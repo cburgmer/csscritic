@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Regression Runner</title>
+
+    <script type="text/javascript" src="../lib/htmlparser.js"></script>
+    <script type="text/javascript" src="../lib/cssParser.js"></script>
+    <script type="text/javascript" src="../lib/URI.js"></script>
+    <script type="text/javascript" src="../lib/rasterizeHTML.js"></script>
+    <script type="text/javascript" src="../lib/imagediff.js"></script>
+    <script type="text/javascript" src="../cssregressiontester.js"></script>
+
+    <script type="text/javascript">
+        (function() {
+            cssregressiontester.compare('pageUnderTest.html', 'pageUnderTestReference.png', console.log);
+        })();
+    </script>
+
+</head>
+
+<body>
+</body>
+</html>
