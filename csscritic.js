@@ -1,5 +1,7 @@
 // csscritic
 // Distributed under the MIT License
+// For source and documentation visit:
+// http://www.github.com/cburgmer/csscritic
 /*global window, rasterizeHTML, imagediff*/
 
 var csscritic = (function () {
