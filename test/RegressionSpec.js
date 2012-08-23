@@ -1,5 +1,5 @@
 describe("Regression testing", function () {
-    var getCanvasForPageUrl, getCanvasForImageUrl,
+    var getCanvasForPageUrl, getImageForUrl,
         htmlCanvas, referenceImageCanvas;
 
     beforeEach(function () {
@@ -12,7 +12,7 @@ describe("Regression testing", function () {
         getCanvasForPageUrl = spyOn(cssregressiontester.util, 'getCanvasForPageUrl').andCallFake(function (pageUrl, width, height, callback) {
             callback(htmlCanvas);
         });
-        getCanvasForImageUrl = spyOn(cssregressiontester.util, 'getCanvasForImageUrl').andCallFake(function (referenceImageUrl, callback) {
+        getImageForUrl = spyOn(cssregressiontester.util, 'getImageForUrl').andCallFake(function (referenceImageUrl, callback) {
             callback(referenceImageCanvas);
         });
     });
@@ -33,7 +33,7 @@ describe("Regression testing", function () {
 
         runs(function () {
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
-            expect(getCanvasForImageUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function));
+            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function));
             expect(imagediffEqual).toHaveBeenCalledWith(htmlCanvas, referenceImageCanvas);
 
             expect(success).toBeTruthy();
@@ -56,7 +56,7 @@ describe("Regression testing", function () {
 
         runs(function () {
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 42, 7, jasmine.any(Function));
-            expect(getCanvasForImageUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function));
+            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function));
             expect(imagediffEqual).toHaveBeenCalledWith(htmlCanvas, referenceImageCanvas);
 
             expect(success).toBeFalsy();
