@@ -28,7 +28,7 @@ describe("Regression testing", function () {
         });
 
         waitsFor(function () {
-            return success !== undefined;
+            return success !== null;
         });
 
         runs(function () {
