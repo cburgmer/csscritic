@@ -1,8 +1,8 @@
-// cssregressiontester
+// csscritic
 // Distributed under the MIT License
 /*global window, rasterizeHTML, imagediff*/
 
-var cssregressiontester = (function () {
+var csscritic = (function () {
     "use strict";
 
     var module = {},
@@ -98,14 +98,14 @@ var cssregressiontester = (function () {
     return module;
 }());
 
-cssregressiontester.BasicHTMLReporter = function () {
+csscritic.BasicHTMLReporter = function () {
     var module = {},
         reportBody = null;
 
     var createBodyOnce = function () {
         if (reportBody === null) {
             reportBody = window.document.createElement("div");
-            reportBody.id = "cssregressiontester_basichtmlreporter";
+            reportBody.id = "csscritic_basichtmlreporter";
 
             window.document.getElementsByTagName("body")[0].appendChild(reportBody);
         }
@@ -140,7 +140,7 @@ cssregressiontester.BasicHTMLReporter = function () {
         if (!result.passed) {
             differenceCanvasContainer = window.document.createElement("div");
             differenceCanvasContainer.className = "differenceCanvas";
-            differenceCanvasContainer.appendChild(cssregressiontester.util.getCanvasForImageData(result.differenceImageData));
+            differenceCanvasContainer.appendChild(csscritic.util.getCanvasForImageData(result.differenceImageData));
             entry.appendChild(differenceCanvasContainer);
         }
 

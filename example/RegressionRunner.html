@@ -4,20 +4,20 @@
     <title>Regression Runner</title>
     <meta charset="utf-8"/>
 
-    <link rel="stylesheet" type="text/css" href="../cssregressiontester.css">
+    <link rel="stylesheet" type="text/css" href="../csscritic.css">
 
     <script type="text/javascript" src="../lib/htmlparser.js"></script>
     <script type="text/javascript" src="../lib/cssParser.js"></script>
     <script type="text/javascript" src="../lib/URI.js"></script>
     <script type="text/javascript" src="../lib/rasterizeHTML.js"></script>
     <script type="text/javascript" src="../lib/imagediff.js"></script>
-    <script type="text/javascript" src="../cssregressiontester.js"></script>
+    <script type="text/javascript" src="../csscritic.js"></script>
 
     <script type="text/javascript">
         window.onload = function() {
-            cssregressiontester.addReporter(cssregressiontester.BasicHTMLReporter());
-            cssregressiontester.compare('pageUnderTest.html', 'pageUnderTestReference.png');
-            cssregressiontester.compare('failingPage.html', 'pageUnderTestReference.png');
+            csscritic.addReporter(csscritic.BasicHTMLReporter());
+            csscritic.compare('pageUnderTest.html', 'pageUnderTestReference.png');
+            csscritic.compare('failingPage.html', 'pageUnderTestReference.png');
         };
     </script>
 

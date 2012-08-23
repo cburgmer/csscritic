@@ -3,20 +3,20 @@ describe("Reporter", function () {
         var reporter, htmlCanvas, referenceImage, differenceImageCanvas, differenceImageData;
 
         beforeEach(function () {
-            reporter = cssregressiontester.BasicHTMLReporter();
+            reporter = csscritic.BasicHTMLReporter();
 
             htmlCanvas = window.document.createElement("canvas");
             referenceImage = new window.Image();
             differenceImageCanvas = window.document.createElement("canvas");
             differenceImageData = differenceImageCanvas.getContext("2d").createImageData(1, 1);
             
-            spyOn(cssregressiontester.util, 'getCanvasForImageData').andCallFake(function (differenceImageData) {
+            spyOn(csscritic.util, 'getCanvasForImageData').andCallFake(function (differenceImageData) {
                 return differenceImageCanvas;
             });
         });
 
         afterEach(function () {
-            $("#cssregressiontester_basichtmlreporter").remove();
+            $("#csscritic_basichtmlreporter").remove();
         });
 
         it("should show an entry for the reported test", function () {
@@ -28,8 +28,8 @@ describe("Reporter", function () {
                 referenceImage: referenceImage
             });
 
-            expect($("#cssregressiontester_basichtmlreporter")).toExist();
-            expect($("#cssregressiontester_basichtmlreporter .comparison")).toExist();
+            expect($("#csscritic_basichtmlreporter")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison")).toExist();
         });
 
         it("should show an entry as passed", function () {
@@ -41,7 +41,7 @@ describe("Reporter", function () {
                 referenceImage: referenceImage
             });
 
-            expect($("#cssregressiontester_basichtmlreporter .passed.comparison")).toExist();
+            expect($("#csscritic_basichtmlreporter .passed.comparison")).toExist();
         });
 
         it("should show an entry as failed", function () {
@@ -54,7 +54,7 @@ describe("Reporter", function () {
                 differenceImageData: differenceImageData
             });
 
-            expect($("#cssregressiontester_basichtmlreporter .failed.comparison")).toExist();
+            expect($("#csscritic_basichtmlreporter .failed.comparison")).toExist();
         });
 
         it("should show the status as passed", function () {
@@ -66,7 +66,7 @@ describe("Reporter", function () {
                 referenceImage: referenceImage
             });
 
-            expect($("#cssregressiontester_basichtmlreporter .comparison .status").text()).toEqual("passed");
+            expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("passed");
         });
 
         it("should show the status as failed", function () {
@@ -79,7 +79,7 @@ describe("Reporter", function () {
                 differenceImageData: differenceImageData
             });
 
-            expect($("#cssregressiontester_basichtmlreporter .comparison .status").text()).toEqual("failed");
+            expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("failed");
         });
 
         it("should show the page url", function () {
@@ -91,7 +91,7 @@ describe("Reporter", function () {
                 referenceImage: referenceImage
             });
 
-            expect($("#cssregressiontester_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url<img>");
+            expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url<img>");
         });
 
         it("should show the diff on a failing comparison", function () {
@@ -104,7 +104,7 @@ describe("Reporter", function () {
                 differenceImageData: differenceImageData
             });
 
-            expect($("#cssregressiontester_basichtmlreporter .comparison .differenceCanvas canvas").get(0)).toBe(differenceImageCanvas);
+            expect($("#csscritic_basichtmlreporter .comparison .differenceCanvas canvas").get(0)).toBe(differenceImageCanvas);
         });
     });
 });

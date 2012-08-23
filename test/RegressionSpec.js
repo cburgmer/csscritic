@@ -9,16 +9,16 @@ describe("Regression testing", function () {
             height: 7
         };
 
-        getCanvasForPageUrl = spyOn(cssregressiontester.util, 'getCanvasForPageUrl').andCallFake(function (pageUrl, width, height, callback) {
+        getCanvasForPageUrl = spyOn(csscritic.util, 'getCanvasForPageUrl').andCallFake(function (pageUrl, width, height, callback) {
             callback(htmlCanvas);
         });
-        getImageForUrl = spyOn(cssregressiontester.util, 'getImageForUrl').andCallFake(function (referenceImageUrl, callback) {
+        getImageForUrl = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (referenceImageUrl, callback) {
             callback(referenceImage);
         });
     });
 
     afterEach(function () {
-        cssregressiontester.clearReporters();
+        csscritic.clearReporters();
     });
 
     describe("Reference comparison", function () {
@@ -27,7 +27,7 @@ describe("Regression testing", function () {
 
             imagediffEqual = spyOn(imagediff, 'equal').andReturn(true);
 
-            cssregressiontester.compare("samplepage.html", "samplepage_reference.png", function (result) {
+            csscritic.compare("samplepage.html", "samplepage_reference.png", function (result) {
                 success = result;
             });
 
@@ -43,7 +43,7 @@ describe("Regression testing", function () {
 
             imagediffEqual = spyOn(imagediff, 'equal').andReturn(false);
 
-            success = cssregressiontester.compare("differentpage.html", "samplepage_reference.png", function (result) {
+            success = csscritic.compare("differentpage.html", "samplepage_reference.png", function (result) {
                 success = result;
             });
 
@@ -60,7 +60,7 @@ describe("Regression testing", function () {
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
-            cssregressiontester.addReporter(reporter);
+            csscritic.addReporter(reporter);
 
             diffCanvas = jasmine.createSpy('diffCanvas');
         });
@@ -68,7 +68,7 @@ describe("Regression testing", function () {
         it("should report a successful comparison", function () {
             spyOn(imagediff, 'equal').andReturn(true);
 
-            cssregressiontester.compare("differentpage.html", "samplepage_reference.png");
+            csscritic.compare("differentpage.html", "samplepage_reference.png");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 passed: true,
@@ -83,7 +83,7 @@ describe("Regression testing", function () {
             spyOn(imagediff, 'equal').andReturn(false);
             imagediffDiffSpy = spyOn(imagediff, 'diff').andReturn(diffCanvas);
 
-            cssregressiontester.compare("differentpage.html", "samplepage_reference.png");
+            csscritic.compare("differentpage.html", "samplepage_reference.png");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 passed: false,

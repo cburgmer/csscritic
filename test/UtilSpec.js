@@ -11,7 +11,7 @@ describe("Utilities", function () {
         it("should draw the url to a canvas", function () {
             var the_canvas = null;
 
-            cssregressiontester.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas) {
+            csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas) {
                 the_canvas = canvas;
             });
 
@@ -34,7 +34,7 @@ describe("Utilities", function () {
         it("should load an image", function () {
             var the_image = null;
 
-            cssregressiontester.util.getImageForUrl("fixtures/green.png", function (image) {
+            csscritic.util.getImageForUrl("fixtures/green.png", function (image) {
                 the_image = image;
             });
 
