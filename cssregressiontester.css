@@ -1,0 +1,16 @@
+#cssregressiontester_basichtmlreporter .comparison {
+    padding: 5px;
+    margin: 5px;
+}
+
+#cssregressiontester_basichtmlreporter .passed.comparison {
+    background-color: #00ff00;
+}
+
+#cssregressiontester_basichtmlreporter .failed.comparison {
+    background-color: #ff0000;
+}
+
+#cssregressiontester_basichtmlreporter .comparison .status {
+    float: right;
+}

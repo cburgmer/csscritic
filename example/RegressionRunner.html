@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Regression Runner</title>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" type="text/css" href="../cssregressiontester.css">
 
     <script type="text/javascript" src="../lib/htmlparser.js"></script>
     <script type="text/javascript" src="../lib/cssParser.js"></script>
@@ -11,9 +14,11 @@
     <script type="text/javascript" src="../cssregressiontester.js"></script>
 
     <script type="text/javascript">
-        (function() {
-            cssregressiontester.compare('pageUnderTest.html', 'pageUnderTestReference.png', console.log);
-        })();
+        window.onload = function() {
+            cssregressiontester.addReporter(cssregressiontester.BasicHTMLReporter());
+            cssregressiontester.compare('pageUnderTest.html', 'pageUnderTestReference.png');
+            cssregressiontester.compare('failingPage.html', 'pageUnderTestReference.png');
+        };
     </script>
 
 </head>
