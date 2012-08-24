@@ -80,8 +80,8 @@ describe("Regression testing", function () {
         });
 
         it("should report a canvas showing the difference on a failing comparison", function () {
+            var imagediffDiffSpy = spyOn(imagediff, 'diff').andReturn(diffCanvas);
             spyOn(imagediff, 'equal').andReturn(false);
-            imagediffDiffSpy = spyOn(imagediff, 'diff').andReturn(diffCanvas);
 
             csscritic.compare("differentpage.html", "samplepage_reference.png");
 

@@ -14,3 +14,7 @@
 #csscritic_basichtmlreporter .comparison .status {
     float: right;
 }
+
+#csscritic_basichtmlreporter .comparison .differenceCanvas canvas {
+    border: 1px solid black;
+}
