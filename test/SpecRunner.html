@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="lib/jasmine-1.2.0/jasmine.css">
     <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine.js"></script>
     <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine-html.js"></script>
-    <script type="text/javascript" src="lib/jasmine.terminal_reporter.js"></script>
     <script type="text/javascript" src="lib/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="lib/jasmine-jquery.js"></script>
 
@@ -48,10 +47,6 @@
             jasmineEnv.updateInterval = 1000;
 
             jasmineEnv.addReporter(new jasmine.TrivialReporter()); // needed for phantomjs-testrunner.js
-            jasmineEnv.addReporter(new jasmine.TerminalReporter({
-                verbosity: 2,
-                color: true
-            }));
 
 //            var htmlReporter = new jasmine.HtmlReporter(); // doesn't work nicely with phantomjs-testrunner.js
 //

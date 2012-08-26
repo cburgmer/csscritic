@@ -183,11 +183,14 @@ function processPage(status, page, resultsKey) {
                 // print out a success / failure message of the results
                 var results = getResults();
                 var failures = Number(results[2]);
+                console.log("Results for url " + page.url + ":");
                 if (failures > 0) {
+                    console.error("  FAILURE: " + results[0]);
                     page.__exit_code = 1;
                     clearInterval(ival);
                 }
                 else {
+                    console.log("  SUCCESS: " + results[0]);
                     page.__exit_code = 0;
                     clearInterval(ival);
                 }
