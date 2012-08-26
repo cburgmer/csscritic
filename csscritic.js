@@ -50,10 +50,10 @@ var csscritic = (function () {
         return canvas;
     };
 
-    var report = function (passed, pageUrl, pageCanvas, referenceUrl, referenceImage) {
+    var report = function (status, pageUrl, pageCanvas, referenceUrl, referenceImage) {
         var i,
             result = {
-                passed: passed,
+                status: status,
                 pageUrl: pageUrl,
                 pageCanvas: pageCanvas,
                 referenceUrl: referenceUrl,
@@ -64,7 +64,7 @@ var csscritic = (function () {
             return;
         }
 
-        if (!passed) {
+        if (status === "failed") {
             result.differenceImageData = imagediff.diff(pageCanvas, referenceImage);
         }
 
@@ -86,13 +86,24 @@ var csscritic = (function () {
 
         module.util.getImageForUrl(referenceImageUrl, function (referenceImage) {
             module.util.getCanvasForPageUrl(pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
-                var passed = imagediff.equal(htmlCanvas, referenceImage);
+                var passed = imagediff.equal(htmlCanvas, referenceImage),
+                    textualStatus = passed ? "passed" : "failed";
 
                 if (callback !== undefined) {
-                    callback(passed);
+                    callback(textualStatus);
                 }
 
-                report(passed, pageUrl, htmlCanvas, referenceImageUrl, referenceImage);
+                report(textualStatus, pageUrl, htmlCanvas, referenceImageUrl, referenceImage);
+            });
+        }, function () {
+            module.util.getCanvasForPageUrl(pageUrl, 800, 600, function (htmlCanvas) {
+                var textualStatus = "referenceMissing";
+
+                if (callback !== undefined) {
+                    callback(textualStatus);
+                }
+
+                report(textualStatus, pageUrl, htmlCanvas, referenceImageUrl);
             });
         });
     };
@@ -117,15 +128,9 @@ csscritic.BasicHTMLReporter = function () {
         var entry = window.document.createElement("div"),
             status = window.document.createElement("span"),
             pageUrl = window.document.createElement("span"),
-            differenceCanvasContainer;
+            pageCanvasContainer, differenceCanvasContainer;
 
-        entry.className = "comparison";
-
-        if (result.passed) {
-            entry.className += " passed";
-        } else {
-            entry.className += " failed";
-        }
+        entry.className = "comparison " + result.status;
 
         entry.appendChild(pageUrl);
         pageUrl.className = "pageUrl";
@@ -133,17 +138,26 @@ csscritic.BasicHTMLReporter = function () {
 
         entry.appendChild(status);
         status.className = "status";
-        if (result.passed) {
+        if (result.status === "passed") {
             status.textContent = "passed";
-        } else {
+        } else if (result.status === "failed") {
             status.textContent = "failed";
+        } else if (result.status === "referenceMissing") {
+            status.textContent = "missing reference";
         }
 
-        if (!result.passed) {
+        if (result.status === "failed") {
             differenceCanvasContainer = window.document.createElement("div");
             differenceCanvasContainer.className = "differenceCanvas";
             differenceCanvasContainer.appendChild(csscritic.util.getCanvasForImageData(result.differenceImageData));
             entry.appendChild(differenceCanvasContainer);
+        }
+
+        if (result.status === "referenceMissing") {
+            pageCanvasContainer = window.document.createElement("div");
+            pageCanvasContainer.className = "pageCanvas";
+            pageCanvasContainer.appendChild(result.pageCanvas);
+            entry.appendChild(pageCanvasContainer);
         }
 
         return entry;

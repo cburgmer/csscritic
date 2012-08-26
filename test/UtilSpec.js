@@ -49,5 +49,21 @@ describe("Utilities", function () {
             });
 
         });
+
+        it("should handle a missing image", function () {
+            var errorCalled = false;
+
+            csscritic.util.getImageForUrl("does_not_exist.png", function () {}, function () {
+                errorCalled = true;
+            });
+
+            waitsFor(function () {
+                return errorCalled;
+            });
+
+            runs(function () {
+                expect(errorCalled).toBeTruthy();
+            });
+        });
     });
 });

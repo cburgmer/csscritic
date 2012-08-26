@@ -11,10 +11,14 @@
     background-color: #ff0000;
 }
 
+#csscritic_basichtmlreporter .referenceMissing.comparison {
+    background-color: #ffff00;
+}
+
 #csscritic_basichtmlreporter .comparison .status {
     float: right;
 }
 
-#csscritic_basichtmlreporter .comparison .differenceCanvas canvas {
+#csscritic_basichtmlreporter .comparison canvas {
     border: 1px solid black;
 }
