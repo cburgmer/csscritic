@@ -12,14 +12,21 @@ var csscritic = (function () {
 
     module.util = {};
 
+    module.util.drawPageUrl = function (pageUrl, htmlCanvas, width, height, callback) {
+        htmlCanvas.width = width;
+        htmlCanvas.height = height;
+
+        htmlCanvas.getContext("2d").clearRect(0, 0, width, height);
+        rasterizeHTML.drawURL(pageUrl, htmlCanvas, function () {
+            callback();
+        });
+    };
+
     module.util.getCanvasForPageUrl = function (pageUrl, width, height, callback) {
         var htmlCanvas = window.document.createElement("canvas");
 
         // TODO better deal with with & height to check for size differences
-        htmlCanvas.width = width;
-        htmlCanvas.height = height;
-
-        rasterizeHTML.drawURL(pageUrl, htmlCanvas, function () {
+        module.util.drawPageUrl(pageUrl, htmlCanvas, width, height, function () {
             callback(htmlCanvas);
         });
     };
@@ -56,6 +63,9 @@ var csscritic = (function () {
                 status: status,
                 pageUrl: pageUrl,
                 pageCanvas: pageCanvas,
+                resizePageCanvas: function (width, height, callback) {
+                    module.util.drawPageUrl(pageUrl, pageCanvas, width, height, callback);
+                },
                 referenceUrl: referenceUrl,
                 referenceImage: referenceImage
             };
@@ -115,6 +125,19 @@ csscritic.BasicHTMLReporter = function () {
     var module = {},
         reportBody = null;
 
+    var registerResizeHandler = (function (element, handler) {
+        var width = element.style.width,
+            height = element.style.height;
+
+        element.onmouseup = function () {
+            if (width !== element.style.width || height !== element.style.height) {
+                width = element.style.width;
+                height = element.style.height;
+                handler(width, height);
+            }
+        };
+    });
+
     var createBodyOnce = function () {
         if (reportBody === null) {
             reportBody = window.document.createElement("div");
@@ -128,7 +151,7 @@ csscritic.BasicHTMLReporter = function () {
         var entry = window.document.createElement("div"),
             status = window.document.createElement("span"),
             pageUrl = window.document.createElement("span"),
-            pageCanvasContainer, differenceCanvasContainer, saveHint;
+            pageCanvasContainer, pageCanvasInnerContainer, differenceCanvasContainer, saveHint;
 
         entry.className = "comparison " + result.status;
 
@@ -163,8 +186,17 @@ csscritic.BasicHTMLReporter = function () {
             pageCanvasContainer.className = "pageCanvas";
             pageCanvasContainer.style.width = result.pageCanvas.width + "px";
             pageCanvasContainer.style.height = result.pageCanvas.height + "px";
-            pageCanvasContainer.appendChild(result.pageCanvas);
+            pageCanvasInnerContainer = window.document.createElement("div");
+            pageCanvasInnerContainer.className = "pageCanvasInner";
+            pageCanvasInnerContainer.appendChild(result.pageCanvas);
+            pageCanvasContainer.appendChild(pageCanvasInnerContainer);
             entry.appendChild(pageCanvasContainer);
+
+            registerResizeHandler(pageCanvasContainer, function () {
+                var width = parseInt(pageCanvasContainer.style.width, 10),
+                    height = parseInt(pageCanvasContainer.style.height, 10);
+                result.resizePageCanvas(width, height);
+            });
         }
 
         return entry;

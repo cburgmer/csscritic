@@ -7,9 +7,49 @@ describe("Utilities", function () {
         });
     });
 
+    describe("drawPageUrl", function () {
+        var the_canvas, clearRectSpy;
+
+        beforeEach(function () {
+            clearRectSpy = jasmine.createSpy("clearRect");
+            the_canvas = {
+                width: null,
+                height: null,
+                getContext: jasmine.createSpy("getContext").andCallFake(function (what) {
+                    if (what === "2d") {
+                        return {clearRect: clearRectSpy};
+                    }
+                })
+            };
+
+        });
+
+        it("should draw the url to the given canvas", function () {
+            var finished = false;
+
+            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {
+                finished = true;
+            });
+
+            expect(finished).toBeTruthy();
+            expect(the_canvas.width).toEqual(42);
+            expect(the_canvas.height).toEqual(7);
+            expect(drawUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, jasmine.any(Function));
+        });
+
+        it("should clear the area before drawing", function () {
+            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {});
+
+            expect(clearRectSpy).toHaveBeenCalledWith(0, 0, 42, 7);
+        });
+    });
+
     describe("getCanvasForPageUrl", function () {
         it("should draw the url to a canvas", function () {
-            var the_canvas = null;
+            var the_canvas = null,
+                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, callback) {
+                    callback();
+                });
 
             csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas) {
                 the_canvas = canvas;
@@ -23,9 +63,7 @@ describe("Utilities", function () {
                 expect(the_canvas instanceof HTMLElement).toBeTruthy();
                 expect(the_canvas.nodeName).toEqual("CANVAS");
 
-                expect(the_canvas.width).toEqual(42);
-                expect(the_canvas.height).toEqual(7);
-                expect(drawUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, jasmine.any(Function));
+                expect(drawPageUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, 42, 7, jasmine.any(Function));
             });
         });
     });

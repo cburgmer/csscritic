@@ -163,6 +163,36 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("save");
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("reference_img_url");
             });
+
+            it("should provide an inner div between container and canvas for styling purposes", function () {
+                reporter.reportComparison({
+                    status: "referenceMissing",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url"
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .pageCanvas .pageCanvasInner canvas")).toExist();
+            });
+
+            it("should resize the canvas when user resizes the container", function () {
+                var resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
+
+                reporter.reportComparison({
+                    status: "referenceMissing",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    resizePageCanvas: resizePageCanvasSpy,
+                    referenceUrl: "reference_img_url"
+                });
+
+                $("#csscritic_basichtmlreporter .comparison .pageCanvas").css({
+                    width: 42,
+                    height: 24
+                }).trigger("mouseup");
+
+                expect(resizePageCanvasSpy).toHaveBeenCalledWith(42, 24);
+            });
         });
     });
 });

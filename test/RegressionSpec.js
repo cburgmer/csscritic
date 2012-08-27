@@ -107,6 +107,7 @@ describe("Regression testing", function () {
                 status: "passed",
                 pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
+                resizePageCanvas: jasmine.any(Function),
                 referenceUrl: "samplepage_reference.png",
                 referenceImage: referenceImage
             });
@@ -129,6 +130,7 @@ describe("Regression testing", function () {
                 status: "failed",
                 pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
+                resizePageCanvas: jasmine.any(Function),
                 referenceUrl: "samplepage_reference.png",
                 referenceImage: referenceImage,
                 differenceImageData: diffCanvas
@@ -150,6 +152,7 @@ describe("Regression testing", function () {
                 status: "referenceMissing",
                 pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
+                resizePageCanvas: jasmine.any(Function),
                 referenceUrl: "samplepage_reference.png"
             });
         });
@@ -166,5 +169,39 @@ describe("Regression testing", function () {
 
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 600, jasmine.any(Function));
         });
+
+        it("should provide a method to repaint the HTML given width and height", function () {
+            var drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, callback) {
+                    callback();
+                }),
+                finished = false;
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlCanvas);
+            });
+            getImageForUrl.andCallFake(function (referenceImageUrl, callback) {
+                callback(referenceImage);
+            });
+
+            csscritic.compare("differentpage.html", "samplepage_reference.png");
+
+            expect(reporter.reportComparison).toHaveBeenCalledWith({
+                status: "passed",
+                pageUrl: "differentpage.html",
+                pageCanvas: htmlCanvas,
+                resizePageCanvas: jasmine.any(Function),
+                referenceUrl: "samplepage_reference.png",
+                referenceImage: referenceImage
+            });
+
+            reporter.reportComparison.mostRecentCall.args[0].resizePageCanvas(16, 34, function () {
+                finished = true;
+            });
+
+            expect(finished).toBeTruthy();
+            expect(drawPageUrlSpy).toHaveBeenCalledWith("differentpage.html", htmlCanvas, 16, 34, jasmine.any(Function));
+        });
+
     });
 });
