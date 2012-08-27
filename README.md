@@ -5,6 +5,8 @@ A lightweight framework for regression testing of Cascading Style Sheets.
 
 See example/RegressionRunner.html for an example.
 
+[![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
+
 How it works
 ------------
 
