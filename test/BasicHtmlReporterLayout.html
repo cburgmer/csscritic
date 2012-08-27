@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Layout of the BasicHtmlReporter</title>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" type="text/css" href="../csscritic.css">
+</head>
+<body>
+<div id="csscritic_basichtmlreporter">
+    <div class="comparison passed">
+        <span class="pageUrl">passingPage.html</span>
+        <span class="status">passed</span>
+    </div>
+    <div class="comparison failed">
+        <span class="pageUrl">failingPage.html</span>
+        <span class="status">failed</span>
+        <div class="differenceCanvas">
+            <canvas height="100" width="204"></canvas>
+        </div>
+    </div>
+    <div class="comparison referenceMissing">
+        <span class="pageUrl">pageWithoutReference.html</span>
+        <span class="status">missing reference</span>
+        <div class="saveHint warning">To create the future reference please right click on the rendered page and save it under 'pageWithoutReference.png' relative to this document.</div>
+        <div class="pageCanvas" style="width: 488px; height: 128px;">
+            <div class="pageCanvasInner">
+                <canvas width="488" height="128"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
