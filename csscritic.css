@@ -15,10 +15,21 @@
     background-color: #ffff00;
 }
 
+#csscritic_basichtmlreporter .referenceMissing.comparison .saveHint {
+    font-weight: bold;
+    margin: 8px 0px;
+}
+
 #csscritic_basichtmlreporter .comparison .status {
     float: right;
 }
 
 #csscritic_basichtmlreporter .comparison canvas {
     border: 1px solid black;
+}
+
+#csscritic_basichtmlreporter .warning:before {
+    content: "⚠";
+    font-size: 25px;
+    padding-right: 5px;
 }

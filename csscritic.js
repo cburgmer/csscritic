@@ -128,7 +128,7 @@ csscritic.BasicHTMLReporter = function () {
         var entry = window.document.createElement("div"),
             status = window.document.createElement("span"),
             pageUrl = window.document.createElement("span"),
-            pageCanvasContainer, differenceCanvasContainer;
+            pageCanvasContainer, differenceCanvasContainer, saveHint;
 
         entry.className = "comparison " + result.status;
 
@@ -154,8 +154,15 @@ csscritic.BasicHTMLReporter = function () {
         }
 
         if (result.status === "referenceMissing") {
+            saveHint = window.document.createElement("div");
+            saveHint.className = "saveHint warning";
+            saveHint.textContent = "To create the future reference please right click on the rendered page and save it under '" + result.referenceUrl + "' relative to this document.";
+            entry.appendChild(saveHint);
+
             pageCanvasContainer = window.document.createElement("div");
             pageCanvasContainer.className = "pageCanvas";
+            pageCanvasContainer.style.width = result.pageCanvas.width + "px";
+            pageCanvasContainer.style.height = result.pageCanvas.height + "px";
             pageCanvasContainer.appendChild(result.pageCanvas);
             entry.appendChild(pageCanvasContainer);
         }

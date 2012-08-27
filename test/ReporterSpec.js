@@ -150,6 +150,19 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvas canvas").get(0)).toBe(htmlCanvas);
             });
 
+            it("should give help on how to save a reference image", function () {
+                reporter.reportComparison({
+                    status: "referenceMissing",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url"
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toHaveClass("warning");
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("save");
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("reference_img_url");
+            });
         });
     });
 });
