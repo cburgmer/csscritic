@@ -37,7 +37,6 @@ var csscritic = (function () {
         img.src = url;
     };
 
-    // TODO unit test for that
     module.util.getCanvasForImageData = function (imageData) {
         var canvas = window.document.createElement("canvas"),
             context;
