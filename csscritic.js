@@ -1,9 +1,3 @@
-// csscritic
-// Distributed under the MIT License
-// For source and documentation visit:
-// http://www.github.com/cburgmer/csscritic
-/*global window, rasterizeHTML, imagediff*/
-
 var csscritic = (function () {
     "use strict";
 
@@ -125,7 +119,7 @@ csscritic.BasicHTMLReporter = function () {
     var module = {},
         reportBody = null;
 
-    var registerResizeHandler = (function (element, handler) {
+    var registerResizeHandler = function (element, handler) {
         var width = element.style.width,
             height = element.style.height;
 
@@ -136,7 +130,7 @@ csscritic.BasicHTMLReporter = function () {
                 handler(width, height);
             }
         };
-    });
+    };
 
     var createBodyOnce = function () {
         if (reportBody === null) {

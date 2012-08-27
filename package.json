@@ -1,0 +1,11 @@
+{
+  "name": "csscritic",
+  "description": "A lightweight framework for regression testing of Cascading Style Sheets.",
+  "keywords": ["CSS", "regression", "test"],
+  "homepage": "http://www.github.com/cburgmer/csscritic",
+  "licenses": [{"type": "MIT"}],
+  "author": {
+    "name": "Christoph Burgmer",
+    "email": "christoph.burgmer@gmail.com"
+  }
+}
