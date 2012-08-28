@@ -59,6 +59,41 @@ describe("Regression testing", function () {
 
             expect(status).toEqual("failed");
         });
+
+        it("should make the callback optional", function () {
+            var status;
+
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            csscritic.compare("samplepage.html", "the_reference.png");
+
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
+            expect(getImageForUrl).toHaveBeenCalledWith("the_reference.png", jasmine.any(Function), jasmine.any(Function));
+        });
+
+        it("should make the reference image url optional", function () {
+            var status;
+
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            csscritic.compare("samplepage.html", function (result) {
+                status = result;
+            });
+
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
+            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+
+            expect(status).toEqual('passed');
+        });
+
+        it("should make the both reference image url and callback optional", function () {
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            csscritic.compare("samplepage.html");
+
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
+            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+        });
     });
 
     describe("Configuration error handling", function () {

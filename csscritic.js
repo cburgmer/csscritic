@@ -81,29 +81,60 @@ var csscritic = (function () {
         reporters = [];
     };
 
-    module.compare = function (pageUrl, referenceImageUrl, callback) {
-        var passed;
+    var getDefaultReferenceImageUrlForPageUrl = function (pageUrl) {
+        var defaultReferenceImageUrl = pageUrl;
+        if (pageUrl.substr(-5) === ".html") {
+            defaultReferenceImageUrl = pageUrl.substr(0, pageUrl.length - 5);
+        }
+        defaultReferenceImageUrl += "_reference.png";
+        return defaultReferenceImageUrl;
+    };
 
-        module.util.getImageForUrl(referenceImageUrl, function (referenceImage) {
-            module.util.getCanvasForPageUrl(pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
+    var parseOptionalParameters = function (pageUrl, referenceImageUrl, callback) {
+        var parameters = {
+            pageUrl: pageUrl,
+            referenceImageUrl: getDefaultReferenceImageUrlForPageUrl(pageUrl),
+            callback: null
+        };
+
+        if (typeof callback === "undefined" && typeof referenceImageUrl === "function") {
+            parameters.callback = referenceImageUrl;
+        } else {
+            if (typeof referenceImageUrl !== "undefined") {
+                parameters.referenceImageUrl = referenceImageUrl;
+            }
+
+            if (typeof callback !== "undefined") {
+                parameters.callback = callback;
+            }
+        }
+        return parameters;
+    };
+
+    module.compare = function (pageUrl, referenceImageUrl, callback) {
+        var params = parseOptionalParameters(pageUrl, referenceImageUrl, callback),
+            passed;
+
+        module.util.getImageForUrl(params.referenceImageUrl, function (referenceImage) {
+            module.util.getCanvasForPageUrl(params.pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
                 var passed = imagediff.equal(htmlCanvas, referenceImage),
                     textualStatus = passed ? "passed" : "failed";
 
-                if (callback !== undefined) {
-                    callback(textualStatus);
+                if (params.callback) {
+                    params.callback(textualStatus);
                 }
 
-                report(textualStatus, pageUrl, htmlCanvas, referenceImageUrl, referenceImage);
+                report(textualStatus, params.pageUrl, htmlCanvas, params.referenceImageUrl, referenceImage);
             });
         }, function () {
-            module.util.getCanvasForPageUrl(pageUrl, 800, 600, function (htmlCanvas) {
+            module.util.getCanvasForPageUrl(params.pageUrl, 800, 600, function (htmlCanvas) {
                 var textualStatus = "referenceMissing";
 
-                if (callback !== undefined) {
-                    callback(textualStatus);
+                if (params.callback) {
+                    params.callback(textualStatus);
                 }
 
-                report(textualStatus, pageUrl, htmlCanvas, referenceImageUrl);
+                report(textualStatus, params.pageUrl, htmlCanvas, params.referenceImageUrl);
             });
         });
     };
