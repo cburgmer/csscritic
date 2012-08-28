@@ -1,6 +1,4 @@
 var csscritic = (function () {
-    "use strict";
-
     var module = {},
         reporters = [];
 
@@ -19,7 +17,6 @@ var csscritic = (function () {
     module.util.getCanvasForPageUrl = function (pageUrl, width, height, callback) {
         var htmlCanvas = window.document.createElement("canvas");
 
-        // TODO better deal with with & height to check for size differences
         module.util.drawPageUrl(pageUrl, htmlCanvas, width, height, function () {
             callback(htmlCanvas);
         });
@@ -140,20 +137,45 @@ csscritic.BasicHTMLReporter = function () {
         }
     };
 
-    var createEntry = function (result) {
-        var entry = window.document.createElement("div"),
-            status = window.document.createElement("span"),
-            pageUrl = window.document.createElement("span"),
-            pageCanvasContainer, pageCanvasInnerContainer, differenceCanvasContainer, saveHint;
+    var createPageCanvasContainer = function (result) {
+        var pageCanvasContainer = window.document.createElement("div"),
+            pageCanvasInnerContainer = window.document.createElement("div");
 
-        entry.className = "comparison " + result.status;
+        pageCanvasContainer.className = "pageCanvas";
+        pageCanvasContainer.style.width = result.pageCanvas.width + "px";
+        pageCanvasContainer.style.height = result.pageCanvas.height + "px";
 
-        entry.appendChild(pageUrl);
-        pageUrl.className = "pageUrl";
-        pageUrl.textContent = result.pageUrl;
+        pageCanvasInnerContainer.className = "pageCanvasInner";
+        pageCanvasInnerContainer.appendChild(result.pageCanvas);
+        pageCanvasContainer.appendChild(pageCanvasInnerContainer);
 
-        entry.appendChild(status);
+        registerResizeHandler(pageCanvasContainer, function () {
+            var width = parseInt(pageCanvasContainer.style.width, 10),
+                height = parseInt(pageCanvasContainer.style.height, 10);
+            result.resizePageCanvas(width, height);
+        });
+
+        return pageCanvasContainer;
+    };
+
+    var createSaveHint = function (result) {
+        var saveHint = window.document.createElement("div");
+        saveHint.className = "saveHint warning";
+        saveHint.textContent = "To create the future reference please right click on the rendered page and save it under '" + result.referenceUrl + "' relative to this document.";
+        return saveHint;
+    };
+
+    var createDifferenceCanvasContainer = function (result) {
+        var differenceCanvasContainer = window.document.createElement("div");
+        differenceCanvasContainer.className = "differenceCanvas";
+        differenceCanvasContainer.appendChild(csscritic.util.getCanvasForImageData(result.differenceImageData));
+        return differenceCanvasContainer;
+    };
+
+    var createStatus = function (result) {
+        var status = window.document.createElement("span");
         status.className = "status";
+
         if (result.status === "passed") {
             status.textContent = "passed";
         } else if (result.status === "failed") {
@@ -161,35 +183,31 @@ csscritic.BasicHTMLReporter = function () {
         } else if (result.status === "referenceMissing") {
             status.textContent = "missing reference";
         }
+        return status;
+    };
+
+    var createPageUrl = function (result) {
+        var pageUrl = window.document.createElement("span");
+        pageUrl.className = "pageUrl";
+        pageUrl.textContent = result.pageUrl;
+        return pageUrl;
+    };
+
+    var createEntry = function (result) {
+        var entry = window.document.createElement("div");
+
+        entry.className = "comparison " + result.status;
+
+        entry.appendChild(createPageUrl(result));
+        entry.appendChild(createStatus(result));
 
         if (result.status === "failed") {
-            differenceCanvasContainer = window.document.createElement("div");
-            differenceCanvasContainer.className = "differenceCanvas";
-            differenceCanvasContainer.appendChild(csscritic.util.getCanvasForImageData(result.differenceImageData));
-            entry.appendChild(differenceCanvasContainer);
+            entry.appendChild(createDifferenceCanvasContainer(result));
         }
 
         if (result.status === "referenceMissing") {
-            saveHint = window.document.createElement("div");
-            saveHint.className = "saveHint warning";
-            saveHint.textContent = "To create the future reference please right click on the rendered page and save it under '" + result.referenceUrl + "' relative to this document.";
-            entry.appendChild(saveHint);
-
-            pageCanvasContainer = window.document.createElement("div");
-            pageCanvasContainer.className = "pageCanvas";
-            pageCanvasContainer.style.width = result.pageCanvas.width + "px";
-            pageCanvasContainer.style.height = result.pageCanvas.height + "px";
-            pageCanvasInnerContainer = window.document.createElement("div");
-            pageCanvasInnerContainer.className = "pageCanvasInner";
-            pageCanvasInnerContainer.appendChild(result.pageCanvas);
-            pageCanvasContainer.appendChild(pageCanvasInnerContainer);
-            entry.appendChild(pageCanvasContainer);
-
-            registerResizeHandler(pageCanvasContainer, function () {
-                var width = parseInt(pageCanvasContainer.style.width, 10),
-                    height = parseInt(pageCanvasContainer.style.height, 10);
-                result.resizePageCanvas(width, height);
-            });
+            entry.appendChild(createSaveHint(result));
+            entry.appendChild(createPageCanvasContainer(result));
         }
 
         return entry;
