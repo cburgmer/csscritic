@@ -194,5 +194,46 @@ describe("Reporter", function () {
                 expect(resizePageCanvasSpy).toHaveBeenCalledWith(42, 24);
             });
         });
+
+        describe("Erroneous tests", function () {
+
+            it("should show an entry as erroneous", function () {
+                reporter.reportComparison({
+                    status: "error",
+                    pageUrl: "page_url",
+                    pageCanvas: null,
+                    referenceUrl: "reference_img_url"
+                });
+
+                expect($("#csscritic_basichtmlreporter .error.comparison")).toExist();
+            });
+
+            it("should show the status is 'error'", function () {
+                reporter.reportComparison({
+                    status: "error",
+                    pageUrl: "page_url",
+                    pageCanvas: null,
+                    referenceUrl: "reference_img_url"
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("error");
+            });
+
+            it("should say what the error is about", function () {
+                reporter.reportComparison({
+                    status: "error",
+                    pageUrl: "page_url",
+                    pageCanvas: null,
+                    referenceUrl: "reference_img_url"
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toHaveClass("warning");
+                expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("could not be read");
+                expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("page_url");
+            });
+
+        });
+
     });
 });

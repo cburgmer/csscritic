@@ -15,9 +15,8 @@
     background-color: #ffff00;
 }
 
-#csscritic_basichtmlreporter .referenceMissing.comparison .saveHint {
-    font-weight: bold;
-    margin: 8px 0;
+#csscritic_basichtmlreporter .error.comparison {
+    background-color: #cc0000;
 }
 
 #csscritic_basichtmlreporter .comparison .status {
@@ -52,4 +51,9 @@
     content: "⚠";
     font-size: 25px;
     padding-right: 5px;
+}
+
+#csscritic_basichtmlreporter .warning {
+    margin: 8px 0;
+    font-weight: bold;
 }

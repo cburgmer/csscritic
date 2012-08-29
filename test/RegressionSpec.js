@@ -86,7 +86,7 @@ describe("Regression testing", function () {
             expect(status).toEqual('passed');
         });
 
-        it("should make the both reference image url and callback optional", function () {
+        it("should make both reference image url and callback optional", function () {
             spyOn(imagediff, 'equal').andReturn(true);
 
             csscritic.compare("samplepage.html");
@@ -97,7 +97,13 @@ describe("Regression testing", function () {
     });
 
     describe("Configuration error handling", function () {
-        it("should return 'referenceMissing' when the reference image cannot be loaded", function () {
+        var imagediffEqual;
+
+        beforeEach(function () {
+            imagediffEqual = spyOn(imagediff, 'equal');
+        });
+
+        it("should return 'referenceMissing' if the reference image cannot be loaded", function () {
             var status;
 
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
@@ -112,8 +118,26 @@ describe("Regression testing", function () {
             });
 
             expect(status).toEqual('referenceMissing');
+            expect(imagediffEqual).not.toHaveBeenCalled();
         });
 
+        it("should return 'error' if the page does not exist", function () {
+            var status;
+
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
+                errorCallback();
+            });
+            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+                errorCallback();
+            });
+
+            csscritic.compare("samplepage.html", function (result) {
+                status = result;
+            });
+
+            expect(status).toEqual('error');
+            expect(imagediffEqual).not.toHaveBeenCalled();
+        });
     });
 
     describe("Reporting", function () {
@@ -202,7 +226,25 @@ describe("Regression testing", function () {
 
             csscritic.compare("differentpage.html", "samplepage_reference.png");
 
-            expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 600, jasmine.any(Function));
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 600, jasmine.any(Function), jasmine.any(Function));
+        });
+
+        it("should report an error if the page does not exist", function () {
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
+                errorCallback();
+            });
+            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+                errorCallback();
+            });
+
+            csscritic.compare("samplepage.html", "samplepage_reference.png");
+
+            expect(reporter.reportComparison).toHaveBeenCalledWith({
+                status: "error",
+                pageUrl: "samplepage.html",
+                pageCanvas: null,
+                referenceUrl: "samplepage_reference.png"
+            });
         });
 
         it("should provide a method to repaint the HTML given width and height", function () {

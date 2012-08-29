@@ -1,12 +1,4 @@
 describe("Utilities", function () {
-    var drawUrlSpy;
-
-    beforeEach(function () {
-        drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, callback) {
-            callback(canvas);
-        });
-    });
-
     describe("drawPageUrl", function () {
         var the_canvas, clearRectSpy;
 
@@ -25,7 +17,10 @@ describe("Utilities", function () {
         });
 
         it("should draw the url to the given canvas", function () {
-            var finished = false;
+            var finished = false,
+                drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, callback) {
+                    callback(canvas);
+                });
 
             csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {
                 finished = true;
@@ -38,22 +33,41 @@ describe("Utilities", function () {
         });
 
         it("should clear the area before drawing", function () {
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, callback) {
+                callback(canvas);
+            });
             csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {});
 
             expect(clearRectSpy).toHaveBeenCalledWith(0, 0, 42, 7);
+        });
+
+        it("should call the error handler if a page does not exist", function () {
+            var hasError = false;
+
+            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {}, function () {
+                hasError = true;
+            });
+
+            waitsFor(function () {
+                return hasError;
+            });
+
+            runs(function () {
+                expect(hasError).toBeTruthy();
+            });
         });
     });
 
     describe("getCanvasForPageUrl", function () {
         it("should draw the url to a canvas", function () {
             var the_canvas = null,
-                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, callback) {
-                    callback();
+                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback, errorCallback) {
+                    successCallback();
                 });
 
             csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas) {
                 the_canvas = canvas;
-            });
+            }, function () {});
 
             waitsFor(function () {
                 return the_canvas !== null;
@@ -63,7 +77,26 @@ describe("Utilities", function () {
                 expect(the_canvas instanceof HTMLElement).toBeTruthy();
                 expect(the_canvas.nodeName).toEqual("CANVAS");
 
-                expect(drawPageUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, 42, 7, jasmine.any(Function));
+                expect(drawPageUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, 42, 7, jasmine.any(Function), jasmine.any(Function));
+            });
+        });
+
+        it("should call the error handler if a page does not exist", function () {
+            var hasError = false;
+            spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback, errorCallback) {
+                errorCallback();
+            });
+
+            csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function () {}, function () {
+                hasError = true;
+            });
+
+            waitsFor(function () {
+                return hasError;
+            });
+
+            runs(function () {
+                expect(hasError).toBeTruthy();
             });
         });
     });

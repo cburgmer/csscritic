@@ -4,22 +4,36 @@ var csscritic = (function () {
 
     module.util = {};
 
-    module.util.drawPageUrl = function (pageUrl, htmlCanvas, width, height, callback) {
+    var rasterizeHTMLDidntFindThePage = function (errors) {
+        var didntFindPage = false;
+        errors.forEach(function (error) {
+            if (error.resourceType === "page") {
+                didntFindPage = true;
+            }
+        });
+        return didntFindPage;
+    };
+
+    module.util.drawPageUrl = function (pageUrl, htmlCanvas, width, height, successCallback, errorCallback) {
         htmlCanvas.width = width;
         htmlCanvas.height = height;
 
         htmlCanvas.getContext("2d").clearRect(0, 0, width, height);
-        rasterizeHTML.drawURL(pageUrl, htmlCanvas, function () {
-            callback();
+        rasterizeHTML.drawURL(pageUrl, htmlCanvas, function (c, errors) {
+            if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
+                errorCallback();
+            } else {
+                successCallback();
+            }
         });
     };
 
-    module.util.getCanvasForPageUrl = function (pageUrl, width, height, callback) {
+    module.util.getCanvasForPageUrl = function (pageUrl, width, height, successCallback, errorCallback) {
         var htmlCanvas = window.document.createElement("canvas");
 
         module.util.drawPageUrl(pageUrl, htmlCanvas, width, height, function () {
-            callback(htmlCanvas);
-        });
+            successCallback(htmlCanvas);
+        }, errorCallback);
     };
 
     module.util.getImageForUrl = function (url, successCallback, errorCallback) {
@@ -53,15 +67,18 @@ var csscritic = (function () {
                 status: status,
                 pageUrl: pageUrl,
                 pageCanvas: pageCanvas,
-                resizePageCanvas: function (width, height, callback) {
-                    module.util.drawPageUrl(pageUrl, pageCanvas, width, height, callback);
-                },
                 referenceUrl: referenceUrl,
                 referenceImage: referenceImage
             };
 
         if (!reporters.length) {
             return;
+        }
+
+        if (pageCanvas) {
+            result.resizePageCanvas = function (width, height, callback) {
+                module.util.drawPageUrl(pageUrl, pageCanvas, width, height, callback);
+            };
         }
 
         if (status === "failed") {
@@ -135,6 +152,14 @@ var csscritic = (function () {
                 }
 
                 report(textualStatus, params.pageUrl, htmlCanvas, params.referenceImageUrl);
+            }, function () {
+                var textualStatus = "error";
+
+                if (params.callback) {
+                    params.callback(textualStatus);
+                }
+
+                report(textualStatus, params.pageUrl, null, params.referenceImageUrl);
             });
         });
     };
@@ -196,6 +221,13 @@ csscritic.BasicHTMLReporter = function () {
         return saveHint;
     };
 
+    var createErrorMsg = function (result) {
+        var errorMsg = window.document.createElement("div");
+        errorMsg.className = "errorMsg warning";
+        errorMsg.textContent = "The page '" + result.pageUrl + "' could not be read. Make sure the path lies within the same origin as this document.";
+        return errorMsg;
+    }
+
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = window.document.createElement("div");
         differenceCanvasContainer.className = "differenceCanvas";
@@ -213,6 +245,8 @@ csscritic.BasicHTMLReporter = function () {
             status.textContent = "failed";
         } else if (result.status === "referenceMissing") {
             status.textContent = "missing reference";
+        } else if (result.status === "error") {
+            status.textContent = "error";
         }
         return status;
     };
@@ -234,11 +268,11 @@ csscritic.BasicHTMLReporter = function () {
 
         if (result.status === "failed") {
             entry.appendChild(createDifferenceCanvasContainer(result));
-        }
-
-        if (result.status === "referenceMissing") {
+        } else if (result.status === "referenceMissing") {
             entry.appendChild(createSaveHint(result));
             entry.appendChild(createPageCanvasContainer(result));
+        } else if (result.status === "error") {
+            entry.appendChild(createErrorMsg(result));
         }
 
         return entry;
