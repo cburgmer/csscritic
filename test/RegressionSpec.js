@@ -37,7 +37,7 @@ describe("Regression testing", function () {
                 status = result;
             });
 
-            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
             expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
             expect(imagediffEqual).toHaveBeenCalledWith(htmlCanvas, referenceImage);
 
@@ -53,7 +53,7 @@ describe("Regression testing", function () {
                 status = result;
             });
 
-            expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 42, 7, jasmine.any(Function));
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
             expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
             expect(imagediffEqual).toHaveBeenCalledWith(htmlCanvas, referenceImage);
 
@@ -67,7 +67,7 @@ describe("Regression testing", function () {
 
             csscritic.compare("samplepage.html", "the_reference.png");
 
-            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
             expect(getImageForUrl).toHaveBeenCalledWith("the_reference.png", jasmine.any(Function), jasmine.any(Function));
         });
 
@@ -80,7 +80,7 @@ describe("Regression testing", function () {
                 status = result;
             });
 
-            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
             expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
 
             expect(status).toEqual('passed');
@@ -91,7 +91,7 @@ describe("Regression testing", function () {
 
             csscritic.compare("samplepage.html");
 
-            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function));
+            expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
             expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
         });
     });
@@ -106,8 +106,8 @@ describe("Regression testing", function () {
         it("should return 'referenceMissing' if the reference image cannot be loaded", function () {
             var status;
 
-            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
-                callback(htmlCanvas);
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
+                successCallback(htmlCanvas);
             });
             getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
                 errorCallback();
@@ -129,6 +129,24 @@ describe("Regression testing", function () {
             });
             getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
                 errorCallback();
+            });
+
+            csscritic.compare("samplepage.html", function (result) {
+                status = result;
+            });
+
+            expect(status).toEqual('error');
+            expect(imagediffEqual).not.toHaveBeenCalled();
+        });
+
+        it("should return 'error' if the page does not exist even if the reference image does", function () {
+            var status;
+
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
+                errorCallback();
+            });
+            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+                successCallback(htmlCanvas);
             });
 
             csscritic.compare("samplepage.html", function (result) {

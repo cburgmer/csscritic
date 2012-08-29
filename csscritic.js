@@ -128,6 +128,16 @@ var csscritic = (function () {
         return parameters;
     };
 
+    var handlePageUrlLoadError = function (params) {
+        var textualStatus = "error";
+
+        if (params.callback) {
+            params.callback(textualStatus);
+        }
+
+        report(textualStatus, params.pageUrl, null, params.referenceImageUrl);
+    };
+
     module.compare = function (pageUrl, referenceImageUrl, callback) {
         var params = parseOptionalParameters(pageUrl, referenceImageUrl, callback),
             passed;
@@ -142,6 +152,8 @@ var csscritic = (function () {
                 }
 
                 report(textualStatus, params.pageUrl, htmlCanvas, params.referenceImageUrl, referenceImage);
+            }, function () {
+                handlePageUrlLoadError(params);
             });
         }, function () {
             module.util.getCanvasForPageUrl(params.pageUrl, 800, 600, function (htmlCanvas) {
@@ -153,13 +165,7 @@ var csscritic = (function () {
 
                 report(textualStatus, params.pageUrl, htmlCanvas, params.referenceImageUrl);
             }, function () {
-                var textualStatus = "error";
-
-                if (params.callback) {
-                    params.callback(textualStatus);
-                }
-
-                report(textualStatus, params.pageUrl, null, params.referenceImageUrl);
+                handlePageUrlLoadError(params);
             });
         });
     };
@@ -226,7 +232,7 @@ csscritic.BasicHTMLReporter = function () {
         errorMsg.className = "errorMsg warning";
         errorMsg.textContent = "The page '" + result.pageUrl + "' could not be read. Make sure the path lies within the same origin as this document.";
         return errorMsg;
-    }
+    };
 
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = window.document.createElement("div");
