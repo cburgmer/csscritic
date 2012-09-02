@@ -1,22 +1,27 @@
+#csscritic_basichtmlreporter {
+    font-family: sans-serif;
+    font-size: 13px;
+}
+
 #csscritic_basichtmlreporter .comparison {
-    padding: 5px;
-    margin: 5px;
+    padding: 8px;
+    margin: 5px 0;
 }
 
 #csscritic_basichtmlreporter .passed.comparison {
-    background-color: #00ff00;
+    background-color: #00FF7F;
 }
 
 #csscritic_basichtmlreporter .failed.comparison {
-    background-color: #ff0000;
+    background-color: #FE3F44;
 }
 
 #csscritic_basichtmlreporter .referenceMissing.comparison {
-    background-color: #ffff00;
+    background-color: #FFFF73;
 }
 
 #csscritic_basichtmlreporter .error.comparison {
-    background-color: #cc0000;
+    background-color: #BE2F33;
 }
 
 #csscritic_basichtmlreporter .comparison .status {
@@ -77,4 +82,10 @@
 #csscritic_basichtmlreporter .warning {
     margin: 8px 0;
     font-weight: bold;
+}
+
+#csscritic_basichtmlreporter .caption {
+    font-style: italic;
+    line-height: 13px;
+    font-size: 12px;
 }
