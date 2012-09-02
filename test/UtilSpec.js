@@ -56,6 +56,17 @@ describe("Utilities", function () {
                 expect(hasError).toBeTruthy();
             });
         });
+
+        it("should work without a callback", function () {
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, callback) {
+                callback(canvas);
+            });
+            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7);
+        });
+
+        it("should work without a callback on error", function () {
+            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7);
+        });
     });
 
     describe("getCanvasForPageUrl", function () {

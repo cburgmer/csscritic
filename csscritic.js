@@ -21,9 +21,13 @@ var csscritic = (function () {
         htmlCanvas.getContext("2d").clearRect(0, 0, width, height);
         rasterizeHTML.drawURL(pageUrl, htmlCanvas, function (c, errors) {
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
-                errorCallback();
+                if (errorCallback) {
+                    errorCallback();
+                }
             } else {
-                successCallback();
+                if (successCallback) {
+                    successCallback();
+                }
             }
         });
     };
