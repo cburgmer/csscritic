@@ -17,7 +17,7 @@
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
             csscritic.compare('pageUnderTest.html', 'pageUnderTestReference.png');
-            csscritic.compare('failingPage.html', 'pageUnderTestReference.png');
+            csscritic.compare('failingPage.html', 'failingPageReference.png');
             csscritic.compare('pageWithoutReference.html');
             csscritic.compare('missingPage.html');
         };
