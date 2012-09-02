@@ -256,6 +256,13 @@ csscritic.BasicHTMLReporter = function () {
         return saveHint;
     };
 
+    var createUpdateHint = function (result) {
+        var updateHint = window.document.createElement("div");
+        updateHint.className = "updateHint warning";
+        updateHint.textContent = "You can update the reference (thus overwriting the current one) by saving the rendered page under '" + result.referenceUrl + "' relative to this document.";
+        return updateHint;
+    };
+
     var createErrorMsg = function (result) {
         var errorMsg = window.document.createElement("div");
         errorMsg.className = "errorMsg warning";
@@ -305,6 +312,7 @@ csscritic.BasicHTMLReporter = function () {
             entry.appendChild(createDifferenceCanvasContainer(result));
             entry.appendChild(createPageCanvasContainer(result, "Page"));
             entry.appendChild(createReferenceImageContainer(result));
+            entry.appendChild(createUpdateHint(result));
         } else if (result.status === "referenceMissing") {
             entry.appendChild(createSaveHint(result));
             entry.appendChild(createPageCanvasContainer(result));

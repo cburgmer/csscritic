@@ -183,6 +183,22 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .caption").text()).toEqual("Reference");
             });
 
+            it("should give help on how to update the reference image", function () {
+                reporter.reportComparison({
+                    status: "failed",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url",
+                    referenceImage: referenceImage,
+                    differenceImageData: differenceImageData
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toHaveClass("warning");
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("update");
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("reference_img_url");
+            });
+
         });
 
         describe("Missing image references", function () {
