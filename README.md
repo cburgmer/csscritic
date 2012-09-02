@@ -26,6 +26,14 @@ CSS critic checks your current layout constantly against a reference image you h
 
 5. Re-run the RegressionRunner.html and see your test passing. Congratulations.
 
+*What do I do if my test fails?*
+
+1. Have a look at the diff image and visually check what has changed.
+
+2. If the change is an unwanted one fix your CSS,
+
+3. If deliberate generate a new reference image.
+
 Limitations
 -----------
 
