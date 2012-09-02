@@ -199,7 +199,7 @@ csscritic.BasicHTMLReporter = function () {
         }
     };
 
-    var createPageCanvasContainer = function (result, captionText) {
+    var createPageCanvasContainer = function (result, withCaption) {
         var outerPageCanvasContainer = window.document.createElement("div"),
             pageCanvasContainer = window.document.createElement("div"),
             pageCanvasInnerContainer = window.document.createElement("div"),
@@ -209,10 +209,10 @@ csscritic.BasicHTMLReporter = function () {
         pageCanvasContainer.style.width = result.pageCanvas.width + "px";
         pageCanvasContainer.style.height = result.pageCanvas.height + "px";
 
-        if (typeof captionText !== "undefined") {
+        if (withCaption) {
             caption = window.document.createElement("span");
             caption.className = "caption";
-            caption.textContent = captionText;
+            caption.textContent = "Page";
             outerPageCanvasContainer.appendChild(caption);
         }
 
@@ -310,7 +310,7 @@ csscritic.BasicHTMLReporter = function () {
 
         if (result.status === "failed") {
             entry.appendChild(createDifferenceCanvasContainer(result));
-            entry.appendChild(createPageCanvasContainer(result, "Page"));
+            entry.appendChild(createPageCanvasContainer(result, true));
             entry.appendChild(createReferenceImageContainer(result));
             entry.appendChild(createUpdateHint(result));
         } else if (result.status === "referenceMissing") {

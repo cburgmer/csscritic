@@ -73,68 +73,46 @@ describe("Reporter", function () {
         });
 
         describe("Failed tests", function () {
-            it("should show an entry as failed", function () {
-                reporter.reportComparison({
+            var paramsOnFailingTest;
+
+            beforeEach(function () {
+                paramsOnFailingTest = {
                     status: "failed",
                     pageUrl: "page_url",
                     pageCanvas: htmlCanvas,
                     referenceUrl: "reference_img_url",
                     referenceImage: referenceImage,
                     differenceImageData: differenceImageData
-                });
+                };
+            });
+
+            it("should show an entry as failed", function () {
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .failed.comparison")).toExist();
             });
 
             it("should show the status as failed", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("failed");
             });
 
             it("should show the diff on a failing comparison", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasContainer canvas").get(0)).toBe(differenceImageCanvas);
             });
 
             it("should show the rendered page for reference and so that the user can save it", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas").get(0)).toBe(htmlCanvas);
             });
 
             it("should show a caption with the rendered page", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .pageCanvasContainer canvas")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .caption")).toExist();
@@ -142,41 +120,20 @@ describe("Reporter", function () {
             });
 
             it("should provide an inner div between page container and canvas for styling purposes", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer .innerPageCanvasContainer canvas")).toExist();
             });
 
             it("should show the reference image", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img").get(0)).toBe(referenceImage);
             });
 
             it("should show a caption with the image reference", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .referenceImageContainer img")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .caption")).toExist();
@@ -184,14 +141,7 @@ describe("Reporter", function () {
             });
 
             it("should give help on how to update the reference image", function () {
-                reporter.reportComparison({
-                    status: "failed",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
-                    referenceImage: referenceImage,
-                    differenceImageData: differenceImageData
-                });
+                reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toHaveClass("warning");
@@ -202,48 +152,41 @@ describe("Reporter", function () {
         });
 
         describe("Missing image references", function () {
+            var paramsOnMissingReference, resizePageCanvasSpy;
 
-            it("should show an entry as status 'referenceMissing'", function () {
-                reporter.reportComparison({
+            beforeEach(function () {
+                resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
+
+                paramsOnMissingReference = {
                     status: "referenceMissing",
                     pageUrl: "page_url<img>",
                     pageCanvas: htmlCanvas,
+                    resizePageCanvas: resizePageCanvasSpy,
                     referenceUrl: "reference_img_url"
-                });
+                };
+            });
+
+            it("should show an entry as status 'referenceMissing'", function () {
+                reporter.reportComparison(paramsOnMissingReference);
 
                 expect($("#csscritic_basichtmlreporter .referenceMissing.comparison")).toExist();
             });
 
             it("should show the status as 'missing reference'", function () {
-                reporter.reportComparison({
-                    status: "referenceMissing",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url"
-                });
+                reporter.reportComparison(paramsOnMissingReference);
 
                 expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("missing reference");
             });
 
             it("should show the rendered page so that the user can save it", function () {
-                reporter.reportComparison({
-                    status: "referenceMissing",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url"
-                });
+                reporter.reportComparison(paramsOnMissingReference);
 
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas").get(0)).toBe(htmlCanvas);
             });
 
             it("should give help on how to save a reference image", function () {
-                reporter.reportComparison({
-                    status: "referenceMissing",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url"
-                });
+                reporter.reportComparison(paramsOnMissingReference);
 
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toHaveClass("warning");
@@ -252,26 +195,13 @@ describe("Reporter", function () {
             });
 
             it("should provide an inner div between container and canvas for styling purposes", function () {
-                reporter.reportComparison({
-                    status: "referenceMissing",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url"
-                });
+                reporter.reportComparison(paramsOnMissingReference);
 
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer .innerPageCanvasContainer canvas")).toExist();
             });
 
             it("should resize the canvas when user resizes the container", function () {
-                var resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
-
-                reporter.reportComparison({
-                    status: "referenceMissing",
-                    pageUrl: "page_url<img>",
-                    pageCanvas: htmlCanvas,
-                    resizePageCanvas: resizePageCanvasSpy,
-                    referenceUrl: "reference_img_url"
-                });
+                reporter.reportComparison(paramsOnMissingReference);
 
                 $("#csscritic_basichtmlreporter .comparison .pageCanvasContainer").css({
                     width: 42,
@@ -283,36 +213,31 @@ describe("Reporter", function () {
         });
 
         describe("Erroneous tests", function () {
+            var paramsOnErroneousTest;
 
-            it("should show an entry as erroneous", function () {
-                reporter.reportComparison({
+            beforeEach(function () {
+                paramsOnErroneousTest = {
                     status: "error",
                     pageUrl: "page_url",
                     pageCanvas: null,
                     referenceUrl: "reference_img_url"
-                });
+                };
+            });
+
+            it("should show an entry as erroneous", function () {
+                reporter.reportComparison(paramsOnErroneousTest);
 
                 expect($("#csscritic_basichtmlreporter .error.comparison")).toExist();
             });
 
             it("should show the status is 'error'", function () {
-                reporter.reportComparison({
-                    status: "error",
-                    pageUrl: "page_url",
-                    pageCanvas: null,
-                    referenceUrl: "reference_img_url"
-                });
+                reporter.reportComparison(paramsOnErroneousTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("error");
             });
 
             it("should say what the error is about", function () {
-                reporter.reportComparison({
-                    status: "error",
-                    pageUrl: "page_url",
-                    pageCanvas: null,
-                    referenceUrl: "reference_img_url"
-                });
+                reporter.reportComparison(paramsOnErroneousTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toHaveClass("warning");
