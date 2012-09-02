@@ -199,15 +199,24 @@ csscritic.BasicHTMLReporter = function () {
         }
     };
 
-    var createPageCanvasContainer = function (result) {
-        var pageCanvasContainer = window.document.createElement("div"),
-            pageCanvasInnerContainer = window.document.createElement("div");
+    var createPageCanvasContainer = function (result, captionText) {
+        var outerPageCanvasContainer = window.document.createElement("div"),
+            pageCanvasContainer = window.document.createElement("div"),
+            pageCanvasInnerContainer = window.document.createElement("div"),
+            caption;
 
-        pageCanvasContainer.className = "pageCanvas";
+        pageCanvasContainer.className = "pageCanvasContainer";
         pageCanvasContainer.style.width = result.pageCanvas.width + "px";
         pageCanvasContainer.style.height = result.pageCanvas.height + "px";
 
-        pageCanvasInnerContainer.className = "pageCanvasInner";
+        if (typeof captionText !== "undefined") {
+            caption = window.document.createElement("span");
+            caption.className = "caption";
+            caption.textContent = captionText;
+            outerPageCanvasContainer.appendChild(caption);
+        }
+
+        pageCanvasInnerContainer.className = "innerPageCanvasContainer";
         pageCanvasInnerContainer.appendChild(result.pageCanvas);
         pageCanvasContainer.appendChild(pageCanvasInnerContainer);
 
@@ -217,7 +226,27 @@ csscritic.BasicHTMLReporter = function () {
             result.resizePageCanvas(width, height);
         });
 
-        return pageCanvasContainer;
+        outerPageCanvasContainer.className = "outerPageCanvasContainer";
+        outerPageCanvasContainer.appendChild(pageCanvasContainer);
+
+        return outerPageCanvasContainer;
+    };
+
+    var createReferenceImageContainer = function (result) {
+        var outerReferenceImageContainer = window.document.createElement("div"),
+            referenceImageContainer = window.document.createElement("div"),
+            caption = window.document.createElement("span");
+
+        referenceImageContainer.className = "referenceImageContainer";
+        referenceImageContainer.appendChild(result.referenceImage);
+
+        caption.className = "caption";
+        caption.textContent = "Reference";
+
+        outerReferenceImageContainer.className = "outerReferenceImageContainer";
+        outerReferenceImageContainer.appendChild(caption);
+        outerReferenceImageContainer.appendChild(referenceImageContainer);
+        return outerReferenceImageContainer;
     };
 
     var createSaveHint = function (result) {
@@ -236,7 +265,7 @@ csscritic.BasicHTMLReporter = function () {
 
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = window.document.createElement("div");
-        differenceCanvasContainer.className = "differenceCanvas";
+        differenceCanvasContainer.className = "differenceCanvasContainer";
         differenceCanvasContainer.appendChild(csscritic.util.getCanvasForImageData(result.differenceImageData));
         return differenceCanvasContainer;
     };
@@ -274,6 +303,8 @@ csscritic.BasicHTMLReporter = function () {
 
         if (result.status === "failed") {
             entry.appendChild(createDifferenceCanvasContainer(result));
+            entry.appendChild(createPageCanvasContainer(result, "Page"));
+            entry.appendChild(createReferenceImageContainer(result));
         } else if (result.status === "referenceMissing") {
             entry.appendChild(createSaveHint(result));
             entry.appendChild(createPageCanvasContainer(result));

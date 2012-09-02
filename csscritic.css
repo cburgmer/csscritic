@@ -27,14 +27,14 @@
     border: 1px solid black;
 }
 
-#csscritic_basichtmlreporter .comparison .pageCanvas {
+#csscritic_basichtmlreporter .comparison .pageCanvasContainer {
     resize: both;               /* Use CSS3 native resizing */
     overflow: hidden;
     padding: 0 10px 10px 0;     /* Show the dnd handle in the bottom right corner */
 }
 
-#csscritic_basichtmlreporter .comparison .pageCanvasInner {
-    /* provides the white area that resizes with the outer canvas container, while showing the dnd handle */
+#csscritic_basichtmlreporter .comparison .innerPageCanvasContainer {
+    /* provides the white area that resizes together with the outer canvas container, while showing the dnd handle */
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -43,8 +43,24 @@
     resize: none;
 }
 
-#csscritic_basichtmlreporter .comparison .pageCanvasInner canvas {
+#csscritic_basichtmlreporter .comparison .innerPageCanvasContainer canvas {
     border: none;
+}
+
+#csscritic_basichtmlreporter .outerReferenceImageContainer,
+#csscritic_basichtmlreporter .outerPageCanvasContainer {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 20px;
+}
+
+
+#csscritic_basichtmlreporter .referenceImageContainer img {
+    border: 1px solid black;
+}
+
+#csscritic_basichtmlreporter .differenceCanvasContainer {
+    margin: 8px 0 20px 0;
 }
 
 #csscritic_basichtmlreporter .warning:before {

@@ -73,7 +73,6 @@ describe("Reporter", function () {
         });
 
         describe("Failed tests", function () {
-
             it("should show an entry as failed", function () {
                 reporter.reportComparison({
                     status: "failed",
@@ -110,7 +109,78 @@ describe("Reporter", function () {
                     differenceImageData: differenceImageData
                 });
 
-                expect($("#csscritic_basichtmlreporter .comparison .differenceCanvas canvas").get(0)).toBe(differenceImageCanvas);
+                expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasContainer canvas").get(0)).toBe(differenceImageCanvas);
+            });
+
+            it("should show the rendered page for reference and so that the user can save it", function () {
+                reporter.reportComparison({
+                    status: "failed",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url",
+                    referenceImage: referenceImage,
+                    differenceImageData: differenceImageData
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas").get(0)).toBe(htmlCanvas);
+            });
+
+            it("should show a caption with the rendered page", function () {
+                reporter.reportComparison({
+                    status: "failed",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url",
+                    referenceImage: referenceImage,
+                    differenceImageData: differenceImageData
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .pageCanvasContainer canvas")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .caption")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .caption").text()).toEqual("Page");
+            });
+
+            it("should provide an inner div between page container and canvas for styling purposes", function () {
+                reporter.reportComparison({
+                    status: "failed",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url",
+                    referenceImage: referenceImage,
+                    differenceImageData: differenceImageData
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer .innerPageCanvasContainer canvas")).toExist();
+            });
+
+            it("should show the reference image", function () {
+                reporter.reportComparison({
+                    status: "failed",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url",
+                    referenceImage: referenceImage,
+                    differenceImageData: differenceImageData
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img").get(0)).toBe(referenceImage);
+            });
+
+            it("should show a caption with the image reference", function () {
+                reporter.reportComparison({
+                    status: "failed",
+                    pageUrl: "page_url<img>",
+                    pageCanvas: htmlCanvas,
+                    referenceUrl: "reference_img_url",
+                    referenceImage: referenceImage,
+                    differenceImageData: differenceImageData
+                });
+
+                expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .referenceImageContainer img")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .caption")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .caption").text()).toEqual("Reference");
             });
 
         });
@@ -139,7 +209,7 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("missing reference");
             });
 
-            it("should indicate a missing reference image", function () {
+            it("should show the rendered page so that the user can save it", function () {
                 reporter.reportComparison({
                     status: "referenceMissing",
                     pageUrl: "page_url<img>",
@@ -147,7 +217,8 @@ describe("Reporter", function () {
                     referenceUrl: "reference_img_url"
                 });
 
-                expect($("#csscritic_basichtmlreporter .comparison .pageCanvas canvas").get(0)).toBe(htmlCanvas);
+                expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas").get(0)).toBe(htmlCanvas);
             });
 
             it("should give help on how to save a reference image", function () {
@@ -172,7 +243,7 @@ describe("Reporter", function () {
                     referenceUrl: "reference_img_url"
                 });
 
-                expect($("#csscritic_basichtmlreporter .comparison .pageCanvas .pageCanvasInner canvas")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer .innerPageCanvasContainer canvas")).toExist();
             });
 
             it("should resize the canvas when user resizes the container", function () {
@@ -186,7 +257,7 @@ describe("Reporter", function () {
                     referenceUrl: "reference_img_url"
                 });
 
-                $("#csscritic_basichtmlreporter .comparison .pageCanvas").css({
+                $("#csscritic_basichtmlreporter .comparison .pageCanvasContainer").css({
                     width: 42,
                     height: 24
                 }).trigger("mouseup");
