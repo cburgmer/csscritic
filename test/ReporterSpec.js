@@ -73,13 +73,16 @@ describe("Reporter", function () {
         });
 
         describe("Failed tests", function () {
-            var paramsOnFailingTest;
+            var paramsOnFailingTest, resizePageCanvasSpy;
 
             beforeEach(function () {
+                resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
+
                 paramsOnFailingTest = {
                     status: "failed",
                     pageUrl: "page_url",
                     pageCanvas: htmlCanvas,
+                    resizePageCanvas: resizePageCanvasSpy,
                     referenceUrl: "reference_img_url",
                     referenceImage: referenceImage,
                     differenceImageData: differenceImageData
@@ -147,6 +150,17 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toHaveClass("warning");
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("update");
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("reference_img_url");
+            });
+
+            it("should resize the page canvas when user resizes the container", function () {
+                reporter.reportComparison(paramsOnFailingTest);
+
+                $("#csscritic_basichtmlreporter .comparison .pageCanvasContainer").css({
+                    width: 42,
+                    height: 24
+                }).trigger("mouseup");
+
+                expect(resizePageCanvasSpy).toHaveBeenCalledWith(42, 24);
             });
 
         });
