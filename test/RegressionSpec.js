@@ -299,4 +299,59 @@ describe("Regression testing", function () {
         });
 
     });
+
+    describe("Configuration", function () {
+        var oldReferencePath, reporter;
+
+        beforeEach(function () {
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlCanvas);
+            });
+            getImageForUrl.andCallFake(function (referenceImageUrl, callback) {
+                callback(referenceImage);
+            });
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
+            csscritic.addReporter(reporter);
+
+            oldReferencePath = csscritic.referencePath;
+        });
+
+        afterEach(function () {
+            csscritic.referencePath = oldReferencePath;
+            csscritic.clearReporters();
+        });
+
+        it("should use the 'referencePath' to look for referenceImages", function () {
+            csscritic.referencePath = "some_directory/";
+
+            csscritic.compare("samplepage.html");
+
+            expect(getImageForUrl).toHaveBeenCalledWith("some_directory/samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+        });
+
+        it("should deal with a 'referencePath' without a trailing slash", function () {
+            csscritic.referencePath = "some_directory";
+
+            csscritic.compare("samplepage.html");
+
+            expect(getImageForUrl).toHaveBeenCalledWith("some_directory/samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+        });
+
+        it("should report a reference image using the 'referencePath'", function () {
+            csscritic.referencePath = "some_directory/";
+
+            csscritic.compare("samplepage.html");
+
+            expect(reporter.reportComparison).toHaveBeenCalledWith({
+                status: "passed",
+                pageUrl: "samplepage.html",
+                pageCanvas: htmlCanvas,
+                resizePageCanvas: jasmine.any(Function),
+                referenceUrl: "some_directory/samplepage_reference.png",
+                referenceImage: referenceImage
+            });
+        });
+    });
 });

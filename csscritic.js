@@ -102,6 +102,15 @@ var csscritic = (function () {
         reporters = [];
     };
 
+    module.referencePath = null;
+
+    var getReferenceImageUrl = function (url) {
+        if (module.referencePath) {
+            return (/\/$/).test(module.referencePath) ? module.referencePath + url : module.referencePath + "/" + url;
+        }
+        return url;
+    };
+
     var getDefaultReferenceImageUrlForPageUrl = function (pageUrl) {
         var defaultReferenceImageUrl = pageUrl;
         if (pageUrl.substr(-5) === ".html") {
@@ -143,9 +152,10 @@ var csscritic = (function () {
     };
 
     module.compare = function (pageUrl, referenceImageUrl, callback) {
-        var params = parseOptionalParameters(pageUrl, referenceImageUrl, callback);
+        var params = parseOptionalParameters(pageUrl, referenceImageUrl, callback),
+            prefixedImageUrl = getReferenceImageUrl(params.referenceImageUrl);
 
-        module.util.getImageForUrl(params.referenceImageUrl, function (referenceImage) {
+        module.util.getImageForUrl(prefixedImageUrl, function (referenceImage) {
             module.util.getCanvasForPageUrl(params.pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
                 var isEqual = imagediff.equal(htmlCanvas, referenceImage),
                     textualStatus = isEqual ? "passed" : "failed";
@@ -154,7 +164,7 @@ var csscritic = (function () {
                     params.callback(textualStatus);
                 }
 
-                report(textualStatus, params.pageUrl, htmlCanvas, params.referenceImageUrl, referenceImage);
+                report(textualStatus, params.pageUrl, htmlCanvas, prefixedImageUrl, referenceImage);
             }, function () {
                 handlePageUrlLoadError(params);
             });
@@ -166,7 +176,7 @@ var csscritic = (function () {
                     params.callback(textualStatus);
                 }
 
-                report(textualStatus, params.pageUrl, htmlCanvas, params.referenceImageUrl);
+                report(textualStatus, params.pageUrl, htmlCanvas, prefixedImageUrl);
             }, function () {
                 handlePageUrlLoadError(params);
             });
