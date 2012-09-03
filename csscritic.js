@@ -143,13 +143,12 @@ var csscritic = (function () {
     };
 
     module.compare = function (pageUrl, referenceImageUrl, callback) {
-        var params = parseOptionalParameters(pageUrl, referenceImageUrl, callback),
-            passed;
+        var params = parseOptionalParameters(pageUrl, referenceImageUrl, callback);
 
         module.util.getImageForUrl(params.referenceImageUrl, function (referenceImage) {
             module.util.getCanvasForPageUrl(params.pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
-                var passed = imagediff.equal(htmlCanvas, referenceImage),
-                    textualStatus = passed ? "passed" : "failed";
+                var isEqual = imagediff.equal(htmlCanvas, referenceImage),
+                    textualStatus = isEqual ? "passed" : "failed";
 
                 if (params.callback) {
                     params.callback(textualStatus);
