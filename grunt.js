@@ -9,7 +9,18 @@ module.exports = function (grunt) {
                 '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
                 '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
                 '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-                ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+                ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */',
+            bannerAllInOne:'/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
+                '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+                '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
+                '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+                ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
+                '\n/* Integrated dependencies:\n' +
+                ' * URI.js (MIT License/GPL v3),\n' +
+                ' * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),\n' +
+                ' * htmlparser.js,\n' +
+                ' * imagediff.js (MIT License),\n' +
+                ' * rasterizeHTML.js (MIT License) */'
         },
         lint:{
             src:'<%= pkg.name %>.js',
@@ -27,12 +38,20 @@ module.exports = function (grunt) {
             dist:{
                 src:['<banner:meta.banner>', '<file_strip_banner:<%= pkg.name %>.js>'],
                 dest:'dist/<%= pkg.name %>.js'
+            },
+            allinone: {
+                src:['<banner:meta.banner>', '<file_strip_banner:<%= pkg.name %>.js>', 'lib/*.js'],
+                dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },
         min:{
             dist:{
                 src:['<banner:meta.banner>', '<config:concat.dist.dest>'],
                 dest:'dist/<%= pkg.name %>.min.js'
+            },
+            allinone: {
+                src:['<banner:meta.bannerAllInOne>', '<config:concat.allinone.dest>'],
+                dest:'dist/<%= pkg.name %>.allinone.min.js'
             }
         },
         cssmin:{
