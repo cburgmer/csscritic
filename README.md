@@ -34,6 +34,15 @@ CSS critic checks your current layout constantly against a reference image you h
 
 3. If deliberate generate a new reference image.
 
+Testing
+-------
+Run
+
+    $ npm install
+    $ ./node_modules/.bin/grunt
+
+for linting, jasmine tests and minification.
+
 Limitations
 -----------
 
