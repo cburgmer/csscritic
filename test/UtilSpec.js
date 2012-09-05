@@ -114,9 +114,10 @@ describe("Utilities", function () {
 
     describe("getImageForUrl", function () {
         it("should load an image", function () {
-            var the_image = null;
+            var the_image = null,
+                imgUrl = csscriticTestPath + "fixtures/green.png";
 
-            csscritic.util.getImageForUrl("fixtures/green.png", function (image) {
+            csscritic.util.getImageForUrl(imgUrl, function (image) {
                 the_image = image;
             });
 
@@ -127,7 +128,7 @@ describe("Utilities", function () {
             runs(function () {
                 expect(the_image instanceof HTMLElement).toBeTruthy();
                 expect(the_image.nodeName).toEqual("IMG");
-                expect(the_image.src.substr(-"fixtures/green.png".length)).toEqual("fixtures/green.png");
+                expect(the_image.src.substr(-imgUrl.length)).toEqual(imgUrl);
             });
 
         });

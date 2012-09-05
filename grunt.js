@@ -17,7 +17,11 @@ module.exports = function (grunt) {
             test:'test/*Spec.js'
         },
         jasmine:{
-            all:['test/SpecRunner.html']
+            src:'<%= pkg.name %>.js',
+            specs:'test/*Spec.js',
+            helpers:['test/helpers.js', 'test/gruntpath.js', 'lib/*.js', 'test/lib/*.js'],
+            timeout:10000,
+            fixturesPath:'./fixtures/'
         },
         concat:{
             dist:{
@@ -86,14 +90,15 @@ module.exports = function (grunt) {
                     rasterizeHTML:true,
                     imagediff:true,
                     csscritic:true,
-                    ifNotInWebkitIt:true
+                    ifNotInWebkitIt:true,
+                    csscriticTestPath:true
                 }
             }
         },
         uglify:{}
     });
 
-    grunt.loadNpmTasks('grunt-jasmine-task');
+    grunt.loadNpmTasks('grunt-jasmine-runner');
     grunt.loadNpmTasks('grunt-css');
 
     // Default task.

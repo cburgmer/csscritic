@@ -10,7 +10,7 @@ See `example/RegressionRunner.html` for an example.
 How it works
 ------------
 
-CSS critic checks your current layout constantly against a reference image you have provided in the past. If your layout breaks (or changes - regression tests can't tell) your tests fail.
+CSS critic checks your current layout constantly against a reference image you have provided in the past. If your layout breaks (or simply changes - CSS critic can't tell) your tests fail.
 
 *Get started:*
 
