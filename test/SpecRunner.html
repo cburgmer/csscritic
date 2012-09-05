@@ -27,6 +27,8 @@
     <script type="text/javascript" src="IntegrationSpec.js"></script>
 
     <script type="text/javascript">
+        var csscriticTestPath = '';
+
         (function() {
             var jasmineEnv = jasmine.getEnv();
 
@@ -35,8 +37,6 @@
             jasmineEnv.specFilter = function(spec) {
                 return htmlReporter.specFilter(spec);
             };
-
-            csscriticTestPath = '';
 
             var currentWindowOnload = window.onload;
 
