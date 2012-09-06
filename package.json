@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "grunt": "~0.3.9",
-    "grunt-jasmine-runner": "0.5.2",
-    "grunt-css": "0.2.1"
+    "grunt-jasmine-runner": "~0.5.2",
+    "grunt-css": "~0.2.1"
   },
   "scripts": {
     "test": "grunt --verbose"
