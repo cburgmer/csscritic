@@ -38,10 +38,6 @@ module.exports = function (grunt) {
             dist:{
                 src:['<banner:meta.banner>', '<file_strip_banner:<%= pkg.name %>.js>'],
                 dest:'dist/<%= pkg.name %>.js'
-            },
-            allinone: {
-                src:['<banner:meta.banner>', '<file_strip_banner:<%= pkg.name %>.js>', 'lib/*.js'],
-                dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },
         min:{
@@ -50,8 +46,8 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.min.js'
             },
             allinone: {
-                src:['<banner:meta.bannerAllInOne>', '<config:concat.allinone.dest>'],
-                dest:'dist/<%= pkg.name %>.allinone.min.js'
+                src:['<banner:meta.bannerAllInOne>', '<file_strip_banner:<%= pkg.name %>.js>', 'lib/*.js'],
+                dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },
         cssmin:{
