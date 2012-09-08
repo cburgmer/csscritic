@@ -73,6 +73,38 @@
     margin: 8px 0 20px 0;
 }
 
+#csscritic_basichtmlreporter .saveHint button,
+#csscritic_basichtmlreporter .updateHint button {
+    /* reset */
+    background: none;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    width: auto;
+    overflow: visible;
+
+    border: 1px solid #AAAAAA;
+    border-radius: 4px;
+    background-color: #00FF7F;
+    cursor: pointer;
+    margin: 0 3px;
+    /* Click effect */
+    padding: 1px 1px;
+}
+
+#csscritic_basichtmlreporter .saveHint button:hover,
+#csscritic_basichtmlreporter .updateHint button:hover {
+    background-color: #00CC66;
+}
+
+#csscritic_basichtmlreporter .saveHint button:active,
+#csscritic_basichtmlreporter .updateHint button:active {
+    /* Click effect */
+    padding: 2px 0 0 2px;
+    position: relative;
+    top: 1px;
+}
+
 #csscritic_basichtmlreporter .warning:before {
     content: "⚠";
     font-size: 25px;

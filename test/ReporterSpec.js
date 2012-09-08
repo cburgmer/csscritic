@@ -24,7 +24,6 @@ describe("Reporter", function () {
                 status: "passed",
                 pageUrl: "page_url",
                 pageCanvas: htmlCanvas,
-                referenceUrl: "reference_img_url",
                 referenceImage: referenceImage
             });
 
@@ -37,7 +36,6 @@ describe("Reporter", function () {
                 status: "passed",
                 pageUrl: "page_url<img>",
                 pageCanvas: htmlCanvas,
-                referenceUrl: "reference_img_url",
                 referenceImage: referenceImage
             });
 
@@ -51,7 +49,6 @@ describe("Reporter", function () {
                     status: "passed",
                     pageUrl: "page_url",
                     pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
                     referenceImage: referenceImage
                 });
 
@@ -63,7 +60,6 @@ describe("Reporter", function () {
                     status: "passed",
                     pageUrl: "page_url",
                     pageCanvas: htmlCanvas,
-                    referenceUrl: "reference_img_url",
                     referenceImage: referenceImage
                 });
 
@@ -73,17 +69,18 @@ describe("Reporter", function () {
         });
 
         describe("Failed tests", function () {
-            var paramsOnFailingTest, resizePageCanvasSpy;
+            var paramsOnFailingTest, resizePageCanvasSpy, acceptPageSpy;
 
             beforeEach(function () {
                 resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
+                acceptPageSpy = jasmine.createSpy("acceptPage");
 
                 paramsOnFailingTest = {
                     status: "failed",
                     pageUrl: "page_url",
                     pageCanvas: htmlCanvas,
                     resizePageCanvas: resizePageCanvasSpy,
-                    referenceUrl: "reference_img_url",
+                    acceptPage: acceptPageSpy,
                     referenceImage: referenceImage,
                     differenceImageData: differenceImageData
                 };
@@ -143,13 +140,17 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .caption").text()).toEqual("Reference");
             });
 
-            it("should give help on how to update the reference image", function () {
+            it("should allow the user to accept the rendered page and update the reference image", function () {
                 reporter.reportComparison(paramsOnFailingTest);
 
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toHaveClass("warning");
-                expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("update");
-                expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("reference_img_url");
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("accept");
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint button")).toExist();
+
+                $("#csscritic_basichtmlreporter .comparison .updateHint button").click();
+
+                expect(acceptPageSpy).toHaveBeenCalled();
             });
 
             it("should resize the page canvas when user resizes the container", function () {
@@ -166,17 +167,18 @@ describe("Reporter", function () {
         });
 
         describe("Missing image references", function () {
-            var paramsOnMissingReference, resizePageCanvasSpy;
+            var paramsOnMissingReference, resizePageCanvasSpy, acceptPageSpy;
 
             beforeEach(function () {
                 resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
+                acceptPageSpy = jasmine.createSpy("acceptPage");
 
                 paramsOnMissingReference = {
                     status: "referenceMissing",
                     pageUrl: "page_url<img>",
                     pageCanvas: htmlCanvas,
                     resizePageCanvas: resizePageCanvasSpy,
-                    referenceUrl: "reference_img_url"
+                    acceptPage: acceptPageSpy
                 };
             });
 
@@ -192,20 +194,24 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("missing reference");
             });
 
-            it("should show the rendered page so that the user can save it", function () {
+            it("should show the rendered page for reference", function () {
                 reporter.reportComparison(paramsOnMissingReference);
 
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas").get(0)).toBe(htmlCanvas);
             });
 
-            it("should give help on how to save a reference image", function () {
+            it("should allow the user to accept the rendered page", function () {
                 reporter.reportComparison(paramsOnMissingReference);
 
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toExist();
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toHaveClass("warning");
-                expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("save");
-                expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("reference_img_url");
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("Accept");
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint button")).toExist();
+
+                $("#csscritic_basichtmlreporter .comparison .saveHint button").click();
+
+                expect(acceptPageSpy).toHaveBeenCalled();
             });
 
             it("should provide an inner div between container and canvas for styling purposes", function () {
@@ -233,8 +239,7 @@ describe("Reporter", function () {
                 paramsOnErroneousTest = {
                     status: "error",
                     pageUrl: "page_url",
-                    pageCanvas: null,
-                    referenceUrl: "reference_img_url"
+                    pageCanvas: null
                 };
             });
 

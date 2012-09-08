@@ -1,5 +1,5 @@
 describe("Regression testing", function () {
-    var getCanvasForPageUrl, getImageForUrl,
+    var getCanvasForPageUrl, readReferenceImage,
         htmlCanvas, referenceImage;
 
     beforeEach(function () {
@@ -10,7 +10,7 @@ describe("Regression testing", function () {
         };
 
         getCanvasForPageUrl = spyOn(csscritic.util, 'getCanvasForPageUrl');
-        getImageForUrl = spyOn(csscritic.util, 'getImageForUrl');
+        readReferenceImage = spyOn(csscritic.util, 'readReferenceImage');
     });
 
     afterEach(function () {
@@ -23,7 +23,7 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
                 callback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, callback) {
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
                 callback(referenceImage);
             });
         });
@@ -33,12 +33,12 @@ describe("Regression testing", function () {
 
             imagediffEqual = spyOn(imagediff, 'equal').andReturn(true);
 
-            csscritic.compare("samplepage.html", "samplepage_reference.png", function (result) {
+            csscritic.compare("samplepage.html", function (result) {
                 status = result;
             });
 
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
-            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+            expect(readReferenceImage).toHaveBeenCalledWith("samplepage.html", jasmine.any(Function), jasmine.any(Function));
             expect(imagediffEqual).toHaveBeenCalledWith(htmlCanvas, referenceImage);
 
             expect(status).toEqual('passed');
@@ -49,12 +49,12 @@ describe("Regression testing", function () {
 
             imagediffEqual = spyOn(imagediff, 'equal').andReturn(false);
 
-            csscritic.compare("differentpage.html", "samplepage_reference.png", function (result) {
+            csscritic.compare("differentpage.html", function (result) {
                 status = result;
             });
 
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
-            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+            expect(readReferenceImage).toHaveBeenCalledWith("differentpage.html", jasmine.any(Function), jasmine.any(Function));
             expect(imagediffEqual).toHaveBeenCalledWith(htmlCanvas, referenceImage);
 
             expect(status).toEqual("failed");
@@ -65,10 +65,10 @@ describe("Regression testing", function () {
 
             spyOn(imagediff, 'equal').andReturn(true);
 
-            csscritic.compare("samplepage.html", "the_reference.png");
+            csscritic.compare("samplepage.html");
 
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
-            expect(getImageForUrl).toHaveBeenCalledWith("the_reference.png", jasmine.any(Function), jasmine.any(Function));
+            expect(readReferenceImage).toHaveBeenCalledWith("samplepage.html", jasmine.any(Function), jasmine.any(Function));
         });
 
         it("should make the reference image url optional", function () {
@@ -81,7 +81,7 @@ describe("Regression testing", function () {
             });
 
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
-            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+            expect(readReferenceImage).toHaveBeenCalledWith("samplepage.html", jasmine.any(Function), jasmine.any(Function));
 
             expect(status).toEqual('passed');
         });
@@ -92,7 +92,7 @@ describe("Regression testing", function () {
             csscritic.compare("samplepage.html");
 
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("samplepage.html", 42, 7, jasmine.any(Function), jasmine.any(Function));
-            expect(getImageForUrl).toHaveBeenCalledWith("samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
+            expect(readReferenceImage).toHaveBeenCalledWith("samplepage.html", jasmine.any(Function), jasmine.any(Function));
         });
     });
 
@@ -109,11 +109,11 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
                 successCallback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
-            csscritic.compare("samplepage.html", "samplepage_reference.png", function (result) {
+            csscritic.compare("samplepage.html", function (result) {
                 status = result;
             });
 
@@ -127,7 +127,7 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
                 errorCallback();
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
@@ -145,7 +145,7 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
                 errorCallback();
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
                 successCallback(htmlCanvas);
             });
 
@@ -174,18 +174,18 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
                 callback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, callback) {
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
                 callback(referenceImage);
             });
 
-            csscritic.compare("differentpage.html", "samplepage_reference.png");
+            csscritic.compare("differentpage.html");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
                 pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
                 resizePageCanvas: jasmine.any(Function),
-                referenceUrl: "samplepage_reference.png",
+                acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
             });
         });
@@ -197,18 +197,18 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
                 callback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, callback) {
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
                 callback(referenceImage);
             });
 
-            csscritic.compare("differentpage.html", "samplepage_reference.png");
+            csscritic.compare("differentpage.html");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "failed",
                 pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
                 resizePageCanvas: jasmine.any(Function),
-                referenceUrl: "samplepage_reference.png",
+                acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage,
                 differenceImageData: diffCanvas
             });
@@ -219,18 +219,18 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
                 callback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
-            csscritic.compare("differentpage.html", "samplepage_reference.png");
+            csscritic.compare("differentpage.html");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
                 pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
                 resizePageCanvas: jasmine.any(Function),
-                referenceUrl: "samplepage_reference.png"
+                acceptPage: jasmine.any(Function)
             });
         });
 
@@ -238,11 +238,11 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
                 callback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
-            csscritic.compare("differentpage.html", "samplepage_reference.png");
+            csscritic.compare("differentpage.html");
 
             expect(getCanvasForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 600, jasmine.any(Function), jasmine.any(Function));
         });
@@ -251,17 +251,16 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
                 errorCallback();
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, successCallback, errorCallback) {
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
-            csscritic.compare("samplepage.html", "samplepage_reference.png");
+            csscritic.compare("samplepage.html");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "error",
                 pageUrl: "samplepage.html",
-                pageCanvas: null,
-                referenceUrl: "samplepage_reference.png"
+                pageCanvas: null
             });
         });
 
@@ -275,18 +274,18 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
                 callback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, callback) {
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
                 callback(referenceImage);
             });
 
-            csscritic.compare("differentpage.html", "samplepage_reference.png");
+            csscritic.compare("differentpage.html");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
                 pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
                 resizePageCanvas: jasmine.any(Function),
-                referenceUrl: "samplepage_reference.png",
+                acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
             });
 
@@ -298,60 +297,36 @@ describe("Regression testing", function () {
             expect(drawPageUrlSpy).toHaveBeenCalledWith("differentpage.html", htmlCanvas, 16, 34, jasmine.any(Function));
         });
 
-    });
+        it("should provide a method to accept the rendered page and store as new reference", function () {
+            var drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, callback) {
+                    callback();
+                }),
+                storeReferenceImageSpy = spyOn(csscritic.util, 'storeReferenceImage'),
+                finished = false;
+            spyOn(imagediff, 'equal').andReturn(true);
 
-    describe("Configuration", function () {
-        var oldReferencePath, reporter;
-
-        beforeEach(function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
                 callback(htmlCanvas);
             });
-            getImageForUrl.andCallFake(function (referenceImageUrl, callback) {
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
                 callback(referenceImage);
             });
-            spyOn(imagediff, 'equal').andReturn(true);
 
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
-            csscritic.addReporter(reporter);
-
-            oldReferencePath = csscritic.referencePath;
-        });
-
-        afterEach(function () {
-            csscritic.referencePath = oldReferencePath;
-            csscritic.clearReporters();
-        });
-
-        it("should use the 'referencePath' to look for referenceImages", function () {
-            csscritic.referencePath = "some_directory/";
-
-            csscritic.compare("samplepage.html");
-
-            expect(getImageForUrl).toHaveBeenCalledWith("some_directory/samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
-        });
-
-        it("should deal with a 'referencePath' without a trailing slash", function () {
-            csscritic.referencePath = "some_directory";
-
-            csscritic.compare("samplepage.html");
-
-            expect(getImageForUrl).toHaveBeenCalledWith("some_directory/samplepage_reference.png", jasmine.any(Function), jasmine.any(Function));
-        });
-
-        it("should report a reference image using the 'referencePath'", function () {
-            csscritic.referencePath = "some_directory/";
-
-            csscritic.compare("samplepage.html");
+            csscritic.compare("differentpage.html");
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
-                pageUrl: "samplepage.html",
+                pageUrl: "differentpage.html",
                 pageCanvas: htmlCanvas,
                 resizePageCanvas: jasmine.any(Function),
-                referenceUrl: "some_directory/samplepage_reference.png",
+                acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
             });
+
+            reporter.reportComparison.mostRecentCall.args[0].acceptPage();
+
+            expect(storeReferenceImageSpy).toHaveBeenCalledWith("differentpage.html", htmlCanvas);
         });
     });
+
 });

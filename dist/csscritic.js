@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2012-09-07
+/*! CSS critic - v0.1.0 - 2012-09-08
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
@@ -69,29 +69,62 @@ var csscritic = (function () {
         return canvas;
     };
 
-    var report = function (status, pageUrl, pageCanvas, referenceUrl, referenceImage) {
-        var i,
-            result = {
+    module.util.storeReferenceImage = function (key, canvas) {
+        var uri = canvas.toDataURL("image/png"),
+            dataObj = {
+                referenceImageUri: uri
+            };
+
+        localStorage.setItem(key, JSON.stringify(dataObj));
+    };
+
+    module.util.readReferenceImage = function (key, successCallback, errorCallback) {
+        var dataObjString = localStorage.getItem(key),
+            dataObj;
+
+        if (dataObjString) {
+            dataObj = JSON.parse(dataObjString);
+
+            module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+                successCallback(img);
+            }, errorCallback);
+        } else {
+            errorCallback();
+        }
+    };
+
+    var buildReportResult = function (status, pageUrl, pageCanvas, referenceImage) {
+        var result = {
                 status: status,
                 pageUrl: pageUrl,
                 pageCanvas: pageCanvas,
-                referenceUrl: referenceUrl,
                 referenceImage: referenceImage
             };
-
-        if (!reporters.length) {
-            return;
-        }
 
         if (pageCanvas) {
             result.resizePageCanvas = function (width, height, callback) {
                 module.util.drawPageUrl(pageUrl, pageCanvas, width, height, callback);
+            };
+            result.acceptPage = function () {
+                module.util.storeReferenceImage(pageUrl, pageCanvas);
             };
         }
 
         if (status === "failed") {
             result.differenceImageData = imagediff.diff(pageCanvas, referenceImage);
         }
+
+        return result;
+    };
+
+    var report = function (status, pageUrl, pageCanvas, referenceImage) {
+        var i, result;
+
+        if (!reporters.length) {
+            return;
+        }
+
+        result = buildReportResult(status, pageUrl, pageCanvas, referenceImage);
 
         for (i = 0; i < reporters.length; i++) {
             reporters[i].reportComparison(result);
@@ -106,83 +139,41 @@ var csscritic = (function () {
         reporters = [];
     };
 
-    module.referencePath = null;
-
-    var getReferenceImageUrl = function (url) {
-        if (module.referencePath) {
-            return (/\/$/).test(module.referencePath) ? module.referencePath + url : module.referencePath + "/" + url;
-        }
-        return url;
-    };
-
-    var getDefaultReferenceImageUrlForPageUrl = function (pageUrl) {
-        var defaultReferenceImageUrl = pageUrl;
-        if (pageUrl.substr(-5) === ".html") {
-            defaultReferenceImageUrl = pageUrl.substr(0, pageUrl.length - 5);
-        }
-        defaultReferenceImageUrl += "_reference.png";
-        return defaultReferenceImageUrl;
-    };
-
-    var parseOptionalParameters = function (pageUrl, referenceImageUrl, callback) {
-        var parameters = {
-            pageUrl: pageUrl,
-            referenceImageUrl: getDefaultReferenceImageUrlForPageUrl(pageUrl),
-            callback: null
-        };
-
-        if (typeof callback === "undefined" && typeof referenceImageUrl === "function") {
-            parameters.callback = referenceImageUrl;
-        } else {
-            if (typeof referenceImageUrl !== "undefined") {
-                parameters.referenceImageUrl = referenceImageUrl;
-            }
-
-            if (typeof callback !== "undefined") {
-                parameters.callback = callback;
-            }
-        }
-        return parameters;
-    };
-
-    var handlePageUrlLoadError = function (params) {
+    var handlePageUrlLoadError = function (pageUrl, callback) {
         var textualStatus = "error";
 
-        if (params.callback) {
-            params.callback(textualStatus);
+        if (callback) {
+            callback(textualStatus);
         }
 
-        report(textualStatus, params.pageUrl, null, params.referenceImageUrl);
+        report(textualStatus, pageUrl, null);
     };
 
-    module.compare = function (pageUrl, referenceImageUrl, callback) {
-        var params = parseOptionalParameters(pageUrl, referenceImageUrl, callback),
-            prefixedImageUrl = getReferenceImageUrl(params.referenceImageUrl);
-
-        module.util.getImageForUrl(prefixedImageUrl, function (referenceImage) {
-            module.util.getCanvasForPageUrl(params.pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
+    module.compare = function (pageUrl, callback) {
+        module.util.readReferenceImage(pageUrl, function (referenceImage) {
+            module.util.getCanvasForPageUrl(pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
                 var isEqual = imagediff.equal(htmlCanvas, referenceImage),
                     textualStatus = isEqual ? "passed" : "failed";
 
-                if (params.callback) {
-                    params.callback(textualStatus);
+                if (callback) {
+                    callback(textualStatus);
                 }
 
-                report(textualStatus, params.pageUrl, htmlCanvas, prefixedImageUrl, referenceImage);
+                report(textualStatus, pageUrl, htmlCanvas, referenceImage);
             }, function () {
-                handlePageUrlLoadError(params);
+                handlePageUrlLoadError(pageUrl, callback);
             });
         }, function () {
-            module.util.getCanvasForPageUrl(params.pageUrl, 800, 600, function (htmlCanvas) {
+            module.util.getCanvasForPageUrl(pageUrl, 800, 600, function (htmlCanvas) {
                 var textualStatus = "referenceMissing";
 
-                if (params.callback) {
-                    params.callback(textualStatus);
+                if (callback) {
+                    callback(textualStatus);
                 }
 
-                report(textualStatus, params.pageUrl, htmlCanvas, prefixedImageUrl);
+                report(textualStatus, pageUrl, htmlCanvas);
             }, function () {
-                handlePageUrlLoadError(params);
+                handlePageUrlLoadError(pageUrl, callback);
             });
         });
     };
@@ -267,16 +258,29 @@ csscritic.BasicHTMLReporter = function () {
     };
 
     var createSaveHint = function (result) {
-        var saveHint = window.document.createElement("div");
+        var saveHint = window.document.createElement("div"),
+            acceptButton = window.document.createElement("button");
+
+        acceptButton.onclick = result.acceptPage;
+        acceptButton.textContent = "Accept the rendered page";
+
         saveHint.className = "saveHint warning";
-        saveHint.textContent = "To create the future reference please right click on the rendered page and save it under '" + result.referenceUrl + "' relative to this document.";
+        saveHint.appendChild(acceptButton);
+        saveHint.appendChild(window.document.createTextNode("and save this as later reference."));
         return saveHint;
     };
 
     var createUpdateHint = function (result) {
-        var updateHint = window.document.createElement("div");
+        var updateHint = window.document.createElement("div"),
+            acceptButton = window.document.createElement("button");
+
+        acceptButton.onclick = result.acceptPage;
+        acceptButton.textContent = "accept the rendered page";
+
         updateHint.className = "updateHint warning";
-        updateHint.textContent = "You can update the reference (thus overwriting the current one) by saving the rendered page under '" + result.referenceUrl + "' relative to this document.";
+        updateHint.appendChild(window.document.createTextNode("You can"));
+        updateHint.appendChild(acceptButton);
+        updateHint.appendChild(window.document.createTextNode("thus making it the new reference."));
         return updateHint;
     };
 

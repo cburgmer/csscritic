@@ -18,22 +18,26 @@
         <div class="differenceCanvasContainer">
             <canvas height="100" width="204"></canvas>
         </div>
-        <div class="outerPageCanvasContainer"><span class="caption">Page</span>
+        <div class="outerPageCanvasContainer">
+            <span class="caption">Page</span>
             <div class="pageCanvasContainer" style="width: 210px; height: 104px;">
                 <div class="innerPageCanvasContainer">
                     <canvas width="210" height="104"></canvas>
                 </div>
             </div>
         </div>
-        <div class="outerReferenceImageContainer"><span class="caption">Reference</span>
-            <div class="referenceImageContainer"><img src="failingPageReference.png"></div>
+        <div class="outerReferenceImageContainer">
+            <span class="caption">Reference</span>
+            <div class="referenceImageContainer">
+                <img src="theReferenceImage.png">
+            </div>
         </div>
-        <div class="updateHint warning">You can update the reference (thus overwriting the current one) by saving the rendered page under 'failingPageReference.png' relative to this document.</div>
+        <div class="updateHint warning">You can<button>accept the rendered page</button>thus making it the new reference.</div>
     </div>
     <div class="comparison referenceMissing">
         <span class="pageUrl">pageWithoutReference.html</span>
         <span class="status">missing reference</span>
-        <div class="saveHint warning">To create the future reference please right click on the rendered page and save it under 'pageWithoutReference.png' relative to this document.</div>
+        <div class="saveHint warning"><button>Accept the rendered page</button>and save this as later reference.</div>
         <div class="outerPageCanvasContainer">
             <div class="pageCanvasContainer" style="width: 488px; height: 128px;">
                 <div class="innerPageCanvasContainer">
