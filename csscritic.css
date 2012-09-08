@@ -76,7 +76,6 @@
 #csscritic_basichtmlreporter .saveHint button,
 #csscritic_basichtmlreporter .updateHint button {
     /* reset */
-    background: none;
     font-size: inherit;
     font-weight: inherit;
     line-height: inherit;
@@ -85,7 +84,7 @@
 
     border: 1px solid #AAAAAA;
     border-radius: 4px;
-    background-color: #00FF7F;
+    background: #00FF7F none;
     cursor: pointer;
     margin: 0 3px;
     /* Click effect */
