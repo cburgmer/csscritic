@@ -12,8 +12,6 @@
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
             csscritic.compare('pageUnderTest.html');
-            csscritic.compare('failingPage.html');
-            csscritic.compare('pageWithoutReference.html');
             csscritic.compare('missingPage.html');
         };
     </script>
@@ -21,5 +19,6 @@
 </head>
 
 <body>
+<button onclick="localStorage.clear()">Reset all tests</button>
 </body>
 </html>
