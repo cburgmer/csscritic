@@ -253,11 +253,20 @@ csscritic.BasicHTMLReporter = function () {
         return outerReferenceImageContainer;
     };
 
+    var showFinishedOnParent = function (parent) {
+        var span = window.document.createElement("span");
+        span.className = "finished";
+        parent.appendChild(span);
+    };
+
     var createSaveHint = function (result) {
         var saveHint = window.document.createElement("div"),
             acceptButton = window.document.createElement("button");
 
-        acceptButton.onclick = result.acceptPage;
+        acceptButton.onclick = function () {
+            result.acceptPage();
+            showFinishedOnParent(saveHint);
+        };
         acceptButton.textContent = "Accept the rendered page";
 
         saveHint.className = "saveHint warning";
@@ -270,7 +279,10 @@ csscritic.BasicHTMLReporter = function () {
         var updateHint = window.document.createElement("div"),
             acceptButton = window.document.createElement("button");
 
-        acceptButton.onclick = result.acceptPage;
+        acceptButton.onclick = function () {
+            result.acceptPage();
+            showFinishedOnParent(updateHint);
+        };
         acceptButton.textContent = "accept the rendered page";
 
         updateHint.className = "updateHint warning";

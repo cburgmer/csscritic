@@ -151,6 +151,7 @@ describe("Reporter", function () {
                 $("#csscritic_basichtmlreporter .comparison .updateHint button").click();
 
                 expect(acceptPageSpy).toHaveBeenCalled();
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint .finished")).toExist();
             });
 
             it("should resize the page canvas when user resizes the container", function () {
@@ -212,6 +213,7 @@ describe("Reporter", function () {
                 $("#csscritic_basichtmlreporter .comparison .saveHint button").click();
 
                 expect(acceptPageSpy).toHaveBeenCalled();
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint .finished")).toExist();
             });
 
             it("should provide an inner div between container and canvas for styling purposes", function () {

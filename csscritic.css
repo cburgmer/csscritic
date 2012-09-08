@@ -115,6 +115,13 @@
     font-weight: bold;
 }
 
+#csscritic_basichtmlreporter .finished:before {
+    content: "✓";
+    font-size: 20px;
+    color: #00CC66;
+    padding-left: 5px;
+}
+
 #csscritic_basichtmlreporter .caption {
     font-style: italic;
     line-height: 13px;
