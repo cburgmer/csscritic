@@ -70,10 +70,17 @@ var csscritic = (function () {
     };
 
     module.util.storeReferenceImage = function (key, canvas) {
-        var uri = canvas.toDataURL("image/png"),
-            dataObj = {
-                referenceImageUri: uri
-            };
+        var uri, dataObj;
+
+        try {
+            uri = canvas.toDataURL("image/png");
+        } catch (e) {
+            window.alert("An error occurred reading the canvas. Are you sure you are using Firefox?\n" + e);
+            throw e;
+        }
+        dataObj = {
+            referenceImageUri: uri
+        };
 
         localStorage.setItem(key, JSON.stringify(dataObj));
     };

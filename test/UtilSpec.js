@@ -244,6 +244,23 @@ describe("Utilities", function () {
             });
         });
 
+        it("should alert the user that possibly the wrong browser is used", function () {
+            var canvas = {
+                    toDataURL: jasmine.createSpy("canvas").andThrow("can't read canvas")
+                },
+                alertSpy = spyOn(window, 'alert'),
+                errorThrown = false;
+
+            try {
+                csscritic.util.storeReferenceImage("somePage.html", canvas);
+            } catch (e) {
+                errorThrown = true;
+            }
+
+            expect(errorThrown).toBeTruthy();
+            expect(alertSpy).toHaveBeenCalled();
+        });
+
         it("should read in a reference image from Web storage", function () {
             var readImage,
                 getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success, error) {
