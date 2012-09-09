@@ -3,7 +3,7 @@ CSS critic
 
 A lightweight framework for regression testing of Cascading Style Sheets.
 
-See `example/RegressionRunner.html` for an example.
+See `example/RegressionRunner.html` for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60).
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
