@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2012-09-08
+/*! CSS critic - v0.1.0 - 2012-09-09
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
@@ -257,35 +257,39 @@ csscritic.BasicHTMLReporter = function () {
         return outerReferenceImageContainer;
     };
 
-    var showFinishedOnParent = function (parent) {
+    var createFinishedIndicator = function () {
         var span = window.document.createElement("span");
         span.className = "finished";
-        parent.appendChild(span);
+        span.style.display = "none";
+        return span;
     };
 
     var createSaveHint = function (result) {
         var saveHint = window.document.createElement("div"),
-            acceptButton = window.document.createElement("button");
+            acceptButton = window.document.createElement("button"),
+            finishedIndicator = createFinishedIndicator();
 
         acceptButton.onclick = function () {
             result.acceptPage();
-            showFinishedOnParent(saveHint);
+            finishedIndicator.style.display = '';
         };
         acceptButton.textContent = "Accept the rendered page";
 
         saveHint.className = "saveHint warning";
         saveHint.appendChild(acceptButton);
         saveHint.appendChild(window.document.createTextNode("and save this as later reference."));
+        saveHint.appendChild(finishedIndicator);
         return saveHint;
     };
 
     var createUpdateHint = function (result) {
         var updateHint = window.document.createElement("div"),
-            acceptButton = window.document.createElement("button");
+            acceptButton = window.document.createElement("button"),
+            finishedIndicator = createFinishedIndicator();
 
         acceptButton.onclick = function () {
             result.acceptPage();
-            showFinishedOnParent(updateHint);
+            finishedIndicator.style.display = '';
         };
         acceptButton.textContent = "accept the rendered page";
 
@@ -293,6 +297,7 @@ csscritic.BasicHTMLReporter = function () {
         updateHint.appendChild(window.document.createTextNode("You can"));
         updateHint.appendChild(acceptButton);
         updateHint.appendChild(window.document.createTextNode("thus making it the new reference."));
+        updateHint.appendChild(finishedIndicator);
         return updateHint;
     };
 

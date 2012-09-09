@@ -147,11 +147,12 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toHaveClass("warning");
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("accept");
                 expect($("#csscritic_basichtmlreporter .comparison .updateHint button")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint .finished").css("display")).toEqual("none");
 
                 $("#csscritic_basichtmlreporter .comparison .updateHint button").click();
 
                 expect(acceptPageSpy).toHaveBeenCalled();
-                expect($("#csscritic_basichtmlreporter .comparison .updateHint .finished")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .updateHint .finished").css("display")).toEqual("inline");
             });
 
             it("should resize the page canvas when user resizes the container", function () {
@@ -209,11 +210,12 @@ describe("Reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toHaveClass("warning");
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("Accept");
                 expect($("#csscritic_basichtmlreporter .comparison .saveHint button")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint .finished").css("display")).toEqual("none");
 
                 $("#csscritic_basichtmlreporter .comparison .saveHint button").click();
 
                 expect(acceptPageSpy).toHaveBeenCalled();
-                expect($("#csscritic_basichtmlreporter .comparison .saveHint .finished")).toExist();
+                expect($("#csscritic_basichtmlreporter .comparison .saveHint .finished").css("display")).toEqual("inline");
             });
 
             it("should provide an inner div between container and canvas for styling purposes", function () {
