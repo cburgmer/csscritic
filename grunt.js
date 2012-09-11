@@ -30,7 +30,7 @@ module.exports = function (grunt) {
         jasmine:{
             src:'<%= pkg.name %>.js',
             specs:'test/*Spec.js',
-            helpers:['test/helpers.js', 'test/gruntpath.js', 'lib/*.js', 'test/lib/*.js'],
+            helpers:['test/helpers.js', 'test/gruntpath.js', 'lib/*.js', 'test/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'components/rasterizeHTML.js/lib/*.js'],
             timeout:10000,
             fixturesPath:'./fixtures/'
         },
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.min.js'
             },
             allinone: {
-                src:['<banner:meta.bannerAllInOne>', '<file_strip_banner:<%= pkg.name %>.js>', 'lib/*.js'],
+                src:['<banner:meta.bannerAllInOne>', '<file_strip_banner:<%= pkg.name %>.js>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js'],
                 dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },
