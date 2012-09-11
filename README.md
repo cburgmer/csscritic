@@ -46,5 +46,6 @@ for linting, jasmine tests and minification.
 Limitations
 -----------
 
-Currently works in Firefox only.
+- Currently works in Firefox only.
+- [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files.
  
