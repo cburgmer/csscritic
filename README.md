@@ -39,7 +39,6 @@ Testing
 Run
 
     $ npm install
-    $ bower install
     $ ./node_modules/.bin/grunt
 
 for linting, jasmine tests and minification.
