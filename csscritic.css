@@ -127,3 +127,7 @@
     line-height: 13px;
     font-size: 12px;
 }
+
+#csscritic_basichtmlreporter .loadErrors ul {
+    margin: 4px 0;
+}

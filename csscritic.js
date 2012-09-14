@@ -14,19 +14,33 @@ var csscritic = (function () {
         return didntFindPage;
     };
 
+    var getErroneousResourceUrls = function (errors) {
+        var erroneousResourceUrls = [];
+
+        errors.forEach(function (error) {
+            if (error.url) {
+                erroneousResourceUrls.push(error.url);
+            }
+        });
+
+        return erroneousResourceUrls;
+    };
+
     module.util.drawPageUrl = function (pageUrl, htmlCanvas, width, height, successCallback, errorCallback) {
         htmlCanvas.width = width;
         htmlCanvas.height = height;
 
         htmlCanvas.getContext("2d").clearRect(0, 0, width, height);
         rasterizeHTML.drawURL(pageUrl, htmlCanvas, function (c, errors) {
+            var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
+
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
                 if (errorCallback) {
                     errorCallback();
                 }
             } else {
                 if (successCallback) {
-                    successCallback();
+                    successCallback(erroneousResourceUrls);
                 }
             }
         });
@@ -35,8 +49,8 @@ var csscritic = (function () {
     module.util.getCanvasForPageUrl = function (pageUrl, width, height, successCallback, errorCallback) {
         var htmlCanvas = window.document.createElement("canvas");
 
-        module.util.drawPageUrl(pageUrl, htmlCanvas, width, height, function () {
-            successCallback(htmlCanvas);
+        module.util.drawPageUrl(pageUrl, htmlCanvas, width, height, function (erroneousResourceUrls) {
+            successCallback(htmlCanvas, erroneousResourceUrls);
         }, errorCallback);
     };
 
@@ -96,12 +110,11 @@ var csscritic = (function () {
         }
     };
 
-    var buildReportResult = function (status, pageUrl, pageCanvas, referenceImage) {
+    var buildReportResult = function (status, pageUrl, pageCanvas, referenceImage, erroneousPageUrls) {
         var result = {
                 status: status,
                 pageUrl: pageUrl,
-                pageCanvas: pageCanvas,
-                referenceImage: referenceImage
+                pageCanvas: pageCanvas
             };
 
         if (pageCanvas) {
@@ -113,6 +126,14 @@ var csscritic = (function () {
             };
         }
 
+        if (referenceImage) {
+            result.referenceImage = referenceImage;
+        }
+
+        if (erroneousPageUrls && erroneousPageUrls.length) {
+            result.erroneousPageUrls = erroneousPageUrls;
+        }
+
         if (status === "failed") {
             result.differenceImageData = imagediff.diff(pageCanvas, referenceImage);
         }
@@ -120,14 +141,14 @@ var csscritic = (function () {
         return result;
     };
 
-    var report = function (status, pageUrl, pageCanvas, referenceImage) {
+    var report = function (status, pageUrl, pageCanvas, referenceImage, erroneousUrls) {
         var i, result;
 
         if (!reporters.length) {
             return;
         }
 
-        result = buildReportResult(status, pageUrl, pageCanvas, referenceImage);
+        result = buildReportResult(status, pageUrl, pageCanvas, referenceImage, erroneousUrls);
 
         for (i = 0; i < reporters.length; i++) {
             reporters[i].reportComparison(result);
@@ -154,7 +175,7 @@ var csscritic = (function () {
 
     module.compare = function (pageUrl, callback) {
         module.util.readReferenceImage(pageUrl, function (referenceImage) {
-            module.util.getCanvasForPageUrl(pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas) {
+            module.util.getCanvasForPageUrl(pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas, erroneousUrls) {
                 var isEqual = imagediff.equal(htmlCanvas, referenceImage),
                     textualStatus = isEqual ? "passed" : "failed";
 
@@ -162,19 +183,19 @@ var csscritic = (function () {
                     callback(textualStatus);
                 }
 
-                report(textualStatus, pageUrl, htmlCanvas, referenceImage);
+                report(textualStatus, pageUrl, htmlCanvas, referenceImage, erroneousUrls);
             }, function () {
                 handlePageUrlLoadError(pageUrl, callback);
             });
         }, function () {
-            module.util.getCanvasForPageUrl(pageUrl, 800, 600, function (htmlCanvas) {
+            module.util.getCanvasForPageUrl(pageUrl, 800, 600, function (htmlCanvas, erroneousUrls) {
                 var textualStatus = "referenceMissing";
 
                 if (callback) {
                     callback(textualStatus);
                 }
 
-                report(textualStatus, pageUrl, htmlCanvas);
+                report(textualStatus, pageUrl, htmlCanvas, null, erroneousUrls);
             }, function () {
                 handlePageUrlLoadError(pageUrl, callback);
             });
@@ -304,6 +325,25 @@ csscritic.BasicHTMLReporter = function () {
         return updateHint;
     };
 
+    var createErroneousResourceWarning = function (result) {
+        var loadErrors = window.document.createElement("div"),
+            ul = window.document.createElement("ul");
+
+        loadErrors.className = "loadErrors warning";
+        loadErrors.appendChild(window.document.createTextNode("Could not load the referenced resources:"));
+        loadErrors.appendChild(ul);
+
+        result.erroneousPageUrls.forEach(function (url) {
+            var urlWarningEntry = window.document.createElement("li");
+
+            urlWarningEntry.textContent = url;
+            ul.appendChild(urlWarningEntry);
+        });
+
+        loadErrors.appendChild(window.document.createTextNode("Make sure the paths lie within the same origin as this document."));
+        return loadErrors;
+    };
+
     var createErrorMsg = function (result) {
         var errorMsg = window.document.createElement("div");
         errorMsg.className = "errorMsg warning";
@@ -348,6 +388,10 @@ csscritic.BasicHTMLReporter = function () {
 
         entry.appendChild(createPageUrl(result));
         entry.appendChild(createStatus(result));
+
+        if (result.erroneousPageUrls) {
+            entry.appendChild(createErroneousResourceWarning(result));
+        }
 
         if (result.status === "failed") {
             entry.appendChild(createDifferenceCanvasContainer(result));

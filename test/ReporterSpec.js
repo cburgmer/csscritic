@@ -42,6 +42,22 @@ describe("Reporter", function () {
             expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url<img>");
         });
 
+        it("should show erroneous page resources", function () {
+            reporter.reportComparison({
+                status: "passed",
+                pageUrl: "page_url<img>",
+                erroneousPageUrls: ["theFirstBadUrl", "yetAnotherBadUrl"],
+                pageCanvas: htmlCanvas,
+                referenceImage: referenceImage
+            });
+
+            expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toHaveClass("warning");
+            expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").length).toEqual(2);
+            expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").get(0).textContent).toContain("theFirstBadUrl");
+            expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").get(1).textContent).toContain("yetAnotherBadUrl");
+        });
+
         describe("Passed tests", function () {
 
             it("should show an entry as passed", function () {

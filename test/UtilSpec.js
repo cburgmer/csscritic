@@ -67,6 +67,31 @@ describe("Utilities", function () {
         it("should work without a callback on error", function () {
             csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7);
         });
+
+        it("should report erroneous resource urls", function () {
+            var canvas = document.createElement("canvas"),
+                erroneousResourceUrls = null,
+                fixtureUrl = csscriticTestPath + "fixtures/",
+                pageUrl = fixtureUrl + "brokenPage.html";
+
+            csscritic.util.drawPageUrl(pageUrl, canvas, 42, 7, function (erroneousUrls) {
+                erroneousResourceUrls = erroneousUrls;
+            });
+
+            waitsFor(function () {
+                return erroneousResourceUrls !== null;
+            });
+
+            runs(function () {
+                expect(erroneousResourceUrls).not.toBeNull();
+                erroneousResourceUrls.sort();
+                expect(erroneousResourceUrls).toEqual([
+                    fixtureUrl + "background_image_does_not_exist.jpg",
+                    fixtureUrl + "css_does_not_exist.css",
+                    fixtureUrl + "image_does_not_exist.png"
+                ]);
+            });
+        });
     });
 
     describe("getCanvasForPageUrl", function () {
@@ -108,6 +133,26 @@ describe("Utilities", function () {
 
             runs(function () {
                 expect(hasError).toBeTruthy();
+            });
+        });
+
+        it("should return a list urls from of erroneous resources", function () {
+            var errorneousPageUrls = null,
+                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback, errorCallback) {
+                    successCallback(["oneUrl", "someOtherUrl"]);
+                });
+
+            csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas, errorneousUrls) {
+                errorneousPageUrls = errorneousUrls;
+            }, function () {});
+
+            waitsFor(function () {
+                return errorneousPageUrls !== null;
+            });
+
+            runs(function () {
+                expect(errorneousPageUrls).not.toBeNull();
+                expect(errorneousPageUrls).toEqual(["oneUrl", "someOtherUrl"]);
             });
         });
     });

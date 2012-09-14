@@ -327,6 +327,72 @@ describe("Regression testing", function () {
 
             expect(storeReferenceImageSpy).toHaveBeenCalledWith("differentpage.html", htmlCanvas);
         });
+
+        it("should provide a list of URLs that couldn't be loaded", function () {
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlCanvas, ["oneUrl", "anotherUrl"]);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
+                callback(referenceImage);
+            });
+
+            csscritic.compare("differentpage.html");
+
+            expect(reporter.reportComparison).toHaveBeenCalledWith({
+                status: "passed",
+                pageUrl: "differentpage.html",
+                pageCanvas: htmlCanvas,
+                erroneousPageUrls: ["oneUrl", "anotherUrl"],
+                resizePageCanvas: jasmine.any(Function),
+                acceptPage: jasmine.any(Function),
+                referenceImage: referenceImage
+            });
+        });
+
+        it("should provide a list of URLs that couldn't be loaded independently of whether the reference image exists", function () {
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlCanvas, ["oneUrl", "anotherUrl"]);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
+                errorCallback();
+            });
+
+            csscritic.compare("differentpage.html");
+
+            expect(reporter.reportComparison).toHaveBeenCalledWith({
+                status: "referenceMissing",
+                pageUrl: "differentpage.html",
+                erroneousPageUrls: ["oneUrl", "anotherUrl"],
+                pageCanvas: htmlCanvas,
+                resizePageCanvas: jasmine.any(Function),
+                acceptPage: jasmine.any(Function)
+            });
+        });
+
+        it("should not pass along a list if no errors exist", function () {
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlCanvas, []);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
+                callback(referenceImage);
+            });
+
+            csscritic.compare("differentpage.html");
+
+            expect(reporter.reportComparison).toHaveBeenCalledWith({
+                status: "passed",
+                pageUrl: "differentpage.html",
+                pageCanvas: htmlCanvas,
+                resizePageCanvas: jasmine.any(Function),
+                acceptPage: jasmine.any(Function),
+                referenceImage: referenceImage
+            });
+        });
+
     });
 
 });
