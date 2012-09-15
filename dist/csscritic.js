@@ -207,8 +207,7 @@ var csscritic = (function () {
 }());
 
 csscritic.BasicHTMLReporter = function () {
-    var module = {},
-        reportBody = null;
+    var module = {};
 
     var registerResizeHandler = function (element, handler) {
         var width = element.style.width,
@@ -223,13 +222,18 @@ csscritic.BasicHTMLReporter = function () {
         };
     };
 
-    var createBodyOnce = function () {
+    var getOrCreateBody = function () {
+        var reporterId = "csscritic_basichtmlreporter",
+            reportBody = window.document.getElementById(reporterId);
+
         if (reportBody === null) {
             reportBody = window.document.createElement("div");
-            reportBody.id = "csscritic_basichtmlreporter";
+            reportBody.id = reporterId;
 
             window.document.getElementsByTagName("body")[0].appendChild(reportBody);
         }
+
+        return reportBody;
     };
 
     var createPageCanvasContainer = function (result, withCaption) {
@@ -410,9 +414,9 @@ csscritic.BasicHTMLReporter = function () {
     };
 
     module.reportComparison = function (result) {
-        var node = createEntry(result);
+        var node = createEntry(result),
+            reportBody = getOrCreateBody();
 
-        createBodyOnce();
         reportBody.appendChild(node);
     };
 
