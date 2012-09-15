@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2012-09-14
+/*! CSS critic - v0.1.0 - 2012-09-15
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
@@ -167,42 +167,39 @@ var csscritic = (function () {
         reporters = [];
     };
 
-    var handlePageUrlLoadError = function (pageUrl, callback) {
-        var textualStatus = "error";
+    var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        if (callback) {
-            callback(textualStatus);
-        }
+        module.util.getCanvasForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlCanvas, erroneousUrls) {
+            var isEqual, textualStatus;
 
-        report(textualStatus, pageUrl, null);
+            if (referenceImage) {
+                isEqual = imagediff.equal(htmlCanvas, referenceImage);
+                textualStatus = isEqual ? "passed" : "failed";
+            } else {
+                textualStatus = "referenceMissing";
+            }
+
+            if (callback) {
+                callback(textualStatus);
+            }
+
+            report(textualStatus, pageUrl, htmlCanvas, referenceImage, erroneousUrls);
+        }, function () {
+            var textualStatus = "error";
+
+            if (callback) {
+                callback(textualStatus);
+            }
+
+            report(textualStatus, pageUrl, null);
+        });
     };
 
     module.compare = function (pageUrl, callback) {
         module.util.readReferenceImage(pageUrl, function (referenceImage) {
-            module.util.getCanvasForPageUrl(pageUrl, referenceImage.width, referenceImage.height, function (htmlCanvas, erroneousUrls) {
-                var isEqual = imagediff.equal(htmlCanvas, referenceImage),
-                    textualStatus = isEqual ? "passed" : "failed";
-
-                if (callback) {
-                    callback(textualStatus);
-                }
-
-                report(textualStatus, pageUrl, htmlCanvas, referenceImage, erroneousUrls);
-            }, function () {
-                handlePageUrlLoadError(pageUrl, callback);
-            });
+            loadPageAndReportResult(pageUrl, referenceImage.width, referenceImage.height, referenceImage, callback);
         }, function () {
-            module.util.getCanvasForPageUrl(pageUrl, 800, 600, function (htmlCanvas, erroneousUrls) {
-                var textualStatus = "referenceMissing";
-
-                if (callback) {
-                    callback(textualStatus);
-                }
-
-                report(textualStatus, pageUrl, htmlCanvas, null, erroneousUrls);
-            }, function () {
-                handlePageUrlLoadError(pageUrl, callback);
-            });
+            loadPageAndReportResult(pageUrl, 800, 600, null, callback);
         });
     };
 
