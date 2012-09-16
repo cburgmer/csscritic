@@ -1,0 +1,6 @@
+test/*.js
+test/lib
+node_modules
+components
+*~
+_SpecRunner.html
