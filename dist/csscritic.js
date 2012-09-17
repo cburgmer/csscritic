@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2012-09-16
+/*! CSS critic - v0.1.0 - 2012-09-18
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
@@ -35,7 +35,7 @@ var csscritic = (function () {
         htmlCanvas.height = height;
 
         htmlCanvas.getContext("2d").clearRect(0, 0, width, height);
-        rasterizeHTML.drawURL(pageUrl, htmlCanvas, function (c, errors) {
+        rasterizeHTML.drawURL(pageUrl, htmlCanvas, {cache: false}, function (c, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {

@@ -16,9 +16,9 @@ describe("Utilities", function () {
 
         });
 
-        it("should draw the url to the given canvas", function () {
+        it("should draw the url to the given canvas and disable caching", function () {
             var finished = false,
-                drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, callback) {
+                drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
                     callback(canvas);
                 });
 
@@ -29,11 +29,11 @@ describe("Utilities", function () {
             expect(finished).toBeTruthy();
             expect(the_canvas.width).toEqual(42);
             expect(the_canvas.height).toEqual(7);
-            expect(drawUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, jasmine.any(Function));
+            expect(drawUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, {cache: false}, jasmine.any(Function));
         });
 
         it("should clear the area before drawing", function () {
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, callback) {
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
                 callback(canvas);
             });
             csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {});
@@ -58,7 +58,7 @@ describe("Utilities", function () {
         });
 
         it("should work without a callback", function () {
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, callback) {
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
                 callback(canvas);
             });
             csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7);

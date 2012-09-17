@@ -28,9 +28,9 @@ module.exports = function (grunt) {
             test:'test/*Spec.js'
         },
         jasmine:{
-            src:'<%= pkg.name %>.js',
+            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', '<%= pkg.name %>.js'],
             specs:'test/*Spec.js',
-            helpers:['test/helpers.js', 'test/gruntpath.js', 'lib/*.js', 'test/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'components/rasterizeHTML.js/lib/*.js'],
+            helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
             timeout:10000,
             fixturesPath:'./fixtures/'
         },

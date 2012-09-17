@@ -31,7 +31,7 @@ var csscritic = (function () {
         htmlCanvas.height = height;
 
         htmlCanvas.getContext("2d").clearRect(0, 0, width, height);
-        rasterizeHTML.drawURL(pageUrl, htmlCanvas, function (c, errors) {
+        rasterizeHTML.drawURL(pageUrl, htmlCanvas, {cache: false}, function (c, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
