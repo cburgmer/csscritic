@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2012-09-18
+/*! CSS critic - v0.1.0 - 2012-09-21
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
@@ -47,6 +47,38 @@ var csscritic = (function () {
                     successCallback(erroneousResourceUrls);
                 }
             }
+        });
+    };
+
+    var loadImage = function (url, callback) {
+        var image = new window.Image();
+        image.onload = function() {
+            callback(image);
+        };
+        image.src = url;
+    };
+
+    var drawUrlToCanvas = function (url, canvas, callback) {
+        var context = canvas.getContext("2d");
+
+        loadImage(url, function (image) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(image, 0, 0);
+
+            callback();
+        });
+    };
+
+    module.util.workAroundTransparencyIssueInFirefox = function (canvas, callback) {
+        // Work around bug https://bugzilla.mozilla.org/show_bug.cgi?id=790468 where the content of a canvas
+        //   drawn to another one will be slightly different if transparency is involved.
+        //   Solution: re-draw the canvas to itself, thus reaching a stable output
+        var newCanvas = window.document.createElement("canvas");
+        newCanvas.height = canvas.height;
+        newCanvas.width  = canvas.width;
+
+        drawUrlToCanvas(canvas.toDataURL("image/png"), newCanvas, function () {
+            callback(newCanvas);
         });
     };
 
@@ -172,18 +204,20 @@ var csscritic = (function () {
         module.util.getCanvasForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlCanvas, erroneousUrls) {
             var isEqual, textualStatus;
 
-            if (referenceImage) {
-                isEqual = imagediff.equal(htmlCanvas, referenceImage);
-                textualStatus = isEqual ? "passed" : "failed";
-            } else {
-                textualStatus = "referenceMissing";
-            }
+            module.util.workAroundTransparencyIssueInFirefox(htmlCanvas, function (adaptedHtmlCanvas) {
+                if (referenceImage) {
+                    isEqual = imagediff.equal(adaptedHtmlCanvas, referenceImage);
+                    textualStatus = isEqual ? "passed" : "failed";
+                } else {
+                    textualStatus = "referenceMissing";
+                }
 
-            if (callback) {
-                callback(textualStatus);
-            }
+                if (callback) {
+                    callback(textualStatus);
+                }
 
-            report(textualStatus, pageUrl, htmlCanvas, referenceImage, erroneousUrls);
+                report(textualStatus, pageUrl, htmlCanvas, referenceImage, erroneousUrls);
+            });
         }, function () {
             var textualStatus = "error";
 

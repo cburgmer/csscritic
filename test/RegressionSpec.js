@@ -11,6 +11,10 @@ describe("Regression testing", function () {
 
         getCanvasForPageUrl = spyOn(csscritic.util, 'getCanvasForPageUrl');
         readReferenceImage = spyOn(csscritic.util, 'readReferenceImage');
+
+        spyOn(csscritic.util, 'workAroundTransparencyIssueInFirefox').andCallFake(function (canvas, callback) {
+            callback(canvas);
+        });
     });
 
     afterEach(function () {
