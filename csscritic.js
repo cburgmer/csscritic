@@ -46,18 +46,22 @@ var csscritic = (function () {
         });
     };
 
-    var loadImage = function (url, callback) {
+    module.util.getImageForUrl = function (url, successCallback, errorCallback) {
         var image = new window.Image();
-        image.onload = function() {
-            callback(image);
+
+        image.onload = function () {
+            successCallback(image);
         };
+        if (errorCallback) {
+            image.onerror = errorCallback;
+        }
         image.src = url;
     };
 
     var drawUrlToCanvas = function (url, canvas, callback) {
         var context = canvas.getContext("2d");
 
-        loadImage(url, function (image) {
+        module.util.getImageForUrl(url, function (image) {
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.drawImage(image, 0, 0);
 
@@ -84,18 +88,6 @@ var csscritic = (function () {
         module.util.drawPageUrl(pageUrl, htmlCanvas, width, height, function (erroneousResourceUrls) {
             successCallback(htmlCanvas, erroneousResourceUrls);
         }, errorCallback);
-    };
-
-    module.util.getImageForUrl = function (url, successCallback, errorCallback) {
-        var img = new window.Image();
-
-        img.onload = function () {
-            successCallback(img);
-        };
-        if (errorCallback) {
-            img.onerror = errorCallback;
-        }
-        img.src = url;
     };
 
     module.util.getCanvasForImageData = function (imageData) {
