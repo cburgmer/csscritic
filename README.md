@@ -51,4 +51,4 @@ Limitations
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files.
 - Because of the way the HTML is rendered to the canvas, all external resources need to be inlined. This part is still in active development (e.g. @Import and non-woff webfonts are missing).
 
-Licensed under MIT. Contact [on Twitter](https://twitter.com/cburgmer)
+Licensed under MIT. Reach out [on Twitter](https://twitter.com/cburgmer)
