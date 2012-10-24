@@ -1,8 +1,8 @@
-/*! CSS critic - v0.1.0 - 2012-10-24
+/*! CSS critic - v0.1.0 - 2012-10-25
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
-var csscritic = (function () {
+window.csscritic = (function () {
     var module = {},
         reporters = [];
 

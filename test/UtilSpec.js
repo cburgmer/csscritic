@@ -97,7 +97,7 @@ describe("Utilities", function () {
     describe("getCanvasForPageUrl", function () {
         it("should draw the url to a canvas", function () {
             var the_canvas = null,
-                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback, errorCallback) {
+                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback) {
                     successCallback();
                 });
 
@@ -137,10 +137,10 @@ describe("Utilities", function () {
         });
 
         it("should return a list urls from of erroneous resources", function () {
-            var errorneousPageUrls = null,
-                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback, errorCallback) {
-                    successCallback(["oneUrl", "someOtherUrl"]);
-                });
+            var errorneousPageUrls = null;
+            spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback) {
+                successCallback(["oneUrl", "someOtherUrl"]);
+            });
 
             csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas, errorneousUrls) {
                 errorneousPageUrls = errorneousUrls;
@@ -308,7 +308,7 @@ describe("Utilities", function () {
 
         it("should read in a reference image from Web storage", function () {
             var readImage,
-                getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success, error) {
+                getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
                 success("read image fake");
             });
 
@@ -333,9 +333,9 @@ describe("Utilities", function () {
         });
 
         it("should call error handler if read reference image is invalid", function () {
-            var errorCalled = false,
-                getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success, error) {
-                    error();
+            var errorCalled = false;
+            spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success, error) {
+                error();
             });
 
             localStorage.setItem("someOtherPage.html", '{"referenceImageUri": "broken uri"}');

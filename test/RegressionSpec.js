@@ -65,8 +65,6 @@ describe("Regression testing", function () {
         });
 
         it("should make the callback optional", function () {
-            var status;
-
             spyOn(imagediff, 'equal').andReturn(true);
 
             csscritic.compare("samplepage.html");
@@ -110,7 +108,7 @@ describe("Regression testing", function () {
         it("should return 'referenceMissing' if the reference image cannot be loaded", function () {
             var status;
 
-            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
+            getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback) {
                 successCallback(htmlCanvas);
             });
             readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
@@ -149,7 +147,7 @@ describe("Regression testing", function () {
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, successCallback, errorCallback) {
                 errorCallback();
             });
-            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
+            readReferenceImage.andCallFake(function (pageUrl, successCallback) {
                 successCallback(htmlCanvas);
             });
 
@@ -302,11 +300,10 @@ describe("Regression testing", function () {
         });
 
         it("should provide a method to accept the rendered page and store as new reference", function () {
-            var drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, callback) {
-                    callback();
-                }),
-                storeReferenceImageSpy = spyOn(csscritic.util, 'storeReferenceImage'),
-                finished = false;
+            var storeReferenceImageSpy = spyOn(csscritic.util, 'storeReferenceImage');
+            spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, callback) {
+                callback();
+            });
             spyOn(imagediff, 'equal').andReturn(true);
 
             getCanvasForPageUrl.andCallFake(function (pageUrl, width, height, callback) {

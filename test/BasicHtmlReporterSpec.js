@@ -9,7 +9,7 @@ describe("Basic HTML reporter", function () {
         differenceImageCanvas = window.document.createElement("canvas");
         differenceImageData = differenceImageCanvas.getContext("2d").createImageData(1, 1);
 
-        spyOn(csscritic.util, 'getCanvasForImageData').andCallFake(function (differenceImageData) {
+        spyOn(csscritic.util, 'getCanvasForImageData').andCallFake(function () {
             return differenceImageCanvas;
         });
     });

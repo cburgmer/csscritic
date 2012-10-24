@@ -1,4 +1,4 @@
-var csscritic = (function () {
+window.csscritic = (function () {
     var module = {},
         reporters = [];
 
