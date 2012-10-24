@@ -28,7 +28,7 @@ module.exports = function (grunt) {
             test:'test/*Spec.js'
         },
         jasmine:{
-            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', '<%= pkg.name %>.js'],
+            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
             specs:'test/*Spec.js',
             helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
             timeout:10000,
@@ -36,7 +36,7 @@ module.exports = function (grunt) {
         },
         concat:{
             dist:{
-                src:['<banner:meta.banner>', '<file_strip_banner:<%= pkg.name %>.js>'],
+                src:['<banner:meta.banner>', '<file_strip_banner:<%= pkg.name %>.js>', 'basichtmlreporter.js'],
                 dest:'dist/<%= pkg.name %>.js'
             }
         },
@@ -46,13 +46,13 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.min.js'
             },
             allinone: {
-                src:['<banner:meta.bannerAllInOne>', '<file_strip_banner:<%= pkg.name %>.js>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js'],
+                src:['<banner:meta.bannerAllInOne>', '<config:concat.dist.dest>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js'],
                 dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },
         cssmin:{
             dist:{
-                src:['<%= pkg.name %>.css'],
+                src:['basichtmlreporter.css'],
                 dest:'dist/<%= pkg.name %>.min.css'
             }
         },
