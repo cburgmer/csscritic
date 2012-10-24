@@ -412,6 +412,46 @@ csscritic.BasicHTMLReporter = function () {
         return pageUrl;
     };
 
+    var getOrCreateDivWithId = function (id) {
+        var tooltip = window.document.getElementById(id);
+
+        if (!tooltip) {
+            tooltip = window.document.createElement("div");
+            tooltip.id = id;
+            tooltip.style.display = "none";
+            tooltip.style.position = "absolute";
+            window.document.getElementsByTagName("body")[0].appendChild(tooltip);
+        }
+
+        return tooltip;
+    };
+
+    var emptyNode = function (node) {
+        while (node.hasChildNodes()) {
+            node.removeChild(node.lastChild);
+        }
+    };
+
+    var addMouseOverHandlerForPreview = function (entry, result) {
+        entry.onmouseover = function (event) {
+            var tooltip = getOrCreateDivWithId("csscritic_basichtmlreporter_tooltip"),
+                image = result.referenceImage;
+
+            emptyNode(tooltip);
+            tooltip.style.display = "block";
+            tooltip.style.top = event.clientY + 10 + "px";
+            tooltip.style.left = event.clientX + 10 + "px";
+
+            tooltip.appendChild(image);
+        };
+
+        entry.onmouseout = function () {
+            var tooltip = getOrCreateDivWithId("csscritic_basichtmlreporter_tooltip");
+
+            tooltip.style.display = "none";
+        };
+    };
+
     var createEntry = function (result) {
         var entry = window.document.createElement("div");
 
@@ -434,6 +474,8 @@ csscritic.BasicHTMLReporter = function () {
             entry.appendChild(createPageCanvasContainer(result));
         } else if (result.status === "error") {
             entry.appendChild(createErrorMsg(result));
+        } else if (result.status === "passed") {
+            addMouseOverHandlerForPreview(entry, result);
         }
 
         return entry;

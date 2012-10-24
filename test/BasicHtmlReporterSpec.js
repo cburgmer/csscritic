@@ -285,4 +285,40 @@ describe("Basic HTML reporter", function () {
 
     });
 
+    describe("Mouse over image preview", function () {
+        beforeEach(function () {
+            reporter.reportComparison({
+                status: "passed",
+                pageUrl: "page_url",
+                pageCanvas: htmlCanvas,
+                referenceImage: referenceImage
+            });
+
+            setFixtures('<style>' +
+                '#csscritic_basichtmlreporter_tooltip {' +
+                '    width: 100px;' +
+                '}' +
+                '</style>');
+        });
+
+        it("should show a preview image on mouse over", function () {
+            expect(typeof $("#csscritic_basichtmlreporter .comparison").get(0).onmouseover).toEqual("function");
+
+            $("#csscritic_basichtmlreporter .comparison").get(0).onmouseover({});
+
+            expect($("#csscritic_basichtmlreporter_tooltip")).toBeVisible();
+            expect($("#csscritic_basichtmlreporter_tooltip").children().get(0)).toBe(referenceImage);
+        });
+
+        it("should hide the tooltip on mouse out", function () {
+            $("#csscritic_basichtmlreporter .comparison").get(0).onmouseover({});
+
+            expect($("#csscritic_basichtmlreporter_tooltip")).toBeVisible();
+
+            $("#csscritic_basichtmlreporter .comparison").get(0).onmouseout();
+
+            expect($("#csscritic_basichtmlreporter_tooltip")).not.toBeVisible();
+        });
+    });
+
 });

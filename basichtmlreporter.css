@@ -131,3 +131,12 @@
 #csscritic_basichtmlreporter .loadErrors ul {
     margin: 4px 0;
 }
+
+#csscritic_basichtmlreporter_tooltip {
+    border: 1px solid black;
+    width: 200px;
+}
+
+#csscritic_basichtmlreporter_tooltip img {
+    width: 100%;
+}
