@@ -43,6 +43,12 @@ describe("Utilities", function () {
 
         it("should call the error handler if a page does not exist", function () {
             var hasError = false;
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
+                callback(canvas, [{
+                    resourceType: "page",
+                    url: url
+                }]);
+            });
 
             csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {}, function () {
                 hasError = true;
@@ -65,6 +71,12 @@ describe("Utilities", function () {
         });
 
         it("should work without a callback on error", function () {
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
+                callback(canvas, [{
+                    resourceType: "page",
+                    url: url
+                }]);
+            });
             csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7);
         });
 
