@@ -134,7 +134,7 @@
 
 #csscritic_basichtmlreporter_tooltip {
     border: 1px solid black;
-    width: 200px;
+    max-width: 400px;
 }
 
 #csscritic_basichtmlreporter_tooltip img {
