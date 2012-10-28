@@ -46,7 +46,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.min.js'
             },
             allinone: {
-                src:['<banner:meta.bannerAllInOne>', '<config:concat.dist.dest>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js'],
+                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', '<config:concat.dist.dest>'],
                 dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },

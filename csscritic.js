@@ -1,4 +1,4 @@
-window.csscritic = (function (module) {
+window.csscritic = (function (module, window, imagediff, rasterizeHTML) {
     var reporters = [];
 
     module.util = {};
@@ -210,4 +210,4 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, window, imagediff, rasterizeHTML));
