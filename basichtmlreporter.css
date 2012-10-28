@@ -60,6 +60,7 @@
     border: 1px solid black;
 }
 
+#csscritic_basichtmlreporter_tooltip,
 #csscritic_basichtmlreporter .comparison .innerPageImageContainer,
 #csscritic_basichtmlreporter .referenceImageContainer img {
     /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in gimp */
