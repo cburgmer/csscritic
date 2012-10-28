@@ -1,6 +1,5 @@
-window.csscritic = (function () {
-    var module = {},
-        reporters = [];
+window.csscritic = (function (module) {
+    var reporters = [];
 
     module.util = {};
 
@@ -211,4 +210,4 @@ window.csscritic = (function () {
     };
 
     return module;
-}());
+}(window.csscritic || {}));

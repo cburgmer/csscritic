@@ -17,7 +17,7 @@ describe("BasicHTMLReporter utilities", function () {
         });
 
         it("should return the canvas", function () {
-            var resultingCanvas = csscritic.basicHTMLReporterUtils.getCanvasForImageData(canvasImageData);
+            var resultingCanvas = csscritic.basicHTMLReporterUtil.getCanvasForImageData(canvasImageData);
 
             expect(resultingCanvas instanceof HTMLElement).toBeTruthy();
             expect(resultingCanvas.nodeName).toEqual("CANVAS");

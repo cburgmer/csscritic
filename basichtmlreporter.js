@@ -1,7 +1,7 @@
-csscritic.basicHTMLReporterUtils = (function () {
-    var module = {};
+window.csscritic = (function (module) {
+    module.basicHTMLReporterUtil = {};
 
-    module.getCanvasForImageData = function (imageData) {
+    module.basicHTMLReporterUtil.getCanvasForImageData = function (imageData) {
         var canvas = window.document.createElement("canvas"),
             context;
 
@@ -13,13 +13,6 @@ csscritic.basicHTMLReporterUtils = (function () {
 
         return canvas;
     };
-
-
-    return module;
-}());
-
-csscritic.BasicHTMLReporter = function () {
-    var module = {};
 
     var registerResizeHandler = function (element, handler) {
         var width = element.style.width,
@@ -176,7 +169,7 @@ csscritic.BasicHTMLReporter = function () {
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = window.document.createElement("div");
         differenceCanvasContainer.className = "differenceCanvasContainer";
-        differenceCanvasContainer.appendChild(csscritic.basicHTMLReporterUtils.getCanvasForImageData(result.differenceImageData));
+        differenceCanvasContainer.appendChild(module.basicHTMLReporterUtil.getCanvasForImageData(result.differenceImageData));
         return differenceCanvasContainer;
     };
 
@@ -272,12 +265,18 @@ csscritic.BasicHTMLReporter = function () {
         return entry;
     };
 
-    module.reportComparison = function (result) {
+    var reportComparison = function (result) {
         var node = createEntry(result),
             reportBody = getOrCreateBody();
 
         reportBody.appendChild(node);
     };
 
+    module.BasicHTMLReporter = function () {
+        return {
+            reportComparison: reportComparison
+        }
+    };
+
     return module;
-};
+}(window.csscritic || {}));
