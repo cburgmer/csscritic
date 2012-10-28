@@ -76,19 +76,6 @@ window.csscritic = (function () {
         });
     };
 
-    module.util.getCanvasForImageData = function (imageData) {
-        var canvas = window.document.createElement("canvas"),
-            context;
-
-        canvas.height = imageData.height;
-        canvas.width  = imageData.width;
-
-        context = canvas.getContext("2d");
-        context.putImageData(imageData, 0, 0);
-
-        return canvas;
-    };
-
     module.util.storeReferenceImage = function (key, pageImage) {
         var uri, dataObj;
 

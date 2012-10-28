@@ -1,3 +1,23 @@
+csscritic.basicHTMLReporterUtils = (function () {
+    var module = {};
+
+    module.getCanvasForImageData = function (imageData) {
+        var canvas = window.document.createElement("canvas"),
+            context;
+
+        canvas.height = imageData.height;
+        canvas.width  = imageData.width;
+
+        context = canvas.getContext("2d");
+        context.putImageData(imageData, 0, 0);
+
+        return canvas;
+    };
+
+
+    return module;
+}());
+
 csscritic.BasicHTMLReporter = function () {
     var module = {};
 
@@ -156,7 +176,7 @@ csscritic.BasicHTMLReporter = function () {
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = window.document.createElement("div");
         differenceCanvasContainer.className = "differenceCanvasContainer";
-        differenceCanvasContainer.appendChild(csscritic.util.getCanvasForImageData(result.differenceImageData));
+        differenceCanvasContainer.appendChild(csscritic.basicHTMLReporterUtils.getCanvasForImageData(result.differenceImageData));
         return differenceCanvasContainer;
     };
 
