@@ -22,6 +22,24 @@ describe("Integration", function () {
         $("#csscritic_basichtmlreporter").remove();
     });
 
+    it("should complete in any browser", function () {
+        var resultStatus = null,
+            testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
+
+        csscritic.addReporter(csscritic.BasicHTMLReporter());
+        csscritic.compare(testPageUrl, function (result) {
+            resultStatus = result;
+        });
+
+        waitsFor(function () {
+            return resultStatus !== null;
+        });
+
+        runs(function () {
+            expect(resultStatus).toEqual("referenceMissing");
+            expect($("#csscritic_basichtmlreporter .referenceMissing.comparison")).toExist();
+        });
+    });
 
     ifNotInWebkitIt("should compare a page with its reference image and return true if similar", function () {
         var resultStatus = null,

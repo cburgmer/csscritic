@@ -71,7 +71,16 @@ window.csscritic = (function () {
         //   drawn to another one will be slightly different if transparency is involved.
         // Here the reference image has been drawn to a canvas once (to serialize it to localStorage), while the
         //   image of the newly rendered page hasn't.  Solution: apply the same transformation to the second image, too.
-        module.util.getImageForUrl(module.util.getDataURIForImage(image), function (newImage) {
+        var dataUri;
+        try {
+            dataUri = module.util.getDataURIForImage(image);
+        } catch (e) {
+            // Fallback for Chrome & Safari
+            callback(image);
+            return;
+        }
+
+        module.util.getImageForUrl(dataUri, function (newImage) {
             callback(newImage);
         });
     };
