@@ -107,6 +107,7 @@ module.exports = function (grunt) {
                     imagediff:true,
                     csscritic:true,
                     ifNotInWebkitIt:true,
+                    safeLog:true,
                     csscriticTestPath:true
                 }
             }

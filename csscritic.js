@@ -26,12 +26,8 @@ window.csscritic = (function () {
         return erroneousResourceUrls;
     };
 
-    module.util.drawPageUrl = function (pageUrl, htmlCanvas, width, height, successCallback, errorCallback) {
-        htmlCanvas.width = width;
-        htmlCanvas.height = height;
-
-        htmlCanvas.getContext("2d").clearRect(0, 0, width, height);
-        rasterizeHTML.drawURL(pageUrl, htmlCanvas, {cache: false}, function (c, errors) {
+    module.util.getImageForPageUrl = function (pageUrl, width, height, successCallback, errorCallback) {
+        rasterizeHTML.drawURL(pageUrl, {cache: false, width: width, height: height}, function (image, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
@@ -40,10 +36,22 @@ window.csscritic = (function () {
                 }
             } else {
                 if (successCallback) {
-                    successCallback(erroneousResourceUrls);
+                    successCallback(image, erroneousResourceUrls);
                 }
             }
         });
+    };
+
+    module.util.getDataURIForImage = function (image) {
+        var canvas = window.document.createElement("canvas"),
+            context = canvas.getContext("2d");
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        context.drawImage(image, 0, 0);
+
+        return canvas.toDataURL("image/png");
     };
 
     module.util.getImageForUrl = function (url, successCallback, errorCallback) {
@@ -58,36 +66,14 @@ window.csscritic = (function () {
         image.src = url;
     };
 
-    var drawUrlToCanvas = function (url, canvas, callback) {
-        var context = canvas.getContext("2d");
-
-        module.util.getImageForUrl(url, function (image) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(image, 0, 0);
-
-            callback();
-        });
-    };
-
-    module.util.workAroundTransparencyIssueInFirefox = function (canvas, callback) {
+    module.util.workAroundTransparencyIssueInFirefox = function (image, callback) {
         // Work around bug https://bugzilla.mozilla.org/show_bug.cgi?id=790468 where the content of a canvas
         //   drawn to another one will be slightly different if transparency is involved.
-        //   Solution: re-draw the canvas to itself, thus reaching a stable output
-        var newCanvas = window.document.createElement("canvas");
-        newCanvas.height = canvas.height;
-        newCanvas.width  = canvas.width;
-
-        drawUrlToCanvas(canvas.toDataURL("image/png"), newCanvas, function () {
-            callback(newCanvas);
+        // Here the reference image has been drawn to a canvas once (to serialize it to localStorage), while the
+        //   image of the newly rendered page hasn't.  Solution: apply the same transformation to the second image, too.
+        module.util.getImageForUrl(module.util.getDataURIForImage(image), function (newImage) {
+            callback(newImage);
         });
-    };
-
-    module.util.getCanvasForPageUrl = function (pageUrl, width, height, successCallback, errorCallback) {
-        var htmlCanvas = window.document.createElement("canvas");
-
-        module.util.drawPageUrl(pageUrl, htmlCanvas, width, height, function (erroneousResourceUrls) {
-            successCallback(htmlCanvas, erroneousResourceUrls);
-        }, errorCallback);
     };
 
     module.util.getCanvasForImageData = function (imageData) {
@@ -103,11 +89,11 @@ window.csscritic = (function () {
         return canvas;
     };
 
-    module.util.storeReferenceImage = function (key, canvas) {
+    module.util.storeReferenceImage = function (key, pageImage) {
         var uri, dataObj;
 
         try {
-            uri = canvas.toDataURL("image/png");
+            uri = module.util.getDataURIForImage(pageImage);
         } catch (e) {
             window.alert("An error occurred reading the canvas. Are you sure you are using Firefox?\n" + e);
             throw e;
@@ -134,19 +120,22 @@ window.csscritic = (function () {
         }
     };
 
-    var buildReportResult = function (status, pageUrl, pageCanvas, referenceImage, erroneousPageUrls) {
+    var buildReportResult = function (status, pageUrl, pageImage, referenceImage, erroneousPageUrls) {
         var result = {
                 status: status,
                 pageUrl: pageUrl,
-                pageCanvas: pageCanvas
+                pageImage: pageImage
             };
 
-        if (pageCanvas) {
-            result.resizePageCanvas = function (width, height, callback) {
-                module.util.drawPageUrl(pageUrl, pageCanvas, width, height, callback);
+        if (pageImage) {
+            result.resizePageImage = function (width, height, callback) {
+                module.util.getImageForPageUrl(pageUrl, width, height, function (image) {
+                    result.pageImage = image;
+                    callback(image);
+                });
             };
             result.acceptPage = function () {
-                module.util.storeReferenceImage(pageUrl, pageCanvas);
+                module.util.storeReferenceImage(pageUrl, result.pageImage);
             };
         }
 
@@ -159,20 +148,20 @@ window.csscritic = (function () {
         }
 
         if (status === "failed") {
-            result.differenceImageData = imagediff.diff(pageCanvas, referenceImage);
+            result.differenceImageData = imagediff.diff(pageImage, referenceImage);
         }
 
         return result;
     };
 
-    var report = function (status, pageUrl, pageCanvas, referenceImage, erroneousUrls) {
+    var report = function (status, pageUrl, pageImage, referenceImage, erroneousUrls) {
         var i, result;
 
         if (!reporters.length) {
             return;
         }
 
-        result = buildReportResult(status, pageUrl, pageCanvas, referenceImage, erroneousUrls);
+        result = buildReportResult(status, pageUrl, pageImage, referenceImage, erroneousUrls);
 
         for (i = 0; i < reporters.length; i++) {
             reporters[i].reportComparison(result);
@@ -189,12 +178,12 @@ window.csscritic = (function () {
 
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        module.util.getCanvasForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlCanvas, erroneousUrls) {
+        module.util.getImageForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlImage, erroneousUrls) {
             var isEqual, textualStatus;
 
-            module.util.workAroundTransparencyIssueInFirefox(htmlCanvas, function (adaptedHtmlCanvas) {
+            module.util.workAroundTransparencyIssueInFirefox(htmlImage, function (adaptedHtmlImage) {
                 if (referenceImage) {
-                    isEqual = imagediff.equal(adaptedHtmlCanvas, referenceImage);
+                    isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
                     textualStatus = isEqual ? "passed" : "failed";
                 } else {
                     textualStatus = "referenceMissing";
@@ -204,7 +193,7 @@ window.csscritic = (function () {
                     callback(textualStatus);
                 }
 
-                report(textualStatus, pageUrl, htmlCanvas, referenceImage, erroneousUrls);
+                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls);
             });
         }, function () {
             var textualStatus = "error";

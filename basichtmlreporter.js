@@ -30,13 +30,13 @@ csscritic.BasicHTMLReporter = function () {
 
     var createPageCanvasContainer = function (result, withCaption) {
         var outerPageCanvasContainer = window.document.createElement("div"),
-            pageCanvasContainer = window.document.createElement("div"),
+            pageImageContainer = window.document.createElement("div"),
             pageCanvasInnerContainer = window.document.createElement("div"),
             caption;
 
-        pageCanvasContainer.className = "pageCanvasContainer";
-        pageCanvasContainer.style.width = result.pageCanvas.width + "px";
-        pageCanvasContainer.style.height = result.pageCanvas.height + "px";
+        pageImageContainer.className = "pageImageContainer";
+        pageImageContainer.style.width = result.pageImage.width + "px";
+        pageImageContainer.style.height = result.pageImage.height + "px";
 
         if (withCaption) {
             caption = window.document.createElement("span");
@@ -45,18 +45,23 @@ csscritic.BasicHTMLReporter = function () {
             outerPageCanvasContainer.appendChild(caption);
         }
 
-        pageCanvasInnerContainer.className = "innerPageCanvasContainer";
-        pageCanvasInnerContainer.appendChild(result.pageCanvas);
-        pageCanvasContainer.appendChild(pageCanvasInnerContainer);
+        pageCanvasInnerContainer.className = "innerPageImageContainer";
+        pageCanvasInnerContainer.appendChild(result.pageImage);
+        pageImageContainer.appendChild(pageCanvasInnerContainer);
 
-        registerResizeHandler(pageCanvasContainer, function () {
-            var width = parseInt(pageCanvasContainer.style.width, 10),
-                height = parseInt(pageCanvasContainer.style.height, 10);
-            result.resizePageCanvas(width, height);
+        registerResizeHandler(pageImageContainer, function () {
+            var width = parseInt(pageImageContainer.style.width, 10),
+                height = parseInt(pageImageContainer.style.height, 10),
+                oldImage = result.pageImage;
+
+            result.resizePageImage(width, height, function (updatedImage) {
+                pageCanvasInnerContainer.removeChild(oldImage);
+                pageCanvasInnerContainer.appendChild(updatedImage);
+            });
         });
 
         outerPageCanvasContainer.className = "outerPageCanvasContainer";
-        outerPageCanvasContainer.appendChild(pageCanvasContainer);
+        outerPageCanvasContainer.appendChild(pageImageContainer);
 
         return outerPageCanvasContainer;
     };

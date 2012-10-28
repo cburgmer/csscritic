@@ -1,11 +1,12 @@
 describe("Basic HTML reporter", function () {
-    var reporter, htmlCanvas, referenceImage, differenceImageCanvas, differenceImageData;
+    var reporter, htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, differenceImageData;
 
     beforeEach(function () {
         reporter = csscritic.BasicHTMLReporter();
 
-        htmlCanvas = window.document.createElement("canvas");
+        htmlImage = window.document.createElement("img");
         referenceImage = new window.Image();
+        updatedReferenceImage = new window.Image();
         differenceImageCanvas = window.document.createElement("canvas");
         differenceImageData = differenceImageCanvas.getContext("2d").createImageData(1, 1);
 
@@ -22,7 +23,7 @@ describe("Basic HTML reporter", function () {
         reporter.reportComparison({
             status: "passed",
             pageUrl: "page_url",
-            pageCanvas: htmlCanvas,
+            pageImage: htmlImage,
             referenceImage: referenceImage
         });
 
@@ -34,7 +35,7 @@ describe("Basic HTML reporter", function () {
         reporter.reportComparison({
             status: "passed",
             pageUrl: "page_url<img>",
-            pageCanvas: htmlCanvas,
+            pageImage: htmlImage,
             referenceImage: referenceImage
         });
 
@@ -46,7 +47,7 @@ describe("Basic HTML reporter", function () {
             status: "passed",
             pageUrl: "page_url<img>",
             erroneousPageUrls: ["theFirstBadUrl", "yetAnotherBadUrl"],
-            pageCanvas: htmlCanvas,
+            pageImage: htmlImage,
             referenceImage: referenceImage
         });
 
@@ -63,7 +64,7 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "page_url",
-                pageCanvas: htmlCanvas,
+                pageImage: htmlImage,
                 referenceImage: referenceImage
             });
 
@@ -74,7 +75,7 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "page_url",
-                pageCanvas: htmlCanvas,
+                pageImage: htmlImage,
                 referenceImage: referenceImage
             });
 
@@ -84,17 +85,19 @@ describe("Basic HTML reporter", function () {
     });
 
     describe("Failed tests", function () {
-        var paramsOnFailingTest, resizePageCanvasSpy, acceptPageSpy;
+        var paramsOnFailingTest, resizePageImageSpy, acceptPageSpy;
 
         beforeEach(function () {
-            resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").andCallFake(function (width, height, callback) {
+                callback(updatedReferenceImage);
+            });
             acceptPageSpy = jasmine.createSpy("acceptPage");
 
             paramsOnFailingTest = {
                 status: "failed",
                 pageUrl: "page_url",
-                pageCanvas: htmlCanvas,
-                resizePageCanvas: resizePageCanvasSpy,
+                pageImage: htmlImage,
+                resizePageImage: resizePageImageSpy,
                 acceptPage: acceptPageSpy,
                 referenceImage: referenceImage,
                 differenceImageData: differenceImageData
@@ -122,14 +125,14 @@ describe("Basic HTML reporter", function () {
         it("should show the rendered page for reference and so that the user can save it", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas").get(0)).toBe(htmlCanvas);
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img").get(0)).toBe(htmlImage);
         });
 
         it("should show a caption with the rendered page", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .pageCanvasContainer canvas")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .pageImageContainer img")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .caption")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .caption").text()).toEqual("Page");
         });
@@ -137,7 +140,7 @@ describe("Basic HTML reporter", function () {
         it("should provide an inner div between page container and canvas for styling purposes", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer .innerPageCanvasContainer canvas")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer .innerPageImageContainer img")).toExist();
         });
 
         it("should show the reference image", function () {
@@ -173,28 +176,31 @@ describe("Basic HTML reporter", function () {
         it("should resize the page canvas when user resizes the container", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            $("#csscritic_basichtmlreporter .comparison .pageCanvasContainer").css({
+            $("#csscritic_basichtmlreporter .comparison .pageImageContainer").css({
                 width: 42,
                 height: 24
             }).trigger("mouseup");
 
-            expect(resizePageCanvasSpy).toHaveBeenCalledWith(42, 24);
+            expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24, jasmine.any(Function));
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toBe(updatedReferenceImage);
         });
 
     });
 
     describe("Missing image references", function () {
-        var paramsOnMissingReference, resizePageCanvasSpy, acceptPageSpy;
+        var paramsOnMissingReference, resizePageImageSpy, acceptPageSpy;
 
         beforeEach(function () {
-            resizePageCanvasSpy = jasmine.createSpy("resizePageCanvas");
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").andCallFake(function (width, height, callback) {
+                callback(updatedReferenceImage);
+            });
             acceptPageSpy = jasmine.createSpy("acceptPage");
 
             paramsOnMissingReference = {
                 status: "referenceMissing",
                 pageUrl: "page_url<img>",
-                pageCanvas: htmlCanvas,
-                resizePageCanvas: resizePageCanvasSpy,
+                pageImage: htmlImage,
+                resizePageImage: resizePageImageSpy,
                 acceptPage: acceptPageSpy
             };
         });
@@ -214,8 +220,8 @@ describe("Basic HTML reporter", function () {
         it("should show the rendered page for reference", function () {
             reporter.reportComparison(paramsOnMissingReference);
 
-            expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer canvas").get(0)).toBe(htmlCanvas);
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img").get(0)).toBe(htmlImage);
         });
 
         it("should allow the user to accept the rendered page", function () {
@@ -236,18 +242,19 @@ describe("Basic HTML reporter", function () {
         it("should provide an inner div between container and canvas for styling purposes", function () {
             reporter.reportComparison(paramsOnMissingReference);
 
-            expect($("#csscritic_basichtmlreporter .comparison .pageCanvasContainer .innerPageCanvasContainer canvas")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer .innerPageImageContainer img")).toExist();
         });
 
         it("should resize the canvas when user resizes the container", function () {
             reporter.reportComparison(paramsOnMissingReference);
 
-            $("#csscritic_basichtmlreporter .comparison .pageCanvasContainer").css({
+            $("#csscritic_basichtmlreporter .comparison .pageImageContainer").css({
                 width: 42,
                 height: 24
             }).trigger("mouseup");
 
-            expect(resizePageCanvasSpy).toHaveBeenCalledWith(42, 24);
+            expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24, jasmine.any(Function));
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toBe(updatedReferenceImage);
         });
     });
 
@@ -258,7 +265,7 @@ describe("Basic HTML reporter", function () {
             paramsOnErroneousTest = {
                 status: "error",
                 pageUrl: "page_url",
-                pageCanvas: null
+                pageImage: null
             };
         });
 
@@ -290,7 +297,7 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "page_url",
-                pageCanvas: htmlCanvas,
+                pageImage: htmlImage,
                 referenceImage: referenceImage
             });
 

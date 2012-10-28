@@ -1,92 +1,76 @@
 describe("Utilities", function () {
-    describe("drawPageUrl", function () {
-        var the_canvas, clearRectSpy;
+    var loadImageFromUrl = function (url, successCallback) {
+        var image = new window.Image();
+
+        image.onload = function () {
+            successCallback(image);
+        };
+        image.onerror = function () {
+            safeLog("Error loading image in test", url);
+        };
+        image.src = url;
+    };
+
+    describe("getImageForPageUrl", function () {
+        var the_image;
 
         beforeEach(function () {
-            clearRectSpy = jasmine.createSpy("clearRect");
-            the_canvas = {
-                width: null,
-                height: null,
-                getContext: jasmine.createSpy("getContext").andCallFake(function (what) {
-                    if (what === "2d") {
-                        return {clearRect: clearRectSpy};
-                    }
-                })
-            };
-
+            the_image = "the_image";
         });
 
         it("should draw the url to the given canvas and disable caching", function () {
-            var finished = false,
-                drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
-                    callback(canvas);
+            var image = null,
+                drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+                    callback(the_image, []);
                 });
 
-            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {
-                finished = true;
+            csscritic.util.getImageForPageUrl("the_url", 42, 7, function (result_image) {
+                image = result_image;
             });
 
-            expect(finished).toBeTruthy();
-            expect(the_canvas.width).toEqual(42);
-            expect(the_canvas.height).toEqual(7);
-            expect(drawUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, {cache: false}, jasmine.any(Function));
-        });
-
-        it("should clear the area before drawing", function () {
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
-                callback(canvas);
-            });
-            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {});
-
-            expect(clearRectSpy).toHaveBeenCalledWith(0, 0, 42, 7);
+            expect(the_image).toBe(image);
+            expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7}, jasmine.any(Function));
         });
 
         it("should call the error handler if a page does not exist", function () {
             var hasError = false;
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
-                callback(canvas, [{
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+                callback(the_image, [{
                     resourceType: "page",
                     url: url
                 }]);
             });
 
-            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7, function () {}, function () {
+            csscritic.util.getImageForPageUrl("the_url", 42, 7, function () {}, function () {
                 hasError = true;
             });
 
-            waitsFor(function () {
-                return hasError;
-            });
-
-            runs(function () {
-                expect(hasError).toBeTruthy();
-            });
+            expect(hasError).toBeTruthy();
         });
 
         it("should work without a callback", function () {
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
-                callback(canvas);
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+                callback(the_image, []);
             });
-            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7);
+            csscritic.util.getImageForPageUrl("the_url", 42, 7);
         });
 
         it("should work without a callback on error", function () {
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, canvas, options, callback) {
-                callback(canvas, [{
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+                callback(the_image, [{
                     resourceType: "page",
                     url: url
                 }]);
             });
-            csscritic.util.drawPageUrl("the_url", the_canvas, 42, 7);
+            csscritic.util.getImageForPageUrl("the_url", 42, 7);
         });
 
         it("should report erroneous resource urls", function () {
-            var canvas = document.createElement("canvas"),
-                erroneousResourceUrls = null,
+            var erroneousResourceUrls = null,
                 fixtureUrl = csscriticTestPath + "fixtures/",
                 pageUrl = fixtureUrl + "brokenPage.html";
 
-            csscritic.util.drawPageUrl(pageUrl, canvas, 42, 7, function (erroneousUrls) {
+            csscritic.util.getImageForPageUrl(pageUrl, 42, 7, function (result_image, erroneousUrls) {
                 erroneousResourceUrls = erroneousUrls;
             });
 
@@ -102,69 +86,6 @@ describe("Utilities", function () {
                     fixtureUrl + "css_does_not_exist.css",
                     fixtureUrl + "image_does_not_exist.png"
                 ]);
-            });
-        });
-    });
-
-    describe("getCanvasForPageUrl", function () {
-        it("should draw the url to a canvas", function () {
-            var the_canvas = null,
-                drawPageUrlSpy = spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback) {
-                    successCallback();
-                });
-
-            csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas) {
-                the_canvas = canvas;
-            }, function () {});
-
-            waitsFor(function () {
-                return the_canvas !== null;
-            });
-
-            runs(function () {
-                expect(the_canvas instanceof HTMLElement).toBeTruthy();
-                expect(the_canvas.nodeName).toEqual("CANVAS");
-
-                expect(drawPageUrlSpy).toHaveBeenCalledWith("the_url", the_canvas, 42, 7, jasmine.any(Function), jasmine.any(Function));
-            });
-        });
-
-        it("should call the error handler if a page does not exist", function () {
-            var hasError = false;
-            spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback, errorCallback) {
-                errorCallback();
-            });
-
-            csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function () {}, function () {
-                hasError = true;
-            });
-
-            waitsFor(function () {
-                return hasError;
-            });
-
-            runs(function () {
-                expect(hasError).toBeTruthy();
-            });
-        });
-
-        it("should return a list urls from of erroneous resources", function () {
-            var errorneousPageUrls = null;
-            spyOn(csscritic.util, 'drawPageUrl').andCallFake(function (url, canvas, width, height, successCallback) {
-                successCallback(["oneUrl", "someOtherUrl"]);
-            });
-
-            csscritic.util.getCanvasForPageUrl("the_url", 42, 7, function (canvas, errorneousUrls) {
-                errorneousPageUrls = errorneousUrls;
-            }, function () {});
-
-            waitsFor(function () {
-                return errorneousPageUrls !== null;
-            });
-
-            runs(function () {
-                expect(errorneousPageUrls).not.toBeNull();
-                expect(errorneousPageUrls).toEqual(["oneUrl", "someOtherUrl"]);
             });
         });
     });
@@ -232,6 +153,27 @@ describe("Utilities", function () {
             expect(resultingCanvas.width).toEqual(4);
             expect(resultingCanvas.height).toEqual(2);
             expect(resultingCanvas.getContext("2d").getImageData(0, 0, 4, 2).data).toEqual(canvasImageData.data);
+        });
+    });
+
+    describe("getDataURIForImage", function () {
+        it("should return the data URI for the given image", function () {
+            var imageDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=",
+                image = null,
+                dataUri;
+
+            loadImageFromUrl(imageDataUri, function (the_image) {
+                image = the_image;
+            });
+
+            waitsFor(function () {
+                return image !== null;
+            });
+
+            runs(function () {
+                dataUri = csscritic.util.getDataURIForImage(image);
+                expect(dataUri).toContain(imageDataUri.substr(0, 10));
+            });
         });
     });
 
