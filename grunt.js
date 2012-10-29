@@ -28,7 +28,7 @@ module.exports = function (grunt) {
             test:'test/*Spec.js'
         },
         jasmine:{
-            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
+            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'browserrenderer.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
             specs:'test/*Spec.js',
             helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
             timeout:10000,
@@ -36,7 +36,7 @@ module.exports = function (grunt) {
         },
         concat:{
             dist:{
-                src:['<banner:meta.banner>', '<file_strip_banner:<%= pkg.name %>.js>', 'basichtmlreporter.js'],
+                src:['<banner:meta.banner>', 'browserrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'basichtmlreporter.js'],
                 dest:'dist/<%= pkg.name %>.js'
             }
         },

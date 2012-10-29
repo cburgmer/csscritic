@@ -1,11 +1,9 @@
-/*! CSS critic - v0.1.0 - 2012-10-28
+/*! CSS critic - v0.1.0 - 2012-10-29
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
-window.csscritic = (function (module, window, imagediff, rasterizeHTML) {
-    var reporters = [];
-
-    module.util = {};
+window.csscritic = (function (module, rasterizeHTML) {
+    module.renderer = {};
 
     var rasterizeHTMLDidntFindThePage = function (errors) {
         var didntFindPage = false;
@@ -29,7 +27,7 @@ window.csscritic = (function (module, window, imagediff, rasterizeHTML) {
         return erroneousResourceUrls;
     };
 
-    module.util.getImageForPageUrl = function (pageUrl, width, height, successCallback, errorCallback) {
+    module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
         rasterizeHTML.drawURL(pageUrl, {cache: false, width: width, height: height}, function (image, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
@@ -44,6 +42,15 @@ window.csscritic = (function (module, window, imagediff, rasterizeHTML) {
             }
         });
     };
+
+    module.renderer.getImageForPageUrl = module.renderer.browserRenderer;
+    return module;
+}(window.csscritic || {}, rasterizeHTML));
+
+window.csscritic = (function (module, renderer, window, imagediff) {
+    var reporters = [];
+
+    module.util = {};
 
     module.util.getDataURIForImage = function (image) {
         var canvas = window.document.createElement("canvas"),
@@ -128,7 +135,7 @@ window.csscritic = (function (module, window, imagediff, rasterizeHTML) {
 
         if (pageImage) {
             result.resizePageImage = function (width, height, callback) {
-                module.util.getImageForPageUrl(pageUrl, width, height, function (image) {
+                renderer.getImageForPageUrl(pageUrl, width, height, function (image) {
                     result.pageImage = image;
                     callback(image);
                 });
@@ -177,7 +184,7 @@ window.csscritic = (function (module, window, imagediff, rasterizeHTML) {
 
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        module.util.getImageForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlImage, erroneousUrls) {
+        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlImage, erroneousUrls) {
             var isEqual, textualStatus;
 
             module.util.workAroundTransparencyIssueInFirefox(htmlImage, function (adaptedHtmlImage) {
@@ -214,7 +221,7 @@ window.csscritic = (function (module, window, imagediff, rasterizeHTML) {
     };
 
     return module;
-}(window.csscritic || {}, window, imagediff, rasterizeHTML));
+}(window.csscritic || {}, window.csscritic.renderer, window, imagediff));
 
 window.csscritic = (function (module, document) {
     module.basicHTMLReporterUtil = {};

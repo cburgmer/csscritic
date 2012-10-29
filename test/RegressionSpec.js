@@ -9,7 +9,7 @@ describe("Regression testing", function () {
             height: 7
         };
 
-        getImageForPageUrl = spyOn(csscritic.util, 'getImageForPageUrl');
+        getImageForPageUrl = spyOn(csscritic.renderer, 'getImageForPageUrl');
         readReferenceImage = spyOn(csscritic.util, 'readReferenceImage');
 
         spyOn(csscritic.util, 'workAroundTransparencyIssueInFirefox').andCallFake(function (image, callback) {
