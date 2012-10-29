@@ -35,13 +35,6 @@ describe("Browser renderer", function () {
         expect(hasError).toBeTruthy();
     });
 
-    it("should work without a callback", function () {
-        spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-            callback(the_image, []);
-        });
-        csscritic.renderer.browserRenderer("the_url", 42, 7);
-    });
-
     it("should work without a callback on error", function () {
         spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
             callback(the_image, [{

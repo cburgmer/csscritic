@@ -23,12 +23,12 @@ module.exports = function (grunt) {
                 ' * rasterizeHTML.js (MIT License) */'
         },
         lint:{
-            src:'<%= pkg.name %>.js',
+            src:['*.js'],
             grunt:'grunt.js',
             test:'test/*Spec.js'
         },
         jasmine:{
-            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'browserrenderer.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
+            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', 'browserrenderer.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
             specs:'test/*Spec.js',
             helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
             timeout:10000,
@@ -87,7 +87,11 @@ module.exports = function (grunt) {
             src:{
                 globals:{
                     rasterizeHTML:true,
-                    imagediff:true
+                    imagediff:true,
+                    phantom:true,
+                    console:true,
+                    require:true,
+                    csscritic:true
                 }
             },
             test:{
@@ -108,7 +112,8 @@ module.exports = function (grunt) {
                     csscritic:true,
                     ifNotInWebkitIt:true,
                     safeLog:true,
-                    csscriticTestPath:true
+                    csscriticTestPath:true,
+                    csscriticTestHelper:true
                 }
             }
         },

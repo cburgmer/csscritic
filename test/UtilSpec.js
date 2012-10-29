@@ -1,16 +1,4 @@
 describe("Utilities", function () {
-    var loadImageFromUrl = function (url, successCallback) {
-        var image = new window.Image();
-
-        image.onload = function () {
-            successCallback(image);
-        };
-        image.onerror = function () {
-            safeLog("Error loading image in test", url);
-        };
-        image.src = url;
-    };
-
     describe("getImageForUrl", function () {
         it("should load an image", function () {
             var the_image = null,
@@ -55,7 +43,7 @@ describe("Utilities", function () {
                 image = null,
                 dataUri;
 
-            loadImageFromUrl(imageDataUri, function (the_image) {
+            csscriticTestHelper.loadImageFromUrl(imageDataUri, function (the_image) {
                 image = the_image;
             });
 

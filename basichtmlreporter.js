@@ -275,7 +275,7 @@ window.csscritic = (function (module, document) {
     module.BasicHTMLReporter = function () {
         return {
             reportComparison: reportComparison
-        }
+        };
     };
 
     return module;

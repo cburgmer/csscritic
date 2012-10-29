@@ -1,5 +1,5 @@
 window.csscritic = (function (module, rasterizeHTML) {
-    module.renderer = {};
+    module.renderer = module.renderer || {};
 
     var rasterizeHTMLDidntFindThePage = function (errors) {
         var didntFindPage = false;

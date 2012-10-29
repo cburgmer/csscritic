@@ -3,7 +3,7 @@
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
 window.csscritic = (function (module, rasterizeHTML) {
-    module.renderer = {};
+    module.renderer = module.renderer || {};
 
     var rasterizeHTMLDidntFindThePage = function (errors) {
         var didntFindPage = false;
@@ -500,7 +500,7 @@ window.csscritic = (function (module, document) {
     module.BasicHTMLReporter = function () {
         return {
             reportComparison: reportComparison
-        }
+        };
     };
 
     return module;
