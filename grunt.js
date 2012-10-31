@@ -25,7 +25,8 @@ module.exports = function (grunt) {
         lint:{
             src:['*.js'],
             grunt:'grunt.js',
-            test:'test/*Spec.js'
+            test:'test/*Spec.js',
+            testForPhantom:'test/*SpecForPhantom.js'
         },
         jasmine:{
             src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', 'browserrenderer.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
@@ -111,6 +112,27 @@ module.exports = function (grunt) {
                     imagediff:true,
                     csscritic:true,
                     ifNotInWebkitIt:true,
+                    safeLog:true,
+                    csscriticTestPath:true,
+                    csscriticTestHelper:true
+                }
+            },
+            testForPhantom:{
+                globals:{
+                    require:true,
+                    localserver:true,
+                    "$":true,
+                    jasmine:true,
+                    describe:true,
+                    it:true,
+                    beforeEach:true,
+                    afterEach:true,
+                    waitsFor:true,
+                    runs:true,
+                    expect:true,
+                    spyOn:true,
+                    imagediff:true,
+                    csscritic:true,
                     safeLog:true,
                     csscriticTestPath:true,
                     csscriticTestHelper:true

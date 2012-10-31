@@ -136,7 +136,7 @@ describe("PhantomJS renderer", function () {
 
     it("should report erroneous resource http urls", function () {
         var erroneousResourceUrls = null,
-            servedFixtureUrl = localserver + "/" + fixtureUrl;
+            servedFixtureUrl = localserver + "/" + fixtureUrl,
             pageUrl = servedFixtureUrl + "brokenPage.html";
 
         csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, function (result_image, erroneousUrls) {
