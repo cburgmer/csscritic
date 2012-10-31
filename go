@@ -9,4 +9,4 @@ function testFailure {
 ./node_modules/.bin/grunt $@
 testFailure
 
-phantomjs run-phantomjs-tests.js
+phantomjs test/run-phantomjs-tests.js
