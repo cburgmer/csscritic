@@ -23,13 +23,9 @@ window.csscritic = (function (module) {
         image.src = url;
     };
 
-    var renderPage = function (page, width, height, successCallback, errorCallback) {
+    var renderPage = function (page, successCallback, errorCallback) {
         var base64PNG, imgURI;
 
-        page.viewportSize = {
-            width: width,
-            height: height
-        };
         base64PNG = page.renderBase64("PNG");
         imgURI = getDataUriForBase64PNG(base64PNG);
 
@@ -46,9 +42,14 @@ window.csscritic = (function (module) {
                 }
             };
 
+        page.viewportSize = {
+            width: width,
+            height: height
+        };
+
         page.open(getFileUrl(pageUrl), function (status) {
             if (status === "success") {
-                renderPage(page, width, height, function (image) {
+                renderPage(page, function (image) {
                     successCallback(image, []);
                 }, handleError);
             } else {
