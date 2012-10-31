@@ -1,5 +1,6 @@
 describe("PhantomJS renderer", function () {
     var oldRequire = window.require,
+        fixtureUrl = csscriticTestPath + "fixtures/",
         webpageModuleMock, pageMock, testPageUrl, theReferenceImageUri;
 
     var setupPageMock = function () {
@@ -17,9 +18,14 @@ describe("PhantomJS renderer", function () {
         });
     };
 
+    var getFileUrl = function (address) {
+        var fs = require("fs");
+
+        return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
+    };
 
     beforeEach(function () {
-        testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
+        testPageUrl = fixtureUrl + "pageUnderTest.html";
 
         theReferenceImageUri = "data:image/png;base64," +
             "iVBORw0KGgoAAAANSUhEUgAAAUoAAACXCAYAAABz/hJAAAADB0lEQVR4nO3UsQ3EMAADMY+ezf39I70iiARuhTv3nKvvdP495+pDs" +
@@ -103,6 +109,53 @@ describe("PhantomJS renderer", function () {
 
     it("should work without a callback on error", function () {
         csscritic.renderer.phantomjsRenderer("the_url", 42, 7);
+    });
+
+    it("should report erroneous resource file urls", function () {
+        var erroneousResourceUrls = null,
+            pageUrl = fixtureUrl + "brokenPage.html";
+
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, function (result_image, erroneousUrls) {
+            erroneousResourceUrls = erroneousUrls;
+        });
+
+        waitsFor(function () {
+            return erroneousResourceUrls !== null;
+        });
+
+        runs(function () {
+            expect(erroneousResourceUrls).not.toBeNull();
+            erroneousResourceUrls.sort();
+            expect(erroneousResourceUrls).toEqual([
+                getFileUrl(fixtureUrl + "background_image_does_not_exist.jpg"),
+                getFileUrl(fixtureUrl + "css_does_not_exist.css"),
+                getFileUrl(fixtureUrl + "image_does_not_exist.png")
+            ]);
+        });
+    });
+
+    it("should report erroneous resource http urls", function () {
+        var erroneousResourceUrls = null,
+            servedFixtureUrl = localserver + "/" + fixtureUrl;
+            pageUrl = servedFixtureUrl + "brokenPage.html";
+
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, function (result_image, erroneousUrls) {
+            erroneousResourceUrls = erroneousUrls;
+        });
+
+        waitsFor(function () {
+            return erroneousResourceUrls !== null;
+        });
+
+        runs(function () {
+            expect(erroneousResourceUrls).not.toBeNull();
+            erroneousResourceUrls.sort();
+            expect(erroneousResourceUrls).toEqual([
+                servedFixtureUrl + "background_image_does_not_exist.jpg",
+                servedFixtureUrl + "css_does_not_exist.css",
+                servedFixtureUrl + "image_does_not_exist.png"
+            ]);
+        });
     });
 
 });

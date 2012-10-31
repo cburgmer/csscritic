@@ -36,11 +36,22 @@ window.csscritic = (function (module) {
 
     module.renderer.phantomjsRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
         var page = require("webpage").create(),
+            errorneousResources = [],
             handleError = function () {
                 if (errorCallback) {
                     errorCallback();
                 }
             };
+
+        page.onResourceReceived = function (response) {
+            var protocol = response.url.substr(0, 7);
+
+            if (response.stage === "end" &&
+                ((protocol === "http://" && response.status !== 200) ||
+                    (protocol === "file://" && !response.headers.length))) {
+                errorneousResources.push(response.url);
+            }
+        };
 
         page.viewportSize = {
             width: width,
@@ -50,7 +61,7 @@ window.csscritic = (function (module) {
         page.open(getFileUrl(pageUrl), function (status) {
             if (status === "success") {
                 renderPage(page, function (image) {
-                    successCallback(image, []);
+                    successCallback(image, errorneousResources);
                 }, handleError);
             } else {
                 handleError();
