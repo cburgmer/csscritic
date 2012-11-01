@@ -74,7 +74,7 @@ module.exports = function (grunt) {
         },
         csslint: {
             basichtmlreporter: {
-                src: 'src/<%= pkg.name %>.css',
+                src: 'src/basichtmlreporter.css',
                 rules:{
                     "ids":false,
                     "adjoining-classes":false,
