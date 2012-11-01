@@ -36,13 +36,11 @@ CSS critic checks your current layout constantly against a reference image you h
 
 Testing
 -------
-Run
+Install Node.js and PhantomJS and run
 
-    $ npm install
-    $ ./node_modules/.bin/bower install
     $ ./go
 
-for linting, jasmine tests and minification.
+for linting, tests and minification.
 
 Limitations
 -----------

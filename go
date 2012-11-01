@@ -6,7 +6,31 @@ function testFailure {
     fi
 }
 
-./node_modules/.bin/grunt $@
-testFailure
+function installBuildDependencies {
+    npm install
+}
 
-phantomjs test/run-phantomjs-tests.js
+function installDependencies {
+    ./node_modules/.bin/bower install
+}
+
+function build {
+    ./node_modules/.bin/grunt $@
+    testFailure
+}
+
+function runPhantomJSOnlyTests {
+    phantomjs test/run-phantomjs-tests.js
+    testFailure
+}
+
+if [ ! -d node_modules ]; then
+    installBuildDependencies
+fi
+
+if [ ! -d components ]; then
+    installDependencies
+fi
+
+build
+runPhantomJSOnlyTests
