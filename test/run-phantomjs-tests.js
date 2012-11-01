@@ -10,8 +10,8 @@ function loadCode() {
     phantom.injectJs("./test/helpers.js");
 
     phantom.injectJs("./lib/imagediff.js");
-    phantom.injectJs("./phantomjsrenderer.js");
-    phantom.injectJs("./csscritic.js");
+    phantom.injectJs("./src/phantomjsrenderer.js");
+    phantom.injectJs("./src/csscritic.js");
 }
 
 function loadTests() {

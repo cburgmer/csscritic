@@ -34,13 +34,13 @@ module.exports = function (grunt) {
                 ' * rasterizeHTML.js (MIT License) */'
         },
         lint:{
-            src:['*.js'],
-            grunt:'grunt.js',
+            src:['src/*.js'],
+            grunt:'*.js',
             test:['test/*Spec.js', 'test/helpers.js', 'test/gruntpath.js'],
             testForPhantom:['test/run-phantomjs-tests.js', 'test/*SpecForPhantom.js', 'test/phantomjs-regressionrunner.js']
         },
         jasmine:{
-            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', 'browserrenderer.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
+            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/browserrenderer.js', 'src/<%= pkg.name %>.js', 'src/basichtmlreporter.js'],
             specs:'test/*Spec.js',
             helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
             timeout:10000,
@@ -48,11 +48,11 @@ module.exports = function (grunt) {
         },
         concat:{
             dist:{
-                src:['<banner:meta.banner>', 'browserrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'basichtmlreporter.js'],
+                src:['<banner:meta.banner>', 'src/browserrenderer.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/basichtmlreporter.js'],
                 dest:'dist/<%= pkg.name %>.js'
             },
             "phantomjs": {
-                src:['<banner:meta.bannerPhantomjs>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'autoacceptingreporter.js', 'phantomjs-runnerlib.js'],
+                src:['<banner:meta.bannerPhantomjs>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'src/phantomjsrenderer.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/autoacceptingreporter.js', 'src/phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },
@@ -68,13 +68,13 @@ module.exports = function (grunt) {
         },
         cssmin:{
             dist:{
-                src:['basichtmlreporter.css'],
+                src:['src/basichtmlreporter.css'],
                 dest:'dist/<%= pkg.name %>.min.css'
             }
         },
         csslint: {
             basichtmlreporter: {
-                src: '<%= pkg.name %>.css',
+                src: 'src/<%= pkg.name %>.css',
                 rules:{
                     "ids":false,
                     "adjoining-classes":false,
