@@ -224,10 +224,17 @@ window.csscritic = (function (module, document) {
 
             emptyNode(tooltip);
             tooltip.style.display = "block";
-            tooltip.style.top = event.clientY + 10 + "px";
-            tooltip.style.left = event.clientX + 10 + "px";
+            tooltip.style.top = event.pageY + 10 + "px";
+            tooltip.style.left = event.pageX + 10 + "px";
 
             tooltip.appendChild(image);
+        };
+
+        entry.onmousemove = function (event) {
+            var tooltip = getOrCreateDivWithId("csscritic_basichtmlreporter_tooltip");
+
+            tooltip.style.top = event.pageY + 10 + "px";
+            tooltip.style.left = event.pageX + 10 + "px";
         };
 
         entry.onmouseout = function () {
