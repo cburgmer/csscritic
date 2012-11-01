@@ -15,6 +15,37 @@
 </head>
 <body>
 <div id="csscritic_basichtmlreporter">
+    <div class="comparison failed"><a class="pageUrl" href="failingPage.html">failingPage.html</a><span class="status">failed</span>
+
+        <div class="differenceCanvasContainer">
+            <canvas height="100" width="100"></canvas>
+        </div>
+        <div class="outerPageImageContainer"><span class="caption">Page</span>
+
+            <div class="pageImageContainer" style="width: 120px; height: 110px;">
+                <div class="innerPageImageContainer"><img src="fixtures/green.png"></div>
+            </div>
+        </div>
+        <div class="outerReferenceImageContainer"><span class="caption">Reference</span>
+
+            <div class="referenceImageContainer"><img src="fixtures/green.png"></div>
+        </div>
+        <div class="updateHint warning">You can
+            <button>accept the rendered page</button>
+            thus making it the new reference.<span class="finished" style=""></span></div>
+    </div>
+    <div class="comparison referenceMissing"><a class="pageUrl" href="pageWithoutReference.html">pageWithoutReference.html</a><span
+            class="status">missing reference</span>
+
+        <div class="saveHint warning">
+            <button>Accept the rendered page</button>
+            and save this as later reference.<span class="finished" style=""></span></div>
+        <div class="outerPageImageContainer">
+            <div class="pageImageContainer" style="width: 120px; height: 110px;">
+                <div class="innerPageImageContainer"><img src="fixtures/green.png"></div>
+            </div>
+        </div>
+    </div>
     <div class="comparison passed"><a class="pageUrl" href="passingPage.html">passingPage.html</a><span class="status">passed</span>
     </div>
     <div class="comparison failed"><a class="pageUrl" href="failingPage.html">failingPage.html</a><span class="status">failed</span>

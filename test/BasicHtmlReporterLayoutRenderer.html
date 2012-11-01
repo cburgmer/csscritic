@@ -34,6 +34,13 @@
             return mocks;
         }
 
+        function clickAcceptButtonToShowTick() {
+            var elements = document.getElementsByTagName("button");
+            Array.prototype.forEach.call(elements, function (elem) {
+                elem.onclick();
+            });
+        }
+
         function increasePageImageSizeToShowTransparentBackground() {
             var elements = document.getElementsByClassName("pageImageContainer");
             Array.prototype.forEach.call(elements, function (elem) {
@@ -48,6 +55,23 @@
                 dummyFunc = function () {},
                 mocks = setUpMocks();
 
+            reporter.reportComparison({
+                status: "failed",
+                pageUrl: "failingPage.html",
+                pageImage: mocks.htmlImage(),
+                resizePageImage: dummyFunc,
+                acceptPage: dummyFunc,
+                referenceImage: mocks.referenceImage(),
+                differenceImageData: mocks.differenceImageData()
+            });
+            reporter.reportComparison({
+                status: "referenceMissing",
+                pageUrl: "pageWithoutReference.html",
+                pageImage: mocks.htmlImage(),
+                resizePageImage: dummyFunc,
+                acceptPage: dummyFunc
+            });
+            clickAcceptButtonToShowTick();
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "passingPage.html",
