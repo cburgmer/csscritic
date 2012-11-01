@@ -39,6 +39,10 @@ module.exports = function (grunt) {
             dist:{
                 src:['<banner:meta.banner>', 'browserrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'basichtmlreporter.js'],
                 dest:'dist/<%= pkg.name %>.js'
+            },
+            "phantomjs": {
+                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'autoacceptingreporter.js', 'phantomjs-runnerlib.js'],
+                dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },
         min:{
@@ -49,10 +53,6 @@ module.exports = function (grunt) {
             allinone: {
                 src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', '<config:concat.dist.dest>'],
                 dest:'dist/<%= pkg.name %>.allinone.js'
-            },
-            "phantomjs-allinone": {
-                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'autoacceptingreporter.js', 'phantomjs-runnerlib.js'],
-                dest:'dist/<%= pkg.name %>-runner.js'
             }
         },
         cssmin:{
