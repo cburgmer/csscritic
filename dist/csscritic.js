@@ -415,9 +415,10 @@ window.csscritic = (function (module, document) {
     };
 
     var createPageUrl = function (result) {
-        var pageUrl = document.createElement("span");
+        var pageUrl = document.createElement("a");
         pageUrl.className = "pageUrl";
         pageUrl.textContent = result.pageUrl;
+        pageUrl.href = result.pageUrl;
         return pageUrl;
     };
 

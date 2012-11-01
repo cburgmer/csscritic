@@ -5,11 +5,19 @@
     <meta charset="utf-8"/>
 
     <link rel="stylesheet" type="text/css" href="../basichtmlreporter.css">
+    <style type="text/css">
+        a {
+            /* Fix for SVG not applying browser rules for links */
+            text-decoration: underline;
+            color: blue;
+        }
+    </style>
 </head>
 <body>
 <div id="csscritic_basichtmlreporter">
-    <div class="comparison passed"><span class="pageUrl">passingPage.html</span><span class="status">passed</span></div>
-    <div class="comparison failed"><span class="pageUrl">failingPage.html</span><span class="status">failed</span>
+    <div class="comparison passed"><a class="pageUrl" href="passingPage.html">passingPage.html</a><span class="status">passed</span>
+    </div>
+    <div class="comparison failed"><a class="pageUrl" href="failingPage.html">failingPage.html</a><span class="status">failed</span>
 
         <div class="differenceCanvasContainer">
             <canvas height="100" width="100"></canvas>
@@ -28,7 +36,8 @@
             <button>accept the rendered page</button>
             thus making it the new reference.<span class="finished" style="display: none;"></span></div>
     </div>
-    <div class="comparison referenceMissing"><span class="pageUrl">pageWithoutReference.html</span><span class="status">missing reference</span>
+    <div class="comparison referenceMissing"><a class="pageUrl" href="pageWithoutReference.html">pageWithoutReference.html</a><span
+            class="status">missing reference</span>
 
         <div class="saveHint warning">
             <button>Accept the rendered page</button>
@@ -39,13 +48,13 @@
             </div>
         </div>
     </div>
-    <div class="comparison error"><span class="pageUrl">missingPage.html </span><span class="status">error</span>
+    <div class="comparison error"><a class="pageUrl" href="missingPage.html ">missingPage.html </a><span class="status">error</span>
 
         <div class="errorMsg warning">The page 'missingPage.html ' could not be read. Make sure the path lies within the
             same origin as this document.
         </div>
     </div>
-    <div class="comparison passed"><span class="pageUrl">passingPage.html</span><span class="status">passed</span>
+    <div class="comparison passed"><a class="pageUrl" href="passingPage.html">passingPage.html</a><span class="status">passed</span>
 
         <div class="loadErrors warning">Could not load the referenced resources:
             <ul>
@@ -55,7 +64,7 @@
             Make sure the paths lie within the same origin as this document.
         </div>
     </div>
-    <div class="comparison failed"><span class="pageUrl">failingPage.html</span><span class="status">failed</span>
+    <div class="comparison failed"><a class="pageUrl" href="failingPage.html">failingPage.html</a><span class="status">failed</span>
 
         <div class="loadErrors warning">Could not load the referenced resources:
             <ul>
@@ -81,7 +90,8 @@
             <button>accept the rendered page</button>
             thus making it the new reference.<span class="finished" style="display: none;"></span></div>
     </div>
-    <div class="comparison referenceMissing"><span class="pageUrl">pageWithoutReference.html</span><span class="status">missing reference</span>
+    <div class="comparison referenceMissing"><a class="pageUrl" href="pageWithoutReference.html">pageWithoutReference.html</a><span
+            class="status">missing reference</span>
 
         <div class="loadErrors warning">Could not load the referenced resources:
             <ul>

@@ -42,6 +42,17 @@ describe("Basic HTML reporter", function () {
         expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url<img>");
     });
 
+    it("should show a link to the page", function () {
+        reporter.reportComparison({
+            status: "passed",
+            pageUrl: "dir/page_url",
+            pageImage: htmlImage,
+            referenceImage: referenceImage
+        });
+
+        expect($("#csscritic_basichtmlreporter .comparison a.pageUrl")).toHaveAttr("href", "dir/page_url");
+    });
+
     it("should show erroneous page resources", function () {
         reporter.reportComparison({
             status: "passed",

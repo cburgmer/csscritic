@@ -24,6 +24,10 @@
     background-color: #BE2F33;
 }
 
+#csscritic_basichtmlreporter .comparison .pageUrl {
+    color: black;
+}
+
 #csscritic_basichtmlreporter .comparison .status {
     float: right;
 }
