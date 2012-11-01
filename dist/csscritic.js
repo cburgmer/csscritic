@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2012-10-29
+/*! CSS critic - v0.1.0 - 2012-11-01
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 
@@ -267,7 +267,7 @@ window.csscritic = (function (module, document) {
     };
 
     var createPageCanvasContainer = function (result, withCaption) {
-        var outerPageCanvasContainer = document.createElement("div"),
+        var outerPageImageContainer = document.createElement("div"),
             pageImageContainer = document.createElement("div"),
             pageCanvasInnerContainer = document.createElement("div"),
             caption;
@@ -280,7 +280,7 @@ window.csscritic = (function (module, document) {
             caption = document.createElement("span");
             caption.className = "caption";
             caption.textContent = "Page";
-            outerPageCanvasContainer.appendChild(caption);
+            outerPageImageContainer.appendChild(caption);
         }
 
         pageCanvasInnerContainer.className = "innerPageImageContainer";
@@ -298,10 +298,10 @@ window.csscritic = (function (module, document) {
             });
         });
 
-        outerPageCanvasContainer.className = "outerPageCanvasContainer";
-        outerPageCanvasContainer.appendChild(pageImageContainer);
+        outerPageImageContainer.className = "outerPageImageContainer";
+        outerPageImageContainer.appendChild(pageImageContainer);
 
-        return outerPageCanvasContainer;
+        return outerPageImageContainer;
     };
 
     var createReferenceImageContainer = function (result) {

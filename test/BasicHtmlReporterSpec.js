@@ -132,9 +132,9 @@ describe("Basic HTML reporter", function () {
         it("should show a caption with the rendered page", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .pageImageContainer img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .caption")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .outerPageCanvasContainer .caption").text()).toEqual("Page");
+            expect($("#csscritic_basichtmlreporter .comparison .outerPageImageContainer .pageImageContainer img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .outerPageImageContainer .caption")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .outerPageImageContainer .caption").text()).toEqual("Page");
         });
 
         it("should provide an inner div between page container and canvas for styling purposes", function () {
