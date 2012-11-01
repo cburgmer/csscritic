@@ -20,13 +20,24 @@ module.exports = function (grunt) {
                 ' * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),\n' +
                 ' * htmlparser.js,\n' +
                 ' * imagediff.js (MIT License),\n' +
+                ' * rasterizeHTML.js (MIT License) */',
+            bannerPhantomjs:'/*! PhantomJS regression runner for <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
+                '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+                '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
+                '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+                ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
+                '\n/* Integrated dependencies:\n' +
+                ' * URI.js (MIT License/GPL v3),\n' +
+                ' * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),\n' +
+                ' * htmlparser.js,\n' +
+                ' * imagediff.js (MIT License),\n' +
                 ' * rasterizeHTML.js (MIT License) */'
         },
         lint:{
             src:['*.js'],
             grunt:'grunt.js',
-            test:'test/*Spec.js',
-            testForPhantom:'test/*SpecForPhantom.js'
+            test:['test/*Spec.js', 'test/helpers.js', 'test/gruntpath.js'],
+            testForPhantom:['test/run-phantomjs-tests.js', 'test/*SpecForPhantom.js', 'test/phantomjs-regressionrunner.js']
         },
         jasmine:{
             src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', 'browserrenderer.js', '<%= pkg.name %>.js', 'basichtmlreporter.js'],
@@ -41,7 +52,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.js'
             },
             "phantomjs": {
-                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'autoacceptingreporter.js', 'phantomjs-runnerlib.js'],
+                src:['<banner:meta.bannerPhantomjs>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'phantomjsrenderer.js', '<file_strip_banner:<%= pkg.name %>.js>', 'autoacceptingreporter.js', 'phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },
@@ -123,6 +134,7 @@ module.exports = function (grunt) {
             },
             testForPhantom:{
                 globals:{
+                    phantom:true,
                     require:true,
                     localserver:true,
                     "$":true,

@@ -1,1 +1,1 @@
-var csscriticTestPath = "test/";
+window.csscriticTestPath = "test/";

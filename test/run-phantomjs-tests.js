@@ -1,7 +1,5 @@
-/*global jasmine, csscriticTestPath:true, localserver:true */
-
 var port = 8000;
-localserver = "http://localhost:" + port;
+window.localserver = "http://localhost:" + port;
 
 function loadJasmine() {
     phantom.injectJs("./test/lib/jasmine-1.2.0/jasmine.js");
@@ -43,7 +41,7 @@ function startWebserver() {
 function startJasmine() {
     var jasmineEnv = jasmine.getEnv();
     jasmineEnv.addReporter(new jasmine.ConsoleReporter(function(msg) {
-        console.log(msg.replace('\n', ''));
+        window.console.log(msg.replace('\n', ''));
     }, function(reporter) {
         phantom.exit(reporter.results().failedCount);
     }, true));
@@ -56,7 +54,7 @@ function startJasmine() {
 loadJasmine();
 loadCode();
 
-csscriticTestPath = '';
+window.csscriticTestPath = '';
 
 var fs = require('fs');
 fs.changeWorkingDirectory('./test');

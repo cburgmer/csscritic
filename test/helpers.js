@@ -1,18 +1,18 @@
-var isWebkit = navigator.userAgent.indexOf("WebKit") >= 0,
-    ifNotInWebkitIt = function(text, functionHandle) {
-        if (! isWebkit) {
-            return it(text, functionHandle);
-        } else {
-            safeLog('Warning: "' + text + '" is disabled on this platform');
-        }
-    },
-    safeLog = function (msg) {
-        if (window.console && console.log) {
-            console.log(msg);
-        }
-    };
+window.isWebkit = navigator.userAgent.indexOf("WebKit") >= 0;
+window.ifNotInWebkitIt = function(text, functionHandle) {
+    if (! window.isWebkit) {
+        return it(text, functionHandle);
+    } else {
+        safeLog('Warning: "' + text + '" is disabled on this platform');
+    }
+};
+window.safeLog = function (msg) {
+    if (window.console && window.console.log) {
+        window.console.log(msg);
+    }
+};
 
-var csscriticTestHelper = (function () {
+window.csscriticTestHelper = (function () {
     var module = {};
 
     module.loadImageFromUrl = function (url, successCallback) {
