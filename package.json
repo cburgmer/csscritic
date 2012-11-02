@@ -21,6 +21,6 @@
     "bower": "~0.1.0"
   },
   "scripts": {
-    "test": "bower install && bash go --verbose"
+    "test": "bash go --verbose"
   }
 }
