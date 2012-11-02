@@ -24,6 +24,12 @@ function runPhantomJSOnlyTests {
     testFailure
 }
 
+function runPhantomJSRunnerIntegrationTest {
+    # TODO too simple
+    phantomjs test/phantomjs-regressionrunner.js test/fixtures/brokenPage.html test/fixtures/pageUnderTest.html
+    testFailure
+}
+
 if [ ! -d node_modules ]; then
     installBuildDependencies
 fi
@@ -34,3 +40,4 @@ fi
 
 build
 runPhantomJSOnlyTests
+runPhantomJSRunnerIntegrationTest
