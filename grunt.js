@@ -27,11 +27,7 @@ module.exports = function (grunt) {
                 '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
                 ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
                 '\n/* Integrated dependencies:\n' +
-                ' * URI.js (MIT License/GPL v3),\n' +
-                ' * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),\n' +
-                ' * htmlparser.js,\n' +
-                ' * imagediff.js (MIT License),\n' +
-                ' * rasterizeHTML.js (MIT License) */'
+                ' * imagediff.js (MIT License) */'
         },
         lint:{
             src:['src/*.js'],
@@ -52,7 +48,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.js'
             },
             "phantomjs": {
-                src:['<banner:meta.bannerPhantomjs>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'src/phantomjsrenderer.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/autoacceptingreporter.js', 'src/phantomjs-runnerlib.js'],
+                src:['<banner:meta.bannerPhantomjs>', 'lib/*.js', 'src/phantomjsrenderer.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/autoacceptingreporter.js', 'src/phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },
