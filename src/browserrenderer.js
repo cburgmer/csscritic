@@ -32,9 +32,7 @@ window.csscritic = (function (module, rasterizeHTML) {
                     errorCallback();
                 }
             } else {
-                if (successCallback) {
-                    successCallback(image, erroneousResourceUrls);
-                }
+                successCallback(image, erroneousResourceUrls);
             }
         });
     };

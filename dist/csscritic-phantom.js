@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-02
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-03
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 /* Integrated dependencies:
@@ -555,10 +555,6 @@ window.csscritic = (function (module, renderer, window, imagediff) {
 
         if (erroneousPageUrls && erroneousPageUrls.length) {
             result.erroneousPageUrls = erroneousPageUrls;
-        }
-
-        if (status === "failed") {
-            result.differenceImageData = imagediff.diff(pageImage, referenceImage);
         }
 
         return result;

@@ -161,13 +161,11 @@ describe("Regression testing", function () {
     });
 
     describe("Reporting", function () {
-        var reporter, diffCanvas;
+        var reporter;
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
             csscritic.addReporter(reporter);
-
-            diffCanvas = jasmine.createSpy('diffCanvas');
         });
 
         it("should report a successful comparison", function () {
@@ -193,7 +191,6 @@ describe("Regression testing", function () {
         });
 
         it("should report a canvas showing the difference on a failing comparison", function () {
-            var imagediffDiffSpy = spyOn(imagediff, 'diff').andReturn(diffCanvas);
             spyOn(imagediff, 'equal').andReturn(false);
 
             getImageForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
@@ -211,10 +208,8 @@ describe("Regression testing", function () {
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
-                referenceImage: referenceImage,
-                differenceImageData: diffCanvas
+                referenceImage: referenceImage
             });
-            expect(imagediffDiffSpy).toHaveBeenCalledWith(htmlImage, referenceImage);
         });
 
         it("should report a missing reference image", function () {

@@ -1,5 +1,5 @@
 describe("Basic HTML reporter", function () {
-    var reporter, htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, differenceImageData;
+    var reporter, htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas;
 
     beforeEach(function () {
         reporter = csscritic.BasicHTMLReporter();
@@ -8,10 +8,11 @@ describe("Basic HTML reporter", function () {
         referenceImage = new window.Image();
         updatedReferenceImage = new window.Image();
         differenceImageCanvas = window.document.createElement("canvas");
-        differenceImageData = differenceImageCanvas.getContext("2d").createImageData(1, 1);
 
-        spyOn(csscritic.basicHTMLReporterUtil, 'getCanvasForImageData').andCallFake(function () {
-            return differenceImageCanvas;
+        spyOn(csscritic.basicHTMLReporterUtil, 'getDifferenceCanvas').andCallFake(function (imageA, imageB) {
+            if (imageA === htmlImage && imageB === referenceImage) {
+                return differenceImageCanvas;
+            }
         });
     });
 
@@ -110,8 +111,7 @@ describe("Basic HTML reporter", function () {
                 pageImage: htmlImage,
                 resizePageImage: resizePageImageSpy,
                 acceptPage: acceptPageSpy,
-                referenceImage: referenceImage,
-                differenceImageData: differenceImageData
+                referenceImage: referenceImage
             };
         });
 

@@ -1,15 +1,16 @@
 window.csscritic = (function (module, document) {
     module.basicHTMLReporterUtil = {};
 
-    module.basicHTMLReporterUtil.getCanvasForImageData = function (imageData) {
-        var canvas = document.createElement("canvas"),
+    module.basicHTMLReporterUtil.getDifferenceCanvas = function (imageA, imageB) {
+        var differenceImageData = imagediff.diff(imageA, imageB),
+            canvas = document.createElement("canvas"),
             context;
 
-        canvas.height = imageData.height;
-        canvas.width  = imageData.width;
+        canvas.height = differenceImageData.height;
+        canvas.width  = differenceImageData.width;
 
         context = canvas.getContext("2d");
-        context.putImageData(imageData, 0, 0);
+        context.putImageData(differenceImageData, 0, 0);
 
         return canvas;
     };
@@ -169,7 +170,7 @@ window.csscritic = (function (module, document) {
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = document.createElement("div");
         differenceCanvasContainer.className = "differenceCanvasContainer";
-        differenceCanvasContainer.appendChild(module.basicHTMLReporterUtil.getCanvasForImageData(result.differenceImageData));
+        differenceCanvasContainer.appendChild(module.basicHTMLReporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage));
         return differenceCanvasContainer;
     };
 

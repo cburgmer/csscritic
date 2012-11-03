@@ -104,10 +104,6 @@ window.csscritic = (function (module, renderer, window, imagediff) {
             result.erroneousPageUrls = erroneousPageUrls;
         }
 
-        if (status === "failed") {
-            result.differenceImageData = imagediff.diff(pageImage, referenceImage);
-        }
-
         return result;
     };
 
