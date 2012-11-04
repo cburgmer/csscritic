@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-03
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-04
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 /* Integrated dependencies:
@@ -425,7 +425,7 @@ window.csscritic = (function (module) {
             var protocol = response.url.substr(0, 7);
 
             if (response.stage === "end" &&
-                ((protocol === "http://" && response.status !== 200) ||
+                ((protocol !== "file://" && response.status >= 400) ||
                     (protocol === "file://" && !response.headers.length))) {
                 errorneousResources.push(response.url);
             }

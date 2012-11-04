@@ -47,7 +47,7 @@ window.csscritic = (function (module) {
             var protocol = response.url.substr(0, 7);
 
             if (response.stage === "end" &&
-                ((protocol === "http://" && response.status !== 200) ||
+                ((protocol !== "file://" && response.status >= 400) ||
                     (protocol === "file://" && !response.headers.length))) {
                 errorneousResources.push(response.url);
             }
