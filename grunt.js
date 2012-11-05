@@ -32,8 +32,8 @@ module.exports = function (grunt) {
         lint:{
             src:['src/*.js'],
             grunt:'*.js',
-            test:['test/*Spec.js', 'test/helpers.js', 'test/gruntpath.js'],
-            testForPhantom:['test/run-phantomjs-tests.js', 'test/*SpecForPhantom.js', 'test/phantomjs-regressionrunner.js']
+            test:['test/*Spec.js', 'test/gruntpath.js'],
+            testForPhantom:['test/helpers.js', 'test/run-phantomjs-tests.js', 'test/*SpecForPhantom.js', 'test/phantomjs-regressionrunner.js']
         },
         jasmine:{
             src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/browserrenderer.js', 'src/domstorage.js', 'src/<%= pkg.name %>.js', 'src/basichtmlreporter.js'],

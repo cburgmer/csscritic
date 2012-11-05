@@ -27,5 +27,21 @@ window.csscriticTestHelper = (function () {
         image.src = url;
     };
 
+    function tempPathName () {
+        return "/tmp/csscriticTest." + Math.floor(Math.random() * 10000) + "/";
+    }
+
+    module.createTempPath = function () {
+        var fs = require("fs"),
+            path = tempPathName();
+
+        while (fs.exists(path)) {
+            path = tempPathName();
+        }
+
+        fs.makeDirectory(path);
+        return path;
+    };
+
     return module;
 }());

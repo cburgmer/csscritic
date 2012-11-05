@@ -1,5 +1,6 @@
-describe("Web storage support for reference images", function () {
-    var imgUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
+describe("Phantom storage support for reference images", function () {
+    var fs = require("fs"),
+        imgUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
         img = null;
 
     beforeEach(function () {
@@ -8,11 +9,7 @@ describe("Web storage support for reference images", function () {
         });
         this.addMatchers(imagediff.jasmine);
 
-        localStorage.clear();
-    });
-
-    afterEach(function () {
-        localStorage.clear();
+        csscritic.filestorage.options.basePath = csscriticTestHelper.createTempPath();
     });
 
     it("should store a the rendered page to Web storage", function () {
@@ -24,9 +21,9 @@ describe("Web storage support for reference images", function () {
         });
 
         runs(function () {
-            csscritic.domstorage.storeReferenceImage("somePage.html", img);
+            csscritic.filestorage.storeReferenceImage("somePage.html", img);
 
-            stringValue = localStorage.getItem("somePage.html");
+            stringValue = fs.read(csscritic.filestorage.options.basePath + "somePage.html.json");
             expect(stringValue).not.toBeNull();
 
             value = JSON.parse(stringValue);
@@ -44,32 +41,15 @@ describe("Web storage support for reference images", function () {
         });
     });
 
-    it("should alert the user that possibly the wrong browser is used", function () {
-        var canvas = {
-                toDataURL: jasmine.createSpy("canvas").andThrow("can't read canvas")
-            },
-            alertSpy = spyOn(window, 'alert'),
-            errorThrown = false;
-
-        try {
-            csscritic.domstorage.storeReferenceImage("somePage.html", canvas);
-        } catch (e) {
-            errorThrown = true;
-        }
-
-        expect(errorThrown).toBeTruthy();
-        expect(alertSpy).toHaveBeenCalled();
-    });
-
     it("should read in a reference image from Web storage", function () {
         var readImage,
             getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
             success("read image fake");
         });
 
-        localStorage.setItem("someOtherPage.html", '{"referenceImageUri": "' + imgUri + '"}');
+        fs.write(csscritic.filestorage.options.basePath + "someOtherPage.html.json", '{"referenceImageUri": "' + imgUri + '"}', 'w');
 
-        csscritic.domstorage.readReferenceImage("someOtherPage.html", function (img) {
+        csscritic.filestorage.readReferenceImage("someOtherPage.html", function (img) {
             readImage = img;
         }, function () {});
 
@@ -80,7 +60,29 @@ describe("Web storage support for reference images", function () {
     it("should call error handler if no reference image has been stored", function () {
         var errorCalled = false;
 
-        csscritic.domstorage.readReferenceImage("someOtherPage.html", function () {}, function () {
+        csscritic.filestorage.readReferenceImage("yetAnotherPage.html", function () {}, function () {
+            errorCalled = true;
+        });
+
+        expect(errorCalled).toBeTruthy();
+    });
+
+    it("should call error handler if the content's JSON is invalid", function () {
+        var errorCalled = false;
+
+        fs.write(csscritic.filestorage.options.basePath + "evenMoarPage.html.json", ';', 'w');
+        csscritic.filestorage.readReferenceImage("evenMoarPage.html", function () {}, function () {
+            errorCalled = true;
+        });
+
+        expect(errorCalled).toBeTruthy();
+    });
+
+    it("should call error handler if the image is missing", function () {
+        var errorCalled = false;
+
+        fs.write(csscritic.filestorage.options.basePath + "yetyetAnotherPage.html.json", '{}', 'w');
+        csscritic.filestorage.readReferenceImage("yetyetAnotherPage.html", function () {}, function () {
             errorCalled = true;
         });
 
@@ -93,9 +95,8 @@ describe("Web storage support for reference images", function () {
             error();
         });
 
-        localStorage.setItem("someOtherPage.html", '{"referenceImageUri": "broken uri"}');
-
-        csscritic.domstorage.readReferenceImage("someOtherPage.html", function () {}, function () {
+        fs.write(csscritic.filestorage.options.basePath + "alreadyEnoughOfPage.html.json", '{"referenceImageUri": "broken uri"}', 'w');
+        csscritic.filestorage.readReferenceImage("alreadyEnoughOfPage.html", function () {}, function () {
             errorCalled = true;
         });
 

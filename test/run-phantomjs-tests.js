@@ -11,10 +11,12 @@ function loadCode() {
 
     phantom.injectJs("./lib/imagediff.js");
     phantom.injectJs("./src/phantomjsrenderer.js");
+    phantom.injectJs("./src/filestorage.js");
     phantom.injectJs("./src/csscritic.js");
 }
 
 function loadTests() {
+    phantom.injectJs("./FileStorageSpecForPhantom.js");
     phantom.injectJs("./PhantomJSRendererSpecForPhantom.js");
 }
 
