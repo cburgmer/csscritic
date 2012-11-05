@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-04
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-05
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 /* Integrated dependencies:
@@ -451,7 +451,47 @@ window.csscritic = (function (module) {
     return module;
 }(window.csscritic || {}));
 
-window.csscritic = (function (module, renderer, window, imagediff) {
+window.csscritic = (function (module) {
+    module.storage = module.storage || {};
+    module.domstorage = {};
+
+    module.domstorage.storeReferenceImage = function (key, pageImage) {
+        var uri, dataObj;
+
+        try {
+            uri = module.util.getDataURIForImage(pageImage);
+        } catch (e) {
+            window.alert("An error occurred reading the canvas. Are you sure you are using Firefox?\n" + e);
+            throw e;
+        }
+        dataObj = {
+            referenceImageUri: uri
+        };
+
+        localStorage.setItem(key, JSON.stringify(dataObj));
+    };
+
+    module.domstorage.readReferenceImage = function (key, successCallback, errorCallback) {
+        var dataObjString = localStorage.getItem(key),
+            dataObj;
+
+        if (dataObjString) {
+            dataObj = JSON.parse(dataObjString);
+
+            module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+                successCallback(img);
+            }, errorCallback);
+        } else {
+            errorCallback();
+        }
+    };
+
+    module.storage.storeReferenceImage = module.domstorage.storeReferenceImage;
+    module.storage.readReferenceImage = module.domstorage.readReferenceImage;
+    return module;
+}(window.csscritic || {}));
+
+window.csscritic = (function (module, renderer, storage, window, imagediff) {
     var reporters = [];
 
     module.util = {};
@@ -499,37 +539,6 @@ window.csscritic = (function (module, renderer, window, imagediff) {
         });
     };
 
-    module.util.storeReferenceImage = function (key, pageImage) {
-        var uri, dataObj;
-
-        try {
-            uri = module.util.getDataURIForImage(pageImage);
-        } catch (e) {
-            window.alert("An error occurred reading the canvas. Are you sure you are using Firefox?\n" + e);
-            throw e;
-        }
-        dataObj = {
-            referenceImageUri: uri
-        };
-
-        localStorage.setItem(key, JSON.stringify(dataObj));
-    };
-
-    module.util.readReferenceImage = function (key, successCallback, errorCallback) {
-        var dataObjString = localStorage.getItem(key),
-            dataObj;
-
-        if (dataObjString) {
-            dataObj = JSON.parse(dataObjString);
-
-            module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
-                successCallback(img);
-            }, errorCallback);
-        } else {
-            errorCallback();
-        }
-    };
-
     var buildReportResult = function (status, pageUrl, pageImage, referenceImage, erroneousPageUrls) {
         var result = {
                 status: status,
@@ -545,7 +554,7 @@ window.csscritic = (function (module, renderer, window, imagediff) {
                 });
             };
             result.acceptPage = function () {
-                module.util.storeReferenceImage(pageUrl, result.pageImage);
+                storage.storeReferenceImage(pageUrl, result.pageImage);
             };
         }
 
@@ -613,7 +622,7 @@ window.csscritic = (function (module, renderer, window, imagediff) {
     };
 
     module.compare = function (pageUrl, callback) {
-        module.util.readReferenceImage(pageUrl, function (referenceImage) {
+        storage.readReferenceImage(pageUrl, function (referenceImage) {
             loadPageAndReportResult(pageUrl, referenceImage.width, referenceImage.height, referenceImage, callback);
         }, function () {
             loadPageAndReportResult(pageUrl, 800, 600, null, callback);
@@ -621,7 +630,7 @@ window.csscritic = (function (module, renderer, window, imagediff) {
     };
 
     return module;
-}(window.csscritic || {}, window.csscritic.renderer, window, imagediff));
+}(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, window, imagediff));
 
 window.csscritic = (function (module) {
 

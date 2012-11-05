@@ -10,7 +10,7 @@ describe("Regression testing", function () {
         };
 
         getImageForPageUrl = spyOn(csscritic.renderer, 'getImageForPageUrl');
-        readReferenceImage = spyOn(csscritic.util, 'readReferenceImage');
+        readReferenceImage = spyOn(csscritic.storage, 'readReferenceImage');
 
         spyOn(csscritic.util, 'workAroundTransparencyIssueInFirefox').andCallFake(function (image, callback) {
             callback(image);
@@ -300,7 +300,7 @@ describe("Regression testing", function () {
         });
 
         it("should provide a method to accept the rendered page and store as new reference", function () {
-            var storeReferenceImageSpy = spyOn(csscritic.util, 'storeReferenceImage');
+            var storeReferenceImageSpy = spyOn(csscritic.storage, 'storeReferenceImage');
             spyOn(imagediff, 'equal').andReturn(true);
 
             getImageForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
