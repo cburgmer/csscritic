@@ -34,6 +34,14 @@ CSS critic checks your current layout constantly against a reference image you h
 
 3. If deliberate generate a new reference image.
 
+Running from the command line
+-----------------------------
+
+Currently in the making is a command-line runner using [PhantomJS](http://phantomjs.org/). While still not fit for a
+shared build-pipeline (e.g. using the default 800x600 canvas for testing) the first shot is up and running:
+
+    $ phantomjs dist/csscritic-phantom.js test/fixtures/pageUnderTest.html
+
 Testing
 -------
 Install Node.js and PhantomJS and run
