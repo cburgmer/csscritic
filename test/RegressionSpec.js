@@ -391,6 +391,29 @@ describe("Regression testing", function () {
             });
         });
 
+        it("should get called before the success handler returns so that user actions don't interfere with reporting", function () {
+            var callbackTriggered = false;
+
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            getImageForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlImage, []);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
+                callback(referenceImage);
+            });
+
+            reporter.reportComparison.andCallFake(function () {
+                expect(callbackTriggered).toBeFalsy();
+            });
+
+            csscritic.compare("differentpage.html", function () {
+                callbackTriggered = true;
+            });
+
+            expect(reporter.reportComparison).toHaveBeenCalled();
+        });
+
     });
 
 });

@@ -453,41 +453,59 @@ window.csscritic = (function (module) {
 
 window.csscritic = (function (module) {
     module.storage = module.storage || {};
-    module.domstorage = {};
+    module.filestorage = {};
 
-    module.domstorage.storeReferenceImage = function (key, pageImage) {
-        var uri, dataObj;
+    module.filestorage.options = {
+        basePath: "./"
+    };
 
-        try {
-            uri = module.util.getDataURIForImage(pageImage);
-        } catch (e) {
-            window.alert("An error occurred reading the canvas. Are you sure you are using Firefox?\n" + e);
-            throw e;
-        }
+    var filePathForKey = function (key) {
+        return module.filestorage.options.basePath + key + ".json";
+    };
+
+    module.filestorage.storeReferenceImage = function (key, pageImage) {
+        var fs = require("fs"),
+            uri, dataObj;
+
+        uri = module.util.getDataURIForImage(pageImage);
         dataObj = {
             referenceImageUri: uri
         };
 
-        localStorage.setItem(key, JSON.stringify(dataObj));
+        fs.write(filePathForKey(key), JSON.stringify(dataObj), "w");
     };
 
-    module.domstorage.readReferenceImage = function (key, successCallback, errorCallback) {
-        var dataObjString = localStorage.getItem(key),
-            dataObj;
+    module.filestorage.readReferenceImage = function (key, successCallback, errorCallback) {
+        var fs = require("fs"),
+            filePath = filePathForKey(key),
+            dataObjString, dataObj;
 
-        if (dataObjString) {
+        if (! fs.exists(filePath)) {
+            errorCallback();
+            return;
+        }
+
+        dataObjString = fs.read(filePath);
+        try {
             dataObj = JSON.parse(dataObjString);
+        } catch (e) {
+            errorCallback();
+            return;
+        }
 
+        if (dataObj.referenceImageUri) {
             module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
                 successCallback(img);
             }, errorCallback);
         } else {
             errorCallback();
+            return;
         }
     };
 
-    module.storage.storeReferenceImage = module.domstorage.storeReferenceImage;
-    module.storage.readReferenceImage = module.domstorage.readReferenceImage;
+    module.storage.options = module.filestorage.options;
+    module.storage.storeReferenceImage = module.filestorage.storeReferenceImage;
+    module.storage.readReferenceImage = module.filestorage.readReferenceImage;
     return module;
 }(window.csscritic || {}));
 
@@ -604,20 +622,20 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                     textualStatus = "referenceMissing";
                 }
 
+                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls);
+
                 if (callback) {
                     callback(textualStatus);
                 }
-
-                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls);
             });
         }, function () {
             var textualStatus = "error";
 
+            report(textualStatus, pageUrl, null);
+
             if (callback) {
                 callback(textualStatus);
             }
-
-            report(textualStatus, pageUrl, null);
         });
     };
 

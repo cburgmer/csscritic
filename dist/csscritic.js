@@ -198,20 +198,20 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                     textualStatus = "referenceMissing";
                 }
 
+                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls);
+
                 if (callback) {
                     callback(textualStatus);
                 }
-
-                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls);
             });
         }, function () {
             var textualStatus = "error";
 
+            report(textualStatus, pageUrl, null);
+
             if (callback) {
                 callback(textualStatus);
             }
-
-            report(textualStatus, pageUrl, null);
         });
     };
 

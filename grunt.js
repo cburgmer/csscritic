@@ -48,7 +48,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.js'
             },
             "phantomjs": {
-                src:['<banner:meta.bannerPhantomjs>', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/domstorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/autoacceptingreporter.js', 'src/phantomjs-runnerlib.js'],
+                src:['<banner:meta.bannerPhantomjs>', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/autoacceptingreporter.js', 'src/phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },
