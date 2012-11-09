@@ -7,13 +7,11 @@ window.csscritic = (function (module) {
         var finishedCount = 0;
 
         csscritic.addReporter(csscritic.AutoAcceptingReporter());
+        csscritic.addReporter(csscritic.TerminalReporter());
 
         testDocuments.forEach(function (testDocument) {
-            console.log("Testing", testDocument, "...");
-
-            csscritic.compare(testDocument, function (status) {
+            csscritic.compare(testDocument, function () {
                 finishedCount += 1;
-                console.log(status);
 
                 if (finishedCount === testDocuments.length) {
                     doneHandler();

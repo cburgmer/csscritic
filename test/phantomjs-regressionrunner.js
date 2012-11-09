@@ -4,6 +4,7 @@
 phantom.injectJs("lib/imagediff.js");
 phantom.injectJs("src/phantomjsrenderer.js");
 phantom.injectJs("src/autoacceptingreporter.js");
+phantom.injectJs("src/terminalreporter.js");
 phantom.injectJs("src/filestorage.js");
 phantom.injectJs("src/csscritic.js");
 phantom.injectJs("src/phantomjs-runnerlib.js");

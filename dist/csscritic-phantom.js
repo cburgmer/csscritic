@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-05
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-09
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 /* Integrated dependencies:
@@ -667,6 +667,54 @@ window.csscritic = (function (module) {
     return module;
 }(window.csscritic || {}));
 
+window.csscritic = (function (module, window) {
+
+    var ATTRIBUTES_TO_ANSI = {
+            "off": 0,
+            "bold": 1,
+            "red": 31,
+            "green": 32
+        };
+
+    var inColor = function (string, color) {
+        var color_attributes = color && color.split("+"),
+            ansi_string = "";
+
+        if (!color_attributes) {
+            return string;
+        }
+
+        color_attributes.forEach(function (colorAttr) {
+            ansi_string += "\033[" + ATTRIBUTES_TO_ANSI[colorAttr] + "m";
+        });
+        ansi_string += string + "\033[" + ATTRIBUTES_TO_ANSI['off'] + "m";
+
+        return ansi_string;
+    };
+
+    var statusColor = {
+            passed: "green+bold",
+            failed: "red+bold",
+            error: "red+bold",
+            referenceMissing: "red+bold"
+        };
+
+    var reportComparison = function (result) {
+        var color = statusColor[result.status] || "",
+            statusStr = inColor(result.status, color);
+
+        window.console.log("Testing " + result.pageUrl + "... " + statusStr);
+    };
+
+    module.TerminalReporter = function () {
+        return {
+            reportComparison: reportComparison
+        };
+    };
+
+    return module;
+}(window.csscritic || {}, window));
+
 window.csscritic = (function (module) {
     var system = require("system");
 
@@ -676,13 +724,11 @@ window.csscritic = (function (module) {
         var finishedCount = 0;
 
         csscritic.addReporter(csscritic.AutoAcceptingReporter());
+        csscritic.addReporter(csscritic.TerminalReporter());
 
         testDocuments.forEach(function (testDocument) {
-            console.log("Testing", testDocument, "...");
-
-            csscritic.compare(testDocument, function (status) {
+            csscritic.compare(testDocument, function () {
                 finishedCount += 1;
-                console.log(status);
 
                 if (finishedCount === testDocuments.length) {
                     doneHandler();
