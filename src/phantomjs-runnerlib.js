@@ -8,6 +8,7 @@ window.csscritic = (function (module) {
 
         csscritic.addReporter(csscritic.AutoAcceptingReporter());
         csscritic.addReporter(csscritic.TerminalReporter());
+        csscritic.addReporter(csscritic.HtmlFileReporter());
 
         testDocuments.forEach(function (testDocument) {
             csscritic.compare(testDocument, function () {
@@ -27,7 +28,10 @@ window.csscritic = (function (module) {
             phantom.exit(2);
         } else {
             runCompare(system.args.slice(1), function () {
+                // TODO wait for all reporters to finish their work
+                setTimeout(function () {
                 phantom.exit(0);
+                }, 1000);
             });
         }
     };

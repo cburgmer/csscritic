@@ -48,7 +48,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.js'
             },
             "phantomjs": {
-                src:['<banner:meta.bannerPhantomjs>', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/autoacceptingreporter.js', 'src/terminalreporter.js', 'src/phantomjs-runnerlib.js'],
+                src:['<banner:meta.bannerPhantomjs>', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/autoacceptingreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },
@@ -141,6 +141,7 @@ module.exports = function (grunt) {
                     beforeEach:true,
                     afterEach:true,
                     waitsFor:true,
+                    waits:true,
                     runs:true,
                     expect:true,
                     spyOn:true,

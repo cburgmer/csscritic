@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-09
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2012-11-12
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2012 Christoph Burgmer; Licensed MIT */
 /* Integrated dependencies:
@@ -716,6 +716,52 @@ window.csscritic = (function (module, window) {
 }(window.csscritic || {}, window));
 
 window.csscritic = (function (module) {
+
+    var reportComparison = function (result, basePath) {
+        var targetImageFileName = getTargetName(result.pageUrl),
+            targetImagePath = basePath + targetImageFileName,
+            image = result.pageImage;
+
+        renderUrlToFile(result.pageImage.src, targetImagePath, image.width, image.height);
+    };
+
+    var getTargetName = function (filePath) {
+        var fileName = filePath.substr(filePath.lastIndexOf("/")+1),
+            stripEnding = ".html";
+
+        if (fileName.substr(fileName.length - stripEnding.length) === stripEnding) {
+            fileName = fileName.substr(0, fileName.length - stripEnding.length);
+        }
+        return fileName + ".png";
+    };
+
+    var renderUrlToFile = function (url, filePath, width, height) {
+        var page = require("webpage").create();
+
+        page.viewportSize = {
+            width: width,
+            height: height
+        };
+
+        page.open(url, function () {
+            page.render(filePath);
+        });
+    };
+
+    module.HtmlFileReporter = function (basePath) {
+        basePath = basePath || "./";
+
+        return {
+            reportComparison: function (result) {
+                return reportComparison(result, basePath);
+            }
+        };
+    };
+
+    return module;
+}(window.csscritic || {}));
+
+window.csscritic = (function (module) {
     var system = require("system");
 
     module.phantomjsRunner = {};
@@ -725,6 +771,7 @@ window.csscritic = (function (module) {
 
         csscritic.addReporter(csscritic.AutoAcceptingReporter());
         csscritic.addReporter(csscritic.TerminalReporter());
+        csscritic.addReporter(csscritic.HtmlFileReporter());
 
         testDocuments.forEach(function (testDocument) {
             csscritic.compare(testDocument, function () {
@@ -744,7 +791,10 @@ window.csscritic = (function (module) {
             phantom.exit(2);
         } else {
             runCompare(system.args.slice(1), function () {
+                // TODO wait for all reporters to finish their work
+                setTimeout(function () {
                 phantom.exit(0);
+                }, 1000);
             });
         }
     };

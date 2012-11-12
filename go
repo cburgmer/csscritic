@@ -27,6 +27,7 @@ function runPhantomJSOnlyTests {
 function runPhantomJSRunnerIntegrationTest {
     # TODO too simple
     phantomjs test/phantomjs-regressionrunner.js test/fixtures/brokenPage.html test/fixtures/pageUnderTest.html
+    phantomjs test/phantomjs-regressionrunner.js test/fixtures/brokenPage.html test/fixtures/pageUnderTest.html
     testFailure
 }
 

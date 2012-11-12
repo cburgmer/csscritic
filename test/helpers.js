@@ -13,7 +13,8 @@ window.safeLog = function (msg) {
 };
 
 window.csscriticTestHelper = (function () {
-    var module = {};
+    var module = {},
+        tempPath = null;
 
     module.loadImageFromUrl = function (url, successCallback) {
         var image = new window.Image();
@@ -22,9 +23,15 @@ window.csscriticTestHelper = (function () {
             successCallback(image);
         };
         image.onerror = function () {
-            safeLog("Error loading image in test", url);
+            safeLog("Error loading image " + url + " in test", url);
         };
         image.src = url;
+    };
+
+    module.getFileUrl = function (filePath) {
+        var fs = require("fs");
+
+        return "file://" + fs.absolute(filePath);
     };
 
     function tempPathName () {
@@ -41,6 +48,13 @@ window.csscriticTestHelper = (function () {
 
         fs.makeDirectory(path);
         return path;
+    };
+
+    module.getOrCreateTempPath = function () {
+        if (tempPath === null) {
+            tempPath = csscriticTestHelper.createTempPath();
+        }
+        return tempPath;
     };
 
     return module;

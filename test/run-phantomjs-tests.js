@@ -11,6 +11,7 @@ function loadCode() {
 
     phantom.injectJs("./lib/imagediff.js");
     phantom.injectJs("./src/phantomjsrenderer.js");
+    phantom.injectJs("./src/htmlfilereporter.js");
     phantom.injectJs("./src/filestorage.js");
     phantom.injectJs("./src/csscritic.js");
 }
@@ -18,6 +19,7 @@ function loadCode() {
 function loadTests() {
     phantom.injectJs("./FileStorageSpecForPhantom.js");
     phantom.injectJs("./PhantomJSRendererSpecForPhantom.js");
+    phantom.injectJs("./HtmlFileReporterSpecForPhantom.js");
 }
 
 function startWebserver() {
@@ -56,10 +58,7 @@ function startJasmine() {
 loadJasmine();
 loadCode();
 
-window.csscriticTestPath = '';
-
-var fs = require('fs');
-fs.changeWorkingDirectory('./test');
+window.csscriticTestPath = 'test/';
 
 loadTests();
 
