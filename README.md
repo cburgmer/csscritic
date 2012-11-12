@@ -38,7 +38,7 @@ Running from the command line
 -----------------------------
 
 Currently in the making is a command-line runner using [PhantomJS](http://phantomjs.org/). While still not fit for a
-shared build-pipeline (e.g. using the default 800x600 canvas for testing) the first shot is up and running:
+shared build-pipeline (e.g. no easy way to "fix" builds) the first shot is up and running:
 
     $ phantomjs dist/csscritic-phantom.js test/fixtures/pageUnderTest.html
 
@@ -53,7 +53,7 @@ for linting, tests and minification.
 Limitations
 -----------
 
-- Currently works in Firefox only.
+- Currently works in Firefox only (experimental PhantomJS runner in the making)
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files.
 - Because of the way the HTML is rendered to the canvas, all external resources need to be inlined. This part is still in active development (e.g. non-woff webfonts are missing).
 
