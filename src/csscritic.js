@@ -98,10 +98,19 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         reporters = [];
     };
 
+    var workaroundFirefoxResourcesSporadicallyMissing = function (htmlImage, referenceImage) {
+        if (referenceImage) {
+            // This does nothing meaningful for us, but seems to trigger Firefox to load any missing resources.
+            imagediff.diff(htmlImage, referenceImage);
+        }
+    };
+
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
         renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlImage, erroneousUrls) {
             var isEqual, textualStatus;
+
+            workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);
 
             module.util.workAroundTransparencyIssueInFirefox(htmlImage, function (adaptedHtmlImage) {
                 if (referenceImage) {

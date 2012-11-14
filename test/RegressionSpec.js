@@ -15,6 +15,8 @@ describe("Regression testing", function () {
         spyOn(csscritic.util, 'workAroundTransparencyIssueInFirefox').andCallFake(function (image, callback) {
             callback(image);
         });
+
+        spyOn(imagediff, 'diff');
     });
 
     afterEach(function () {
