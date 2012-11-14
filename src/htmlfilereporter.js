@@ -5,7 +5,7 @@ window.csscritic = (function (module) {
             targetImagePath = basePath + targetImageFileName,
             image = result.pageImage;
 
-        renderUrlToFile(result.pageImage.src, targetImagePath, image.width, image.height);
+        renderUrlToFile(image.src, targetImagePath, image.width, image.height);
     };
 
     var getTargetName = function (filePath) {
