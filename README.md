@@ -3,7 +3,9 @@ CSS critic
 
 A lightweight framework for regression testing of Cascading Style Sheets.
 
-See `example/RegressionRunner.html` for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60).
+[Project page](http://cburgmer.github.com/csscritic)
+
+See `example/RegressionRunner.html` for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60). 
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
@@ -42,8 +44,8 @@ shared build-pipeline (e.g. no easy way to "fix" builds) the first shot is up an
 
     $ phantomjs dist/csscritic-phantom.js test/fixtures/pageUnderTest.html
 
-Testing
--------
+Testing CSS critic
+------------------
 Install Node.js and PhantomJS and run
 
     $ ./go
