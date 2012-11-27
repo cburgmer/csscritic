@@ -36,7 +36,7 @@ module.exports = function (grunt) {
             testForPhantom:['test/helpers.js', 'test/run-phantomjs-tests.js', 'test/*SpecForPhantom.js', 'test/phantomjs-regressionrunner.js']
         },
         jasmine:{
-            src:['components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/browserrenderer.js', 'src/domstorage.js', 'src/<%= pkg.name %>.js', 'src/basichtmlreporter.js', 'src/terminalreporter.js'],
+            src:['components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/browserrenderer.js', 'src/domstorage.js', 'src/<%= pkg.name %>.js', 'src/basichtmlreporter.js', 'src/terminalreporter.js'],
             specs:'test/*Spec.js',
             helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
             timeout:10000,
@@ -58,7 +58,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.min.js'
             },
             allinone: {
-                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/lib/*.js', 'components/rasterizeHTML.js/rasterizeHTML.js', 'lib/*.js', '<config:concat.dist.dest>'],
+                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/dist/rasterizeHTML.allineone.js', 'lib/*.js', '<config:concat.dist.dest>'],
                 dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },
