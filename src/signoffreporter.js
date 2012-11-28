@@ -59,20 +59,22 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     var acceptSignedOffPage = function (result, signedOffPages) {
         var signedOffPageEntry, actualFingerprint;
 
-        if (result.status === "failed") {
+        if (result.status === "failed" || result.status === "referenceMissing") {
             signedOffPageEntry = findPage(result.pageUrl, signedOffPages);
 
-            if (signedOffPageEntry) {
-                module.signOffReporterUtil.loadFullDocument(result.pageUrl, function (content) {
-                    actualFingerprint = module.signOffReporterUtil.calculateFingerprint(content);
+            module.signOffReporterUtil.loadFullDocument(result.pageUrl, function (content) {
+                actualFingerprint = module.signOffReporterUtil.calculateFingerprint(content);
 
+                if (signedOffPageEntry) {
                     if (actualFingerprint === signedOffPageEntry.fingerprint) {
                         result.acceptPage();
+                    } else {
+                        console.log("Fingerprint does not match for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
                     }
-                    console.log(result.pageUrl + ": " + actualFingerprint);
-                });
-                
-            }
+                } else {
+                    console.log("No sign-off for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
+                }
+            });
         }
     };
 

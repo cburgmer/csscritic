@@ -35,6 +35,29 @@ describe("SignOffReporter", function () {
         expect(calculateFingerprintSpy).toHaveBeenCalledWith("some content");
     });
 
+    it("should auto-accept a signed off version on a test with a missing reference", function () {
+        var fixtureUrl = csscriticTestPath + "fixtures/",
+            pageUrl = fixtureUrl + 'pageUnderTest.html';
+
+        var reporter = csscritic.SignOffReporter([{
+            pageUrl: pageUrl,
+            fingerprint: "fIngRPrinT"
+        }]);
+
+        reporter.reportComparison({
+            status: "referenceMissing",
+            pageUrl: pageUrl,
+            pageImage: htmlImage,
+            resizePageImage: function () {},
+            acceptPage: acceptPageSpy
+        });
+
+        expect(acceptPageSpy).toHaveBeenCalled();
+
+        expect(loadFullDocumentSpy).toHaveBeenCalledWith(pageUrl, jasmine.any(Function));
+        expect(calculateFingerprintSpy).toHaveBeenCalledWith("some content");
+    });
+
     it("should take fingerprints from a file", function () {
         var fixtureUrl = csscriticTestPath + "fixtures/",
             pageUrl = fixtureUrl + 'pageUnderTest.html';
