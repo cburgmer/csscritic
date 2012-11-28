@@ -5,6 +5,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     module.signOffReporterUtil.loadFullDocument = function (pageUrl, callback) {
         var doc = window.document.implementation.createHTMLDocument("");
 
+        // TODO remove reference to rasterizeHTMLInline.util
         rasterizeHTMLInline.util.ajax(pageUrl, {cache: false}, function (content) {
             doc.documentElement.innerHTML = content;
 
@@ -13,6 +14,12 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
                     doc.documentElement.innerHTML +
                     '</html>');
             });
+        });
+    };
+
+    module.signOffReporterUtil.loadFingerprintJson = function (url, callback) {
+        rasterizeHTMLInline.util.ajax(url, {cache: false}, function (content) {
+            callback(JSON.parse(content));
         });
     };
 
@@ -57,7 +64,13 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     module.SignOffReporter = function (signedOffPages) {
         return {
             reportComparison: function (result) {
-                acceptSignedOffPage(result, signedOffPages);
+                if (! Array.isArray(signedOffPages)) {
+                    module.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
+                        acceptSignedOffPage(result, json);
+                    });
+                } else {
+                    acceptSignedOffPage(result, signedOffPages);
+                }
             }
         };
     };

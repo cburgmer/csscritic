@@ -19,6 +19,30 @@ describe("SignOffReporterUtil", function () {
         });
     });
 
+    describe("loadFingerprintJson", function () {
+        it("should load a json file and return the content", function () {
+            var fixtureUrl = csscriticTestPath + "fixtures/",
+                jsonUrl = fixtureUrl + 'fingerprints.json',
+                result = null;
+
+            csscritic.signOffReporterUtil.loadFingerprintJson(jsonUrl, function (content) {
+                result = content;
+            });
+
+            waitsFor(function () {
+                return result !== null;
+            });
+
+            runs(function () {
+                expect(result).toEqual([{
+                    pageUrl: 'pageUnderTest.html',
+                    fingerprint: "fIngRPrinT"
+                }]);
+            });
+        });
+
+    });
+
     describe("calculateFingerprint", function () {
         it("should return the SHA2 hash for a given content", function () {
             var hash = csscritic.signOffReporterUtil.calculateFingerprint("the given content");
