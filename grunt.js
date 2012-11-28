@@ -27,7 +27,12 @@ module.exports = function (grunt) {
                 '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
                 ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
                 '\n/* Integrated dependencies:\n' +
-                ' * imagediff.js (MIT License) */'
+                ' * jsSHA.js (BSD License),\n' +
+                ' * URI.js (MIT License/GPL v3),\n' +
+                ' * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),\n' +
+                ' * htmlparser.js,\n' +
+                ' * imagediff.js (MIT License),\n' +
+                ' * rasterizeHTML.js (MIT License) */'
         },
         lint:{
             src:['src/*.js'],
@@ -48,7 +53,7 @@ module.exports = function (grunt) {
                 dest:'dist/<%= pkg.name %>.js'
             },
             "phantomjs": {
-                src:['<banner:meta.bannerPhantomjs>', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs-runnerlib.js'],
+                src:['<banner:meta.bannerPhantomjs>', 'lib/sha256.js', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },

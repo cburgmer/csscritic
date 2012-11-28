@@ -24,10 +24,9 @@ function runPhantomJSOnlyTests {
     testFailure
 }
 
-function runPhantomJSRunnerIntegrationTest {
-    # TODO too simple
-    phantomjs test/phantomjs-regressionrunner.js test/fixtures/brokenPage.html test/fixtures/pageUnderTest.html
-    phantomjs test/phantomjs-regressionrunner.js test/fixtures/brokenPage.html test/fixtures/pageUnderTest.html
+function runCSSTest {
+    phantomjs dist/csscritic-phantom.js -f test/signedOff.json test/BasicHtmlReporterLayout.html
+    phantomjs dist/csscritic-phantom.js test/BasicHtmlReporterLayout.html
     testFailure
 }
 
@@ -41,4 +40,4 @@ fi
 
 build
 runPhantomJSOnlyTests
-runPhantomJSRunnerIntegrationTest
+runCSSTest

@@ -41,11 +41,14 @@ window.csscritic = (function (module) {
         csscritic.addReporter(csscritic.HtmlFileReporter());
 
         testDocuments.forEach(function (testDocument) {
-            csscritic.compare(testDocument, function () {
+            var passed = true;
+
+            csscritic.compare(testDocument, function (status) {
                 finishedCount += 1;
+                passed = passed && (status === "passed");
 
                 if (finishedCount === testDocuments.length) {
-                    doneHandler();
+                    doneHandler(passed);
                 }
             });
         });
@@ -60,10 +63,12 @@ window.csscritic = (function (module) {
             console.log("Usage: phantomjs-regressionrunner.js [-f SIGNED_OFF.json] A_DOCUMENT.html [ANOTHER_DOCUMENT.html ...]");
             phantom.exit(2);
         } else {
-            runCompare(parsedArguments.args, signedOffPages, function () {
+            runCompare(parsedArguments.args, signedOffPages, function (passed) {
+                var ret = passed ? 0 : 1;
+
                 // TODO wait for all reporters to finish their work
                 setTimeout(function () {
-                phantom.exit(0);
+                phantom.exit(ret);
                 }, 1000);
             });
         }
