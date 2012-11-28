@@ -659,22 +659,100 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
     return module;
 }(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, window, imagediff));
 
-window.csscritic = (function (module) {
+window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
 
-    var acceptMissingReference = function (result) {
-        if (result.status === "referenceMissing") {
-            result.acceptPage();
+    module.signOffReporterUtil = {};
+
+    var getFileUrl = function (address) {
+        var fs;
+
+        if (window.require) {
+            fs = require("fs");
+
+            return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
+        } else {
+            return address;
         }
     };
 
-    module.AutoAcceptingReporter = function () {
+    module.signOffReporterUtil.loadFullDocument = function (pageUrl, callback) {
+        var absolutePageUrl = getFileUrl(pageUrl),
+            doc = window.document.implementation.createHTMLDocument("");
+
+        // TODO remove reference to rasterizeHTMLInline.util
+        rasterizeHTMLInline.util.ajax(absolutePageUrl, {cache: false}, function (content) {
+            doc.documentElement.innerHTML = content;
+
+            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}, function () {
+                callback('<html>' +
+                    doc.documentElement.innerHTML +
+                    '</html>');
+            });
+        });
+    };
+
+    module.signOffReporterUtil.loadFingerprintJson = function (url, callback) {
+        var absoluteUrl = getFileUrl(url);
+
+        rasterizeHTMLInline.util.ajax(absoluteUrl, {cache: false}, function (content) {
+            callback(JSON.parse(content));
+        });
+    };
+
+    module.signOffReporterUtil.calculateFingerprint = function (content) {
+        var shaObj = new JsSHA(content, "TEXT");
+
+        return shaObj.getHash("SHA-224", "HEX");
+    };
+
+    var findPage = function (pageUrl, signedOffPages) {
+        var signedOffPage = null;
+
+        signedOffPages.forEach(function (entry) {
+            if (entry.pageUrl === pageUrl) {
+                signedOffPage = entry;
+            }
+        });
+
+        return signedOffPage;
+    };
+
+    var acceptSignedOffPage = function (result, signedOffPages) {
+        var signedOffPageEntry, actualFingerprint;
+
+        if (result.status === "failed") {
+            signedOffPageEntry = findPage(result.pageUrl, signedOffPages);
+
+            if (signedOffPageEntry) {
+                module.signOffReporterUtil.loadFullDocument(result.pageUrl, function (content) {
+                    actualFingerprint = module.signOffReporterUtil.calculateFingerprint(content);
+
+                    if (actualFingerprint === signedOffPageEntry.fingerprint) {
+                        result.acceptPage();
+                    }
+                    console.log(result.pageUrl + ": " + actualFingerprint);
+                });
+                
+            }
+        }
+    };
+
+    module.SignOffReporter = function (signedOffPages) {
         return {
-            reportComparison: acceptMissingReference
+            reportComparison: function (result) {
+                if (! Array.isArray(signedOffPages)) {
+                    module.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
+                        acceptSignedOffPage(result, json);
+                    });
+                } else {
+                    acceptSignedOffPage(result, signedOffPages);
+                }
+            }
         };
     };
 
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, rasterizeHTMLInline, jsSHA));
 
 window.csscritic = (function (module, window) {
 
@@ -775,10 +853,40 @@ window.csscritic = (function (module) {
 
     module.phantomjsRunner = {};
 
-    var runCompare = function (testDocuments, doneHandler) {
+    var parseArguments = function (args) {
+        var i = 0,
+            arg, value,
+            parsedArguments = {
+                opts: {},
+                args: []
+            };
+
+        while(i < args.length) {
+            if (args[i][0] === "-") {
+                arg = args[i];
+                value = args[i+1];
+                parsedArguments.opts[arg] = value;
+                if (i + 1 < args.length) {
+                    i += 1;
+                } else {
+                    throw new Error("Invalid arguments");
+                }
+            } else {
+                arg = args[i];
+                parsedArguments.args.push(arg);
+            }
+            i += 1;
+        }
+
+        return parsedArguments;
+    };
+
+    var runCompare = function (testDocuments, signedOffPages, doneHandler) {
         var finishedCount = 0;
 
-        csscritic.addReporter(csscritic.AutoAcceptingReporter());
+        signedOffPages = signedOffPages || [];
+
+        csscritic.addReporter(csscritic.SignOffReporter(signedOffPages));
         csscritic.addReporter(csscritic.TerminalReporter());
         csscritic.addReporter(csscritic.HtmlFileReporter());
 
@@ -794,12 +902,15 @@ window.csscritic = (function (module) {
     };
 
     module.phantomjsRunner.main = function () {
-        if (system.args.length < 2) {
+        var parsedArguments = parseArguments(system.args.slice(1)),
+            signedOffPages = parsedArguments.opts['-f'];
+
+        if (parsedArguments.args.length < 1) {
             console.log("CSS critic regression runner for PhantomJS");
-            console.log("Usage: phantomjs-regressionrunner.js A_DOCUMENT.html [ANOTHER_DOCUMENT.html ...]");
+            console.log("Usage: phantomjs-regressionrunner.js [-f SIGNED_OFF.json] A_DOCUMENT.html [ANOTHER_DOCUMENT.html ...]");
             phantom.exit(2);
         } else {
-            runCompare(system.args.slice(1), function () {
+            runCompare(parsedArguments.args, signedOffPages, function () {
                 // TODO wait for all reporters to finish their work
                 setTimeout(function () {
                 phantom.exit(0);

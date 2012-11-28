@@ -2,14 +2,27 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
 
     module.signOffReporterUtil = {};
 
+    var getFileUrl = function (address) {
+        var fs;
+
+        if (window.require) {
+            fs = require("fs");
+
+            return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
+        } else {
+            return address;
+        }
+    };
+
     module.signOffReporterUtil.loadFullDocument = function (pageUrl, callback) {
-        var doc = window.document.implementation.createHTMLDocument("");
+        var absolutePageUrl = getFileUrl(pageUrl),
+            doc = window.document.implementation.createHTMLDocument("");
 
         // TODO remove reference to rasterizeHTMLInline.util
-        rasterizeHTMLInline.util.ajax(pageUrl, {cache: false}, function (content) {
+        rasterizeHTMLInline.util.ajax(absolutePageUrl, {cache: false}, function (content) {
             doc.documentElement.innerHTML = content;
 
-            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: pageUrl, cache: false}, function () {
+            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}, function () {
                 callback('<html>' +
                     doc.documentElement.innerHTML +
                     '</html>');
@@ -18,7 +31,9 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     };
 
     module.signOffReporterUtil.loadFingerprintJson = function (url, callback) {
-        rasterizeHTMLInline.util.ajax(url, {cache: false}, function (content) {
+        var absoluteUrl = getFileUrl(url);
+
+        rasterizeHTMLInline.util.ajax(absoluteUrl, {cache: false}, function (content) {
             callback(JSON.parse(content));
         });
     };

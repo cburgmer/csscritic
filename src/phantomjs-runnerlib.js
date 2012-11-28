@@ -3,10 +3,40 @@ window.csscritic = (function (module) {
 
     module.phantomjsRunner = {};
 
-    var runCompare = function (testDocuments, doneHandler) {
+    var parseArguments = function (args) {
+        var i = 0,
+            arg, value,
+            parsedArguments = {
+                opts: {},
+                args: []
+            };
+
+        while(i < args.length) {
+            if (args[i][0] === "-") {
+                arg = args[i];
+                value = args[i+1];
+                parsedArguments.opts[arg] = value;
+                if (i + 1 < args.length) {
+                    i += 1;
+                } else {
+                    throw new Error("Invalid arguments");
+                }
+            } else {
+                arg = args[i];
+                parsedArguments.args.push(arg);
+            }
+            i += 1;
+        }
+
+        return parsedArguments;
+    };
+
+    var runCompare = function (testDocuments, signedOffPages, doneHandler) {
         var finishedCount = 0;
 
-        csscritic.addReporter(csscritic.AutoAcceptingReporter());
+        signedOffPages = signedOffPages || [];
+
+        csscritic.addReporter(csscritic.SignOffReporter(signedOffPages));
         csscritic.addReporter(csscritic.TerminalReporter());
         csscritic.addReporter(csscritic.HtmlFileReporter());
 
@@ -22,12 +52,15 @@ window.csscritic = (function (module) {
     };
 
     module.phantomjsRunner.main = function () {
-        if (system.args.length < 2) {
+        var parsedArguments = parseArguments(system.args.slice(1)),
+            signedOffPages = parsedArguments.opts['-f'];
+
+        if (parsedArguments.args.length < 1) {
             console.log("CSS critic regression runner for PhantomJS");
-            console.log("Usage: phantomjs-regressionrunner.js A_DOCUMENT.html [ANOTHER_DOCUMENT.html ...]");
+            console.log("Usage: phantomjs-regressionrunner.js [-f SIGNED_OFF.json] A_DOCUMENT.html [ANOTHER_DOCUMENT.html ...]");
             phantom.exit(2);
         } else {
-            runCompare(system.args.slice(1), function () {
+            runCompare(parsedArguments.args, signedOffPages, function () {
                 // TODO wait for all reporters to finish their work
                 setTimeout(function () {
                 phantom.exit(0);
