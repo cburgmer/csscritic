@@ -24,7 +24,7 @@ window.csscritic = (function (module, rasterizeHTML) {
     };
 
     module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
-        rasterizeHTML.drawURL(pageUrl, {cache: false, width: width, height: height}, function (image, errors) {
+        rasterizeHTML.drawURL(pageUrl, {cache: false, width: width, height: height, executeJs: true}, function (image, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
