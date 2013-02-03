@@ -27,7 +27,7 @@ function startWebserver() {
     var fs = require('fs'),
         server = require('webserver').create();
 
-    server.listen(port, function(request, response) {
+    var launched = server.listen(port, function(request, response) {
         var localPath = '.' + request.url;
 
         if (fs.isReadable(localPath)) {
@@ -39,6 +39,11 @@ function startWebserver() {
         }
         response.close();
     });
+
+    if (!launched) {
+        window.console.log("Error: Unable to start internal web server on port", port);
+        phantom.exit(1);
+    }
 
 }
 
