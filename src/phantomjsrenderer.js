@@ -60,9 +60,11 @@ window.csscritic = (function (module) {
 
         page.open(getFileUrl(pageUrl), function (status) {
             if (status === "success") {
-                renderPage(page, function (image) {
-                    successCallback(image, errorneousResources);
-                }, handleError);
+                setTimeout(function () {
+                    renderPage(page, function (image) {
+                        successCallback(image, errorneousResources);
+                    }, handleError);
+                }, 200);
             } else {
                 handleError();
             }
