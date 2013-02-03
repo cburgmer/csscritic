@@ -729,6 +729,8 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
                     doc.documentElement.innerHTML +
                     '</html>');
             });
+        }, function () {
+            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
         });
     };
 

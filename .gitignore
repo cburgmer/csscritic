@@ -4,3 +4,5 @@ node_modules
 components/
 .DS_Store
 bugs/
+test/BasicHtmlReporterLayout.html.json
+BasicHtmlReporterLayout.png
