@@ -69,7 +69,7 @@ window.csscritic = (function (module) {
                 // TODO wait for all reporters to finish their work
                 setTimeout(function () {
                 phantom.exit(ret);
-                }, 1000);
+                }, 2000);
             });
         }
     };

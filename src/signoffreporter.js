@@ -44,6 +44,14 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         return shaObj.getHash("SHA-224", "HEX");
     };
 
+    var calculateFingerprintForPage = function (pageUrl, callback) {
+        module.signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+            var actualFingerprint = module.signOffReporterUtil.calculateFingerprint(content);
+
+            callback(actualFingerprint);
+        });
+    };
+
     var findPage = function (pageUrl, signedOffPages) {
         var signedOffPage = null;
 
@@ -57,16 +65,15 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     };
 
     var acceptSignedOffPage = function (result, signedOffPages) {
-        var signedOffPageEntry, actualFingerprint;
+        var signedOffPageEntry;
 
         if (result.status === "failed" || result.status === "referenceMissing") {
             signedOffPageEntry = findPage(result.pageUrl, signedOffPages);
 
-            module.signOffReporterUtil.loadFullDocument(result.pageUrl, function (content) {
-                actualFingerprint = module.signOffReporterUtil.calculateFingerprint(content);
-
+            calculateFingerprintForPage(result.pageUrl, function (actualFingerprint) {
                 if (signedOffPageEntry) {
                     if (actualFingerprint === signedOffPageEntry.fingerprint) {
+                        console.log("Generating reference image for " + result.pageUrl);
                         result.acceptPage();
                     } else {
                         console.log("Fingerprint does not match for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
