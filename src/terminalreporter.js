@@ -30,11 +30,15 @@ window.csscritic = (function (module, window) {
             referenceMissing: "red+bold"
         };
 
-    var reportComparison = function (result) {
+    var reportComparison = function (result, callback) {
         var color = statusColor[result.status] || "",
             statusStr = inColor(result.status, color);
 
         window.console.log("Testing " + result.pageUrl + "... " + statusStr);
+
+        if (callback) {
+            callback();
+        }
     };
 
     module.TerminalReporter = function () {

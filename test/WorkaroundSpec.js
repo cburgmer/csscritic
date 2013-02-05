@@ -1,7 +1,8 @@
 describe("Workarounds", function () {
     var autoAcceptingReporter = {
-            reportComparison: function (result) {
+            reportComparison: function (result, callback) {
                 result.acceptPage();
+                callback();
             }
         };
 

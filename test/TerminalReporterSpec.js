@@ -24,6 +24,14 @@ describe("TerminalReporter", function () {
         expect(consoleLogSpy).toHaveBeenCalledWith("Testing page_url... \033[32m\033[1mpassed\033[0m");
     });
 
+    it("should call the callback when finished reporting", function () {
+        var callback = jasmine.createSpy("callback");
+
+        reporter.reportComparison({}, callback);
+
+        expect(callback).toHaveBeenCalled();
+    });
+
     it("should log failing status to output", function () {
         reporter.reportComparison({
             status: "failed",

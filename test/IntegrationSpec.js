@@ -68,6 +68,10 @@ describe("Integration", function () {
             testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html",
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
 
+        reporter.reportComparison.andCallFake(function (result, callback) {
+            callback();
+        });
+
         csscritic.addReporter(reporter);
         csscritic.compare(testPageUrl, function (result) {
             resultStatus = result;
@@ -79,7 +83,7 @@ describe("Integration", function () {
 
         runs(function () {
             expect(resultStatus).toEqual("referenceMissing");
-            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object));
+            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function));
 
             reporter.reportComparison.mostRecentCall.args[0].resizePageImage(330, 151, function () {
                 sizeAdjusted = true;

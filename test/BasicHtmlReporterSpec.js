@@ -32,6 +32,14 @@ describe("Basic HTML reporter", function () {
         expect($("#csscritic_basichtmlreporter .comparison")).toExist();
     });
 
+    it("should call the callback when finished reporting", function () {
+        var callback = jasmine.createSpy("callback");
+
+        reporter.reportComparison({}, callback);
+
+        expect(callback).toHaveBeenCalled();
+    });
+
     it("should show the page url", function () {
         reporter.reportComparison({
             status: "passed",

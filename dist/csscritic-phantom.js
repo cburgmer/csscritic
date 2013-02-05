@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-03
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-05
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -628,17 +628,26 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         return result;
     };
 
-    var report = function (status, pageUrl, pageImage, referenceImage, erroneousUrls) {
-        var i, result;
+    var report = function (status, pageUrl, pageImage, referenceImage, erroneousUrls, callback) {
+        var i, result,
+            finishedReporterCount = 0,
+            reporterCount = reporters.length,
+            finishUp = function () {
+                finishedReporterCount += 1;
+                if (finishedReporterCount === reporterCount) {
+                    callback();
+                }
+            };
 
-        if (!reporters.length) {
+        if (!reporterCount) {
+            callback();
             return;
         }
 
         result = buildReportResult(status, pageUrl, pageImage, referenceImage, erroneousUrls);
 
-        for (i = 0; i < reporters.length; i++) {
-            reporters[i].reportComparison(result);
+        for (i = 0; i < reporterCount; i++) {
+            reporters[i].reportComparison(result, finishUp);
         }
     };
 
@@ -672,20 +681,20 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                     textualStatus = "referenceMissing";
                 }
 
-                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls);
-
-                if (callback) {
-                    callback(textualStatus);
-                }
+                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls, function () {
+                    if (callback) {
+                        callback(textualStatus);
+                    }
+                });
             });
         }, function () {
             var textualStatus = "error";
 
-            report(textualStatus, pageUrl, null);
-
-            if (callback) {
-                callback(textualStatus);
-            }
+            report(textualStatus, pageUrl, null, null, null, function () {
+                if (callback) {
+                    callback(textualStatus);
+                }
+            });
         });
     };
 
@@ -768,7 +777,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         return signedOffPage;
     };
 
-    var acceptSignedOffPage = function (result, signedOffPages) {
+    var acceptSignedOffPage = function (result, signedOffPages, callback) {
         var signedOffPageEntry;
 
         if (result.status === "failed" || result.status === "referenceMissing") {
@@ -785,19 +794,27 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
                 } else {
                     console.log("No sign-off for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
                 }
+
+                if (callback) {
+                    callback();
+                }
             });
+        } else {
+            if (callback) {
+                callback();
+            }
         }
     };
 
     module.SignOffReporter = function (signedOffPages) {
         return {
-            reportComparison: function (result) {
+            reportComparison: function (result, callback) {
                 if (! Array.isArray(signedOffPages)) {
                     module.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
-                        acceptSignedOffPage(result, json);
+                        acceptSignedOffPage(result, json, callback);
                     });
                 } else {
-                    acceptSignedOffPage(result, signedOffPages);
+                    acceptSignedOffPage(result, signedOffPages, callback);
                 }
             }
         };
@@ -838,11 +855,15 @@ window.csscritic = (function (module, window) {
             referenceMissing: "red+bold"
         };
 
-    var reportComparison = function (result) {
+    var reportComparison = function (result, callback) {
         var color = statusColor[result.status] || "",
             statusStr = inColor(result.status, color);
 
         window.console.log("Testing " + result.pageUrl + "... " + statusStr);
+
+        if (callback) {
+            callback();
+        }
     };
 
     module.TerminalReporter = function () {
@@ -856,12 +877,16 @@ window.csscritic = (function (module, window) {
 
 window.csscritic = (function (module) {
 
-    var reportComparison = function (result, basePath) {
+    var reportComparison = function (result, basePath, callback) {
         var targetImageFileName = getTargetName(result.pageUrl),
             targetImagePath = basePath + targetImageFileName,
             image = result.pageImage;
 
         renderUrlToFile(image.src, targetImagePath, image.width, image.height);
+
+        if (callback) {
+            callback();
+        }
     };
 
     var getTargetName = function (filePath) {
@@ -891,8 +916,8 @@ window.csscritic = (function (module) {
         basePath = basePath || "./";
 
         return {
-            reportComparison: function (result) {
-                return reportComparison(result, basePath);
+            reportComparison: function (result, callback) {
+                return reportComparison(result, basePath, callback);
             }
         };
     };
@@ -968,10 +993,7 @@ window.csscritic = (function (module) {
             runCompare(parsedArguments.args, signedOffPages, function (passed) {
                 var ret = passed ? 0 : 1;
 
-                // TODO wait for all reporters to finish their work
-                setTimeout(function () {
                 phantom.exit(ret);
-                }, 2000);
             });
         }
     };

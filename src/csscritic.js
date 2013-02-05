@@ -76,17 +76,26 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         return result;
     };
 
-    var report = function (status, pageUrl, pageImage, referenceImage, erroneousUrls) {
-        var i, result;
+    var report = function (status, pageUrl, pageImage, referenceImage, erroneousUrls, callback) {
+        var i, result,
+            finishedReporterCount = 0,
+            reporterCount = reporters.length,
+            finishUp = function () {
+                finishedReporterCount += 1;
+                if (finishedReporterCount === reporterCount) {
+                    callback();
+                }
+            };
 
-        if (!reporters.length) {
+        if (!reporterCount) {
+            callback();
             return;
         }
 
         result = buildReportResult(status, pageUrl, pageImage, referenceImage, erroneousUrls);
 
-        for (i = 0; i < reporters.length; i++) {
-            reporters[i].reportComparison(result);
+        for (i = 0; i < reporterCount; i++) {
+            reporters[i].reportComparison(result, finishUp);
         }
     };
 
@@ -120,20 +129,20 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                     textualStatus = "referenceMissing";
                 }
 
-                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls);
-
-                if (callback) {
-                    callback(textualStatus);
-                }
+                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls, function () {
+                    if (callback) {
+                        callback(textualStatus);
+                    }
+                });
             });
         }, function () {
             var textualStatus = "error";
 
-            report(textualStatus, pageUrl, null);
-
-            if (callback) {
-                callback(textualStatus);
-            }
+            report(textualStatus, pageUrl, null, null, null, function () {
+                if (callback) {
+                    callback(textualStatus);
+                }
+            });
         });
     };
 

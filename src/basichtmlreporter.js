@@ -274,11 +274,15 @@ window.csscritic = (function (module, document) {
         return entry;
     };
 
-    var reportComparison = function (result) {
+    var reportComparison = function (result, callback) {
         var node = createEntry(result),
             reportBody = getOrCreateBody();
 
         reportBody.appendChild(node);
+
+        if (callback) {
+            callback();
+        }
     };
 
     module.BasicHTMLReporter = function () {

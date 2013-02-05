@@ -1,11 +1,15 @@
 window.csscritic = (function (module) {
 
-    var reportComparison = function (result, basePath) {
+    var reportComparison = function (result, basePath, callback) {
         var targetImageFileName = getTargetName(result.pageUrl),
             targetImagePath = basePath + targetImageFileName,
             image = result.pageImage;
 
         renderUrlToFile(image.src, targetImagePath, image.width, image.height);
+
+        if (callback) {
+            callback();
+        }
     };
 
     var getTargetName = function (filePath) {
@@ -35,8 +39,8 @@ window.csscritic = (function (module) {
         basePath = basePath || "./";
 
         return {
-            reportComparison: function (result) {
-                return reportComparison(result, basePath);
+            reportComparison: function (result, callback) {
+                return reportComparison(result, basePath, callback);
             }
         };
     };

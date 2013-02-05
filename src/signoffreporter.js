@@ -66,7 +66,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         return signedOffPage;
     };
 
-    var acceptSignedOffPage = function (result, signedOffPages) {
+    var acceptSignedOffPage = function (result, signedOffPages, callback) {
         var signedOffPageEntry;
 
         if (result.status === "failed" || result.status === "referenceMissing") {
@@ -83,19 +83,27 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
                 } else {
                     console.log("No sign-off for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
                 }
+
+                if (callback) {
+                    callback();
+                }
             });
+        } else {
+            if (callback) {
+                callback();
+            }
         }
     };
 
     module.SignOffReporter = function (signedOffPages) {
         return {
-            reportComparison: function (result) {
+            reportComparison: function (result, callback) {
                 if (! Array.isArray(signedOffPages)) {
                     module.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
-                        acceptSignedOffPage(result, json);
+                        acceptSignedOffPage(result, json, callback);
                     });
                 } else {
-                    acceptSignedOffPage(result, signedOffPages);
+                    acceptSignedOffPage(result, signedOffPages, callback);
                 }
             }
         };

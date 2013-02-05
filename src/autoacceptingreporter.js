@@ -1,8 +1,12 @@
 window.csscritic = (function (module) {
 
-    var acceptMissingReference = function (result) {
+    var acceptMissingReference = function (result, callback) {
         if (result.status === "referenceMissing") {
             result.acceptPage();
+        }
+
+        if (callback) {
+            callback();
         }
     };
 

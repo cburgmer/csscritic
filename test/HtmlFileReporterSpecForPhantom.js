@@ -13,10 +13,6 @@ describe("HtmlFileReporter", function () {
         differenceImageCanvas = window.document.createElement("canvas");
 
         this.addMatchers(imagediff.jasmine);
-    });
-
-    it("should save rendered page on status passed", function () {
-        var resultImage = null;
 
         csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "green.png"), function (image) {
             htmlImage = image;
@@ -26,6 +22,23 @@ describe("HtmlFileReporter", function () {
         waitsFor(function () {
             return htmlImage != null && referenceImage != null;
         });
+    });
+
+    it("should call the callback when finished reporting", function () {
+        var callback = jasmine.createSpy("callback");
+
+        reporter.reportComparison({
+            status: "passed",
+            pageUrl: "page_url",
+            pageImage: htmlImage,
+            referenceImage: referenceImage
+        }, callback);
+
+        expect(callback).toHaveBeenCalled();
+    });
+
+    it("should save rendered page on status passed", function () {
+        var resultImage = null;
 
         runs(function () {
             reporter.reportComparison({

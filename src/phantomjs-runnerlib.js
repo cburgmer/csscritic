@@ -66,10 +66,7 @@ window.csscritic = (function (module) {
             runCompare(parsedArguments.args, signedOffPages, function (passed) {
                 var ret = passed ? 0 : 1;
 
-                // TODO wait for all reporters to finish their work
-                setTimeout(function () {
                 phantom.exit(ret);
-                }, 2000);
             });
         }
     };

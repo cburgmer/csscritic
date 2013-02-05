@@ -11,6 +11,19 @@ describe("SignOffReporter", function () {
         calculateFingerprintSpy = spyOn(csscritic.signOffReporterUtil, 'calculateFingerprint').andReturn("fIngRPrinT");
     });
 
+    it("should call the callback when finished reporting", function () {
+        var callback = jasmine.createSpy("callback");
+
+        var reporter = csscritic.SignOffReporter([{
+            pageUrl: "something",
+            fingerprint: "fIngRPrinT"
+        }]);
+
+        reporter.reportComparison({}, callback);
+
+        expect(callback).toHaveBeenCalled();
+    });
+
     it("should auto-accept a signed off version on a failing test", function () {
         var fixtureUrl = csscriticTestPath + "fixtures/",
             pageUrl = fixtureUrl + 'pageUnderTest.html';

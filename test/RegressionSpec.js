@@ -170,6 +170,26 @@ describe("Regression testing", function () {
             csscritic.addReporter(reporter);
         });
 
+        it("should call the callback only after the reporter finished", function () {
+            var callback = jasmine.createSpy("callback");
+
+            spyOn(imagediff, 'equal').andReturn(true);
+
+            getImageForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlImage);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
+                callback(referenceImage);
+            });
+
+            csscritic.compare("samplepage.html", callback);
+
+            expect(callback).not.toHaveBeenCalled();
+            reporter.reportComparison.mostRecentCall.args[1]();
+            expect(callback).toHaveBeenCalled();
+
+        });
+
         it("should report a successful comparison", function () {
             spyOn(imagediff, 'equal').andReturn(true);
 
@@ -189,7 +209,7 @@ describe("Regression testing", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            });
+            }, jasmine.any(Function));
         });
 
         it("should report a canvas showing the difference on a failing comparison", function () {
@@ -211,7 +231,7 @@ describe("Regression testing", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            });
+            }, jasmine.any(Function));
         });
 
         it("should report a missing reference image", function () {
@@ -230,7 +250,7 @@ describe("Regression testing", function () {
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function)
-            });
+            }, jasmine.any(Function));
         });
 
         it("should provide a appropriately sized page rendering on a missing reference image", function () {
@@ -260,7 +280,7 @@ describe("Regression testing", function () {
                 status: "error",
                 pageUrl: "samplepage.html",
                 pageImage: null
-            });
+            }, jasmine.any(Function));
         });
 
         it("should provide a method to repaint the HTML given width and height", function () {
@@ -289,7 +309,7 @@ describe("Regression testing", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            });
+            }, jasmine.any(Function));
             result = reporter.reportComparison.mostRecentCall.args[0];
 
             result.resizePageImage(16, 34, function () {
@@ -321,7 +341,7 @@ describe("Regression testing", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            });
+            }, jasmine.any(Function));
 
             reporter.reportComparison.mostRecentCall.args[0].acceptPage();
 
@@ -348,7 +368,7 @@ describe("Regression testing", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            });
+            }, jasmine.any(Function));
         });
 
         it("should provide a list of URLs that couldn't be loaded independently of whether the reference image exists", function () {
@@ -368,7 +388,7 @@ describe("Regression testing", function () {
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function)
-            });
+            }, jasmine.any(Function));
         });
 
         it("should not pass along a list if no errors exist", function () {
@@ -390,7 +410,7 @@ describe("Regression testing", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            });
+            }, jasmine.any(Function));
         });
 
         it("should get called before the success handler returns so that user actions don't interfere with reporting", function () {
