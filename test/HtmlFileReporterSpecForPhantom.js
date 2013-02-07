@@ -115,4 +115,38 @@ describe("HtmlFileReporter", function () {
             });
         });
     });
+
+    describe("on status error", function () {
+        var testResult;
+
+        beforeEach(function () {
+            testResult = {
+                status: "error",
+                pageUrl: "erroneous_page_url",
+                pageImage: null
+            };
+        });
+
+        it("should not save a page image", function () {
+            var imageAvailable = null;
+
+            reporter.reportComparison(testResult, callback);
+
+            waitsFor(isFinished);
+
+            runs(function () {
+                csscriticTestHelper.testImageUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "erroneous_page_url.reference.png"), function (result) {
+                    imageAvailable = result;
+                });
+            });
+
+            waitsFor(function () {
+                return imageAvailable != null;
+            });
+
+            runs(function () {
+                expect(imageAvailable).toBeFalsy();
+            });
+        });
+    });
 });

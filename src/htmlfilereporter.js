@@ -3,10 +3,12 @@ window.csscritic = (function (module) {
     var reportComparison = function (result, basePath, callback) {
         var imagesToWrite = [];
 
-        imagesToWrite.push({
-            image: result.pageImage,
-            target: basePath + getTargetBaseName(result.pageUrl) + ".png"
-        });
+        if (result.status !== "error") {
+            imagesToWrite.push({
+                image: result.pageImage,
+                target: basePath + getTargetBaseName(result.pageUrl) + ".png"
+            });
+        }
         if (result.status === "failed") {
             imagesToWrite.push({
                 image: result.referenceImage,
@@ -33,6 +35,11 @@ window.csscritic = (function (module) {
 
     var renderUrlsToFile = function (entrys, callback) {
         var urlsWritten = 0;
+
+        if (entrys.length === 0) {
+            callback();
+            return;
+        }
 
         entrys.forEach(function (entry) {
             renderUrlToFile(entry.image.src, entry.target, entry.image.width, entry.image.height, function () {

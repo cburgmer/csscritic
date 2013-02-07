@@ -16,16 +16,28 @@ window.csscriticTestHelper = (function () {
     var module = {},
         tempPath = null;
 
-    module.loadImageFromUrl = function (url, successCallback) {
+    var loadImage = function (url, successCallback, errorCallback) {
         var image = new window.Image();
 
         image.onload = function () {
             successCallback(image);
         };
-        image.onerror = function () {
-            safeLog("Error loading image " + url + " in test", url);
-        };
+        image.onerror = errorCallback;
         image.src = url;
+    };
+
+    module.loadImageFromUrl = function (url, successCallback) {
+        loadImage(url, successCallback, function () {
+            safeLog("Error loading image " + url + " in test", url);
+        });
+    };
+
+    module.testImageUrl = function (url, callback) {
+        loadImage(url, function () {
+            callback(true);
+        }, function () {
+            callback(false);
+        });
     };
 
     module.getFileUrl = function (filePath) {
