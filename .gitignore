@@ -6,3 +6,4 @@ components/
 bugs/
 test/BasicHtmlReporterLayout.html.json
 BasicHtmlReporterLayout.png
+BasicHtmlReporterLayout.reference.png

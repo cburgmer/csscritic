@@ -4,6 +4,14 @@ describe("HtmlFileReporter", function () {
         htmlImage, referenceImage, differenceImageCanvas,
         reporterOutputPath;
 
+    var finished,
+        callback = function () {
+            finished = true;
+        },
+        isFinished = function () {
+            return finished;
+        };
+
     beforeEach(function () {
         reporterOutputPath = csscriticTestHelper.getOrCreateTempPath();
         reporter = csscritic.HtmlFileReporter(reporterOutputPath);
@@ -12,10 +20,14 @@ describe("HtmlFileReporter", function () {
         referenceImage = null;
         differenceImageCanvas = window.document.createElement("canvas");
 
+        finished = false;
+
         this.addMatchers(imagediff.jasmine);
 
         csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "green.png"), function (image) {
             htmlImage = image;
+        });
+        csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "greenWithTransparency.png"), function (image) {
             referenceImage = image;
         });
 
@@ -25,13 +37,7 @@ describe("HtmlFileReporter", function () {
     });
 
     describe("on status passed", function () {
-        var testResult, finished,
-            callback = function () {
-                finished = true;
-            },
-            isFinished = function () {
-                return finished;
-            };
+        var testResult;
 
         beforeEach(function () {
             testResult = {
@@ -40,8 +46,6 @@ describe("HtmlFileReporter", function () {
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             };
-
-            finished = false;
         });
 
         it("should call the callback when finished reporting", function () {
@@ -54,7 +58,7 @@ describe("HtmlFileReporter", function () {
             });
         });
 
-        it("should save rendered page on status passed", function () {
+        it("should save the rendered page", function () {
             var resultImage = null;
 
             reporter.reportComparison(testResult, callback);
@@ -77,4 +81,38 @@ describe("HtmlFileReporter", function () {
         });
     });
 
+    describe("on status failed", function () {
+        var testResult;
+
+        beforeEach(function () {
+            testResult = {
+                status: "failed",
+                pageUrl: "page_url",
+                pageImage: htmlImage,
+                referenceImage: referenceImage
+            };
+        });
+
+        it("should save the reference image", function () {
+            var resultImage = null;
+
+            reporter.reportComparison(testResult, callback);
+
+            waitsFor(isFinished);
+
+            runs(function () {
+                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.reference.png"), function (image) {
+                    resultImage = image;
+                });
+            });
+
+            waitsFor(function () {
+                return resultImage != null;
+            });
+
+            runs(function () {
+                expect(resultImage).toImageDiffEqual(referenceImage);
+            });
+        });
+    });
 });

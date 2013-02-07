@@ -1,25 +1,48 @@
 window.csscritic = (function (module) {
 
     var reportComparison = function (result, basePath, callback) {
-        var targetImageFileName = getTargetName(result.pageUrl),
-            targetImagePath = basePath + targetImageFileName,
-            image = result.pageImage;
+        var imagesToWrite = [];
 
-        renderUrlToFile(image.src, targetImagePath, image.width, image.height, function () {
+        imagesToWrite.push({
+            image: result.pageImage,
+            target: basePath + getTargetBaseName(result.pageUrl) + ".png"
+        });
+        if (result.status === "failed") {
+            imagesToWrite.push({
+                image: result.referenceImage,
+                target: basePath + getTargetBaseName(result.pageUrl) + ".reference.png"
+            });
+        }
+
+        renderUrlsToFile(imagesToWrite, function () {
             if (callback) {
                 callback();
             }
         });
     };
 
-    var getTargetName = function (filePath) {
+    var getTargetBaseName = function (filePath) {
         var fileName = filePath.substr(filePath.lastIndexOf("/")+1),
             stripEnding = ".html";
 
         if (fileName.substr(fileName.length - stripEnding.length) === stripEnding) {
             fileName = fileName.substr(0, fileName.length - stripEnding.length);
         }
-        return fileName + ".png";
+        return fileName;
+    };
+
+    var renderUrlsToFile = function (entrys, callback) {
+        var urlsWritten = 0;
+
+        entrys.forEach(function (entry) {
+            renderUrlToFile(entry.image.src, entry.target, entry.image.width, entry.image.height, function () {
+                urlsWritten += 1;
+
+                if (entrys.length === urlsWritten) {
+                    callback();
+                }
+            });
+        });
     };
 
     var renderUrlToFile = function (url, filePath, width, height, callback) {
