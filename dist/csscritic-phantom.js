@@ -882,14 +882,24 @@ window.csscritic = (function (module) {
 
         if (result.status !== "error") {
             imagesToWrite.push({
-                image: result.pageImage,
+                imageUrl: result.pageImage.src,
+                width: result.pageImage.width,
+                height: result.pageImage.height,
                 target: basePath + getTargetBaseName(result.pageUrl) + ".png"
             });
         }
         if (result.status === "failed") {
             imagesToWrite.push({
-                image: result.referenceImage,
+                imageUrl: result.referenceImage.src,
+                width: result.referenceImage.width,
+                height: result.referenceImage.height,
                 target: basePath + getTargetBaseName(result.pageUrl) + ".reference.png"
+            });
+            imagesToWrite.push({
+                imageUrl: getDifferenceCanvas(result.pageImage, result.referenceImage).toDataURL('image/png'),
+                width: result.referenceImage.width,
+                height: result.referenceImage.height,
+                target: basePath + getTargetBaseName(result.pageUrl) + ".diff.png"
             });
         }
 
@@ -919,7 +929,7 @@ window.csscritic = (function (module) {
         }
 
         entrys.forEach(function (entry) {
-            renderUrlToFile(entry.image.src, entry.target, entry.image.width, entry.image.height, function () {
+            renderUrlToFile(entry.imageUrl, entry.target, entry.width, entry.height, function () {
                 urlsWritten += 1;
 
                 if (entrys.length === urlsWritten) {
@@ -942,6 +952,20 @@ window.csscritic = (function (module) {
 
             callback();
         });
+    };
+
+    var getDifferenceCanvas = function (imageA, imageB) {
+        var differenceImageData = imagediff.diff(imageA, imageB),
+            canvas = document.createElement("canvas"),
+            context;
+
+        canvas.height = differenceImageData.height;
+        canvas.width  = differenceImageData.width;
+
+        context = canvas.getContext("2d");
+        context.putImageData(differenceImageData, 0, 0);
+
+        return canvas;
     };
 
     module.HtmlFileReporter = function (basePath) {

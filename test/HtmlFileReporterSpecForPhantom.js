@@ -82,15 +82,29 @@ describe("HtmlFileReporter", function () {
     });
 
     describe("on status failed", function () {
-        var testResult;
+        var testResult,
+            diffImage = null,
+            testCounter = 0,
+            getUniquePageUrl = function () {
+                testCounter += 1;
+                return "page_url" + testCounter;
+            };
 
         beforeEach(function () {
             testResult = {
                 status: "failed",
-                pageUrl: "page_url",
+                pageUrl: getUniquePageUrl(),
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             };
+
+            csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "greenWithTransparencyDiff.png"), function (image) {
+                diffImage = image;
+            });
+
+            waitsFor(function () {
+                return diffImage != null;
+            });
         });
 
         it("should save the reference image", function () {
@@ -101,7 +115,7 @@ describe("HtmlFileReporter", function () {
             waitsFor(isFinished);
 
             runs(function () {
-                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.reference.png"), function (image) {
+                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + testResult.pageUrl + ".reference.png"), function (image) {
                     resultImage = image;
                 });
             });
@@ -112,6 +126,28 @@ describe("HtmlFileReporter", function () {
 
             runs(function () {
                 expect(resultImage).toImageDiffEqual(referenceImage);
+            });
+        });
+
+        it("should save a difference image", function () {
+            var resultImage = null;
+
+            reporter.reportComparison(testResult, callback);
+
+            waitsFor(isFinished);
+
+            runs(function () {
+                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + testResult.pageUrl + ".diff.png"), function (image) {
+                    resultImage = image;
+                });
+            });
+
+            waitsFor(function () {
+                return resultImage != null;
+            });
+
+            runs(function () {
+                expect(resultImage).toImageDiffEqual(diffImage);
             });
         });
     });
