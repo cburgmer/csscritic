@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2013-02-05
+/*! CSS critic - v0.1.0 - 2013-02-07
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 

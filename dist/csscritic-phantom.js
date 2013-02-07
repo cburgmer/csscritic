@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-05
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-07
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -882,11 +882,11 @@ window.csscritic = (function (module) {
             targetImagePath = basePath + targetImageFileName,
             image = result.pageImage;
 
-        renderUrlToFile(image.src, targetImagePath, image.width, image.height);
-
-        if (callback) {
-            callback();
-        }
+        renderUrlToFile(image.src, targetImagePath, image.width, image.height, function () {
+            if (callback) {
+                callback();
+            }
+        });
     };
 
     var getTargetName = function (filePath) {
@@ -899,7 +899,7 @@ window.csscritic = (function (module) {
         return fileName + ".png";
     };
 
-    var renderUrlToFile = function (url, filePath, width, height) {
+    var renderUrlToFile = function (url, filePath, width, height, callback) {
         var page = require("webpage").create();
 
         page.viewportSize = {
@@ -909,6 +909,8 @@ window.csscritic = (function (module) {
 
         page.open(url, function () {
             page.render(filePath);
+
+            callback();
         });
     };
 

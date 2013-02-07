@@ -5,11 +5,11 @@ window.csscritic = (function (module) {
             targetImagePath = basePath + targetImageFileName,
             image = result.pageImage;
 
-        renderUrlToFile(image.src, targetImagePath, image.width, image.height);
-
-        if (callback) {
-            callback();
-        }
+        renderUrlToFile(image.src, targetImagePath, image.width, image.height, function () {
+            if (callback) {
+                callback();
+            }
+        });
     };
 
     var getTargetName = function (filePath) {
@@ -22,7 +22,7 @@ window.csscritic = (function (module) {
         return fileName + ".png";
     };
 
-    var renderUrlToFile = function (url, filePath, width, height) {
+    var renderUrlToFile = function (url, filePath, width, height, callback) {
         var page = require("webpage").create();
 
         page.viewportSize = {
@@ -32,6 +32,8 @@ window.csscritic = (function (module) {
 
         page.open(url, function () {
             page.render(filePath);
+
+            callback();
         });
     };
 

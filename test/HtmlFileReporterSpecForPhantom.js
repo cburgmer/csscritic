@@ -24,47 +24,57 @@ describe("HtmlFileReporter", function () {
         });
     });
 
-    it("should call the callback when finished reporting", function () {
-        var callback = jasmine.createSpy("callback");
+    describe("on status passed", function () {
+        var testResult, finished,
+            callback = function () {
+                finished = true;
+            },
+            isFinished = function () {
+                return finished;
+            };
 
-        reporter.reportComparison({
-            status: "passed",
-            pageUrl: "page_url",
-            pageImage: htmlImage,
-            referenceImage: referenceImage
-        }, callback);
-
-        expect(callback).toHaveBeenCalled();
-    });
-
-    it("should save rendered page on status passed", function () {
-        var resultImage = null;
-
-        runs(function () {
-            reporter.reportComparison({
+        beforeEach(function () {
+            testResult = {
                 status: "passed",
                 pageUrl: "page_url",
                 pageImage: htmlImage,
                 referenceImage: referenceImage
+            };
+
+            finished = false;
+        });
+
+        it("should call the callback when finished reporting", function () {
+            reporter.reportComparison(testResult, callback);
+
+            waitsFor(isFinished);
+
+            runs(function () {
+                expect(isFinished).toBeTruthy();
+            });
+        });
+
+        it("should save rendered page on status passed", function () {
+            var resultImage = null;
+
+            reporter.reportComparison(testResult, callback);
+
+            waitsFor(isFinished);
+
+            runs(function () {
+                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.png"), function (image) {
+                    resultImage = image;
+                });
             });
 
-        });
-
-        // TODO wait for reporter.reportComparison() to finish
-        waits(1000);
-
-        runs(function () {
-            csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.png"), function (image) {
-                resultImage = image;
+            waitsFor(function () {
+                return resultImage != null;
             });
-        });
 
-        waitsFor(function () {
-            return resultImage != null;
-        });
-
-        runs(function () {
-            expect(resultImage).toImageDiffEqual(htmlImage);
+            runs(function () {
+                expect(resultImage).toImageDiffEqual(htmlImage);
+            });
         });
     });
+
 });
