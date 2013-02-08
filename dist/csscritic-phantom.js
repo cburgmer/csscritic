@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-07
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-08
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -492,7 +492,7 @@ window.csscritic = (function (module) {
     return module;
 }(window.csscritic || {}));
 
-window.csscritic = (function (module) {
+window.csscritic = (function (module, fs) {
     module.storage = module.storage || {};
     module.filestorage = {};
 
@@ -505,8 +505,7 @@ window.csscritic = (function (module) {
     };
 
     module.filestorage.storeReferenceImage = function (key, pageImage) {
-        var fs = require("fs"),
-            uri, dataObj;
+        var uri, dataObj;
 
         uri = module.util.getDataURIForImage(pageImage);
         dataObj = {
@@ -517,8 +516,7 @@ window.csscritic = (function (module) {
     };
 
     module.filestorage.readReferenceImage = function (key, successCallback, errorCallback) {
-        var fs = require("fs"),
-            filePath = filePathForKey(key),
+        var filePath = filePathForKey(key),
             dataObjString, dataObj;
 
         if (! fs.exists(filePath)) {
@@ -548,7 +546,7 @@ window.csscritic = (function (module) {
     module.storage.storeReferenceImage = module.filestorage.storeReferenceImage;
     module.storage.readReferenceImage = module.filestorage.readReferenceImage;
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, require("fs")));
 
 window.csscritic = (function (module, renderer, storage, window, imagediff) {
     var reporters = [];
@@ -823,7 +821,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     return module;
 }(window.csscritic || {}, rasterizeHTMLInline, jsSHA));
 
-window.csscritic = (function (module, window) {
+window.csscritic = (function (module, console) {
 
     var ATTRIBUTES_TO_ANSI = {
             "off": 0,
@@ -859,7 +857,7 @@ window.csscritic = (function (module, window) {
         var color = statusColor[result.status] || "",
             statusStr = inColor(result.status, color);
 
-        window.console.log("Testing " + result.pageUrl + "... " + statusStr);
+        console.log("Testing " + result.pageUrl + "... " + statusStr);
 
         if (callback) {
             callback();
@@ -873,9 +871,9 @@ window.csscritic = (function (module, window) {
     };
 
     return module;
-}(window.csscritic || {}, window));
+}(window.csscritic || {}, window.console));
 
-window.csscritic = (function (module) {
+window.csscritic = (function (module, webpage) {
 
     var reportComparison = function (result, basePath, callback) {
         var imagesToWrite = [];
@@ -940,7 +938,7 @@ window.csscritic = (function (module) {
     };
 
     var renderUrlToFile = function (url, filePath, width, height, callback) {
-        var page = require("webpage").create();
+        var page = webpage.create();
 
         page.viewportSize = {
             width: width,
@@ -979,7 +977,7 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, require("webpage")));
 
 window.csscritic = (function (module) {
     var system = require("system");

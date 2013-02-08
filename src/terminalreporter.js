@@ -1,4 +1,4 @@
-window.csscritic = (function (module, window) {
+window.csscritic = (function (module, console) {
 
     var ATTRIBUTES_TO_ANSI = {
             "off": 0,
@@ -34,7 +34,7 @@ window.csscritic = (function (module, window) {
         var color = statusColor[result.status] || "",
             statusStr = inColor(result.status, color);
 
-        window.console.log("Testing " + result.pageUrl + "... " + statusStr);
+        console.log("Testing " + result.pageUrl + "... " + statusStr);
 
         if (callback) {
             callback();
@@ -48,4 +48,4 @@ window.csscritic = (function (module, window) {
     };
 
     return module;
-}(window.csscritic || {}, window));
+}(window.csscritic || {}, window.console));

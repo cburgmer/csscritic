@@ -1,4 +1,4 @@
-window.csscritic = (function (module) {
+window.csscritic = (function (module, webpage) {
 
     var reportComparison = function (result, basePath, callback) {
         var imagesToWrite = [];
@@ -63,7 +63,7 @@ window.csscritic = (function (module) {
     };
 
     var renderUrlToFile = function (url, filePath, width, height, callback) {
-        var page = require("webpage").create();
+        var page = webpage.create();
 
         page.viewportSize = {
             width: width,
@@ -102,4 +102,4 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, require("webpage")));

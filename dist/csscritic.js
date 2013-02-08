@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2013-02-07
+/*! CSS critic - v0.1.0 - 2013-02-08
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 
@@ -45,7 +45,7 @@ window.csscritic = (function (module, rasterizeHTML) {
     return module;
 }(window.csscritic || {}, rasterizeHTML));
 
-window.csscritic = (function (module) {
+window.csscritic = (function (module, localStorage) {
     module.storage = module.storage || {};
     module.domstorage = {};
 
@@ -83,7 +83,7 @@ window.csscritic = (function (module) {
     module.storage.storeReferenceImage = module.domstorage.storeReferenceImage;
     module.storage.readReferenceImage = module.domstorage.readReferenceImage;
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, localStorage));
 
 window.csscritic = (function (module, renderer, storage, window, imagediff) {
     var reporters = [];

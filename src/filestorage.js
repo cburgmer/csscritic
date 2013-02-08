@@ -1,4 +1,4 @@
-window.csscritic = (function (module) {
+window.csscritic = (function (module, fs) {
     module.storage = module.storage || {};
     module.filestorage = {};
 
@@ -11,8 +11,7 @@ window.csscritic = (function (module) {
     };
 
     module.filestorage.storeReferenceImage = function (key, pageImage) {
-        var fs = require("fs"),
-            uri, dataObj;
+        var uri, dataObj;
 
         uri = module.util.getDataURIForImage(pageImage);
         dataObj = {
@@ -23,8 +22,7 @@ window.csscritic = (function (module) {
     };
 
     module.filestorage.readReferenceImage = function (key, successCallback, errorCallback) {
-        var fs = require("fs"),
-            filePath = filePathForKey(key),
+        var filePath = filePathForKey(key),
             dataObjString, dataObj;
 
         if (! fs.exists(filePath)) {
@@ -54,4 +52,4 @@ window.csscritic = (function (module) {
     module.storage.storeReferenceImage = module.filestorage.storeReferenceImage;
     module.storage.readReferenceImage = module.filestorage.readReferenceImage;
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, require("fs")));

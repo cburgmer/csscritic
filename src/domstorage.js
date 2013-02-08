@@ -1,4 +1,4 @@
-window.csscritic = (function (module) {
+window.csscritic = (function (module, localStorage) {
     module.storage = module.storage || {};
     module.domstorage = {};
 
@@ -36,4 +36,4 @@ window.csscritic = (function (module) {
     module.storage.storeReferenceImage = module.domstorage.storeReferenceImage;
     module.storage.readReferenceImage = module.domstorage.readReferenceImage;
     return module;
-}(window.csscritic || {}));
+}(window.csscritic || {}, localStorage));
