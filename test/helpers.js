@@ -14,7 +14,8 @@ window.safeLog = function (msg) {
 
 window.csscriticTestHelper = (function () {
     var module = {},
-        tempPath = null;
+        tempPath = null,
+        tempPathCounter = 0;
 
     var loadImage = function (url, successCallback, errorCallback) {
         var image = new window.Image();
@@ -50,7 +51,7 @@ window.csscriticTestHelper = (function () {
         return "/tmp/csscriticTest." + Math.floor(Math.random() * 10000) + "/";
     }
 
-    module.createTempPath = function () {
+    var createMainTempPath = function () {
         var fs = require("fs"),
             path = tempPathName();
 
@@ -62,11 +63,17 @@ window.csscriticTestHelper = (function () {
         return path;
     };
 
-    module.getOrCreateTempPath = function () {
+    module.createTempPath = function () {
+        var fs = require("fs"),
+            tempSubPath;
+
         if (tempPath === null) {
-            tempPath = csscriticTestHelper.createTempPath();
+            tempPath = createMainTempPath();
         }
-        return tempPath;
+        tempSubPath = tempPath + '/' + tempPathCounter + '/';
+        tempPathCounter += 1;
+        fs.makeDirectory(tempSubPath);
+        return tempSubPath;
     };
 
     return module;

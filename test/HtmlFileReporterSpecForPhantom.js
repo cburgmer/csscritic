@@ -13,7 +13,7 @@ describe("HtmlFileReporter", function () {
         };
 
     beforeEach(function () {
-        reporterOutputPath = csscriticTestHelper.getOrCreateTempPath();
+        reporterOutputPath = csscriticTestHelper.createTempPath();
         reporter = csscritic.HtmlFileReporter(reporterOutputPath);
 
         htmlImage = null;
@@ -83,17 +83,12 @@ describe("HtmlFileReporter", function () {
 
     describe("on status failed", function () {
         var testResult,
-            diffImage = null,
-            testCounter = 0,
-            getUniquePageUrl = function () {
-                testCounter += 1;
-                return "page_url" + testCounter;
-            };
+            diffImage = null;
 
         beforeEach(function () {
             testResult = {
                 status: "failed",
-                pageUrl: getUniquePageUrl(),
+                pageUrl: "page_url",
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             };
@@ -115,7 +110,7 @@ describe("HtmlFileReporter", function () {
             waitsFor(isFinished);
 
             runs(function () {
-                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + testResult.pageUrl + ".reference.png"), function (image) {
+                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.reference.png"), function (image) {
                     resultImage = image;
                 });
             });
@@ -137,7 +132,7 @@ describe("HtmlFileReporter", function () {
             waitsFor(isFinished);
 
             runs(function () {
-                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + testResult.pageUrl + ".diff.png"), function (image) {
+                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.diff.png"), function (image) {
                     resultImage = image;
                 });
             });
