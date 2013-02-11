@@ -969,6 +969,10 @@ window.csscritic = (function (module, webpage) {
     module.HtmlFileReporter = function (basePath) {
         basePath = basePath || "./";
 
+        if (basePath[basePath.length - 1] !== '/') {
+            basePath += '/';
+        }
+
         return {
             reportComparison: function (result, callback) {
                 return reportComparison(result, basePath, callback);
