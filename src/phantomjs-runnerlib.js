@@ -3,6 +3,13 @@ window.csscritic = (function (module) {
 
     module.phantomjsRunner = {};
 
+    var getFollowingValue = function (args, i) {
+        if (i + 1 >= args.length) {
+            throw new Error("Invalid arguments");
+        }
+        return args[i+1];
+    };
+
     var parseArguments = function (args) {
         var i = 0,
             arg, value,
@@ -12,15 +19,23 @@ window.csscritic = (function (module) {
             };
 
         while(i < args.length) {
-            if (args[i][0] === "-") {
-                arg = args[i];
-                value = args[i+1];
-                parsedArguments.opts[arg] = value;
-                if (i + 1 < args.length) {
-                    i += 1;
+            if (args[i].substr(0, 2) === "--") {
+                if (args[i].indexOf('=') >= 0) {
+                    arg = args[i].substring(0, args[i].indexOf('='));
+                    value = args[i].substring(args[i].indexOf('=') + 1, args[i].length);
                 } else {
-                    throw new Error("Invalid arguments");
+                    arg = args[i];
+                    value = getFollowingValue(args, i);
+
+                    i += 1;
                 }
+
+                parsedArguments.opts[arg] = value;
+            } else if (args[i][0] === "-") {
+                arg = args[i];
+                parsedArguments.opts[arg] = getFollowingValue(args, i);
+
+                i += 1;
             } else {
                 arg = args[i];
                 parsedArguments.args.push(arg);
@@ -31,14 +46,16 @@ window.csscritic = (function (module) {
         return parsedArguments;
     };
 
-    var runCompare = function (testDocuments, signedOffPages, doneHandler) {
+    var runCompare = function (testDocuments, signedOffPages, logToPath, doneHandler) {
         var finishedCount = 0;
 
         signedOffPages = signedOffPages || [];
 
         csscritic.addReporter(csscritic.SignOffReporter(signedOffPages));
         csscritic.addReporter(csscritic.TerminalReporter());
-        csscritic.addReporter(csscritic.HtmlFileReporter());
+        if (logToPath) {
+            csscritic.addReporter(csscritic.HtmlFileReporter(logToPath));
+        }
 
         testDocuments.forEach(function (testDocument) {
             var passed = true;
@@ -56,14 +73,15 @@ window.csscritic = (function (module) {
 
     module.phantomjsRunner.main = function () {
         var parsedArguments = parseArguments(system.args.slice(1)),
-            signedOffPages = parsedArguments.opts['-f'];
+            signedOffPages = parsedArguments.opts['-f'],
+            logToPath = parsedArguments.opts['--log'];
 
         if (parsedArguments.args.length < 1) {
             console.log("CSS critic regression runner for PhantomJS");
-            console.log("Usage: phantomjs-regressionrunner.js [-f SIGNED_OFF.json] A_DOCUMENT.html [ANOTHER_DOCUMENT.html ...]");
+            console.log("Usage: phantomjs-regressionrunner.js [-f SIGNED_OFF.json] [--log PATH] A_DOCUMENT.html [ANOTHER_DOCUMENT.html ...]");
             phantom.exit(2);
         } else {
-            runCompare(parsedArguments.args, signedOffPages, function (passed) {
+            runCompare(parsedArguments.args, signedOffPages, logToPath, function (passed) {
                 var ret = passed ? 0 : 1;
 
                 phantom.exit(ret);
