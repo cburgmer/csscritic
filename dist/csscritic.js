@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2013-02-11
+/*! CSS critic - v0.1.0 - 2013-02-12
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 
@@ -86,7 +86,14 @@ window.csscritic = (function (module, localStorage) {
 }(window.csscritic || {}, localStorage));
 
 window.csscritic = (function (module, renderer, storage, window, imagediff) {
-    var reporters = [];
+    var reporters, testCases;
+
+    var clear = function () {
+        reporters = [];
+        testCases = [];
+    };
+
+    clear();
 
     module.util = {};
 
@@ -240,6 +247,29 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
             loadPageAndReportResult(pageUrl, 800, 600, null, callback);
         });
     };
+
+    module.add = function (pageUrl) {
+        testCases.push(pageUrl);
+    };
+
+    module.execute = function (callback) {
+        var testCaseCount = testCases.length,
+            finishedCount = 0,
+            passed = true;
+
+        testCases.forEach(function (pageUrl) {
+            module.compare(pageUrl, function (status) {
+                passed &= status === "passed";
+
+                finishedCount += 1;
+                if (finishedCount === testCaseCount) {
+                    callback(passed);
+                }
+            });
+        });
+    };
+
+    module.clear = clear;
 
     return module;
 }(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, window, imagediff));

@@ -3,13 +3,6 @@ window.csscritic = (function (module) {
 
     module.phantomjsRunner = {};
 
-    var getFollowingValue = function (args, i) {
-        if (i + 1 >= args.length) {
-            throw new Error("Invalid arguments");
-        }
-        return args[i+1];
-    };
-
     var parseArguments = function (args) {
         var i = 0,
             arg, value,
@@ -17,6 +10,13 @@ window.csscritic = (function (module) {
                 opts: {},
                 args: []
             };
+
+        var getFollowingValue = function (args, i) {
+            if (i + 1 >= args.length) {
+                throw new Error("Invalid arguments");
+            }
+            return args[i+1];
+        };
 
         while(i < args.length) {
             if (args[i].substr(0, 2) === "--") {
@@ -47,8 +47,6 @@ window.csscritic = (function (module) {
     };
 
     var runCompare = function (testDocuments, signedOffPages, logToPath, doneHandler) {
-        var finishedCount = 0;
-
         signedOffPages = signedOffPages || [];
 
         csscritic.addReporter(csscritic.SignOffReporter(signedOffPages));
@@ -58,17 +56,10 @@ window.csscritic = (function (module) {
         }
 
         testDocuments.forEach(function (testDocument) {
-            var passed = true;
-
-            csscritic.compare(testDocument, function (status) {
-                finishedCount += 1;
-                passed = passed && (status === "passed");
-
-                if (finishedCount === testDocuments.length) {
-                    doneHandler(passed);
-                }
-            });
+            csscritic.add(testDocument);
         });
+
+        csscritic.execute(doneHandler);
     };
 
     module.phantomjsRunner.main = function () {

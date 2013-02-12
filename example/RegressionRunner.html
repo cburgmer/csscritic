@@ -11,8 +11,9 @@
     <script type="text/javascript">
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
-            csscritic.compare('pageUnderTest.html');
-            csscritic.compare('missingPage.html');
+            csscritic.add('pageUnderTest.html');
+            csscritic.add('missingPage.html');
+            csscritic.execute();
         };
     </script>
 

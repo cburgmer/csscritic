@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-11
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-02-12
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -549,7 +549,14 @@ window.csscritic = (function (module, fs) {
 }(window.csscritic || {}, require("fs")));
 
 window.csscritic = (function (module, renderer, storage, window, imagediff) {
-    var reporters = [];
+    var reporters, testCases;
+
+    var clear = function () {
+        reporters = [];
+        testCases = [];
+    };
+
+    clear();
 
     module.util = {};
 
@@ -703,6 +710,29 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
             loadPageAndReportResult(pageUrl, 800, 600, null, callback);
         });
     };
+
+    module.add = function (pageUrl) {
+        testCases.push(pageUrl);
+    };
+
+    module.execute = function (callback) {
+        var testCaseCount = testCases.length,
+            finishedCount = 0,
+            passed = true;
+
+        testCases.forEach(function (pageUrl) {
+            module.compare(pageUrl, function (status) {
+                passed &= status === "passed";
+
+                finishedCount += 1;
+                if (finishedCount === testCaseCount) {
+                    callback(passed);
+                }
+            });
+        });
+    };
+
+    module.clear = clear;
 
     return module;
 }(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, window, imagediff));
@@ -988,13 +1018,6 @@ window.csscritic = (function (module) {
 
     module.phantomjsRunner = {};
 
-    var getFollowingValue = function (args, i) {
-        if (i + 1 >= args.length) {
-            throw new Error("Invalid arguments");
-        }
-        return args[i+1];
-    };
-
     var parseArguments = function (args) {
         var i = 0,
             arg, value,
@@ -1002,6 +1025,13 @@ window.csscritic = (function (module) {
                 opts: {},
                 args: []
             };
+
+        var getFollowingValue = function (args, i) {
+            if (i + 1 >= args.length) {
+                throw new Error("Invalid arguments");
+            }
+            return args[i+1];
+        };
 
         while(i < args.length) {
             if (args[i].substr(0, 2) === "--") {
@@ -1032,8 +1062,6 @@ window.csscritic = (function (module) {
     };
 
     var runCompare = function (testDocuments, signedOffPages, logToPath, doneHandler) {
-        var finishedCount = 0;
-
         signedOffPages = signedOffPages || [];
 
         csscritic.addReporter(csscritic.SignOffReporter(signedOffPages));
@@ -1043,17 +1071,10 @@ window.csscritic = (function (module) {
         }
 
         testDocuments.forEach(function (testDocument) {
-            var passed = true;
-
-            csscritic.compare(testDocument, function (status) {
-                finishedCount += 1;
-                passed = passed && (status === "passed");
-
-                if (finishedCount === testDocuments.length) {
-                    doneHandler(passed);
-                }
-            });
+            csscritic.add(testDocument);
         });
+
+        csscritic.execute(doneHandler);
     };
 
     module.phantomjsRunner.main = function () {

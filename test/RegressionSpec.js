@@ -20,7 +20,54 @@ describe("Regression testing", function () {
     });
 
     afterEach(function () {
-        csscritic.clearReporters();
+        csscritic.clear();
+    });
+
+    describe("adding & executing", function () {
+        beforeEach(function () {
+            getImageForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlImage);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
+                callback(referenceImage);
+            });
+        });
+
+        it("should compare a page", function () {
+            var passed = null,
+                imagediffEqual;
+
+            imagediffEqual = spyOn(imagediff, 'equal').andReturn(true);
+
+            csscritic.add("samplepage.html");
+
+            expect(imagediffEqual).not.toHaveBeenCalled();
+
+            csscritic.execute(function (result) {
+                passed = result;
+            });
+
+            expect(imagediffEqual).toHaveBeenCalledWith(htmlImage, referenceImage);
+
+            expect(passed).toBeTruthy();
+        });
+
+        it("should report fail on a failing test case", function () {
+            var passed = null,
+                imagediffEqual;
+
+            imagediffEqual = spyOn(imagediff, 'equal').andReturn(false);
+
+            csscritic.add("samplepage.html");
+
+            csscritic.execute(function (result) {
+                passed = result;
+            });
+
+            expect(imagediffEqual).toHaveBeenCalledWith(htmlImage, referenceImage);
+
+            expect(passed).toBeFalsy();
+        });
     });
 
     describe("Reference comparison", function () {
