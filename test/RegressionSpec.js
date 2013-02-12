@@ -68,6 +68,20 @@ describe("Regression testing", function () {
 
             expect(passed).toBeFalsy();
         });
+
+        it("should return on an empty list of tests", function () {
+            var passed = null;
+
+            csscritic.execute(function (result) {
+                passed = result;
+            });
+
+            expect(passed).toBeTruthy();
+        });
+
+        it("should handle a missing callback", function () {
+            csscritic.execute();
+        });
     });
 
     describe("Reference comparison", function () {
@@ -213,7 +227,7 @@ describe("Regression testing", function () {
         var reporter;
 
         beforeEach(function () {
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison", "report"]);
             csscritic.addReporter(reporter);
         });
 
@@ -481,6 +495,34 @@ describe("Regression testing", function () {
             });
 
             expect(reporter.reportComparison).toHaveBeenCalled();
+        });
+
+        it("should call final report", function () {
+            csscritic.execute();
+
+            expect(reporter.report).toHaveBeenCalledWith({
+                success: true
+            }, jasmine.any(Function));
+        });
+
+        it("should indicate fail in final report", function () {
+            spyOn(imagediff, 'equal').andReturn(false);
+
+            getImageForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                callback(htmlImage);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, callback) {
+                callback(referenceImage);
+            });
+
+            csscritic.add("failingpage.html");
+
+            csscritic.execute();
+
+            reporter.reportComparison.mostRecentCall.args[1]();
+            expect(reporter.report).toHaveBeenCalledWith({
+                success: false
+            }, jasmine.any(Function));
         });
 
     });

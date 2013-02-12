@@ -33,6 +33,15 @@ window.csscritic = (function (module, webpage) {
         });
     };
 
+    var compileReport = function (results, basePath, callback) {
+        var fs = require("fs"),
+            content = results.success ? "Passed" : "Failed",
+            document = "<html><body>" + content + "</body></html>";
+
+        fs.write(basePath + "index.html", document, "w");
+        callback();
+    };
+
     var getTargetBaseName = function (filePath) {
         var fileName = filePath.substr(filePath.lastIndexOf("/")+1),
             stripEnding = ".html";
@@ -101,6 +110,9 @@ window.csscritic = (function (module, webpage) {
         return {
             reportComparison: function (result, callback) {
                 return reportComparison(result, basePath, callback);
+            },
+            report: function (results, callback) {
+                return compileReport(results, basePath, callback);
             }
         };
     };

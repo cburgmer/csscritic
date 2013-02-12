@@ -180,4 +180,35 @@ describe("HtmlFileReporter", function () {
             });
         });
     });
+
+    describe("'s page output", function () {
+        it("should save a HTML result page", function () {
+            reporter.report({
+                success: true
+            }, callback);
+
+            waitsFor(isFinished);
+
+            runs(function () {
+                var content = require("fs").read(reporterOutputPath + "index.html");
+
+                expect(content).toMatch(/Passed/);
+            });
+        });
+
+        it("should mark a failed run", function () {
+            reporter.report({
+                success: false
+            }, callback);
+
+            waitsFor(isFinished);
+
+            runs(function () {
+                var content = require("fs").read(reporterOutputPath + "index.html");
+
+                expect(content).toMatch(/Failed/);
+            });
+        });
+    });
+
 });

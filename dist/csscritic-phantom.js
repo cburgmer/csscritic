@@ -718,15 +718,40 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
     module.execute = function (callback) {
         var testCaseCount = testCases.length,
             finishedCount = 0,
-            passed = true;
+            passed = true,
+            finishedReporterCount = 0,
+            reporterCount = reporters.length,
+            finishUp = function () {
+                var i;
+                for (i = 0; i < reporterCount; i++) {
+                    if (reporters[i].report) {
+                        reporters[i].report({success: passed}, finishUpReporters);
+                    }
+                }
+
+                if (callback) {
+                    callback(passed);
+                }
+            },
+            finishUpReporters = function () {
+                finishedReporterCount += 1;
+                if (finishedReporterCount === reporterCount) {
+                    callback();
+                }
+            };
+
+        if (testCases.length === 0) {
+            finishUp();
+            return;
+        }
 
         testCases.forEach(function (pageUrl) {
             module.compare(pageUrl, function (status) {
-                passed &= status === "passed";
+                passed = passed && status === "passed";
 
                 finishedCount += 1;
                 if (finishedCount === testCaseCount) {
-                    callback(passed);
+                    finishUp();
                 }
             });
         });
@@ -938,6 +963,15 @@ window.csscritic = (function (module, webpage) {
         });
     };
 
+    var compileReport = function (results, basePath, callback) {
+        var fs = require("fs"),
+            content = results.success ? "Passed" : "Failed",
+            document = "<html><body>" + content + "</body></html>";
+
+        fs.write(basePath + "index.html", document, "w");
+        callback();
+    };
+
     var getTargetBaseName = function (filePath) {
         var fileName = filePath.substr(filePath.lastIndexOf("/")+1),
             stripEnding = ".html";
@@ -1006,6 +1040,9 @@ window.csscritic = (function (module, webpage) {
         return {
             reportComparison: function (result, callback) {
                 return reportComparison(result, basePath, callback);
+            },
+            report: function (results, callback) {
+                return compileReport(results, basePath, callback);
             }
         };
     };
