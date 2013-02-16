@@ -5,7 +5,7 @@ describe("Browser renderer", function () {
         the_image = "the_image";
     });
 
-    it("should draw the url to the given canvas and disable caching", function () {
+    it("should draw the url to the given canvas, disable caching and execute JavaScript", function () {
         var image = null,
             drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
                 callback(the_image, []);
@@ -16,7 +16,7 @@ describe("Browser renderer", function () {
         });
 
         expect(the_image).toBe(image);
-        expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7, executeJs: true}, jasmine.any(Function));
+        expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 10}, jasmine.any(Function));
     });
 
     it("should call the error handler if a page does not exist", function () {

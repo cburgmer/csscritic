@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2013-02-12
+/*! CSS critic - v0.1.0 - 2013-02-16
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 
@@ -28,7 +28,13 @@ window.csscritic = (function (module, rasterizeHTML) {
     };
 
     module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
-        rasterizeHTML.drawURL(pageUrl, {cache: false, width: width, height: height, executeJs: true}, function (image, errors) {
+        rasterizeHTML.drawURL(pageUrl, {
+                cache: false,
+                width: width,
+                height: height,
+                executeJs: true,
+                executeJsTimeout: 10
+            }, function (image, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
