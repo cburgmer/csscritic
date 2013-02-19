@@ -45,7 +45,8 @@ describe("Browser renderer", function () {
         csscritic.renderer.browserRenderer("the_url", 42, 7);
     });
 
-    it("should report erroneous resource urls", function () {
+    // This test makes phantomjs crash, due to http://code.google.com/p/phantomjs/issues/detail?id=947
+    ifNotInWebkitIt("should report erroneous resource urls", function () {
         var erroneousResourceUrls = null,
             fixtureUrl = csscriticTestPath + "fixtures/",
             pageUrl = fixtureUrl + "brokenPage.html";
