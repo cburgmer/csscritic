@@ -29,7 +29,7 @@ window.csscritic = (function (module, rasterizeHTML) {
                 width: width,
                 height: height,
                 executeJs: true,
-                executeJsTimeout: 10
+                executeJsTimeout: 50
             }, function (image, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 

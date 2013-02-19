@@ -16,7 +16,7 @@ describe("Browser renderer", function () {
         });
 
         expect(the_image).toBe(image);
-        expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 10}, jasmine.any(Function));
+        expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 50}, jasmine.any(Function));
     });
 
     it("should call the error handler if a page does not exist", function () {
