@@ -364,14 +364,21 @@ window.csscritic = (function (module, document) {
 
     var getOrCreateBody = function () {
         var reporterId = "csscritic_basichtmlreporter",
-            reportBody = document.getElementById(reporterId);
+            reportBody = document.getElementById(reporterId),
+            timeTaken;
 
         if (reportBody === null) {
             reportBody = document.createElement("div");
             reportBody.id = reporterId;
 
+            timeTaken = document.createElement("div");
+            timeTaken.className = "timeTaken";
+            reportBody.appendChild(timeTaken);
+
             document.getElementsByTagName("body")[0].appendChild(reportBody);
         }
+
+
 
         return reportBody;
     };
@@ -618,19 +625,6 @@ window.csscritic = (function (module, document) {
         return entry;
     };
 
-    var reportComparisonStarting = function (comparison, runningComparisonEntries, callback) {
-        var node = createRunningEntry(comparison),
-            reportBody = getOrCreateBody();
-
-        reportBody.appendChild(node);
-
-        runningComparisonEntries[comparison.pageUrl] = node;
-
-        if (callback) {
-            callback();
-        }
-    };
-
     var addFinalEntry = function (comparison, node, runningComparisonEntries) {
         var reportBody = getOrCreateBody(),
             runningComparisonNode = runningComparisonEntries[comparison.pageUrl];
@@ -643,25 +637,56 @@ window.csscritic = (function (module, document) {
         }
     };
 
-    var reportComparison = function (comparison, runningComparisonEntries, callback) {
-        var node = createEntry(comparison);
-
-        addFinalEntry(comparison, node, runningComparisonEntries);
-
-        if (callback) {
-            callback();
+    var padNumber = function (number, length) {
+        number += '';
+        while (number.length < length) {
+            number = "0" + number;
         }
+        return number;
+    };
+
+    var renderMilliseconds = function (time) {
+        var seconds = Math.floor(time / 1000),
+            milliSeconds = time % 1000;
+        return seconds + '.' + padNumber(milliSeconds, 3);
     };
 
     module.BasicHTMLReporter = function () {
-        var runningComparisonEntries = {};
+        var runningComparisonEntries = {},
+            timeStarted = null;
 
         return {
             reportComparisonStarting: function (comparison, callback) {
-                reportComparisonStarting(comparison, runningComparisonEntries, callback);
+                var node = createRunningEntry(comparison),
+                    reportBody = getOrCreateBody();
+
+                if (timeStarted === null) {
+                    timeStarted = Date.now();
+                }
+
+                reportBody.appendChild(node);
+
+                runningComparisonEntries[comparison.pageUrl] = node;
+
+                if (callback) {
+                    callback();
+                }
             },
             reportComparison: function (comparison, callback) {
-                reportComparison(comparison, runningComparisonEntries, callback);
+                var node = createEntry(comparison);
+
+                addFinalEntry(comparison, node, runningComparisonEntries);
+
+                if (callback) {
+                    callback();
+                }
+            },
+            report: function () {
+                var reportBody = getOrCreateBody(),
+                    timeTaken = (timeStarted === null) ? 0 : Date.now() - timeStarted,
+                    timeTakenNode = reportBody.getElementsByClassName("timeTaken")[0];
+
+                timeTakenNode.textContent = "finished in " + renderMilliseconds(timeTaken) + "s";
             }
         };
     };

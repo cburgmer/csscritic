@@ -78,9 +78,9 @@ describe("Basic HTML reporter", function () {
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").get(1).textContent).toContain("yetAnotherBadUrl");
     });
 
-    describe("reportComparisonStarting", function () {
+    describe("on running tests", function () {
 
-        it("should render all tests before completion", function () {
+        it("should render all currently running", function () {
             reporter.reportComparisonStarting({
                 pageUrl: "page_url"
             });
@@ -111,6 +111,28 @@ describe("Basic HTML reporter", function () {
 
             expect($("#csscritic_basichtmlreporter .comparison").length).toEqual(1);
             expect($("#csscritic_basichtmlreporter .comparison.running")).not.toExist();
+        });
+    });
+
+    describe("on completion", function () {
+        it("should render the time taken", function () {
+            var dateNowValues = [1000, 2034];
+            spyOn(Date, "now").andCallFake(function () {
+                return dateNowValues.shift();
+            });
+
+            reporter.reportComparisonStarting({
+                pageUrl: "some_page.html"
+            });
+            reporter.report({success: true});
+            expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
+            expect($("#csscritic_basichtmlreporter .timeTaken").text()).toEqual("finished in 1.034s");
+        });
+
+        it("should render the time taken as 0 when no test cases given", function () {
+            reporter.report({success: true});
+            expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
+            expect($("#csscritic_basichtmlreporter .timeTaken").text()).toEqual("finished in 0.000s");
         });
     });
 
