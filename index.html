@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>CSS critic by cburgmer</title>
+    <title>CSS Critic by cburgmer</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,7 +15,7 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>CSS critic</h1>
+        <h1>CSS Critic</h1>
         <p>A lightweight framework for regression testing of Cascading Style Sheets</p>
 
         <p class="view"><a href="https://github.com/cburgmer/csscritic">View the Project on GitHub <small>cburgmer/csscritic</small></a></p>
@@ -28,17 +28,17 @@
         </ul>
       </header>
       <section>
-<p>CSS critic is here to fill the gap in your test tooling.</p>
+<p><em>CSS Critic</em> is here to fill the gap in your test tooling.</p>
 
 <p>Watch the screencast and learn how to write your first test:</p>
 
 <iframe width="480" height="360" src="http://www.youtube.com/embed/AqQ2bNPtF60" frameborder="0" allowfullscreen style="margin-bottom: 20px;"></iframe>
 
-<p>You can have a look at how CSS critic <a href="RegressionRunner.html">tests its own CSS</a>.</p>
+<p>You can have a look at how CSS Critic <a href="RegressionRunner.html">tests its own CSS</a>.</p>
 
 <h2>How it works</h2>
 
-<p>CSS critic checks your current layout constantly against a reference image you have provided in the past. If your layout breaks (or simply changes - CSS critic can't tell) your tests fail.</p>
+<p>CSS Critic checks your current layout constantly against a reference image you have provided in the past. If your layout breaks (or simply changes - CSS Critic can't tell) your tests fail.</p>
 
 <p><em>Get started:</em></p>
 
@@ -47,11 +47,11 @@
 <li>
 <p>Register your page under test via:</p>
 
-<pre><code>csscritic.compare(PUT_THE_PAGE_URL_HERE);
+<pre><code>csscritic.add(PUT_THE_PAGE_URL_HERE);
+csscritic.execute();
 </code></pre>
 </li>
-<li><p>Open the RegressionRunner.html in Firefox for the first time.</p></li>
-<li><p>Follow the hint and save the resulting image as future reference.</p></li>
+<li><p>Open the RegressionRunner.html in Firefox for the first time and save the resulting image as future reference.</p></li>
 <li><p>Re-run the RegressionRunner.html and see your test passing. Congratulations.</p></li>
 </ol><p><em>What do I do if my test fails?</em></p>
 
@@ -62,12 +62,13 @@
 </ol><h2>Limitations</h2>
 
 <ul>
-<li>Currently works in Firefox only (experimental PhantomJS runner in the making).</li>
+<li>Works in Firefox only (experimental PhantomJS runner in the making).</li>
 <li>
-<a href="https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript">Same-origin restrictions</a> apply when sourcing files.</li>
+<a href="https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript">Same-origin restrictions</a> apply when sourcing files. All files referenced need to be inside the same directory as the <code>RegressionRunner.html</code> or in ones below.</li>
 <li>
-Because of the way the HTML is rendered to the canvas, all external resources need to be inlined. This part is still in active development (e.g. non-woff webfonts are missing).</li>
+Because of the way the HTML is rendered to the canvas inside the browser certain more esoteric pages might fail to render correctly. Here the CLI runner can be help as it uses the native interface to render pages.</li>
 </ul>
+<p>Maintained by <a href="https://twitter.com/cburgmer">@cburgmer</a>. Copyright (c) 2012 ThoughtWorks, Inc.<br/>Licensed under MIT.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/cburgmer">cburgmer</a></p>
