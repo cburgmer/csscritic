@@ -1,5 +1,5 @@
 describe("Basic HTML reporter", function () {
-    var reporter, htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas;
+    var reporter, htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas;
 
     beforeEach(function () {
         reporter = csscritic.BasicHTMLReporter();
@@ -7,11 +7,18 @@ describe("Basic HTML reporter", function () {
         htmlImage = window.document.createElement("img");
         referenceImage = new window.Image();
         updatedReferenceImage = new window.Image();
-        differenceImageCanvas = window.document.createElement("canvas");
+        differenceImageCanvas = window.document.createElement("canvas"),
+        highlightedDifferenceImageCanvas = window.document.createElement("canvas");
 
         spyOn(csscritic.basicHTMLReporterUtil, 'getDifferenceCanvas').andCallFake(function (imageA, imageB) {
             if (imageA === htmlImage && imageB === referenceImage) {
                 return differenceImageCanvas;
+            }
+        });
+
+        spyOn(csscritic.basicHTMLReporterUtil, 'getHighlightedDifferenceCanvas').andCallFake(function (imageA, imageB) {
+            if (imageA === htmlImage && imageB === referenceImage) {
+                return highlightedDifferenceImageCanvas;
             }
         });
     });
@@ -197,6 +204,12 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
             expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasContainer canvas").get(0)).toBe(differenceImageCanvas);
+        });
+
+        it("should show the highlighted diff on a failing comparison", function () {
+            reporter.reportComparison(paramsOnFailingTest);
+
+            expect($("#csscritic_basichtmlreporter .comparison .highlightedDifferenceCanvas").get(0)).toBe(highlightedDifferenceImageCanvas);
         });
 
         it("should show the rendered page for reference and so that the user can save it", function () {

@@ -382,18 +382,41 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
 window.csscritic = (function (module, document) {
     module.basicHTMLReporterUtil = {};
 
-    module.basicHTMLReporterUtil.getDifferenceCanvas = function (imageA, imageB) {
-        var differenceImageData = imagediff.diff(imageA, imageB),
-            canvas = document.createElement("canvas"),
+    var canvasForImageCanvas = function (imageData) {
+        var canvas = document.createElement("canvas"),
             context;
 
-        canvas.height = differenceImageData.height;
-        canvas.width  = differenceImageData.width;
+        canvas.height = imageData.height;
+        canvas.width  = imageData.width;
 
         context = canvas.getContext("2d");
-        context.putImageData(differenceImageData, 0, 0);
+        context.putImageData(imageData, 0, 0);
 
         return canvas;
+    };
+
+    module.basicHTMLReporterUtil.getDifferenceCanvas = function (imageA, imageB) {
+        var differenceImageData = imagediff.diff(imageA, imageB);
+
+        return canvasForImageCanvas(differenceImageData);
+    };
+
+    var scale = function (byte) {
+        var normalize = Math.log(256);
+
+        return Math.floor(255 * Math.log(byte + 1) / normalize);
+    };
+
+    module.basicHTMLReporterUtil.getHighlightedDifferenceCanvas = function (imageA, imageB) {
+        var differenceImageData = imagediff.diff(imageA, imageB);
+
+        for (var i = 0; i < differenceImageData.data.length; i++) {
+            if (i % 4 < 3) {
+                differenceImageData.data[i] = scale(differenceImageData.data[i]);
+            }
+        }
+
+        return canvasForImageCanvas(differenceImageData);
     };
 
     var registerResizeHandler = function (element, handler) {
@@ -556,9 +579,22 @@ window.csscritic = (function (module, document) {
     };
 
     var createDifferenceCanvasContainer = function (result) {
-        var differenceCanvasContainer = document.createElement("div");
+        var differenceCanvasContainer = document.createElement("div"),
+            innerDifferenceCanvasContainer = document.createElement("div"),
+            differenceCanvas = module.basicHTMLReporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage),
+            highlightedDifferenceCanvas = module.basicHTMLReporterUtil.getHighlightedDifferenceCanvas(result.pageImage, result.referenceImage);
+
         differenceCanvasContainer.className = "differenceCanvasContainer";
-        differenceCanvasContainer.appendChild(module.basicHTMLReporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage));
+
+        innerDifferenceCanvasContainer.className = "innerDifferenceCanvasContainer";
+        differenceCanvasContainer.appendChild(innerDifferenceCanvasContainer);
+
+        differenceCanvas.className = "differenceCanvas";
+        innerDifferenceCanvasContainer.appendChild(differenceCanvas);
+
+        highlightedDifferenceCanvas.className = "highlightedDifferenceCanvas";
+        innerDifferenceCanvasContainer.appendChild(highlightedDifferenceCanvas);
+
         return differenceCanvasContainer;
     };
 

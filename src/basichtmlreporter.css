@@ -66,7 +66,6 @@
     margin-right: 20px;
 }
 
-
 #csscritic_basichtmlreporter .differenceCanvasContainer canvas,
 #csscritic_basichtmlreporter .referenceImageContainer img {
     border: 1px solid black;
@@ -81,6 +80,41 @@
 
 #csscritic_basichtmlreporter .differenceCanvasContainer {
     margin: 8px 0 20px 0;
+}
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer {
+    display: inline-block;
+    position: relative;
+}
+
+#csscritic_basichtmlreporter .failed.comparison:hover .innerDifferenceCanvasContainer:after {
+    /* Tooltip for difference image */
+    content: "< Hover over difference image to highlight subtle changes";
+    position: absolute;
+    top: 0;
+    padding: 4px;
+    margin-left: 4px;
+
+    white-space: nowrap;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+}
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover:after {
+    display: none;
+}
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .differenceCanvas {
+    display: none;
+}
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer .highlightedDifferenceCanvas {
+    display: none;
+}
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .highlightedDifferenceCanvas {
+    display: block;
 }
 
 #csscritic_basichtmlreporter .saveHint button,
