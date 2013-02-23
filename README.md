@@ -1,18 +1,18 @@
-CSS critic
+CSS Critic
 ==========
 
 A lightweight framework for regression testing of Cascading Style Sheets.
 
 [Project page](http://cburgmer.github.com/csscritic)
 
-See `example/RegressionRunner.html` for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60). 
+See `example/RegressionRunner.html` for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60).
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
 How it works
 ------------
 
-CSS critic checks your current layout constantly against a reference image you have provided in the past. If your layout breaks (or simply changes - CSS critic can't tell) your tests fail.
+CSS Critic checks your current layout constantly against a reference image you have provided in the past. If your layout breaks (or simply changes - CSS Critic can't tell) your tests fail.
 
 *Get started:*
 
@@ -20,13 +20,12 @@ CSS critic checks your current layout constantly against a reference image you h
 
 2. Register your page under test via:
 
-        csscritic.compare(PUT_THE_PAGE_URL_HERE);
+        csscritic.add(PUT_THE_PAGE_URL_HERE);
+        csscritic.execute();
 
-3. Open the RegressionRunner.html in Firefox for the first time.
+3. Open the RegressionRunner.html in Firefox for the first time and save the resulting image as future reference.
 
-4. Follow the hint and save the resulting image as future reference.
-
-5. Re-run the RegressionRunner.html and see your test passing. Congratulations.
+4. Re-run the RegressionRunner.html and see your test passing. Congratulations.
 
 *What do I do if my test fails?*
 
@@ -42,21 +41,21 @@ Running from the command line
 Currently in the making is a command-line runner using [PhantomJS](http://phantomjs.org/). While still not fit for a
 shared build-pipeline (e.g. no easy way to "fix" builds) the first shot is up and running:
 
-    $ phantomjs dist/csscritic-phantom.js test/fixtures/pageUnderTest.html
+    $ phantomjs dist/csscritic-phantom.js -f example/signedOff.json example/pageUnderTest.html
 
-Testing CSS critic
+If the fingerprint of the page under test matches the one given in the `signedOff.json` file then the CLI will generate a reference image. In the future we want to combine both a signing-off process with the image diff approach to share accepted renderings inside a development team.
+
+Testing CSS Critic
 ------------------
-Install Node.js and PhantomJS and run
+For linting, tests and minification install Node.js and PhantomJS and run
 
     $ ./go
-
-for linting, tests and minification.
 
 Limitations
 -----------
 
-- Currently works in Firefox only (experimental PhantomJS runner in the making)
-- [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files.
-- Because of the way the HTML is rendered to the canvas, all external resources need to be inlined. This part is still in active development (e.g. non-woff webfonts are missing).
+- Works in Firefox only (see above for the experimental PhantomJS runner)
+- [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files. All files referenced need to be inside the same directory as the `RegressionRunner.html` or in ones below.
+- Because of the way the HTML is rendered to the canvas inside the browser certain more esoteric pages might fail to render correctly. Here the CLI runner can be help as it uses the native interface to render pages.
 
-Licensed under MIT. Reach out [on Twitter](https://twitter.com/cburgmer)
+Licensed under MIT. Maintained by [@cburgmer](https://twitter.com/cburgmer). Copyright (c) 2012 ThoughtWorks, Inc.
