@@ -58,4 +58,72 @@ describe("Utilities", function () {
         });
     });
 
+    describe("map", function () {
+        it("should map each value to one function call and then call complete function", function () {
+            var completedValues = [],
+                completed = false;
+
+            csscritic.util.map([1, 2, 3], function (val, callback) {
+                completedValues.push(val);
+
+                callback();
+            }, function () {
+                completed = true;
+            });
+
+            expect(completed).toBeTruthy();
+            expect(completedValues).toEqual([1, 2, 3]);
+        });
+
+        it("should pass computed results as array to complete function", function () {
+            var computedResults = null;
+
+            csscritic.util.map([1, 2, 3], function (val, callback) {
+                callback(val + 1);
+            }, function (results) {
+                computedResults = results;
+            });
+
+            expect(computedResults).toEqual([2, 3, 4]);
+        });
+
+        it("should call complete if empty list is passed", function () {
+            var completed = false,
+                computedResults = null;
+
+            csscritic.util.map([], function () {}, function (results) {
+                completed = true;
+                computedResults = results;
+            });
+
+            expect(completed).toBeTruthy();
+            expect(computedResults).toEqual([]);
+        });
+
+        it("should not call complete until last value is handled", function () {
+            var completedValues = [],
+                completed = false,
+                lastCallback = null;
+
+            csscritic.util.map([1, 2, 3], function (val, callback) {
+                completedValues.push(val);
+
+                if (val < 3) {
+                    callback();
+                } else {
+                    lastCallback = callback;
+                }
+            }, function () {
+                completed = true;
+            });
+
+            expect(completed).toBeFalsy();
+
+            lastCallback();
+
+            expect(completed).toBeTruthy();
+        });
+
+    });
+
 });

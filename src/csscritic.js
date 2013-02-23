@@ -53,6 +53,34 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         });
     };
 
+    module.util.map = function (list, func, callback) {
+        var completedCount = 0,
+            results = [],
+            i;
+
+        if (list.length === 0) {
+            callback(results);
+        }
+
+        var callForItem = function (idx) {
+            function funcFinishCallback(result) {
+                completedCount += 1;
+
+                results[idx] = result;
+
+                if (completedCount === list.length) {
+                    callback(results);
+                }
+            }
+
+            func(list[idx], funcFinishCallback);
+        };
+
+        for(i = 0; i < list.length; i++) {
+            callForItem(i);
+        }
+    };
+
     var buildReportResult = function (status, pageUrl, pageImage, referenceImage, erroneousPageUrls) {
         var result = {
                 status: status,
@@ -83,7 +111,19 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         return result;
     };
 
-    var report = function (status, pageUrl, pageImage, referenceImage, erroneousUrls, callback) {
+    var reportComparisonStarting = function (testCases, callback) {
+        module.util.map(testCases, function (pageUrl, finishTestCase) {
+            module.util.map(reporters, function (reporter, finishReporter) {
+                if (reporter.reportComparisonStarting) {
+                    reporter.reportComparisonStarting({pageUrl: pageUrl}, finishReporter);
+                } else {
+                    finishReporter();
+                }
+            }, finishTestCase);
+        }, callback);
+    };
+
+    var reportComparison = function (status, pageUrl, pageImage, referenceImage, erroneousUrls, callback) {
         var i, result,
             finishedReporterCount = 0,
             reporterCount = reporters.length,
@@ -104,6 +144,16 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         for (i = 0; i < reporterCount; i++) {
             reporters[i].reportComparison(result, finishUp);
         }
+    };
+
+    var reportTestSuite = function (passed, callback) {
+        module.util.map(reporters, function (reporter, finish) {
+            if (reporter.report) {
+                reporter.report({success: passed}, finish);
+            } else {
+                finish();
+            }
+        }, callback);
     };
 
     module.addReporter = function (reporter) {
@@ -136,7 +186,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                     textualStatus = "referenceMissing";
                 }
 
-                report(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls, function () {
+                reportComparison(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls, function () {
                     if (callback) {
                         callback(textualStatus);
                     }
@@ -145,7 +195,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         }, function () {
             var textualStatus = "error";
 
-            report(textualStatus, pageUrl, null, null, null, function () {
+            reportComparison(textualStatus, pageUrl, null, null, null, function () {
                 if (callback) {
                     callback(textualStatus);
                 }
@@ -165,71 +215,19 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         testCases.push(pageUrl);
     };
 
-    var reportComparisonStarting = function (testCases, callback) {
-        var finishedReporterCount = 0,
-            reporterCount = reporters.length,
-            finishUp = function () {
-                finishedReporterCount += 1;
-                if (finishedReporterCount === reporterCount) {
-                    callback();
-                }
-            };
-
-        if (reporterCount === 0) {
-            callback();
-        }
-
-        testCases.forEach(function (pageUrl) {
-            var i;
-            for (i = 0; i < reporterCount; i++) {
-                if (reporters[i].reportComparisonStarting) {
-                    reporters[i].reportComparisonStarting({pageUrl: pageUrl}, finishUp);
-                } else {
-                    finishUp();
-                }
-            }
-        });
-    };
-
     module.execute = function (callback) {
-        var testCaseCount = testCases.length,
-            finishedCount = 0,
-            passed = true,
-            finishedReporterCount = 0,
-            reporterCount = reporters.length,
-            finishUp = function () {
-                var i;
-                for (i = 0; i < reporterCount; i++) {
-                    if (reporters[i].report) {
-                        reporters[i].report({success: passed}, finishUpReporters);
-                    }
-                }
-
-                if (callback) {
-                    callback(passed);
-                }
-            },
-            finishUpReporters = function () {
-                finishedReporterCount += 1;
-                if (finishedReporterCount === reporterCount) {
-                    callback();
-                }
-            };
-
-        if (testCases.length === 0) {
-            finishUp();
-            return;
-        }
-
         reportComparisonStarting(testCases, function () {
 
-            testCases.forEach(function (pageUrl) {
+            module.util.map(testCases, function (pageUrl, finish) {
                 module.compare(pageUrl, function (status) {
-                    passed = passed && status === "passed";
+                    finish(status === "passed");
+                });
+            }, function (results) {
+                var allPassed = results.indexOf(false) === -1;
 
-                    finishedCount += 1;
-                    if (finishedCount === testCaseCount) {
-                        finishUp();
+                reportTestSuite(allPassed, function () {
+                    if (callback) {
+                        callback(allPassed);
                     }
                 });
             });
