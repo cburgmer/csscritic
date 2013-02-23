@@ -12,6 +12,8 @@
     padding: 8px;
     margin: 5px 0;
     clear: both;
+
+    transition: background-color 1s;
 }
 
 #csscritic_basichtmlreporter .passed.comparison {

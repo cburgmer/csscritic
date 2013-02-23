@@ -252,12 +252,9 @@ window.csscritic = (function (module, document) {
         };
     };
 
-    var createEntry = function (result) {
-        var entry = document.createElement("div");
+    var fillEntry = function (entry, result) {
+        entry.className += " " + result.status;
 
-        entry.className = "comparison " + result.status;
-
-        entry.appendChild(createPageUrl(result));
         entry.appendChild(createStatus(result));
 
         if (result.erroneousPageUrls) {
@@ -277,8 +274,6 @@ window.csscritic = (function (module, document) {
         } else if (result.status === "passed") {
             addMouseOverHandlerForPreview(entry, result);
         }
-
-        return entry;
     };
 
     var createRunningEntry = function (comparison) {
@@ -291,16 +286,9 @@ window.csscritic = (function (module, document) {
         return entry;
     };
 
-    var addFinalEntry = function (comparison, node, runningComparisonEntries) {
-        var reportBody = getOrCreateBody(),
-            runningComparisonNode = runningComparisonEntries[comparison.pageUrl];
-
-        if (runningComparisonNode) {
-            reportBody.insertBefore(node, runningComparisonNode);
-            reportBody.removeChild(runningComparisonNode);
-        } else {
-            reportBody.appendChild(node);
-        }
+    var addFinalEntry = function (comparison, runningNode) {
+        runningNode.className = runningNode.className.replace(" running", "");
+        fillEntry(runningNode, comparison);
     };
 
     var padNumber = function (number, length) {
@@ -339,9 +327,14 @@ window.csscritic = (function (module, document) {
                 }
             },
             reportComparison: function (comparison, callback) {
-                var node = createEntry(comparison);
+                var node = runningComparisonEntries[comparison.pageUrl];
+                if (!node) {
+                    // Work with old api `compare()` where no start node is created
+                    node = createRunningEntry(comparison);
+                    getOrCreateBody().appendChild(node);
+                }
 
-                addFinalEntry(comparison, node, runningComparisonEntries);
+                addFinalEntry(comparison, node);
 
                 if (callback) {
                     callback();
