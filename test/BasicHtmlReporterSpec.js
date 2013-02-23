@@ -78,6 +78,27 @@ describe("Basic HTML reporter", function () {
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").get(1).textContent).toContain("yetAnotherBadUrl");
     });
 
+    describe("reportComparisonStarting", function () {
+
+        it("should render all tests before completion", function () {
+            reporter.reportComparisonStarting({
+                pageUrl: "page_url"
+            });
+
+            expect($("#csscritic_basichtmlreporter .comparison")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison.running")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url");
+        });
+
+        it("should call the callback when finished reporting", function () {
+            var callback = jasmine.createSpy("callback");
+
+            reporter.reportComparisonStarting({}, callback);
+
+            expect(callback).toHaveBeenCalled();
+        });
+    });
+
     describe("Passed tests", function () {
 
         it("should show an entry as passed", function () {

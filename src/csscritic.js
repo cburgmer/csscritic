@@ -165,6 +165,32 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         testCases.push(pageUrl);
     };
 
+    var reportComparisonStarting = function (testCases, callback) {
+        var finishedReporterCount = 0,
+            reporterCount = reporters.length,
+            finishUp = function () {
+                finishedReporterCount += 1;
+                if (finishedReporterCount === reporterCount) {
+                    callback();
+                }
+            };
+
+        if (reporterCount === 0) {
+            callback();
+        }
+
+        testCases.forEach(function (pageUrl) {
+            var i;
+            for (i = 0; i < reporterCount; i++) {
+                if (reporters[i].reportComparisonStarting) {
+                    reporters[i].reportComparisonStarting({pageUrl: pageUrl}, finishUp);
+                } else {
+                    finishUp();
+                }
+            }
+        });
+    };
+
     module.execute = function (callback) {
         var testCaseCount = testCases.length,
             finishedCount = 0,
@@ -195,14 +221,17 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
             return;
         }
 
-        testCases.forEach(function (pageUrl) {
-            module.compare(pageUrl, function (status) {
-                passed = passed && status === "passed";
+        reportComparisonStarting(testCases, function () {
 
-                finishedCount += 1;
-                if (finishedCount === testCaseCount) {
-                    finishUp();
-                }
+            testCases.forEach(function (pageUrl) {
+                module.compare(pageUrl, function (status) {
+                    passed = passed && status === "passed";
+
+                    finishedCount += 1;
+                    if (finishedCount === testCaseCount) {
+                        finishUp();
+                    }
+                });
             });
         });
     };

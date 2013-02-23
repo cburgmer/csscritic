@@ -231,6 +231,39 @@ describe("Regression testing", function () {
             csscritic.addReporter(reporter);
         });
 
+        describe("reportComparisonStarting", function () {
+            beforeEach(function () {
+                reporter.reportComparisonStarting = jasmine.createSpy("reportComparisonStarting");
+            });
+
+            it("should report a starting comparison", function () {
+                csscritic.add("samplepage.html");
+                csscritic.execute();
+
+                expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({
+                    pageUrl: "samplepage.html"
+                }, jasmine.any(Function));
+            });
+
+            it("should only procede once the reporter returned", function () {
+                spyOn(imagediff, 'equal').andReturn(true);
+                getImageForPageUrl.andCallFake(function (pageUrl, width, height, callback) {
+                    callback(htmlImage, []);
+                });
+                readReferenceImage.andCallFake(function (pageUrl, callback) {
+                    callback(referenceImage);
+                });
+
+                csscritic.add("samplepage.html");
+                csscritic.execute();
+
+                expect(reporter.reportComparison).not.toHaveBeenCalled();
+                reporter.reportComparisonStarting.mostRecentCall.args[1]();
+                expect(reporter.reportComparison).toHaveBeenCalled();
+            });
+
+        });
+
         it("should call the callback only after the reporter finished", function () {
             var callback = jasmine.createSpy("callback");
 

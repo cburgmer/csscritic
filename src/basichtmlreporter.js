@@ -190,11 +190,11 @@ window.csscritic = (function (module, document) {
         return status;
     };
 
-    var createPageUrl = function (result) {
+    var createPageUrl = function (comparison) {
         var pageUrl = document.createElement("a");
         pageUrl.className = "pageUrl";
-        pageUrl.textContent = result.pageUrl;
-        pageUrl.href = result.pageUrl;
+        pageUrl.textContent = comparison.pageUrl;
+        pageUrl.href = comparison.pageUrl;
         return pageUrl;
     };
 
@@ -274,6 +274,27 @@ window.csscritic = (function (module, document) {
         return entry;
     };
 
+    var createRunningEntry = function (comparison) {
+        var entry = document.createElement("div");
+
+        entry.className = "comparison running";
+
+        entry.appendChild(createPageUrl(comparison));
+
+        return entry;
+    };
+
+    var reportComparisonStarting = function (comparison, callback) {
+        var node = createRunningEntry(comparison),
+            reportBody = getOrCreateBody();
+
+        reportBody.appendChild(node);
+
+        if (callback) {
+            callback();
+        }
+    };
+
     var reportComparison = function (result, callback) {
         var node = createEntry(result),
             reportBody = getOrCreateBody();
@@ -287,6 +308,7 @@ window.csscritic = (function (module, document) {
 
     module.BasicHTMLReporter = function () {
         return {
+            reportComparisonStarting: reportComparisonStarting,
             reportComparison: reportComparison
         };
     };
