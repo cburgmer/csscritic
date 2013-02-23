@@ -41,7 +41,7 @@ module.exports = function (grunt) {
             testForPhantom:['test/helpers.js', 'test/run-phantomjs-tests.js', 'test/*SpecForPhantom.js', 'test/phantomjs-regressionrunner.js']
         },
         jasmine:{
-            src:['components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/*.js', 'src/phantomjsrenderer.js', 'src/browserrenderer.js', 'src/domstorage.js', 'src/<%= pkg.name %>.js', 'src/basichtmlreporter.js', 'src/terminalreporter.js', 'src/signoffreporter.js'],
+            src:['components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/*.js', 'src/utils.js', 'src/phantomjsrenderer.js', 'src/browserrenderer.js', 'src/domstorage.js', 'src/<%= pkg.name %>.js', 'src/basichtmlreporter.js', 'src/terminalreporter.js', 'src/signoffreporter.js'],
             specs:'test/*Spec.js',
             helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
             timeout:10000,
@@ -49,11 +49,11 @@ module.exports = function (grunt) {
         },
         concat:{
             dist:{
-                src:['<banner:meta.banner>', 'src/browserrenderer.js', 'src/domstorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/basichtmlreporter.js'],
+                src:['<banner:meta.banner>', 'src/utils.js', 'src/browserrenderer.js', 'src/domstorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/basichtmlreporter.js'],
                 dest:'dist/<%= pkg.name %>.js'
             },
             "phantomjs": {
-                src:['<banner:meta.bannerPhantomjs>', 'lib/sha256.js', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs-runnerlib.js'],
+                src:['<banner:meta.bannerPhantomjs>', 'src/utils.js', 'lib/sha256.js', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
             }
         },
