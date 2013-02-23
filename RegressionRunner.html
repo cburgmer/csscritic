@@ -11,7 +11,8 @@
     <script type="text/javascript">
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
-            csscritic.compare('test/BasicHtmlReporterLayout.html');
+            csscritic.add('test/BasicHtmlReporterLayout.html');
+            csscritic.execute();
         };
     </script>
 
