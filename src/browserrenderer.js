@@ -23,7 +23,7 @@ window.csscritic = (function (module, rasterizeHTML) {
         return erroneousResourceUrls;
     };
 
-    module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+    var doRender = function (pageUrl, width, height, successCallback, errorCallback) {
         rasterizeHTML.drawURL(pageUrl, {
                 cache: false,
                 width: width,
@@ -34,12 +34,27 @@ window.csscritic = (function (module, rasterizeHTML) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
-                if (errorCallback) {
-                    errorCallback();
-                }
+                errorCallback();
             } else {
                 successCallback(image, erroneousResourceUrls);
             }
+        });
+    };
+
+    module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+        // Execute render jobs one after another to stabilise rendering (especially JS execution).
+        // Also provides a more fluid response. Performance seems not to be affected.
+        module.util.queue.execute(function (doneSignal) {
+            doRender(pageUrl, width, height, function (image, erroneousResourceUrls) {
+                successCallback(image, erroneousResourceUrls);
+
+                doneSignal();
+            }, function () {
+                if (errorCallback) {
+                    errorCallback();
+                }
+                doneSignal();
+            });
         });
     };
 

@@ -76,6 +76,34 @@ window.csscritic = (function (module) {
         }
     };
 
+    module.util.queue = {};
+
+    var jobQueue = [],
+        busy = false;
+
+    var nextInQueue = function () {
+        var func;
+        if (jobQueue.length > 0) {
+            busy = true;
+            func = jobQueue.shift();
+            func(nextInQueue);
+        } else {
+            busy = false;
+        }
+    };
+
+    module.util.queue.execute = function (func) {
+        jobQueue.push(func);
+        if (!busy) {
+            nextInQueue();
+        }
+    };
+
+    module.util.queue.clear = function () {
+        jobQueue = [];
+        busy = false;
+    };
+
     return module;
 }(window.csscritic || {}));
 
@@ -104,7 +132,7 @@ window.csscritic = (function (module, rasterizeHTML) {
         return erroneousResourceUrls;
     };
 
-    module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+    var doRender = function (pageUrl, width, height, successCallback, errorCallback) {
         rasterizeHTML.drawURL(pageUrl, {
                 cache: false,
                 width: width,
@@ -115,12 +143,25 @@ window.csscritic = (function (module, rasterizeHTML) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
             if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
-                if (errorCallback) {
-                    errorCallback();
-                }
+                errorCallback();
             } else {
                 successCallback(image, erroneousResourceUrls);
             }
+        });
+    };
+
+    module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+        module.util.queue.execute(function (doneSignal) {
+            doRender(pageUrl, width, height, function (image, erroneousResourceUrls) {
+                successCallback(image, erroneousResourceUrls);
+
+                doneSignal();
+            }, function () {
+                if (errorCallback) {
+                    errorCallback();
+                }
+                doneSignal();
+            });
         });
     };
 
