@@ -97,6 +97,21 @@ describe("Basic HTML reporter", function () {
 
             expect(callback).toHaveBeenCalled();
         });
+
+        it("should report the final result 'on top' of the running entry", function () {
+            reporter.reportComparisonStarting({
+                pageUrl: "page_url"
+            });
+            reporter.reportComparison({
+                status: "passed",
+                pageUrl: "page_url",
+                pageImage: htmlImage,
+                referenceImage: referenceImage
+            });
+
+            expect($("#csscritic_basichtmlreporter .comparison").length).toEqual(1);
+            expect($("#csscritic_basichtmlreporter .comparison.running")).not.toExist();
+        });
     });
 
     describe("Passed tests", function () {

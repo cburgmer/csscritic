@@ -284,22 +284,35 @@ window.csscritic = (function (module, document) {
         return entry;
     };
 
-    var reportComparisonStarting = function (comparison, callback) {
+    var reportComparisonStarting = function (comparison, runningComparisonEntries, callback) {
         var node = createRunningEntry(comparison),
             reportBody = getOrCreateBody();
 
         reportBody.appendChild(node);
+
+        runningComparisonEntries[comparison.pageUrl] = node;
 
         if (callback) {
             callback();
         }
     };
 
-    var reportComparison = function (result, callback) {
-        var node = createEntry(result),
-            reportBody = getOrCreateBody();
+    var addFinalEntry = function (comparison, node, runningComparisonEntries) {
+        var reportBody = getOrCreateBody(),
+            runningComparisonNode = runningComparisonEntries[comparison.pageUrl];
 
-        reportBody.appendChild(node);
+        if (runningComparisonNode) {
+            reportBody.insertBefore(node, runningComparisonNode);
+            reportBody.removeChild(runningComparisonNode);
+        } else {
+            reportBody.appendChild(node);
+        }
+    };
+
+    var reportComparison = function (comparison, runningComparisonEntries, callback) {
+        var node = createEntry(comparison);
+
+        addFinalEntry(comparison, node, runningComparisonEntries);
 
         if (callback) {
             callback();
@@ -307,9 +320,15 @@ window.csscritic = (function (module, document) {
     };
 
     module.BasicHTMLReporter = function () {
+        var runningComparisonEntries = {};
+
         return {
-            reportComparisonStarting: reportComparisonStarting,
-            reportComparison: reportComparison
+            reportComparisonStarting: function (comparison, callback) {
+                reportComparisonStarting(comparison, runningComparisonEntries, callback);
+            },
+            reportComparison: function (comparison, callback) {
+                reportComparison(comparison, runningComparisonEntries, callback);
+            }
         };
     };
 
