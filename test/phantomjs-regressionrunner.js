@@ -4,6 +4,7 @@
 phantom.injectJs("lib/imagediff.js");
 phantom.injectJs("lib/sha256.js");
 phantom.injectJs("components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js");
+phantom.injectJs("src/utils.js");
 phantom.injectJs("src/phantomjsrenderer.js");
 phantom.injectJs("src/signoffreporter.js");
 phantom.injectJs("src/terminalreporter.js");
