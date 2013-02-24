@@ -376,7 +376,7 @@ describe("Basic HTML reporter", function () {
 
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toHaveClass("warning");
-            expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("could not be read");
+            expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("could not be rendered");
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("page_url");
         });
 

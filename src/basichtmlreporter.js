@@ -193,7 +193,7 @@ window.csscritic = (function (module, document) {
     var createErrorMsg = function (result) {
         var errorMsg = document.createElement("div");
         errorMsg.className = "errorMsg warning";
-        errorMsg.textContent = "The page '" + result.pageUrl + "' could not be read. Make sure the path lies within the same origin as this document.";
+        errorMsg.textContent = "The page '" + result.pageUrl + "' could not be rendered. Make sure the path lies within the same origin as this document.";
         return errorMsg;
     };
 

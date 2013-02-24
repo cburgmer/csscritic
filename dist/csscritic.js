@@ -1,4 +1,4 @@
-/*! CSS critic - v0.1.0 - 2013-02-23
+/*! CSS critic - v0.1.0 - 2013-02-24
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 
@@ -110,10 +110,10 @@ window.csscritic = (function (module) {
 window.csscritic = (function (module, rasterizeHTML) {
     module.renderer = module.renderer || {};
 
-    var rasterizeHTMLDidntFindThePage = function (errors) {
+    var rasterizeHTMLDidntRenderThePage = function (errors) {
         var didntFindPage = false;
         errors.forEach(function (error) {
-            if (error.resourceType === "page") {
+            if (error.resourceType === "page" || error.resourceType === "document") {
                 didntFindPage = true;
             }
         });
@@ -142,7 +142,7 @@ window.csscritic = (function (module, rasterizeHTML) {
             }, function (image, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
-            if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
+            if (errors !== undefined && rasterizeHTMLDidntRenderThePage(errors)) {
                 errorCallback();
             } else {
                 successCallback(image, erroneousResourceUrls);
@@ -574,7 +574,7 @@ window.csscritic = (function (module, document) {
     var createErrorMsg = function (result) {
         var errorMsg = document.createElement("div");
         errorMsg.className = "errorMsg warning";
-        errorMsg.textContent = "The page '" + result.pageUrl + "' could not be read. Make sure the path lies within the same origin as this document.";
+        errorMsg.textContent = "The page '" + result.pageUrl + "' could not be rendered. Make sure the path lies within the same origin as this document.";
         return errorMsg;
     };
 

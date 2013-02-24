@@ -1,10 +1,10 @@
 window.csscritic = (function (module, rasterizeHTML) {
     module.renderer = module.renderer || {};
 
-    var rasterizeHTMLDidntFindThePage = function (errors) {
+    var rasterizeHTMLDidntRenderThePage = function (errors) {
         var didntFindPage = false;
         errors.forEach(function (error) {
-            if (error.resourceType === "page") {
+            if (error.resourceType === "page" || error.resourceType === "document") {
                 didntFindPage = true;
             }
         });
@@ -33,7 +33,7 @@ window.csscritic = (function (module, rasterizeHTML) {
             }, function (image, errors) {
             var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
-            if (errors !== undefined && rasterizeHTMLDidntFindThePage(errors)) {
+            if (errors !== undefined && rasterizeHTMLDidntRenderThePage(errors)) {
                 errorCallback();
             } else {
                 successCallback(image, erroneousResourceUrls);

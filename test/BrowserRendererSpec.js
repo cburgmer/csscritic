@@ -20,7 +20,8 @@ describe("Browser renderer", function () {
     });
 
     it("should call the error handler if a page does not exist", function () {
-        var hasError = false;
+        var successCallback = jasmine.createSpy("success"),
+            errorCallback = jasmine.createSpy("error");
         spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
             callback(the_image, [{
                 resourceType: "page",
@@ -28,11 +29,25 @@ describe("Browser renderer", function () {
             }]);
         });
 
-        csscritic.renderer.browserRenderer("the_url", 42, 7, function () {}, function () {
-            hasError = true;
+        csscritic.renderer.browserRenderer("the_url", 42, 7, successCallback, errorCallback);
+
+        expect(successCallback).not.toHaveBeenCalled();
+        expect(errorCallback).toHaveBeenCalled();
+    });
+
+    it("should call the error handler if a page could not be rendered", function () {
+        var successCallback = jasmine.createSpy("success"),
+            errorCallback = jasmine.createSpy("error");
+        spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+            callback(the_image, [{
+                resourceType: "document"
+            }]);
         });
 
-        expect(hasError).toBeTruthy();
+        csscritic.renderer.browserRenderer("the_url", 42, 7, successCallback, errorCallback);
+
+        expect(successCallback).not.toHaveBeenCalled();
+        expect(errorCallback).toHaveBeenCalled();
     });
 
     it("should work without a callback on error", function () {
