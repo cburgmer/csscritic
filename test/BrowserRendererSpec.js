@@ -23,7 +23,7 @@ describe("Browser renderer", function () {
         var successCallback = jasmine.createSpy("success"),
             errorCallback = jasmine.createSpy("error");
         spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-            callback(the_image, [{
+            callback(null, [{
                 resourceType: "page",
                 url: url
             }]);
@@ -39,7 +39,7 @@ describe("Browser renderer", function () {
         var successCallback = jasmine.createSpy("success"),
             errorCallback = jasmine.createSpy("error");
         spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-            callback(the_image, [{
+            callback(null, [{
                 resourceType: "document"
             }]);
         });
@@ -52,7 +52,7 @@ describe("Browser renderer", function () {
 
     it("should work without a callback on error", function () {
         spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-            callback(the_image, [{
+            callback(null, [{
                 resourceType: "page",
                 url: url
             }]);
