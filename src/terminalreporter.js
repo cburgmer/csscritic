@@ -33,6 +33,12 @@ window.csscritic = (function (module, console) {
     var reportComparison = function (result, callback) {
         var color = statusColor[result.status] || "",
             statusStr = inColor(result.status, color);
+        if (result.erroneousPageUrls) {
+            console.log(inColor("Error(s) loading " + result.pageUrl + ":", "red"));
+            result.erroneousPageUrls.forEach(function (msg) {
+                console.log(inColor("  " + msg, "red+bold"));
+            });
+        }
 
         console.log("Testing " + result.pageUrl + "... " + statusStr);
 
