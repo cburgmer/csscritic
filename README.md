@@ -5,7 +5,7 @@ A lightweight framework for regression testing of Cascading Style Sheets.
 
 [Project page](http://cburgmer.github.com/csscritic)
 
-See `example/RegressionRunner.html` for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60).
+See [`example/RegressionRunner.html`](example/RegressionRunner.html) for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60).
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
@@ -16,7 +16,7 @@ CSS Critic checks your current layout constantly against a reference image you h
 
 *Get started:*
 
-1. Create a `RegressionRunner.html` similar to the one under `example/` and put it with your code that is to be tested.
+1. Create a `RegressionRunner.html` similar to the one under [`example/`](example/) and put it with your code that is to be tested.
 
 2. Register your page under test via:
 
