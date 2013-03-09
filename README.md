@@ -5,7 +5,7 @@ A lightweight framework for regression testing of Cascading Style Sheets.
 
 [Project page](http://cburgmer.github.com/csscritic)
 
-See [`example/RegressionRunner.html`](example/RegressionRunner.html) for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60).
+See [`example/RegressionRunner.html`](example/RegressionRunner.html) for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60). I have set up [a sandbox on runnable.com](http://runnable.com/UTshWysNM0MHAJbo) to play around with.
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
