@@ -1,10 +1,8 @@
 var port = 8765;
 
-phantom.injectJs("../components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js");
-
 function get(url, mimeType, successCallback, errorCallback) {
     var page = require("webpage").create(),
-        basePageMatch = /^(https?:)?\/\/[^\/]+/.exec(url)
+        basePageMatch = /^(https?:)?\/\/[^\/]+/.exec(url),
         basePage = basePageMatch ? basePageMatch[0] : url;
 
     // HACK for relative protocol support
@@ -26,7 +24,6 @@ function get(url, mimeType, successCallback, errorCallback) {
                 console.log("Error: Can't understand internal command " + msg + " : " + e);
                 return;
             }
-
 
             if (params.status === 'success') {
                 successCallback(params.content);
@@ -83,7 +80,7 @@ function ajax(url, options, successCallback, errorCallback) {
     augmentedUrl = getUncachableURL(url, options.cache === false);
 
     get(augmentedUrl, options.mimeType, successCallback, errorCallback);
-};
+}
 
 rasterizeHTMLInline.util.ajax = ajax;
 
@@ -93,6 +90,7 @@ function loadDocument(url, successCallback, errorCallback) {
         doc.documentElement.innerHTML = html;
 
         rasterizeHTMLInline.inlineReferences(doc, {baseUrl: url}, function (allErrors) {
+            // TODO sandbox execution
             rasterizeHTML.util.executeJavascript(doc, 200, function (doc, errors) {
                 successCallback(doc, allErrors.concat(errors));
             });
@@ -102,7 +100,7 @@ function loadDocument(url, successCallback, errorCallback) {
 
 function loadPage(url, successCallback, errorCallback) {
     loadDocument(url, function (doc, errors) {
-        var html = (new window.XMLSerializer()).serializeToString(doc.documentElement)
+        var html = (new window.XMLSerializer()).serializeToString(doc.documentElement);
         successCallback(html, errors);
     }, errorCallback);
 }
@@ -175,9 +173,7 @@ function servePageSvg(request, response) {
 }
 
 function startWebserver() {
-
-    var fs = require('fs'),
-        server = require('webserver').create();
+    var server = require('webserver').create();
 
     var launched = server.listen(port, function(request, response) {
         console.log("Requested " + request.url);

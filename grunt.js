@@ -55,6 +55,10 @@ module.exports = function (grunt) {
             "phantomjs": {
                 src:['<banner:meta.bannerPhantomjs>', 'src/utils.js', 'lib/sha256.js', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs-runnerlib.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
+            },
+            "server": {
+                src:['components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'src/phantomjs_render_backend.js'],
+                dest:'dist/<%= pkg.name %>-server.js'
             }
         },
         min:{
