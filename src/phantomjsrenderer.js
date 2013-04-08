@@ -34,7 +34,7 @@ window.csscritic = (function (module) {
         }, errorCallback);
     };
 
-    module.renderer.phantomjsRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+    module.renderer.phantomjsRenderer = function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
         var page = require("webpage").create(),
             errorneousResources = [],
             handleError = function () {

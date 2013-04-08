@@ -51,7 +51,7 @@ describe("PhantomJS renderer", function () {
         var image = null,
             referenceImage = null;
 
-        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, function (result_image) {
+        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, null, function (result_image) {
             image = result_image;
         });
 
@@ -71,7 +71,7 @@ describe("PhantomJS renderer", function () {
     it("should call the error handler if a page does not exist", function () {
         var hasError = false;
 
-        csscritic.renderer.phantomjsRenderer("the_url_that_doesnt_exist", 42, 7, function () {}, function () {
+        csscritic.renderer.phantomjsRenderer("the_url_that_doesnt_exist", 42, 7, null, function () {}, function () {
             hasError = true;
         });
 
@@ -94,7 +94,7 @@ describe("PhantomJS renderer", function () {
             callback("success");
         });
 
-        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, function () {}, function () {
+        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, null, function () {}, function () {
             hasError = true;
         });
 
@@ -115,7 +115,7 @@ describe("PhantomJS renderer", function () {
         var erroneousResourceUrls = null,
             pageUrl = fixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, function (result_image, erroneousUrls) {
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
             erroneousResourceUrls = erroneousUrls;
         });
 
@@ -139,7 +139,7 @@ describe("PhantomJS renderer", function () {
             servedFixtureUrl = localserver + "/" + fixtureUrl,
             pageUrl = servedFixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, function (result_image, erroneousUrls) {
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
             erroneousResourceUrls = erroneousUrls;
         });
 

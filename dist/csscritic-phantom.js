@@ -556,7 +556,7 @@ window.csscritic = (function (module) {
         }, errorCallback);
     };
 
-    module.renderer.phantomjsRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+    module.renderer.phantomjsRenderer = function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
         var page = require("webpage").create(),
             errorneousResources = [],
             handleError = function () {
@@ -654,14 +654,19 @@ window.csscritic = (function (module, fs) {
 }(window.csscritic || {}, require("fs")));
 
 window.csscritic = (function (module, renderer, storage, window, imagediff) {
-    var reporters, testCases;
+    var reporters, testCases, proxyUrl;
 
     var clear = function () {
         reporters = [];
         testCases = [];
+        proxyUrl = null;
     };
 
     clear();
+
+    module.setProxy = function (newProxyUrl) {
+        proxyUrl = newProxyUrl;
+    };
 
     var buildReportResult = function (status, pageUrl, pageImage, referenceImage, erroneousPageUrls) {
         var result = {
@@ -672,7 +677,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
 
         if (pageImage) {
             result.resizePageImage = function (width, height, callback) {
-                renderer.getImageForPageUrl(pageUrl, width, height, function (image) {
+                renderer.getImageForPageUrl(pageUrl, width, height, proxyUrl, function (image) {
                     result.pageImage = image;
                     callback(image);
                 });
@@ -755,7 +760,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
 
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlImage, erroneousUrls) {
+        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, proxyUrl, function (htmlImage, erroneousUrls) {
             var isEqual, textualStatus;
 
             workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);

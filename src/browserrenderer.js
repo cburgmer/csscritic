@@ -31,11 +31,15 @@ window.csscritic = (function (module, rasterizeHTML) {
         });
     };
 
-    module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+    module.renderer.browserRenderer = function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+        var url = pageUrl;
+        if (proxyUrl) {
+            url = proxyUrl + "/inline?url=" + pageUrl;
+        }
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
         module.util.queue.execute(function (doneSignal) {
-            doRender(pageUrl, width, height, function (image, erroneousResourceUrls) {
+            doRender(url, width, height, function (image, erroneousResourceUrls) {
                 successCallback(image, erroneousResourceUrls);
 
                 doneSignal();

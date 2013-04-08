@@ -140,11 +140,15 @@ window.csscritic = (function (module, rasterizeHTML) {
         });
     };
 
-    module.renderer.browserRenderer = function (pageUrl, width, height, successCallback, errorCallback) {
+    module.renderer.browserRenderer = function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+        var url = pageUrl;
+        if (proxyUrl) {
+            url = proxyUrl + "/inline?url=" + pageUrl;
+        }
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
         module.util.queue.execute(function (doneSignal) {
-            doRender(pageUrl, width, height, function (image, erroneousResourceUrls) {
+            doRender(url, width, height, function (image, erroneousResourceUrls) {
                 successCallback(image, erroneousResourceUrls);
 
                 doneSignal();
@@ -202,14 +206,19 @@ window.csscritic = (function (module, localStorage) {
 }(window.csscritic || {}, localStorage));
 
 window.csscritic = (function (module, renderer, storage, window, imagediff) {
-    var reporters, testCases;
+    var reporters, testCases, proxyUrl;
 
     var clear = function () {
         reporters = [];
         testCases = [];
+        proxyUrl = null;
     };
 
     clear();
+
+    module.setProxy = function (newProxyUrl) {
+        proxyUrl = newProxyUrl;
+    };
 
     var buildReportResult = function (status, pageUrl, pageImage, referenceImage, erroneousPageUrls) {
         var result = {
@@ -220,7 +229,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
 
         if (pageImage) {
             result.resizePageImage = function (width, height, callback) {
-                renderer.getImageForPageUrl(pageUrl, width, height, function (image) {
+                renderer.getImageForPageUrl(pageUrl, width, height, proxyUrl, function (image) {
                     result.pageImage = image;
                     callback(image);
                 });
@@ -303,7 +312,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
 
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, function (htmlImage, erroneousUrls) {
+        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, proxyUrl, function (htmlImage, erroneousUrls) {
             var isEqual, textualStatus;
 
             workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);

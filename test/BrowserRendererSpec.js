@@ -11,7 +11,7 @@ describe("Browser renderer", function () {
                 callback(the_image, []);
             });
 
-        csscritic.renderer.browserRenderer("the_url", 42, 7, function (result_image) {
+        csscritic.renderer.browserRenderer("the_url", 42, 7, null, function (result_image) {
             image = result_image;
         });
 
@@ -29,7 +29,7 @@ describe("Browser renderer", function () {
             }]);
         });
 
-        csscritic.renderer.browserRenderer("the_url", 42, 7, successCallback, errorCallback);
+        csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
 
         expect(successCallback).not.toHaveBeenCalled();
         expect(errorCallback).toHaveBeenCalled();
@@ -44,7 +44,7 @@ describe("Browser renderer", function () {
             }]);
         });
 
-        csscritic.renderer.browserRenderer("the_url", 42, 7, successCallback, errorCallback);
+        csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
 
         expect(successCallback).not.toHaveBeenCalled();
         expect(errorCallback).toHaveBeenCalled();
@@ -66,7 +66,7 @@ describe("Browser renderer", function () {
             fixtureUrl = csscriticTestPath + "fixtures/",
             pageUrl = fixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.browserRenderer(pageUrl, 42, 7, function (result_image, erroneousUrls) {
+        csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
             erroneousResourceUrls = erroneousUrls;
         });
 
