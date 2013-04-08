@@ -33,7 +33,6 @@ function get(url, mimeType, successCallback, errorCallback) {
                 return;
             }
 
-
             if (params.status === 'success') {
                 successCallback(params.content);
             } else {
@@ -99,6 +98,7 @@ function loadDocument(url, successCallback, errorCallback) {
         doc.documentElement.innerHTML = html;
 
         rasterizeHTMLInline.inlineReferences(doc, {baseUrl: url}, function (allErrors) {
+            // TODO sandbox execution
             rasterizeHTML.util.executeJavascript(doc, 200, function (doc, errors) {
                 successCallback(doc, allErrors.concat(errors));
             });

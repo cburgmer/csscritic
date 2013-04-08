@@ -11,4 +11,4 @@ phantom.injectJs("src/terminalreporter.js");
 phantom.injectJs("src/htmlfilereporter.js");
 phantom.injectJs("src/filestorage.js");
 phantom.injectJs("src/csscritic.js");
-phantom.injectJs("src/phantomjs-runnerlib.js");
+phantom.injectJs("src/phantomjs_runner.js");
