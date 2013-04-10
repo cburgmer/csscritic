@@ -1,18 +1,41 @@
 var port = 8765;
 
-function get(url, mimeType, successCallback, errorCallback) {
-    var page = require("webpage").create(),
-        basePageMatch = /^(https?:)?\/\/[^\/]+/.exec(url),
-        basePage = basePageMatch ? basePageMatch[0] : url;
+function get_page_domain(url) {
+    var domainMatch = /^(https?:)?\/\/[^\/]+/.exec(url);
+    return domainMatch[0] || url;
+}
 
-    // HACK for relative protocol support
-    if (basePage.indexOf("//") === 0) {
-        basePage = "http:" + basePage;
+function find_loadable_base_page(url, callback) {
+    var page = require("webpage").create(),
+        basePageMatch = /^(https?:)?\/\/(.*\/|[^\/]+)/.exec(url),
+        basePage = basePageMatch[0];
+
+    if (basePage.substring(basePage.length - 1) === '/') {
+        basePage = basePage.substring(0, basePage.length - 1);
     }
 
     page.open(basePage, function(status) {
-        if (status !== 'success') {
-            errorCallback("internal error");
+        if (status !== 'success' || get_page_domain(page.url) !== get_page_domain(basePage)) {
+            if (/^(https?:)?\/\/[^\/]+$/.test(basePage)) {
+                callback(null);
+            } else {
+                find_loadable_base_page(basePage, callback);
+            }
+        } else {
+            callback(page);
+        }
+    });
+}
+
+function get(url, mimeType, successCallback, errorCallback) {
+    // HACK for relative protocol support
+    if (url.indexOf("//") === 0) {
+        url = "http:" + url;
+    }
+
+    find_loadable_base_page(url, function(page) {
+        if (!page) {
+            errorCallback("Error: Can't load base page to open " + url);
             return;
         }
 
@@ -44,22 +67,22 @@ function get(url, mimeType, successCallback, errorCallback) {
                 if (ajaxRequest.status === 200 || ajaxRequest.status === 0) {
                     repond('success', ajaxRequest.response);
                 } else {
-                    repond('error');
+                    repond('error', ajaxRequest.status);
                 }
             }, false);
 
-            ajaxRequest.addEventListener("error", function () {
-                repond('error');
+            ajaxRequest.addEventListener("error", function (e) {
+                repond('error', e);
             }, false);
 
-            ajaxRequest.open('GET', url, true);
-            if (mimeType) {
-                ajaxRequest.overrideMimeType(mimeType);
-            }
             try {
+                ajaxRequest.open('GET', url, true);
+                if (mimeType) {
+                    ajaxRequest.overrideMimeType(mimeType);
+                }
                 ajaxRequest.send(null);
             } catch (err) {
-                repond('error');
+                repond('error', err);
             }
         }, url, mimeType);
     });
@@ -79,7 +102,9 @@ function ajax(url, options, successCallback, errorCallback) {
     options = options || {};
     augmentedUrl = getUncachableURL(url, options.cache === false);
 
-    get(augmentedUrl, options.mimeType, successCallback, errorCallback);
+    get(augmentedUrl, options.mimeType, successCallback, function () {
+        errorCallback();
+    });
 }
 
 rasterizeHTMLInline.util.ajax = ajax;
