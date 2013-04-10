@@ -5,6 +5,8 @@ function get_page_domain(url) {
     return domainMatch[0] || url;
 }
 
+var basePageUrlCache = {};
+
 function find_loadable_base_page(url, callback) {
     var page = require("webpage").create(),
         basePageMatch = /^(https?:)?\/\/(.*\/|[^\/]+)/.exec(url),
@@ -14,14 +16,24 @@ function find_loadable_base_page(url, callback) {
         basePage = basePage.substring(0, basePage.length - 1);
     }
 
+    if (basePageUrlCache[basePage]) {
+        // save time walking up the url
+        basePage = basePageUrlCache[basePage];
+    }
+
     page.open(basePage, function(status) {
         if (status !== 'success' || get_page_domain(page.url) !== get_page_domain(basePage)) {
             if (/^(https?:)?\/\/[^\/]+$/.test(basePage)) {
                 callback(null);
             } else {
-                find_loadable_base_page(basePage, callback);
+                find_loadable_base_page(basePage, function (page) {
+                    // Cach page url also for sub page
+                    basePageUrlCache[basePage] = page.url;
+                    callback(page);
+                });
             }
         } else {
+            basePageUrlCache[basePage] = page.url;
             callback(page);
         }
     });
@@ -51,31 +63,33 @@ function get(url, mimeType, successCallback, errorCallback) {
             if (params.status === 'success') {
                 successCallback(params.content);
             } else {
-                errorCallback();
+                errorCallback(params.content);
             }
         };
 
         page.evaluate(function (url, mimeType) {
-            var ajaxRequest = new window.XMLHttpRequest(),
+            var ajaxRequest, repond;
+            try {
+                ajaxRequest = new window.XMLHttpRequest();
                 repond = function (status, content) {
                     console.log(JSON.stringify({
                         status: status,
                         content: content
                     }));
                 };
-            ajaxRequest.addEventListener("load", function () {
-                if (ajaxRequest.status === 200 || ajaxRequest.status === 0) {
-                    repond('success', ajaxRequest.response);
-                } else {
-                    repond('error', ajaxRequest.status);
-                }
-            }, false);
 
-            ajaxRequest.addEventListener("error", function (e) {
-                repond('error', e);
-            }, false);
+                ajaxRequest.addEventListener("load", function () {
+                    if (ajaxRequest.status === 200 || ajaxRequest.status === 0) {
+                        repond('success', ajaxRequest.response);
+                    } else {
+                        repond('error', ajaxRequest.status);
+                    }
+                }, false);
 
-            try {
+                ajaxRequest.addEventListener("error", function (e) {
+                    repond('error', e);
+                }, false);
+
                 ajaxRequest.open('GET', url, true);
                 if (mimeType) {
                     ajaxRequest.overrideMimeType(mimeType);
@@ -102,7 +116,8 @@ function ajax(url, options, successCallback, errorCallback) {
     options = options || {};
     augmentedUrl = getUncachableURL(url, options.cache === false);
 
-    get(augmentedUrl, options.mimeType, successCallback, function () {
+    get(augmentedUrl, options.mimeType, successCallback, function (e) {
+        console.log("Error loading", url, e);
         errorCallback();
     });
 }
