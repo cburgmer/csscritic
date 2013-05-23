@@ -110,8 +110,7 @@ describe("Browser renderer", function () {
             expect(errorCallback).toHaveBeenCalled();
         });
 
-        // This test makes phantomjs crash, due to http://code.google.com/p/phantomjs/issues/detail?id=947
-        ifNotInWebkitIt("should report erroneous resource urls", function () {
+        it("should report erroneous resource urls", function () {
             var erroneousResourceUrls = null,
                 fixtureUrl = csscriticTestPath + "fixtures/",
                 pageUrl = fixtureUrl + "brokenPage.html";

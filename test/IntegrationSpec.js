@@ -23,7 +23,7 @@ describe("Integration", function () {
     });
 
     // This test makes phantomjs crash, due to http://code.google.com/p/phantomjs/issues/detail?id=947
-    ifNotInWebkitIt("should complete in any browser", function () {
+    it("should complete in any browser", function () {
         var resultStatus = null,
             testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
 
