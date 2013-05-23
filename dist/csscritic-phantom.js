@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-04-10
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-05-23
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -34,6 +34,74 @@ window.csscritic = (function (module) {
             image.onerror = errorCallback;
         }
         image.src = url;
+    };
+
+    module.util.getImageForBlob = function (blob, callback) {
+        var reader = new FileReader(),
+            img = new window.Image();
+
+        img.onload = function () {
+            callback(img);
+        };
+        img.onerror = function () {
+            callback(null);
+        };
+        reader.onload = function (e) {
+            img.src = e.target.result;
+        };
+
+        reader.readAsDataURL(blob);
+    };
+
+    var aBlob = function (content, properties) {
+        // Workaround for old PhantomJS
+        var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder,
+            blobBuilder;
+        try {
+            return new Blob([content], properties);
+        } catch (e) {
+            blobBuilder = new BlobBuilder();
+            blobBuilder.append(content[0]);
+            return blobBuilder.getBlob(properties.type);
+        }
+    };
+
+    var getBlobForBinary = function (data) {
+        var binaryContent = "";
+
+        for (var i = 0; i < data.length; i++) {
+            binaryContent += String.fromCharCode(data.charCodeAt(i) & 0xFF);
+        }
+        return aBlob([binaryContent], {"type": "unknown"});
+    };
+
+    module.util.ajax = function (url, successCallback, errorCallback) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.onload = function () {
+            if (xhr.status === 200 || xhr.status === 0) {
+                if (xhr.response instanceof Blob) {
+                    successCallback(xhr.response);
+                } else {
+                    // Workaround for Safari 6 not supporting xhr.responseType = 'blob'
+                    successCallback(getBlobForBinary(xhr.response));
+                }
+            } else {
+                errorCallback();
+            }
+        };
+
+        xhr.onerror = function () {
+            errorCallback();
+        };
+
+        try {
+            xhr.open('get', url, true);
+            xhr.responseType = 'blob';
+            xhr.send();
+        } catch (e) {
+            errorCallback();
+        }
     };
 
     module.util.workAroundTransparencyIssueInFirefox = function (image, callback) {

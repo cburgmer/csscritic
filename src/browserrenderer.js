@@ -13,21 +13,27 @@ window.csscritic = (function (module, rasterizeHTML) {
         return erroneousResourceUrls;
     };
 
-    var doRender = function (pageUrl, width, height, successCallback, errorCallback) {
-        rasterizeHTML.drawURL(pageUrl, {
-                cache: false,
-                width: width,
-                height: height,
-                executeJs: true,
-                executeJsTimeout: 50
-            }, function (image, errors) {
-            var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
+    var doRenderHtml = function (pageUrl, width, height, successCallback, errorCallback) {
+        // Execute render jobs one after another to stabilise rendering (especially JS execution).
+        // Also provides a more fluid response. Performance seems not to be affected.
+        module.util.queue.execute(function (doneSignal) {
+            rasterizeHTML.drawURL(pageUrl, {
+                    cache: false,
+                    width: width,
+                    height: height,
+                    executeJs: true,
+                    executeJsTimeout: 50
+                }, function (image, errors) {
+                var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
-            if (! image) {
-                errorCallback();
-            } else {
-                successCallback(image, erroneousResourceUrls);
-            }
+                if (! image) {
+                    errorCallback();
+                } else {
+                    successCallback(image, erroneousResourceUrls);
+                }
+
+                doneSignal();
+            });
         });
     };
 
@@ -36,19 +42,24 @@ window.csscritic = (function (module, rasterizeHTML) {
         if (proxyUrl) {
             url = proxyUrl + "/inline?url=" + pageUrl;
         }
-        // Execute render jobs one after another to stabilise rendering (especially JS execution).
-        // Also provides a more fluid response. Performance seems not to be affected.
-        module.util.queue.execute(function (doneSignal) {
-            doRender(url, width, height, function (image, erroneousResourceUrls) {
-                successCallback(image, erroneousResourceUrls);
-
-                doneSignal();
-            }, function () {
-                if (errorCallback) {
-                    errorCallback();
+        module.util.ajax(url, function (blob) {
+            module.util.getImageForBlob(blob, function (image) {
+                if (image) {
+                    successCallback(image, []);
+                } else {
+                    doRenderHtml(url, width, height, function (image, erroneousResourceUrls) {
+                        successCallback(image, erroneousResourceUrls);
+                    }, function () {
+                        if (errorCallback) {
+                            errorCallback();
+                        }
+                    });
                 }
-                doneSignal();
             });
+        }, function () {
+            if (errorCallback) {
+                errorCallback();
+            }
         });
     };
 

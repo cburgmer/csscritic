@@ -3,45 +3,43 @@ describe("Browser renderer", function () {
 
     beforeEach(function () {
         the_image = "the_image";
+
+        spyOn(csscritic.util.queue, 'execute').andCallFake(function (func) {
+            func(function () {});
+        });
     });
 
-    it("should draw the url to the given canvas, disable caching and execute JavaScript", function () {
+    it("should draw an image directly", function () {
         var image = null,
-            drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-                callback(the_image, []);
-            });
+            theUrl = "the url",
+            theBlob = "the blob",
+            theImage = "the image";
 
-        csscritic.renderer.browserRenderer("the_url", 42, 7, null, function (result_image) {
-            image = result_image;
+        spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback) {
+            if (url === theUrl) {
+                successCallback(theBlob);
+            }
+        });
+        spyOn(csscritic.util, 'getImageForBlob').andCallFake(function (blob, callback) {
+            if (blob === theBlob) {
+                callback(theImage);
+            } else {
+                callback(null);
+            }
         });
 
-        expect(the_image).toBe(image);
-        expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 50}, jasmine.any(Function));
+        csscritic.renderer.browserRenderer(theUrl, 42, 7, null, function (resultImage) {
+            image = resultImage;
+        });
+
+        expect(image).toBe(theImage);
     });
 
     it("should call the error handler if a page does not exist", function () {
         var successCallback = jasmine.createSpy("success"),
             errorCallback = jasmine.createSpy("error");
-        spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-            callback(null, [{
-                resourceType: "page",
-                url: url
-            }]);
-        });
-
-        csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
-
-        expect(successCallback).not.toHaveBeenCalled();
-        expect(errorCallback).toHaveBeenCalled();
-    });
-
-    it("should call the error handler if a page could not be rendered", function () {
-        var successCallback = jasmine.createSpy("success"),
-            errorCallback = jasmine.createSpy("error");
-        spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-            callback(null, [{
-                resourceType: "document"
-            }]);
+        spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback, errorCallback) {
+            errorCallback();
         });
 
         csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
@@ -51,37 +49,90 @@ describe("Browser renderer", function () {
     });
 
     it("should work without a callback on error", function () {
-        spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-            callback(null, [{
-                resourceType: "page",
-                url: url
-            }]);
+        spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback, errorCallback) {
+            errorCallback();
         });
         csscritic.renderer.browserRenderer("the_url", 42, 7);
     });
 
-    // This test makes phantomjs crash, due to http://code.google.com/p/phantomjs/issues/detail?id=947
-    ifNotInWebkitIt("should report erroneous resource urls", function () {
-        var erroneousResourceUrls = null,
-            fixtureUrl = csscriticTestPath + "fixtures/",
-            pageUrl = fixtureUrl + "brokenPage.html";
-
-        csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
-            erroneousResourceUrls = erroneousUrls;
+    describe("HTML page rendering", function () {
+        beforeEach(function () {
+            spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback) {
+                successCallback("some blob");
+            });
+            spyOn(csscritic.util, 'getImageForBlob').andCallFake(function (blob, callback) {
+                callback(null);
+            });
         });
 
-        waitsFor(function () {
-            return erroneousResourceUrls !== null;
+        it("should draw the html page if url is not an image, disable caching and execute JavaScript", function () {
+            var image = null,
+                drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+                    callback(the_image, []);
+                });
+
+            csscritic.renderer.browserRenderer("the_url", 42, 7, null, function (result_image) {
+                image = result_image;
+            });
+
+            expect(the_image).toBe(image);
+            expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 50}, jasmine.any(Function));
         });
 
-        runs(function () {
-            expect(erroneousResourceUrls).not.toBeNull();
-            erroneousResourceUrls.sort();
-            expect(erroneousResourceUrls).toEqual([
-                fixtureUrl + "background_image_does_not_exist.jpg",
-                fixtureUrl + "css_does_not_exist.css",
-                fixtureUrl + "image_does_not_exist.png"
-            ]);
+        it("should call the error handler if a page could not be rendered", function () {
+            var successCallback = jasmine.createSpy("success"),
+                errorCallback = jasmine.createSpy("error");
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+                callback(null, [{
+                    resourceType: "document"
+                }]);
+            });
+
+            csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
+
+            expect(successCallback).not.toHaveBeenCalled();
+            expect(errorCallback).toHaveBeenCalled();
+        });
+
+        it("should call the error handler if a page does not exist", function () {
+            var successCallback = jasmine.createSpy("success"),
+                errorCallback = jasmine.createSpy("error");
+            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+                callback(null, [{
+                    resourceType: "page",
+                    url: url
+                }]);
+            });
+
+            csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
+
+            expect(successCallback).not.toHaveBeenCalled();
+            expect(errorCallback).toHaveBeenCalled();
+        });
+
+        // This test makes phantomjs crash, due to http://code.google.com/p/phantomjs/issues/detail?id=947
+        ifNotInWebkitIt("should report erroneous resource urls", function () {
+            var erroneousResourceUrls = null,
+                fixtureUrl = csscriticTestPath + "fixtures/",
+                pageUrl = fixtureUrl + "brokenPage.html";
+
+            csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
+                erroneousResourceUrls = erroneousUrls;
+            });
+
+            waitsFor(function () {
+                return erroneousResourceUrls !== null;
+            });
+
+            runs(function () {
+                expect(erroneousResourceUrls).not.toBeNull();
+                erroneousResourceUrls.sort();
+                expect(erroneousResourceUrls).toEqual([
+                    fixtureUrl + "background_image_does_not_exist.jpg",
+                    fixtureUrl + "css_does_not_exist.css",
+                    fixtureUrl + "image_does_not_exist.png"
+                ]);
+            });
         });
     });
 

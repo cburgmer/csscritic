@@ -58,6 +58,109 @@ describe("Utility", function () {
         });
     });
 
+    describe("ajax", function () {
+
+        var loadText = function (blob, callback) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                callback(e.target.result);
+            };
+
+            reader.readAsText(blob);
+        };
+
+        it("should load content from a URL", function () {
+            var loadedContent,
+                errorCallback = jasmine.createSpy("errorCallback");
+
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "simple.js", function (blob) {
+                loadText(blob, function (content) {
+                    loadedContent = content;
+                });
+            }, errorCallback);
+
+            waitsFor(function () {
+                return loadedContent !== undefined;
+            });
+
+            runs(function () {
+                expect(loadedContent).toEqual('var s = "hello";\n');
+                expect(errorCallback).not.toHaveBeenCalled();
+            });
+        });
+
+        it("should call error callback on fail", function () {
+            var finished = false,
+                successCallback = jasmine.createSpy("successCallback"),
+                errorCallback = jasmine.createSpy("errorCallback").andCallFake(function () {
+                    finished = true;
+                });
+
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "non_existing_url.html", successCallback, errorCallback);
+
+            waitsFor(function () {
+                return finished;
+            });
+
+            runs(function () {
+                expect(successCallback).not.toHaveBeenCalled();
+                expect(errorCallback).toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe("getImageForBlob", function () {
+        // Compat for old PhantomJS
+        var aBlob = function (content, properties) {
+            var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder,
+                blobBuilder;
+            try {
+                return new Blob([content], properties);
+            } catch (e) {
+                blobBuilder = new BlobBuilder();
+                blobBuilder.append(content[0]);
+                return blobBuilder.getBlob(properties.type);
+            }
+        };
+
+        it("should return an image for a blob", function () {
+            var svg = '<svg xmlns="http://www.w3.org/2000/svg"></svg>',
+                blob = aBlob([svg], {"type": "image/svg+xml"}),
+                theImage;
+
+            csscritic.util.getImageForBlob(blob, function (image) {
+                theImage = image;
+            });
+
+            waitsFor(function () {
+                return theImage !== undefined;
+            });
+
+            runs(function () {
+                expect(theImage).not.toBe(null);
+                expect(theImage.src).toEqual('data:image/svg+xml;base64,' + btoa(svg));
+            });
+        });
+
+        it("should return null for something else", function () {
+            var blob = aBlob(["some text"], {"type": "text/plain"}),
+                result;
+
+            csscritic.util.getImageForBlob(blob, function (image) {
+                result = image;
+            });
+
+            waitsFor(function () {
+                return result !== undefined;
+            });
+
+            runs(function () {
+                expect(result).toBe(null);
+            });
+        });
+    });
+
     describe("map", function () {
         it("should map each value to one function call and then call complete function", function () {
             var completedValues = [],

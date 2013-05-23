@@ -43,6 +43,8 @@
         (function() {
             var jasmineEnv = jasmine.getEnv();
 
+            jasmine.getFixtures().fixturesPath = 'fixtures/';
+
             var htmlReporter = new jasmine.HtmlReporter();
             jasmineEnv.addReporter(htmlReporter);
             jasmineEnv.specFilter = function(spec) {

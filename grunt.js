@@ -43,7 +43,7 @@ module.exports = function (grunt) {
         jasmine:{
             src:['components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/*.js', 'src/utils.js', 'src/phantomjsrenderer.js', 'src/browserrenderer.js', 'src/domstorage.js', 'src/<%= pkg.name %>.js', 'src/basichtmlreporter.js', 'src/terminalreporter.js', 'src/signoffreporter.js'],
             specs:'test/*Spec.js',
-            helpers:['test/helpers.js', 'test/gruntpath.js', 'test/lib/*.js'],
+            helpers:['test/helpers.js', 'test/lib/*.js', 'test/gruntpath.js'],
             timeout:10000,
             fixturesPath:'./fixtures/'
         },
