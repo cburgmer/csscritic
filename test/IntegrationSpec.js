@@ -41,6 +41,39 @@ describe("Integration", function () {
         });
     });
 
+    ifNotInWebkitIt("should compare a page with its reference and return true if similar", function () {
+        var resultStatus = null,
+            testImageUrl = csscriticTestPath + "fixtures/redWithLetter.png",
+            theReferenceImageUri;
+
+        csscritic.util.getImageForUrl(testImageUrl, function (image) {
+            theReferenceImageUri = csscritic.util.getDataURIForImage(image);
+
+        });
+
+        waitsFor(function () {
+            return theReferenceImageUri !== undefined;
+        });
+
+        runs(function () {
+            localStorage.setItem(testImageUrl, JSON.stringify({
+                referenceImageUri: theReferenceImageUri
+            }));
+
+            csscritic.compare(testImageUrl, function (result) {
+                resultStatus = result;
+            });
+        });
+
+        waitsFor(function () {
+            return resultStatus !== null;
+        });
+
+        runs(function () {
+            expect(resultStatus).toEqual("passed");
+        });
+    });
+
     ifNotInWebkitIt("should compare a page with its reference image and return true if similar", function () {
         var resultStatus = null,
             testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
