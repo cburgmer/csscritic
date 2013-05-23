@@ -22,7 +22,6 @@ describe("Integration", function () {
         $("#csscritic_basichtmlreporter").remove();
     });
 
-    // This test makes phantomjs crash, due to http://code.google.com/p/phantomjs/issues/detail?id=947
     it("should complete in any browser", function () {
         var resultStatus = null,
             testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
