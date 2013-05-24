@@ -13,29 +13,27 @@ window.csscritic = (function (module, rasterizeHTML) {
         return erroneousResourceUrls;
     };
 
-    var doRenderHtml = function (url, blob, width, height, successCallback, errorCallback) {
+    var doRenderHtml = function (url, html, width, height, successCallback, errorCallback) {
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
         module.util.queue.execute(function (doneSignal) {
-            csscritic.util.getTextForBlob(blob, function (html) {
-                rasterizeHTML.drawHTML(html, {
-                        cache: false,
-                        width: width,
-                        height: height,
-                        executeJs: true,
-                        executeJsTimeout: 50,
-                        baseUrl: url
-                    }, function (image, errors) {
-                    var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
+            rasterizeHTML.drawHTML(html, {
+                    cache: false,
+                    width: width,
+                    height: height,
+                    executeJs: true,
+                    executeJsTimeout: 50,
+                    baseUrl: url
+                }, function (image, errors) {
+                var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
-                    if (! image) {
-                        errorCallback();
-                    } else {
-                        successCallback(image, erroneousResourceUrls);
-                    }
+                if (! image) {
+                    errorCallback();
+                } else {
+                    successCallback(image, erroneousResourceUrls);
+                }
 
-                    doneSignal();
-                });
+                doneSignal();
             });
         });
     };
@@ -45,12 +43,12 @@ window.csscritic = (function (module, rasterizeHTML) {
         if (proxyUrl) {
             url = proxyUrl + "/inline?url=" + pageUrl;
         }
-        module.util.ajax(url, function (blob) {
-            module.util.getImageForBlob(blob, function (image) {
+        module.util.ajax(url, function (content) {
+            module.util.getImageForBinaryContent(content, function (image) {
                 if (image) {
                     successCallback(image, []);
                 } else {
-                    doRenderHtml(url, blob, width, height, function (image, erroneousResourceUrls) {
+                    doRenderHtml(url, content, width, height, function (image, erroneousResourceUrls) {
                         successCallback(image, erroneousResourceUrls);
                     }, function () {
                         if (errorCallback) {

@@ -29,53 +29,29 @@ window.csscritic = (function (module) {
         image.src = url;
     };
 
-    module.util.getImageForBlob = function (blob, callback) {
-        var reader = new FileReader(),
-            img = new window.Image();
+    module.util.getImageForBinaryContent = function (content, callback) {
+        var image = new window.Image();
 
-        img.onload = function () {
-            callback(img);
+        image.onload = function () {
+            callback(image);
         };
-        img.onerror = function () {
+        image.onerror = function () {
             callback(null);
         };
-        reader.onload = function (e) {
-            img.src = e.target.result;
-        };
-
-        reader.readAsDataURL(blob);
+        image.src = 'data:image/png;base64,' + btoa(content);
     };
 
-    module.util.getTextForBlob = function (blob, callback) {
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            callback(e.target.result);
-        };
-
-        reader.readAsText(blob);
-    };
-
-    var aBlob = function (content, properties) {
-        // Workaround for old PhantomJS
-        var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder,
-            blobBuilder;
-        try {
-            return new Blob([content], properties);
-        } catch (e) {
-            blobBuilder = new BlobBuilder();
-            blobBuilder.append(content[0]);
-            return blobBuilder.getBlob(properties.type);
-        }
-    };
-
-    var getBlobForBinary = function (data) {
+    var getBinary = function (data) {
         var binaryContent = "";
 
         for (var i = 0; i < data.length; i++) {
             binaryContent += String.fromCharCode(data.charCodeAt(i) & 0xFF);
         }
-        return aBlob([binaryContent], {"type": "unknown"});
+        return binaryContent;
+    };
+
+    var getUncachableURL = function (url) {
+        return url + "?_=" + Date.now();
     };
 
     module.util.ajax = function (url, successCallback, errorCallback) {
@@ -83,12 +59,7 @@ window.csscritic = (function (module) {
 
         xhr.onload = function () {
             if (xhr.status === 200 || xhr.status === 0) {
-                if (xhr.response instanceof Blob) {
-                    successCallback(xhr.response);
-                } else {
-                    // Workaround for Safari 6 not supporting xhr.responseType = 'blob'
-                    successCallback(getBlobForBinary(xhr.response));
-                }
+                successCallback(getBinary(xhr.response));
             } else {
                 errorCallback();
             }
@@ -99,8 +70,8 @@ window.csscritic = (function (module) {
         };
 
         try {
-            xhr.open('get', url, true);
-            xhr.responseType = 'blob';
+            xhr.open('get', getUncachableURL(url), true);
+            xhr.overrideMimeType('text/plain; charset=x-user-defined');
             xhr.send();
         } catch (e) {
             errorCallback();
@@ -200,29 +171,27 @@ window.csscritic = (function (module, rasterizeHTML) {
         return erroneousResourceUrls;
     };
 
-    var doRenderHtml = function (url, blob, width, height, successCallback, errorCallback) {
+    var doRenderHtml = function (url, html, width, height, successCallback, errorCallback) {
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
         module.util.queue.execute(function (doneSignal) {
-            csscritic.util.getTextForBlob(blob, function (html) {
-                rasterizeHTML.drawHTML(html, {
-                        cache: false,
-                        width: width,
-                        height: height,
-                        executeJs: true,
-                        executeJsTimeout: 50,
-                        baseUrl: url
-                    }, function (image, errors) {
-                    var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
+            rasterizeHTML.drawHTML(html, {
+                    cache: false,
+                    width: width,
+                    height: height,
+                    executeJs: true,
+                    executeJsTimeout: 50,
+                    baseUrl: url
+                }, function (image, errors) {
+                var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
 
-                    if (! image) {
-                        errorCallback();
-                    } else {
-                        successCallback(image, erroneousResourceUrls);
-                    }
+                if (! image) {
+                    errorCallback();
+                } else {
+                    successCallback(image, erroneousResourceUrls);
+                }
 
-                    doneSignal();
-                });
+                doneSignal();
             });
         });
     };
@@ -232,12 +201,12 @@ window.csscritic = (function (module, rasterizeHTML) {
         if (proxyUrl) {
             url = proxyUrl + "/inline?url=" + pageUrl;
         }
-        module.util.ajax(url, function (blob) {
-            module.util.getImageForBlob(blob, function (image) {
+        module.util.ajax(url, function (content) {
+            module.util.getImageForBinaryContent(content, function (image) {
                 if (image) {
                     successCallback(image, []);
                 } else {
-                    doRenderHtml(url, blob, width, height, function (image, erroneousResourceUrls) {
+                    doRenderHtml(url, content, width, height, function (image, erroneousResourceUrls) {
                         successCallback(image, erroneousResourceUrls);
                     }, function () {
                         if (errorCallback) {

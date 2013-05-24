@@ -12,16 +12,16 @@ describe("Browser renderer", function () {
     it("should draw an image directly", function () {
         var image = null,
             theUrl = "the url",
-            theBlob = "the blob",
+            theBinaryContent = "the content",
             theImage = "the image";
 
         spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback) {
             if (url === theUrl) {
-                successCallback(theBlob);
+                successCallback(theBinaryContent);
             }
         });
-        spyOn(csscritic.util, 'getImageForBlob').andCallFake(function (blob, callback) {
-            if (blob === theBlob) {
+        spyOn(csscritic.util, 'getImageForBinaryContent').andCallFake(function (content, callback) {
+            if (content === theBinaryContent) {
                 callback(theImage);
             } else {
                 callback(null);
@@ -57,24 +57,20 @@ describe("Browser renderer", function () {
 
     describe("HTML page rendering", function () {
         var theUrl = "the url",
-            theHtml = "some html",
-            theHtmlBlob = [theHtml];
+            theHtml = "some html";
 
         beforeEach(function () {
             spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback) {
                 var relativeFixtureUrl;
                 if (url === theUrl) {
-                    successCallback(theHtmlBlob);
+                    successCallback(theHtml);
                 } else {
                     relativeFixtureUrl = url.replace(jasmine.getFixtures().fixturesPath, "");
                     successCallback([readFixtures(relativeFixtureUrl)]);
                 }
             });
-            spyOn(csscritic.util, 'getImageForBlob').andCallFake(function (blob, callback) {
+            spyOn(csscritic.util, 'getImageForBinaryContent').andCallFake(function (content, callback) {
                 callback(null);
-            });
-            spyOn(csscritic.util, 'getTextForBlob').andCallFake(function (blob, callback) {
-                callback(blob[0]);
             });
         });
 

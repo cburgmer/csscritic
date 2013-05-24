@@ -58,26 +58,52 @@ describe("Utility", function () {
         });
     });
 
+    describe("getImageForBinaryContent", function () {
+        it("should load an image", function () {
+            var imageData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=',
+                theImage;
+
+            csscritic.util.getImageForBinaryContent(atob(imageData), function (image) {
+                theImage = image;
+            });
+
+            waitsFor(function () {
+                return theImage !== undefined;
+            });
+
+            runs(function () {
+                expect(theImage instanceof HTMLElement).toBeTruthy();
+                expect(theImage.nodeName).toEqual("IMG");
+                expect(theImage.src).toEqual('data:image/png;base64,' + imageData);
+            });
+
+        });
+
+        it("should handle invalid image content", function () {
+            var theImage;
+
+            csscritic.util.getImageForBinaryContent("invalid content", function (image) {
+                theImage = image;
+            });
+
+            waitsFor(function () {
+                return theImage !== undefined;
+            });
+
+            runs(function () {
+                expect(theImage).toBe(null);
+            });
+        });
+    });
+
     describe("ajax", function () {
-
-        var loadText = function (blob, callback) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                callback(e.target.result);
-            };
-
-            reader.readAsText(blob);
-        };
 
         it("should load content from a URL", function () {
             var loadedContent,
                 errorCallback = jasmine.createSpy("errorCallback");
 
-            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "simple.js", function (blob) {
-                loadText(blob, function (content) {
-                    loadedContent = content;
-                });
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "simple.js", function (content) {
+                loadedContent = content;
             }, errorCallback);
 
             waitsFor(function () {
@@ -87,6 +113,22 @@ describe("Utility", function () {
             runs(function () {
                 expect(loadedContent).toEqual('var s = "hello";\n');
                 expect(errorCallback).not.toHaveBeenCalled();
+            });
+        });
+
+        it("should load binary data", function () {
+            var loadedContent;
+
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "green.png", function (content) {
+                loadedContent = content;
+            }, function () {});
+
+            waitsFor(function () {
+                return loadedContent !== undefined;
+            });
+
+            runs(function () {
+                expect(btoa(loadedContent)).toEqual("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABFElEQVR4nO3OMQ0AAAjAMPybhnsKxrHUQGc2r+iBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YHAAV821mT1w27RAAAAAElFTkSuQmCC");
             });
         });
 
@@ -124,91 +166,6 @@ describe("Utility", function () {
             expect(ajaxRequest.open.mostRecentCall.args[1]).toEqual('non_existing_url.html?_=43');
         });
 
-    });
-
-    describe("getImageForBlob", function () {
-        // Compat for old PhantomJS
-        var aBlob = function (content, properties) {
-            var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder,
-                blobBuilder;
-            try {
-                return new Blob([content], properties);
-            } catch (e) {
-                blobBuilder = new BlobBuilder();
-                blobBuilder.append(content[0]);
-                return blobBuilder.getBlob(properties.type);
-            }
-        };
-
-        it("should return an image for a blob", function () {
-            var svg = '<svg xmlns="http://www.w3.org/2000/svg"></svg>',
-                blob = aBlob([svg], {"type": "image/svg+xml"}),
-                theImage;
-
-            csscritic.util.getImageForBlob(blob, function (image) {
-                theImage = image;
-            });
-
-            waitsFor(function () {
-                return theImage !== undefined;
-            });
-
-            runs(function () {
-                expect(theImage).not.toBe(null);
-                expect(theImage.src).toEqual('data:image/svg+xml;base64,' + btoa(svg));
-            });
-        });
-
-        it("should return null for something else", function () {
-            var blob = aBlob(["some text"], {"type": "text/plain"}),
-                result;
-
-            csscritic.util.getImageForBlob(blob, function (image) {
-                result = image;
-            });
-
-            waitsFor(function () {
-                return result !== undefined;
-            });
-
-            runs(function () {
-                expect(result).toBe(null);
-            });
-        });
-    });
-
-    describe("getImageForBlob", function () {
-        // Compat for old PhantomJS
-        var aBlob = function (content, properties) {
-            var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder,
-                blobBuilder;
-            try {
-                return new Blob([content], properties);
-            } catch (e) {
-                blobBuilder = new BlobBuilder();
-                blobBuilder.append(content[0]);
-                return blobBuilder.getBlob(properties.type);
-            }
-        };
-
-        it("should return text for a blob", function () {
-            var text = 'some text that will go into the blob',
-                blob = aBlob([text], {"type": "text/plain"}),
-                theText;
-
-            csscritic.util.getTextForBlob(blob, function (result) {
-                theText = result;
-            });
-
-            waitsFor(function () {
-                return theText !== undefined;
-            });
-
-            runs(function () {
-                expect(theText).not.toBe(null);
-                expect(theText).toEqual(theText);
-            });
-        });
     });
 
     describe("map", function () {

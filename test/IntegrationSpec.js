@@ -41,7 +41,7 @@ describe("Integration", function () {
         });
     });
 
-    ifNotInWebkitIt("should compare a page with its reference and return true if similar", function () {
+    it("should compare an image with its reference and return true if similar", function () {
         var resultStatus = null,
             testImageUrl = csscriticTestPath + "fixtures/redWithLetter.png",
             theReferenceImageUri;
