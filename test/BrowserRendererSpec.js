@@ -56,27 +56,42 @@ describe("Browser renderer", function () {
     });
 
     describe("HTML page rendering", function () {
+        var theUrl = "the url",
+            theHtml = "some html",
+            theHtmlBlob = [theHtml];
+
         beforeEach(function () {
             spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback) {
-                successCallback("some blob");
+                var relativeFixtureUrl;
+                if (url === theUrl) {
+                    successCallback(theHtmlBlob);
+                } else {
+                    relativeFixtureUrl = url.replace(jasmine.getFixtures().fixturesPath, "");
+                    successCallback([readFixtures(relativeFixtureUrl)]);
+                }
             });
             spyOn(csscritic.util, 'getImageForBlob').andCallFake(function (blob, callback) {
                 callback(null);
+            });
+            spyOn(csscritic.util, 'getTextForBlob').andCallFake(function (blob, callback) {
+                callback(blob[0]);
             });
         });
 
         it("should draw the html page if url is not an image, disable caching and execute JavaScript", function () {
             var image = null,
-                drawUrlSpy = spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-                    callback(the_image, []);
+                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").andCallFake(function (html, options, callback) {
+                    if (html === theHtml) {
+                        callback(the_image, []);
+                    }
                 });
 
-            csscritic.renderer.browserRenderer("the_url", 42, 7, null, function (result_image) {
+            csscritic.renderer.browserRenderer(theUrl, 42, 7, null, function (result_image) {
                 image = result_image;
             });
 
             expect(the_image).toBe(image);
-            expect(drawUrlSpy).toHaveBeenCalledWith("the_url", {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 50}, jasmine.any(Function));
+            expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 50, baseUrl: theUrl}, jasmine.any(Function));
         });
 
         it("should call the error handler if a page could not be rendered", function () {
@@ -87,20 +102,9 @@ describe("Browser renderer", function () {
                     resourceType: "document"
                 }]);
             });
-
-            csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
-
-            expect(successCallback).not.toHaveBeenCalled();
-            expect(errorCallback).toHaveBeenCalled();
-        });
-
-        it("should call the error handler if a page does not exist", function () {
-            var successCallback = jasmine.createSpy("success"),
-                errorCallback = jasmine.createSpy("error");
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
+            spyOn(rasterizeHTML, "drawHTML").andCallFake(function (html, options, callback) {
                 callback(null, [{
-                    resourceType: "page",
-                    url: url
+                    resourceType: "document"
                 }]);
             });
 

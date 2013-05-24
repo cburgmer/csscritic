@@ -131,6 +131,7 @@ module.exports = function (grunt) {
                     expect:true,
                     spyOn:true,
                     setFixtures:true,
+                    readFixtures:true,
                     rasterizeHTML:true,
                     imagediff:true,
                     csscritic:true,

@@ -161,6 +161,40 @@ describe("Utility", function () {
         });
     });
 
+    describe("getImageForBlob", function () {
+        // Compat for old PhantomJS
+        var aBlob = function (content, properties) {
+            var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder,
+                blobBuilder;
+            try {
+                return new Blob([content], properties);
+            } catch (e) {
+                blobBuilder = new BlobBuilder();
+                blobBuilder.append(content[0]);
+                return blobBuilder.getBlob(properties.type);
+            }
+        };
+
+        it("should return text for a blob", function () {
+            var text = 'some text that will go into the blob',
+                blob = aBlob([text], {"type": "text/plain"}),
+                theText;
+
+            csscritic.util.getTextForBlob(blob, function (result) {
+                theText = result;
+            });
+
+            waitsFor(function () {
+                return theText !== undefined;
+            });
+
+            runs(function () {
+                expect(theText).not.toBe(null);
+                expect(theText).toEqual(theText);
+            });
+        });
+    });
+
     describe("map", function () {
         it("should map each value to one function call and then call complete function", function () {
             var completedValues = [],

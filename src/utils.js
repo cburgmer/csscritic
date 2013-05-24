@@ -42,6 +42,16 @@ window.csscritic = (function (module) {
         reader.readAsDataURL(blob);
     };
 
+    module.util.getTextForBlob = function (blob, callback) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            callback(e.target.result);
+        };
+
+        reader.readAsText(blob);
+    };
+
     var aBlob = function (content, properties) {
         // Workaround for old PhantomJS
         var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder,
