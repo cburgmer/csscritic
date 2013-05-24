@@ -5,11 +5,6 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg:'<json:package.json>',
         meta:{
-            banner:'/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-                '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-                '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
-                '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
-                ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */',
             bannerAllInOne:'/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
                 '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
                 '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
@@ -48,10 +43,6 @@ module.exports = function (grunt) {
             fixturesPath:'./fixtures/'
         },
         concat:{
-            dist:{
-                src:['<banner:meta.banner>', 'src/utils.js', 'src/browserrenderer.js', 'src/domstorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/basichtmlreporter.js'],
-                dest:'dist/<%= pkg.name %>.js'
-            },
             "phantomjs": {
                 src:['<banner:meta.bannerPhantomjs>', 'src/utils.js', 'lib/sha256.js', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
                 dest:'dist/<%= pkg.name %>-phantom.js'
@@ -62,12 +53,8 @@ module.exports = function (grunt) {
             }
         },
         min:{
-            dist:{
-                src:['<banner:meta.banner>', '<config:concat.dist.dest>'],
-                dest:'dist/<%= pkg.name %>.min.js'
-            },
             allinone: {
-                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', '<config:concat.dist.dest>'],
+                src:['<banner:meta.bannerAllInOne>', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/utils.js', 'src/browserrenderer.js', 'src/domstorage.js', '<file_strip_banner:src/<%= pkg.name %>.js>', 'src/basichtmlreporter.js'],
                 dest:'dist/<%= pkg.name %>.allinone.js'
             }
         },
