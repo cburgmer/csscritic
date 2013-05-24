@@ -108,6 +108,22 @@ describe("Utility", function () {
                 expect(errorCallback).toHaveBeenCalled();
             });
         });
+
+        it("should not cache repeated calls by default", function () {
+            var dateNowSpy = spyOn(window.Date, 'now').andReturn(42),
+                ajaxRequest = jasmine.createSpyObj("ajaxRequest", ["open", "addEventListener", "overrideMimeType", "send"]);
+
+            spyOn(window, "XMLHttpRequest").andReturn(ajaxRequest);
+
+            csscritic.util.ajax("non_existing_url.html", function () {}, function () {});
+
+            expect(ajaxRequest.open.mostRecentCall.args[1]).toEqual('non_existing_url.html?_=42');
+
+            dateNowSpy.andReturn(43);
+            csscritic.util.ajax("non_existing_url.html", function () {}, function () {});
+            expect(ajaxRequest.open.mostRecentCall.args[1]).toEqual('non_existing_url.html?_=43');
+        });
+
     });
 
     describe("getImageForBlob", function () {

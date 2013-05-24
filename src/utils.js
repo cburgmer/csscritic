@@ -74,6 +74,10 @@ window.csscritic = (function (module) {
         return aBlob([binaryContent], {"type": "unknown"});
     };
 
+    var getUncachableURL = function (url) {
+        return url + "?_=" + Date.now();
+    };
+
     module.util.ajax = function (url, successCallback, errorCallback) {
         var xhr = new XMLHttpRequest();
 
@@ -95,7 +99,7 @@ window.csscritic = (function (module) {
         };
 
         try {
-            xhr.open('get', url, true);
+            xhr.open('get', getUncachableURL(url), true);
             xhr.responseType = 'blob';
             xhr.send();
         } catch (e) {
