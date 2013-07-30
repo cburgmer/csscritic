@@ -93,18 +93,13 @@ describe("Browser renderer", function () {
         it("should call the error handler if a page could not be rendered", function () {
             var successCallback = jasmine.createSpy("success"),
                 errorCallback = jasmine.createSpy("error");
-            spyOn(rasterizeHTML, "drawURL").andCallFake(function (url, options, callback) {
-                callback(null, [{
-                    resourceType: "document"
-                }]);
-            });
             spyOn(rasterizeHTML, "drawHTML").andCallFake(function (html, options, callback) {
                 callback(null, [{
                     resourceType: "document"
                 }]);
             });
 
-            csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
+            csscritic.renderer.browserRenderer(theUrl, 42, 7, null, successCallback, errorCallback);
 
             expect(successCallback).not.toHaveBeenCalled();
             expect(errorCallback).toHaveBeenCalled();
