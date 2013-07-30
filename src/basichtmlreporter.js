@@ -176,17 +176,17 @@ window.csscritic = (function (module, document) {
             ul = document.createElement("ul");
 
         loadErrors.className = "loadErrors warning";
-        loadErrors.appendChild(document.createTextNode("Could not load the referenced resources:"));
+        loadErrors.appendChild(document.createTextNode("Had the following errors rendering the page:"));
         loadErrors.appendChild(ul);
 
-        result.erroneousPageUrls.forEach(function (url) {
+        result.renderErrors.forEach(function (url) {
             var urlWarningEntry = document.createElement("li");
 
             urlWarningEntry.textContent = url;
             ul.appendChild(urlWarningEntry);
         });
 
-        loadErrors.appendChild(document.createTextNode("Make sure the paths lie within the same origin as this document."));
+        loadErrors.appendChild(document.createTextNode("Make sure that resource paths lie within the same origin as this document."));
         return loadErrors;
     };
 
@@ -293,7 +293,7 @@ window.csscritic = (function (module, document) {
 
         entry.appendChild(createStatus(result));
 
-        if (result.erroneousPageUrls) {
+        if (result.renderErrors) {
             entry.appendChild(createErroneousResourceWarning(result));
         }
 

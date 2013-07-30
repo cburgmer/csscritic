@@ -69,11 +69,11 @@ describe("Basic HTML reporter", function () {
         expect($("#csscritic_basichtmlreporter .comparison a.pageUrl")).toHaveAttr("href", "dir/page_url");
     });
 
-    it("should show erroneous page resources", function () {
+    it("should show page render errors", function () {
         reporter.reportComparison({
             status: "passed",
             pageUrl: "page_url<img>",
-            erroneousPageUrls: ["theFirstBadUrl", "yetAnotherBadUrl"],
+            renderErrors: ["theFirstBadUrl", "yetAnotherBadUrl"],
             pageImage: htmlImage,
             referenceImage: referenceImage
         });

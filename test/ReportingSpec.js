@@ -240,7 +240,7 @@ describe("Reporting", function () {
             expect(storeReferenceImageSpy).toHaveBeenCalledWith("differentpage.html", htmlImage);
         });
 
-        it("should provide a list of URLs that couldn't be loaded", function () {
+        it("should provide a list of errors during rendering", function () {
             spyOn(imagediff, 'equal').andReturn(true);
 
             getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
@@ -256,14 +256,14 @@ describe("Reporting", function () {
                 status: "passed",
                 pageUrl: "differentpage.html",
                 pageImage: htmlImage,
-                erroneousPageUrls: ["oneUrl", "anotherUrl"],
+                renderErrors: ["oneUrl", "anotherUrl"],
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
             }, jasmine.any(Function));
         });
 
-        it("should provide a list of URLs that couldn't be loaded independently of whether the reference image exists", function () {
+        it("should provide a list of errors during rendering independently of whether the reference image exists", function () {
             getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
                 callback(htmlImage, ["oneUrl", "anotherUrl"]);
             });
@@ -276,7 +276,7 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
                 pageUrl: "differentpage.html",
-                erroneousPageUrls: ["oneUrl", "anotherUrl"],
+                renderErrors: ["oneUrl", "anotherUrl"],
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function)

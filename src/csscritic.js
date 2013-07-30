@@ -36,8 +36,8 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
             result.referenceImage = comparison.referenceImage;
         }
 
-        if (comparison.erroneousUrls && comparison.erroneousUrls.length) {
-            result.erroneousPageUrls = comparison.erroneousUrls;
+        if (comparison.renderErrors && comparison.renderErrors.length) {
+            result.renderErrors = comparison.renderErrors;
         }
 
         return result;
@@ -105,7 +105,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
 
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, proxyUrl, function (htmlImage, erroneousUrls) {
+        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, proxyUrl, function (htmlImage, renderErrors) {
             var isEqual, textualStatus;
 
             workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);
@@ -123,7 +123,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                         pageUrl: pageUrl,
                         htmlImage: htmlImage,
                         referenceImage: referenceImage,
-                        erroneousUrls: erroneousUrls
+                        renderErrors: renderErrors
                     },
                     function () {
                         if (callback) {

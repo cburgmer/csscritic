@@ -105,26 +105,26 @@ describe("Browser renderer", function () {
             expect(errorCallback).toHaveBeenCalled();
         });
 
-        it("should report erroneous resource urls", function () {
-            var erroneousResourceUrls = null,
+        it("should report errors from rendering", function () {
+            var errors = null,
                 fixtureUrl = csscriticTestPath + "fixtures/",
                 pageUrl = fixtureUrl + "brokenPage.html";
 
-            csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
-                erroneousResourceUrls = erroneousUrls;
+            csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, renderErrors) {
+                errors = renderErrors;
             });
 
             waitsFor(function () {
-                return erroneousResourceUrls !== null;
+                return errors !== null;
             });
 
             runs(function () {
-                expect(erroneousResourceUrls).not.toBeNull();
-                erroneousResourceUrls.sort();
-                expect(erroneousResourceUrls).toEqual([
-                    fixtureUrl + "background_image_does_not_exist.jpg",
-                    fixtureUrl + "css_does_not_exist.css",
-                    fixtureUrl + "image_does_not_exist.png"
+                expect(errors).not.toBeNull();
+                errors.sort();
+                expect(errors).toEqual([
+                    "Unable to load background-image " + fixtureUrl + "background_image_does_not_exist.jpg",
+                    "Unable to load image " + fixtureUrl + "image_does_not_exist.png",
+                    "Unable to load stylesheet " + fixtureUrl + "css_does_not_exist.css"
                 ]);
             });
         });

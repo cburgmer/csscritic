@@ -1,16 +1,16 @@
 window.csscritic = (function (module, rasterizeHTML) {
     module.renderer = module.renderer || {};
 
-    var getErroneousResourceUrls = function (errors) {
-        var erroneousResourceUrls = [];
+    var getRenderErrors = function (errors) {
+        var renderErrors = [];
 
         errors.forEach(function (error) {
-            if (error.url) {
-                erroneousResourceUrls.push(error.url);
+            if (error.msg) {
+                renderErrors.push(error.msg);
             }
         });
 
-        return erroneousResourceUrls;
+        return renderErrors;
     };
 
     var doRenderHtml = function (url, html, width, height, successCallback, errorCallback) {
@@ -25,12 +25,12 @@ window.csscritic = (function (module, rasterizeHTML) {
                     executeJsTimeout: 50,
                     baseUrl: url
                 }, function (image, errors) {
-                var erroneousResourceUrls = errors === undefined ? [] : getErroneousResourceUrls(errors);
+                var renderErrors = errors === undefined ? [] : getRenderErrors(errors);
 
                 if (! image) {
                     errorCallback();
                 } else {
-                    successCallback(image, erroneousResourceUrls);
+                    successCallback(image, renderErrors);
                 }
 
                 doneSignal();
@@ -48,8 +48,8 @@ window.csscritic = (function (module, rasterizeHTML) {
                 if (image) {
                     successCallback(image, []);
                 } else {
-                    doRenderHtml(url, content, width, height, function (image, erroneousResourceUrls) {
-                        successCallback(image, erroneousResourceUrls);
+                    doRenderHtml(url, content, width, height, function (image, renderErrors) {
+                        successCallback(image, renderErrors);
                     }, function () {
                         if (errorCallback) {
                             errorCallback();

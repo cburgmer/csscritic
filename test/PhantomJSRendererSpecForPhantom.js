@@ -111,22 +111,22 @@ describe("PhantomJS renderer", function () {
         csscritic.renderer.phantomjsRenderer("the_url", 42, 7);
     });
 
-    it("should report erroneous resource file urls", function () {
-        var erroneousResourceUrls = null,
+    it("should report errors from rendering", function () {
+        var errors = null,
             pageUrl = fixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
-            erroneousResourceUrls = erroneousUrls;
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, renderErrors) {
+            errors = renderErrors;
         });
 
         waitsFor(function () {
-            return erroneousResourceUrls !== null;
+            return errors !== null;
         });
 
         runs(function () {
-            expect(erroneousResourceUrls).not.toBeNull();
-            erroneousResourceUrls.sort();
-            expect(erroneousResourceUrls).toEqual([
+            expect(errors).not.toBeNull();
+            errors.sort();
+            expect(errors).toEqual([
                 getFileUrl(fixtureUrl + "background_image_does_not_exist.jpg"),
                 getFileUrl(fixtureUrl + "css_does_not_exist.css"),
                 getFileUrl(fixtureUrl + "image_does_not_exist.png")
@@ -134,23 +134,23 @@ describe("PhantomJS renderer", function () {
         });
     });
 
-    it("should report erroneous resource http urls", function () {
-        var erroneousResourceUrls = null,
+    it("should report errors from rendering with http urls", function () {
+        var errors = null,
             servedFixtureUrl = localserver + "/" + fixtureUrl,
             pageUrl = servedFixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, erroneousUrls) {
-            erroneousResourceUrls = erroneousUrls;
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, renderErrors) {
+            errors = renderErrors;
         });
 
         waitsFor(function () {
-            return erroneousResourceUrls !== null;
+            return errors !== null;
         });
 
         runs(function () {
-            expect(erroneousResourceUrls).not.toBeNull();
-            erroneousResourceUrls.sort();
-            expect(erroneousResourceUrls).toEqual([
+            expect(errors).not.toBeNull();
+            errors.sort();
+            expect(errors).toEqual([
                 servedFixtureUrl + "background_image_does_not_exist.jpg",
                 servedFixtureUrl + "css_does_not_exist.css",
                 servedFixtureUrl + "image_does_not_exist.png"
