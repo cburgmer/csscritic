@@ -13,31 +13,31 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         proxyUrl = newProxyUrl;
     };
 
-    var buildReportResult = function (status, pageUrl, pageImage, referenceImage, erroneousPageUrls) {
+    var buildReportResult = function (comparison) {
         var result = {
-                status: status,
-                pageUrl: pageUrl,
-                pageImage: pageImage
+                status: comparison.status,
+                pageUrl: comparison.pageUrl,
+                pageImage: comparison.htmlImage
             };
 
-        if (pageImage) {
+        if (comparison.htmlImage) {
             result.resizePageImage = function (width, height, callback) {
-                renderer.getImageForPageUrl(pageUrl, width, height, proxyUrl, function (image) {
+                renderer.getImageForPageUrl(comparison.pageUrl, width, height, proxyUrl, function (image) {
                     result.pageImage = image;
                     callback(image);
                 });
             };
             result.acceptPage = function () {
-                storage.storeReferenceImage(pageUrl, result.pageImage);
+                storage.storeReferenceImage(comparison.pageUrl, result.pageImage);
             };
         }
 
-        if (referenceImage) {
-            result.referenceImage = referenceImage;
+        if (comparison.referenceImage) {
+            result.referenceImage = comparison.referenceImage;
         }
 
-        if (erroneousPageUrls && erroneousPageUrls.length) {
-            result.erroneousPageUrls = erroneousPageUrls;
+        if (comparison.erroneousUrls && comparison.erroneousUrls.length) {
+            result.erroneousPageUrls = comparison.erroneousUrls;
         }
 
         return result;
@@ -55,7 +55,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         }, callback);
     };
 
-    var reportComparison = function (status, pageUrl, pageImage, referenceImage, erroneousUrls, callback) {
+    var reportComparison = function (comparison, callback) {
         var i, result,
             finishedReporterCount = 0,
             reporterCount = reporters.length,
@@ -71,7 +71,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
             return;
         }
 
-        result = buildReportResult(status, pageUrl, pageImage, referenceImage, erroneousUrls);
+        result = buildReportResult(comparison);
 
         for (i = 0; i < reporterCount; i++) {
             reporters[i].reportComparison(result, finishUp);
@@ -118,20 +118,33 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                     textualStatus = "referenceMissing";
                 }
 
-                reportComparison(textualStatus, pageUrl, htmlImage, referenceImage, erroneousUrls, function () {
-                    if (callback) {
-                        callback(textualStatus);
+                reportComparison({
+                        status: textualStatus,
+                        pageUrl: pageUrl,
+                        htmlImage: htmlImage,
+                        referenceImage: referenceImage,
+                        erroneousUrls: erroneousUrls
+                    },
+                    function () {
+                        if (callback) {
+                            callback(textualStatus);
+                        }
                     }
-                });
+                );
             });
         }, function () {
             var textualStatus = "error";
 
-            reportComparison(textualStatus, pageUrl, null, null, null, function () {
-                if (callback) {
-                    callback(textualStatus);
+            reportComparison({
+                    status: textualStatus,
+                    pageUrl: pageUrl
+                },
+                function () {
+                    if (callback) {
+                        callback(textualStatus);
+                    }
                 }
-            });
+            );
         });
     };
 

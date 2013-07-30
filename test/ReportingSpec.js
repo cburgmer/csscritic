@@ -171,7 +171,7 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "error",
                 pageUrl: "samplepage.html",
-                pageImage: null
+                pageImage: undefined
             }, jasmine.any(Function));
         });
 
