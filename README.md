@@ -5,7 +5,7 @@ A lightweight framework for regression testing of Cascading Style Sheets.
 
 [Project page](http://cburgmer.github.com/csscritic)
 
-See [`example/RegressionRunner.html`](example/RegressionRunner.html) for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60). I have set up [a sandbox on runnable.com](http://runnable.com/UTshWysNM0MHAJbo) to play around with.
+See [`example/RegressionRunner.html`](example/RegressionRunner.html) for an example. Also [watch the screencast here](http://youtu.be/AqQ2bNPtF60).
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
@@ -45,8 +45,8 @@ shared build-pipeline (e.g. no easy way to "fix" builds) the first shot is up an
 
 If the fingerprint of the page under test matches the one given in the `signedOff.json` file then the CLI will generate a reference image. In the future we want to combine both a signing-off process with the image diff approach to share accepted renderings inside a development team.
 
-Testing CSS Critic
-------------------
+Developing CSS Critic
+---------------------
 For linting, tests and minification install Node.js and PhantomJS and run
 
     $ ./go
@@ -56,6 +56,6 @@ Limitations
 
 - Works in Firefox only (see above for the experimental PhantomJS runner)
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files. All files referenced need to be inside the same directory as the `RegressionRunner.html` or in ones below.
-- Because of the way the HTML is rendered to the canvas inside the browser certain more esoteric pages might fail to render correctly. Here the CLI runner can be help as it uses the native interface to render pages.
+- Because of the way the HTML is rendered to the canvas inside the browser certain more esoteric pages might fail to render correctly. Here the CLI runner can be of some help as it uses the native interface to render pages.
 
 Licensed under MIT. Maintained by [@cburgmer](https://twitter.com/cburgmer). Copyright (c) 2012 ThoughtWorks, Inc.
