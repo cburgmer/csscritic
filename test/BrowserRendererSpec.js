@@ -87,7 +87,15 @@ describe("Browser renderer", function () {
             });
 
             expect(the_image).toBe(image);
-            expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {cache: false, width: 42, height: 7, executeJs: true, executeJsTimeout: 50, baseUrl: theUrl}, jasmine.any(Function));
+            expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {
+                cache: false,
+                cacheRepeated: true,
+                width: 42,
+                height: 7,
+                executeJs: true,
+                executeJsTimeout: 50,
+                baseUrl: theUrl
+            }, jasmine.any(Function));
         });
 
         it("should call the error handler if a page could not be rendered", function () {

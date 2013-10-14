@@ -19,6 +19,7 @@ window.csscritic = (function (module, rasterizeHTML) {
         module.util.queue.execute(function (doneSignal) {
             rasterizeHTML.drawHTML(html, {
                     cache: false,
+                    cacheRepeated: true,
                     width: width,
                     height: height,
                     executeJs: true,
