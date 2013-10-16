@@ -7,7 +7,7 @@ describe("Basic HTML reporter", function () {
         htmlImage = window.document.createElement("img");
         referenceImage = new window.Image();
         updatedReferenceImage = new window.Image();
-        differenceImageCanvas = window.document.createElement("canvas"),
+        differenceImageCanvas = window.document.createElement("canvas");
         highlightedDifferenceImageCanvas = window.document.createElement("canvas");
 
         spyOn(csscritic.basicHTMLReporterUtil, 'getDifferenceCanvas').andCallFake(function (imageA, imageB) {
