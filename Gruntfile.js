@@ -4,7 +4,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         jasmine: {
             src: [
-                'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
+                'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
                 'lib/*.js',
                 'src/utils.js',
                 'src/phantomjsrenderer.js',
@@ -41,11 +41,11 @@ module.exports = function (grunt) {
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
-                src: ['src/utils.js', 'lib/sha256.js', 'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', 'src/<%= pkg.name %>.js', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
+                src: ['src/utils.js', 'lib/sha256.js', 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', 'src/<%= pkg.name %>.js', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
             },
             server: {
-                src: ['components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'src/phantomjs_render_backend.js'],
+                src: ['bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'src/phantomjs_render_backend.js'],
                 dest: 'dist/<%= pkg.name %>-server.js'
             }
         },
@@ -66,7 +66,7 @@ module.exports = function (grunt) {
                 },
                 files: {
                     'dist/<%= pkg.name %>.allinone.js': [
-                        'components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
+                        'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
                         'lib/imagediff.js',
                         'src/utils.js',
                         'src/browserrenderer.js',

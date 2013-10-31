@@ -1,7 +1,7 @@
 _SpecRunner.html
 node_modules
 *~
-components/
+bower_components/
 .DS_Store
 bugs/
 test/BasicHtmlReporterLayout.html.json
