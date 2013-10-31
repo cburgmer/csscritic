@@ -88,8 +88,8 @@ describe("Browser renderer", function () {
 
             expect(the_image).toBe(image);
             expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {
-                cache: false,
-                cacheRepeated: true,
+                cache: 'repeated',
+                cacheBucket: jasmine.any(Object),
                 width: 42,
                 height: 7,
                 executeJs: true,

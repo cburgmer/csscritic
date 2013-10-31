@@ -1,6 +1,8 @@
 window.csscritic = (function (module, rasterizeHTML) {
     module.renderer = module.renderer || {};
 
+    var cache = {};
+
     var getRenderErrors = function (errors) {
         var renderErrors = [];
 
@@ -18,8 +20,8 @@ window.csscritic = (function (module, rasterizeHTML) {
         // Also provides a more fluid response. Performance seems not to be affected.
         module.util.queue.execute(function (doneSignal) {
             rasterizeHTML.drawHTML(html, {
-                    cache: false,
-                    cacheRepeated: true,
+                    cache: 'repeated',
+                    cacheBucket: cache,
                     width: width,
                     height: height,
                     executeJs: true,
