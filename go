@@ -1,40 +1,33 @@
 #!/bin/bash
-
-function testFailure {
-    if [ $? != 0 ]; then
-        exit 1;
-    fi
-}
+set -e
 
 function installBuildDependencies {
     npm install
 }
 
 function installDependencies {
+    ./node_modules/.bin/bower --version
     ./node_modules/.bin/bower install
 }
 
 function build {
     ./node_modules/.bin/grunt $@
-    testFailure
 }
 
 function runPhantomJSOnlyTests {
     phantomjs test/run-phantomjs-tests.js
-    testFailure
 }
 
 function runCSSTest {
     # workaround for csscritic currently needing to be called twice
     phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/BasicHtmlReporterLayout.html || phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/BasicHtmlReporterLayout.html
-    testFailure
 }
 
 if [ ! -d node_modules ]; then
     installBuildDependencies
 fi
 
-if [ ! -d components ]; then
+if [ ! -d bower_components ]; then
     installDependencies
 fi
 
