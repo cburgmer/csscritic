@@ -2,8 +2,8 @@ var port = 8000;
 window.localserver = "http://localhost:" + port;
 
 function loadJasmine() {
-    phantom.injectJs("./test/lib/jasmine-1.2.0/jasmine.js");
-    phantom.injectJs("./test/lib/jasmine-console.js");
+    phantom.injectJs("./bower_components/jasmine/lib/jasmine-core/jasmine.js");
+    phantom.injectJs("./bower_components/jasmine/src/console/ConsoleReporter.js");
 }
 
 function loadCode() {
