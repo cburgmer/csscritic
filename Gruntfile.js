@@ -36,8 +36,9 @@ module.exports = function (grunt) {
                         '\n/* Integrated dependencies:\n' +
                         ' * jsSHA.js (BSD License),\n' +
                         ' * URI.js (MIT License/GPL v3),\n' +
-                        ' * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),\n' +
-                        ' * htmlparser.js,\n' +
+                        ' * CSSOM.js (MIT License),\n' +
+                        ' * html2xhtml.js (MIT License),\n' +
+                        ' * parse5.js (MIT License),\n' +
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
@@ -59,8 +60,9 @@ module.exports = function (grunt) {
                         ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
                         '\n/* Integrated dependencies:\n' +
                         ' * URI.js (MIT License/GPL v3),\n' +
-                        ' * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),\n' +
-                        ' * htmlparser.js,\n' +
+                        ' * CSSOM.js (MIT License),\n' +
+                        ' * html2xhtml.js (MIT License),\n' +
+                        ' * parse5.js (MIT License),\n' +
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n'
                 },

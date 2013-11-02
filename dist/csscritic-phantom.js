@@ -1,11 +1,12 @@
-/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-10-31
+/*! PhantomJS regression runner for CSS critic - v0.1.0 - 2013-11-02
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
  * jsSHA.js (BSD License),
  * URI.js (MIT License/GPL v3),
- * cssParser.js (MPL 1.1/GPL 2.0/LGPL 2.1),
- * htmlparser.js,
+ * CSSOM.js (MIT License),
+ * html2xhtml.js (MIT License),
+ * parse5.js (MIT License),
  * imagediff.js (MIT License),
  * rasterizeHTML.js (MIT License) */
 
