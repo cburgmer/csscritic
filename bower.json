@@ -1,9 +1,14 @@
 {
   "name": "csscritic",
   "version": "0.1.0",
-  "main": ["csscritic.js", "csscritic.css", "lib/imagediff.js"],
+  "main": [
+    "csscritic.js",
+    "csscritic.css",
+    "lib/imagediff.js"
+  ],
   "dependencies": {
     "rasterizeHTML.js": "0.5.0",
-    "js-imagediff": "~1.0.4"
+    "js-imagediff": "~1.0.4",
+    "jssha": "*"
   }
 }

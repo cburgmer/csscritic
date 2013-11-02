@@ -6,7 +6,7 @@ module.exports = function (grunt) {
             src: [
                 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
                 'bower_components/js-imagediff/imagediff.js',
-                'lib/*.js',
+                'bower_components/jssha/src/sha256.js',
                 'src/utils.js',
                 'src/phantomjsrenderer.js',
                 'src/browserrenderer.js',
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
-                src: ['src/utils.js', 'lib/sha256.js', 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'bower_components/js-imagediff/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', 'src/<%= pkg.name %>.js', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
+                src: ['src/utils.js', 'bower_components/jssha/src/sha256.js', 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'bower_components/js-imagediff/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', 'src/<%= pkg.name %>.js', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
             },
             server: {
