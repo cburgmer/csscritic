@@ -5,6 +5,7 @@ module.exports = function (grunt) {
         jasmine: {
             src: [
                 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
+                'bower_components/js-imagediff/imagediff.js',
                 'lib/*.js',
                 'src/utils.js',
                 'src/phantomjsrenderer.js',
@@ -42,7 +43,7 @@ module.exports = function (grunt) {
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
-                src: ['src/utils.js', 'lib/sha256.js', 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'lib/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', 'src/<%= pkg.name %>.js', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
+                src: ['src/utils.js', 'lib/sha256.js', 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'bower_components/js-imagediff/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', 'src/<%= pkg.name %>.js', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
             },
             server: {
@@ -69,7 +70,7 @@ module.exports = function (grunt) {
                 files: {
                     'dist/<%= pkg.name %>.allinone.js': [
                         'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
-                        'lib/imagediff.js',
+                        'bower_components/js-imagediff/imagediff.js',
                         'src/utils.js',
                         'src/browserrenderer.js',
                         'src/domstorage.js',
