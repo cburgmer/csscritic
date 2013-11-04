@@ -47,7 +47,7 @@ If the fingerprint of the page under test matches the one given in the `signedOf
 
 Developing CSS Critic
 ---------------------
-For linting, tests and minification install Node.js and PhantomJS and run
+For linting, tests and minification install Node.js and run
 
     $ ./go
 
