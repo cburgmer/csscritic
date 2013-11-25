@@ -9,6 +9,13 @@ See [`example/RegressionRunner.html`](example/RegressionRunner.html) for an exam
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
+Install
+-------
+
+    $ bower install csscritic
+
+See `bower_components/csscritic/example/RegressionRunner.html` for an example.
+
 How it works
 ------------
 
