@@ -37,10 +37,9 @@ module.exports = function (grunt) {
                         ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
                         '\n/* Integrated dependencies:\n' +
                         ' * jsSHA.js (BSD License),\n' +
-                        ' * URI.js (MIT License/GPL v3),\n' +
-                        ' * CSSOM.js (MIT License),\n' +
-                        ' * html2xhtml.js (MIT License),\n' +
-                        ' * parse5.js (MIT License),\n' +
+                        ' * url (MIT License),\n' +
+                        ' * CSSOM (MIT License),\n' +
+                        ' * xmlserializer (MIT License),\n' +
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
@@ -61,10 +60,9 @@ module.exports = function (grunt) {
                         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
                         ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
                         '\n/* Integrated dependencies:\n' +
-                        ' * URI.js (MIT License/GPL v3),\n' +
-                        ' * CSSOM.js (MIT License),\n' +
-                        ' * html2xhtml.js (MIT License),\n' +
-                        ' * parse5.js (MIT License),\n' +
+                        ' * url (MIT License),\n' +
+                        ' * CSSOM (MIT License),\n' +
+                        ' * xmlserializer (MIT License),\n' +
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n'
                 },

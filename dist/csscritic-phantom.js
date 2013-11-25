@@ -3,10 +3,9 @@
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
  * jsSHA.js (BSD License),
- * URI.js (MIT License/GPL v3),
- * CSSOM.js (MIT License),
- * html2xhtml.js (MIT License),
- * parse5.js (MIT License),
+ * url (MIT License),
+ * CSSOM (MIT License),
+ * xmlserializer (MIT License),
  * imagediff.js (MIT License),
  * rasterizeHTML.js (MIT License) */
 
