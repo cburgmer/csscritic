@@ -65,4 +65,4 @@ Limitations
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files. All files referenced need to be inside the same directory as the `RegressionRunner.html` or in ones below.
 - Because of the way the HTML is rendered to the canvas inside the browser certain more esoteric pages might fail to render correctly. Here the CLI runner can be of some help as it uses the native interface to render pages.
 
-Licensed under MIT. Maintained by [@cburgmer](https://twitter.com/cburgmer). Copyright (c) 2012 ThoughtWorks, Inc.
+Licensed under MIT. Maintained by [@cburgmer](https://twitter.com/cburgmer). Copyright (c) 2012, 2013 ThoughtWorks, Inc.
