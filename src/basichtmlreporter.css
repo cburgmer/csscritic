@@ -184,3 +184,25 @@
 #csscritic_basichtmlreporter_tooltip img {
     width: 100%;
 }
+
+#csscritic_basichtmlreporter .browserWarning:before {
+    content: "⚠";
+    font-size: 25px;
+    padding-right: 5px;
+    vertical-align: middle;
+}
+
+#csscritic_basichtmlreporter .browserWarning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+
+    background-color: #922;
+    background-color: rgba(150, 20, 30, 0.85);
+    color: white;
+    font-size: 120%;
+    border: 2px solid black;
+    padding: 20px;
+}

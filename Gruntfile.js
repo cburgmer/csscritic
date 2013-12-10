@@ -90,9 +90,10 @@ module.exports = function (grunt) {
             basichtmlreporter: {
                 src: 'src/basichtmlreporter.css',
                 options: {
-                    "ids":false,
-                    "adjoining-classes":false,
-                    "box-model":false
+                    "ids": false,
+                    "adjoining-classes": false,
+                    "box-model": false,
+                    "box-sizing": false
                 }
             }
         },

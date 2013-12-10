@@ -1,6 +1,27 @@
 window.csscritic = (function (module, document) {
     module.basicHTMLReporterUtil = {};
 
+    module.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas = function (callback) {
+        var canvas = document.createElement("canvas"),
+            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><foreignObject></foreignObject></svg>',
+            image = new Image();
+
+        image.onload = function () {
+            var context = canvas.getContext("2d");
+            try {
+                context.drawImage(image, 0, 0);
+                // This will fail in Chrome & Safari
+                context.getImageData(0, 0, 1, 1);
+            } catch (e) {
+                callback(false);
+                // Firefox throws a 'NS_ERROR_NOT_AVAILABLE' if the SVG is faulty
+                return false;
+            }
+            callback(true);
+        };
+        image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    };
+
     var canvasForImageCanvas = function (imageData) {
         var canvas = document.createElement("canvas"),
             context;
@@ -341,9 +362,27 @@ window.csscritic = (function (module, document) {
         return seconds + '.' + padNumber(milliSeconds, 3);
     };
 
+    var showBrowserWarningIfNeeded = function () {
+        var warning;
+
+        module.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
+            if (!supported) {
+                warning = document.createElement('div');
+                warning.className = "browserWarning";
+                warning.innerHTML = 'Your browser is currently not supported, ' +
+                    'as it does not support reading rendered HTML from the canvas ' +
+                    '(<a href="https://code.google.com/p/chromium/issues/detail?id=294129">Chrome #294129</a>, ' +
+                    '<a href="https://bugs.webkit.org/show_bug.cgi?id=17352">Safari #17352</a>). How about trying Firefox?';
+                getOrCreateBody().appendChild(warning);
+            }
+        });
+    };
+
     module.BasicHTMLReporter = function () {
         var runningComparisonEntries = {},
             timeStarted = null;
+
+        showBrowserWarningIfNeeded();
 
         return {
             reportComparisonStarting: function (comparison, callback) {

@@ -1,4 +1,54 @@
 describe("BasicHTMLReporter utilities", function () {
+
+    describe("supportsReadingHtmlFromCanvas", function () {
+        var canvas, context;
+        beforeEach(function () {
+            canvas = jasmine.createSpyObj('canvas', ['getContext']);
+            context = jasmine.createSpyObj('context', ['drawImage', 'getImageData']);
+            canvas.getContext.andReturn(context);
+
+            spyOn(document, 'createElement').andCallFake(function (tagName) {
+                if (tagName === 'canvas') {
+                    return canvas;
+                }
+            });
+        });
+
+        it("should return false when reading HTML from a canvas is not supported", function () {
+            var supported;
+
+            context.getImageData.andThrow(new Error());
+
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (isSupported) {
+                supported = isSupported;
+            });
+
+            waitsFor(function () {
+                return supported !== undefined;
+            });
+
+            runs(function () {
+                expect(supported).toBe(false);
+            });
+        });
+
+        it("should return true when reading HTML from a canvas is supported", function () {
+            var supported;
+
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (isSupported) {
+                supported = isSupported;
+            });
+
+            waitsFor(function () {
+                return supported !== undefined;
+            });
+
+            runs(function () {
+                expect(supported).toBe(true);
+            });
+        });
+    });
+
     describe("getDifferenceCanvas", function () {
         var diffReferenceUrl = "data:image/png;base64," +
             "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAD/0lEQVR4nO3bTYhNYRzH8T+DmZCRTEjyEiWZlJKwMJqSzSy8JQs1WbCg" +

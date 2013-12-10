@@ -2,6 +2,8 @@ describe("Basic HTML reporter", function () {
     var reporter, htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas;
 
     beforeEach(function () {
+        spyOn(csscritic.basicHTMLReporterUtil, 'supportsReadingHtmlFromCanvas');
+
         reporter = csscritic.BasicHTMLReporter();
 
         htmlImage = window.document.createElement("img");
@@ -418,4 +420,29 @@ describe("Basic HTML reporter", function () {
         });
     });
 
+    describe("Browser compatibility warning", function () {
+        afterEach(function () {
+            $(".browserWarning").remove();
+        });
+
+        it("should show a warning if the browser is not supported", function () {
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.andCallFake(function (callback) {
+                callback(false);
+            });
+
+            reporter = csscritic.BasicHTMLReporter();
+
+            expect($(".browserWarning")).toExist();
+        });
+
+        it("should not show a warning if the browser is supported", function () {
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.andCallFake(function (callback) {
+                callback(true);
+            });
+
+            reporter = csscritic.BasicHTMLReporter();
+
+            expect($(".browserWarning")).not.toExist();
+        });
+    });
 });
