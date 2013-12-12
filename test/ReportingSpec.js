@@ -1,13 +1,17 @@
 describe("Reporting", function () {
     var reporter,
         getImageForPageUrl, readReferenceImage,
-        htmlImage, referenceImage;
+        htmlImage, referenceImage, viewport;
 
     beforeEach(function () {
         htmlImage = jasmine.createSpy('htmlImage');
         referenceImage = {
             width: 42,
             height: 7
+        };
+        viewport = {
+            width: 98,
+            height: 76
         };
 
         getImageForPageUrl = spyOn(csscritic.renderer, 'getImageForPageUrl');
@@ -47,7 +51,7 @@ describe("Reporting", function () {
                 callback(htmlImage, []);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.add("samplepage.html");
@@ -71,7 +75,7 @@ describe("Reporting", function () {
                 callback(htmlImage);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.compare("samplepage.html", callback);
@@ -89,7 +93,7 @@ describe("Reporting", function () {
                 callback(htmlImage);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.compare("differentpage.html");
@@ -111,7 +115,7 @@ describe("Reporting", function () {
                 callback(htmlImage);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.compare("differentpage.html");
@@ -189,7 +193,7 @@ describe("Reporting", function () {
                 }
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.compare("differentpage.html");
@@ -221,7 +225,7 @@ describe("Reporting", function () {
                 callback(htmlImage);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.compare("differentpage.html");
@@ -237,7 +241,46 @@ describe("Reporting", function () {
 
             reporter.reportComparison.mostRecentCall.args[0].acceptPage();
 
-            expect(storeReferenceImageSpy).toHaveBeenCalledWith("differentpage.html", htmlImage);
+            expect(storeReferenceImageSpy).toHaveBeenCalledWith("differentpage.html", htmlImage, jasmine.any(Number), jasmine.any(Number));
+        });
+
+        it("should store the viewport's size on accept", function () {
+            var storeReferenceImageSpy = spyOn(csscritic.storage, 'storeReferenceImage');
+
+            readReferenceImage.andCallFake(function (pageUrl, callback, errorCallback) {
+                errorCallback();
+            });
+            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
+                callback(htmlImage);
+            });
+
+            csscritic.compare("differentpage.html");
+
+            reporter.reportComparison.mostRecentCall.args[0].acceptPage();
+
+            expect(storeReferenceImageSpy).toHaveBeenCalledWith(jasmine.any(String), htmlImage, 800, 600);
+        });
+
+        it("should store the viewport's updated size on accept", function () {
+            var storeReferenceImageSpy = spyOn(csscritic.storage, 'storeReferenceImage'),
+                result;
+
+            readReferenceImage.andCallFake(function (pageUrl, callback, errorCallback) {
+                errorCallback();
+            });
+            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
+                callback(htmlImage);
+            });
+
+            csscritic.compare("differentpage.html");
+
+            result = reporter.reportComparison.mostRecentCall.args[0];
+
+            result.resizePageImage(16, 34, function () {});
+
+            result.acceptPage();
+
+            expect(storeReferenceImageSpy).toHaveBeenCalledWith(jasmine.any(String), htmlImage, 16, 34);
         });
 
         it("should provide a list of errors during rendering", function () {
@@ -247,7 +290,7 @@ describe("Reporting", function () {
                 callback(htmlImage, ["oneUrl", "anotherUrl"]);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.compare("differentpage.html");
@@ -290,7 +333,7 @@ describe("Reporting", function () {
                 callback(htmlImage, []);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.compare("differentpage.html");
@@ -314,7 +357,7 @@ describe("Reporting", function () {
                 callback(htmlImage, []);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             reporter.reportComparison.andCallFake(function () {
@@ -346,7 +389,7 @@ describe("Reporting", function () {
                 callback(htmlImage);
             });
             readReferenceImage.andCallFake(function (pageUrl, callback) {
-                callback(referenceImage);
+                callback(referenceImage, viewport);
             });
 
             csscritic.add("failingpage.html");

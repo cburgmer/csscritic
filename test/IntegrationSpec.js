@@ -166,4 +166,43 @@ describe("Integration", function () {
             expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img")).toExist();
         });
     });
+
+    ifNotInWebkitIt("should correctly re-render a page overflowing the given viewport", function () {
+        var testPageUrl = csscriticTestPath + "fixtures/overflowingPage.html",
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]),
+            result, status;
+
+        csscritic.addReporter(reporter);
+
+        // Accept first rendering
+        reporter.reportComparison.andCallFake(function (theResult, callback) {
+            result = theResult;
+            callback();
+        });
+        csscritic.compare(testPageUrl);
+
+        waitsFor(function () {
+            return result !== undefined;
+        });
+
+        runs(function () {
+            result.acceptPage();
+        });
+
+        // Re-render
+        runs(function () {
+            csscritic.compare(testPageUrl, function (theStatus) {
+                status = theStatus;
+            });
+        });
+
+        waitsFor(function () {
+            return status !== undefined;
+        });
+
+        runs(function () {
+            expect(status).toEqual('passed');
+        });
+    });
+
 });

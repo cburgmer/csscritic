@@ -14,6 +14,8 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
     };
 
     var buildReportResult = function (comparison) {
+        var viewportWidth = comparison.viewportWidth,
+            viewportHeight = comparison.viewportHeight;
         var result = {
                 status: comparison.status,
                 pageUrl: comparison.pageUrl,
@@ -22,13 +24,16 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
 
         if (comparison.htmlImage) {
             result.resizePageImage = function (width, height, callback) {
+                viewportWidth = width;
+                viewportHeight = height;
+
                 renderer.getImageForPageUrl(comparison.pageUrl, width, height, proxyUrl, function (image) {
                     result.pageImage = image;
                     callback(image);
                 });
             };
             result.acceptPage = function () {
-                storage.storeReferenceImage(comparison.pageUrl, result.pageImage);
+                storage.storeReferenceImage(comparison.pageUrl, result.pageImage, viewportWidth, viewportHeight);
             };
         }
 
@@ -123,7 +128,9 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                         pageUrl: pageUrl,
                         htmlImage: htmlImage,
                         referenceImage: referenceImage,
-                        renderErrors: renderErrors
+                        renderErrors: renderErrors,
+                        viewportWidth: pageWidth,
+                        viewportHeight: pageHeight
                     },
                     function () {
                         if (callback) {
@@ -149,8 +156,8 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
     };
 
     module.compare = function (pageUrl, callback) {
-        storage.readReferenceImage(pageUrl, function (referenceImage) {
-            loadPageAndReportResult(pageUrl, referenceImage.width, referenceImage.height, referenceImage, callback);
+        storage.readReferenceImage(pageUrl, function (referenceImage, viewport) {
+            loadPageAndReportResult(pageUrl, viewport.width, viewport.height, referenceImage, callback);
         }, function () {
             loadPageAndReportResult(pageUrl, 800, 600, null, callback);
         });

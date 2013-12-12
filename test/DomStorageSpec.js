@@ -15,7 +15,7 @@ describe("Web storage support for reference images", function () {
         localStorage.clear();
     });
 
-    it("should store a the rendered page to Web storage", function () {
+    it("should store a the rendered page to web storage", function () {
         var stringValue, value,
             readImage = null;
 
@@ -24,7 +24,7 @@ describe("Web storage support for reference images", function () {
         });
 
         runs(function () {
-            csscritic.domstorage.storeReferenceImage("somePage.html", img);
+            csscritic.domstorage.storeReferenceImage("somePage.html", img, 47, 11);
 
             stringValue = localStorage.getItem("somePage.html");
             expect(stringValue).not.toBeNull();
@@ -44,6 +44,20 @@ describe("Web storage support for reference images", function () {
         });
     });
 
+    it("should store the viewport's size to web storage", function () {
+        var image = "the image",
+            storedValue;
+
+        spyOn(csscritic.util, 'getDataURIForImage');
+
+        csscritic.domstorage.storeReferenceImage("somePage.html", image, 47, 11);
+
+        storedValue = JSON.parse(localStorage.getItem("somePage.html"));
+
+        expect(storedValue.viewport.width).toEqual(47);
+        expect(storedValue.viewport.height).toEqual(11);
+    });
+
     it("should alert the user that possibly the wrong browser is used", function () {
         var canvas = {
                 toDataURL: jasmine.createSpy("canvas").andThrow("can't read canvas")
@@ -52,7 +66,7 @@ describe("Web storage support for reference images", function () {
             errorThrown = false;
 
         try {
-            csscritic.domstorage.storeReferenceImage("somePage.html", canvas);
+            csscritic.domstorage.storeReferenceImage("somePage.html", canvas, 47, 11);
         } catch (e) {
             errorThrown = true;
         }
@@ -61,13 +75,15 @@ describe("Web storage support for reference images", function () {
         expect(alertSpy).toHaveBeenCalled();
     });
 
-    it("should read in a reference image from Web storage", function () {
+    it("should read in a reference image from web storage", function () {
         var readImage,
             getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
-            success("read image fake");
-        });
+                success("read image fake");
+            });
 
-        localStorage.setItem("someOtherPage.html", '{"referenceImageUri": "' + imgUri + '"}');
+        localStorage.setItem("someOtherPage.html", JSON.stringify({
+            referenceImageUri: imgUri,
+        }));
 
         csscritic.domstorage.readReferenceImage("someOtherPage.html", function (img) {
             readImage = img;
@@ -75,6 +91,51 @@ describe("Web storage support for reference images", function () {
 
         expect(getImageForUrlSpy).toHaveBeenCalledWith(imgUri, jasmine.any(Function), jasmine.any(Function));
         expect(readImage).toEqual("read image fake");
+    });
+
+    it("should return the viewport's size", function () {
+        var viewportSize;
+
+        spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
+            success("read image fake");
+        });
+
+        localStorage.setItem("someOtherPage.html", JSON.stringify({
+            referenceImageUri: imgUri,
+            viewport: {
+                width: 19,
+                height: 84
+            }
+        }));
+
+        csscritic.domstorage.readReferenceImage("someOtherPage.html", function (img, theViewportSize) {
+            viewportSize = theViewportSize;
+        });
+
+        expect(viewportSize.width).toEqual(19);
+        expect(viewportSize.height).toEqual(84);
+    });
+
+    it("should return the viewport's size and fallback to the image's size", function () {
+        var viewportSize;
+
+        spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
+            success({
+                width: 12,
+                height: 34
+            });
+        });
+
+        localStorage.setItem("someOtherPage.html", JSON.stringify({
+            referenceImageUri: imgUri
+        }));
+
+        csscritic.domstorage.readReferenceImage("someOtherPage.html", function (img, theViewportSize) {
+            viewportSize = theViewportSize;
+        });
+
+        expect(viewportSize.width).toEqual(12);
+        expect(viewportSize.height).toEqual(34);
     });
 
     it("should call error handler if no reference image has been stored", function () {

@@ -2,7 +2,7 @@ window.csscritic = (function (module, localStorage) {
     module.storage = module.storage || {};
     module.domstorage = {};
 
-    module.domstorage.storeReferenceImage = function (key, pageImage) {
+    module.domstorage.storeReferenceImage = function (key, pageImage, viewportWidth, viewportHeight) {
         var uri, dataObj;
 
         try {
@@ -12,7 +12,11 @@ window.csscritic = (function (module, localStorage) {
             throw e;
         }
         dataObj = {
-            referenceImageUri: uri
+            referenceImageUri: uri,
+            viewport: {
+                width: viewportWidth,
+                height: viewportHeight
+            }
         };
 
         localStorage.setItem(key, JSON.stringify(dataObj));
@@ -26,7 +30,12 @@ window.csscritic = (function (module, localStorage) {
             dataObj = JSON.parse(dataObjString);
 
             module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
-                successCallback(img);
+                var viewport = dataObj.viewport || {
+                    width: img.width,
+                    height: img.height
+                };
+
+                successCallback(img, viewport);
             }, errorCallback);
         } else {
             errorCallback();
