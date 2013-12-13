@@ -10,12 +10,16 @@ window.csscritic = (function (module, fs) {
         return module.filestorage.options.basePath + key + ".json";
     };
 
-    module.filestorage.storeReferenceImage = function (key, pageImage) {
+    module.filestorage.storeReferenceImage = function (key, pageImage, viewportWidth, viewportHeight) {
         var uri, dataObj;
 
         uri = module.util.getDataURIForImage(pageImage);
         dataObj = {
-            referenceImageUri: uri
+            referenceImageUri: uri,
+            viewport: {
+                width: viewportWidth,
+                height: viewportHeight
+            }
         };
 
         fs.write(filePathForKey(key), JSON.stringify(dataObj), "w");
@@ -40,7 +44,12 @@ window.csscritic = (function (module, fs) {
 
         if (dataObj.referenceImageUri) {
             module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
-                successCallback(img);
+                var viewport = dataObj.viewport || {
+                    width: img.width,
+                    height: img.height
+                };
+
+                successCallback(img, viewport);
             }, errorCallback);
         } else {
             errorCallback();

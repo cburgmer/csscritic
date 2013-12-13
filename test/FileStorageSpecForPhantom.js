@@ -41,11 +41,26 @@ describe("Phantom storage support for reference images", function () {
         });
     });
 
+    it("should store the viewport's size", function () {
+        var image = "the image",
+            stringValue, storedValue;
+
+        spyOn(csscritic.util, 'getDataURIForImage');
+
+        csscritic.filestorage.storeReferenceImage("aTestPage.html", image, 47, 11);
+
+        stringValue = fs.read(csscritic.filestorage.options.basePath + "aTestPage.html.json");
+        storedValue = JSON.parse(stringValue);
+
+        expect(storedValue.viewport.width).toEqual(47);
+        expect(storedValue.viewport.height).toEqual(11);
+    });
+
     it("should read in a reference image from Web storage", function () {
         var readImage,
             getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
-            success("read image fake");
-        });
+                success("read image fake");
+            });
 
         fs.write(csscritic.filestorage.options.basePath + "someOtherPage.html.json", '{"referenceImageUri": "' + imgUri + '"}', 'w');
 
@@ -55,6 +70,51 @@ describe("Phantom storage support for reference images", function () {
 
         expect(getImageForUrlSpy).toHaveBeenCalledWith(imgUri, jasmine.any(Function), jasmine.any(Function));
         expect(readImage).toEqual("read image fake");
+    });
+
+    it("should return the viewport's size", function () {
+        var viewportSize;
+
+        spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
+            success("read image fake");
+        });
+
+        fs.write(csscritic.filestorage.options.basePath + "andAnotherPage.html.json", JSON.stringify({
+            referenceImageUri: "some image uri",
+            viewport: {
+                width: 19,
+                height: 84
+            }
+        }), 'w');
+
+        csscritic.filestorage.readReferenceImage("andAnotherPage.html", function (img, theViewportSize) {
+            viewportSize = theViewportSize;
+        });
+
+        expect(viewportSize.width).toEqual(19);
+        expect(viewportSize.height).toEqual(84);
+    });
+
+    it("should return the viewport's size and fallback to the image's size", function () {
+        var viewportSize;
+
+        spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
+            success({
+                width: 12,
+                height: 34
+            });
+        });
+
+        fs.write(csscritic.filestorage.options.basePath + "possiblyTheLastPage.html.json", JSON.stringify({
+            referenceImageUri: imgUri
+        }));
+
+        csscritic.filestorage.readReferenceImage("possiblyTheLastPage.html", function (img, theViewportSize) {
+            viewportSize = theViewportSize;
+        });
+
+        expect(viewportSize.width).toEqual(12);
+        expect(viewportSize.height).toEqual(34);
     });
 
     it("should call error handler if no reference image has been stored", function () {
