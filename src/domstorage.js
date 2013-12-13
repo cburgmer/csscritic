@@ -2,7 +2,7 @@ window.csscritic = (function (module, localStorage) {
     module.storage = module.storage || {};
     module.domstorage = {};
 
-    module.domstorage.storeReferenceImage = function (key, pageImage, viewportWidth, viewportHeight) {
+    module.domstorage.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
         try {
@@ -14,8 +14,8 @@ window.csscritic = (function (module, localStorage) {
         dataObj = {
             referenceImageUri: uri,
             viewport: {
-                width: viewportWidth,
-                height: viewportHeight
+                width: viewport.width,
+                height: viewport.height
             }
         };
 

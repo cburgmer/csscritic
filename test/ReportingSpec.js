@@ -241,7 +241,7 @@ describe("Reporting", function () {
 
             reporter.reportComparison.mostRecentCall.args[0].acceptPage();
 
-            expect(storeReferenceImageSpy).toHaveBeenCalledWith("differentpage.html", htmlImage, jasmine.any(Number), jasmine.any(Number));
+            expect(storeReferenceImageSpy).toHaveBeenCalledWith("differentpage.html", htmlImage, jasmine.any(Object));
         });
 
         it("should store the viewport's size on accept", function () {
@@ -258,7 +258,10 @@ describe("Reporting", function () {
 
             reporter.reportComparison.mostRecentCall.args[0].acceptPage();
 
-            expect(storeReferenceImageSpy).toHaveBeenCalledWith(jasmine.any(String), htmlImage, 800, 600);
+            expect(storeReferenceImageSpy).toHaveBeenCalledWith(jasmine.any(String), htmlImage, {
+                width: 800,
+                height: 600
+            });
         });
 
         it("should store the viewport's updated size on accept", function () {
@@ -280,7 +283,10 @@ describe("Reporting", function () {
 
             result.acceptPage();
 
-            expect(storeReferenceImageSpy).toHaveBeenCalledWith(jasmine.any(String), htmlImage, 16, 34);
+            expect(storeReferenceImageSpy).toHaveBeenCalledWith(jasmine.any(String), htmlImage, {
+                width: 16,
+                height: 34
+            });
         });
 
         it("should provide a list of errors during rendering", function () {

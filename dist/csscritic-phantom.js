@@ -672,15 +672,15 @@ window.csscritic = (function (module, fs) {
         return module.filestorage.options.basePath + key + ".json";
     };
 
-    module.filestorage.storeReferenceImage = function (key, pageImage, viewportWidth, viewportHeight) {
+    module.filestorage.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
         uri = module.util.getDataURIForImage(pageImage);
         dataObj = {
             referenceImageUri: uri,
             viewport: {
-                width: viewportWidth,
-                height: viewportHeight
+                width: viewport.width,
+                height: viewport.height
             }
         };
 
@@ -770,7 +770,10 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
                 });
             };
             result.acceptPage = function () {
-                storage.storeReferenceImage(comparison.pageUrl, result.pageImage, viewportWidth, viewportHeight);
+                storage.storeReferenceImage(comparison.pageUrl, result.pageImage, {
+                    width: viewportWidth,
+                    height: viewportHeight
+                });
             };
         }
 

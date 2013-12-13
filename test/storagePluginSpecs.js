@@ -18,7 +18,10 @@ var loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImage, 
         });
 
         runs(function () {
-            storagePlugin.storeReferenceImage("somePage.html", img);
+            storagePlugin.storeReferenceImage("somePage.html", img, {
+                width: 47,
+                height: 11
+            });
 
             stringValue = readStoredReferenceImage("somePage.html");
             expect(stringValue).not.toBeNull();
@@ -44,7 +47,10 @@ var loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImage, 
 
         spyOn(csscritic.util, 'getDataURIForImage');
 
-        storagePlugin.storeReferenceImage("somePage.html", image, 47, 11);
+        storagePlugin.storeReferenceImage("somePage.html", image, {
+            width: 47,
+            height: 11
+        });
 
         storedValue = JSON.parse(readStoredReferenceImage("somePage.html"));
 

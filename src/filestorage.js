@@ -10,15 +10,15 @@ window.csscritic = (function (module, fs) {
         return module.filestorage.options.basePath + key + ".json";
     };
 
-    module.filestorage.storeReferenceImage = function (key, pageImage, viewportWidth, viewportHeight) {
+    module.filestorage.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
         uri = module.util.getDataURIForImage(pageImage);
         dataObj = {
             referenceImageUri: uri,
             viewport: {
-                width: viewportWidth,
-                height: viewportHeight
+                width: viewport.width,
+                height: viewport.height
             }
         };
 
