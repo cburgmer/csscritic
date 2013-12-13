@@ -120,6 +120,9 @@ window.csscritic = (function (module, document) {
                 oldImage = result.pageImage;
 
             result.resizePageImage(width, height, function (updatedImage) {
+                pageImageContainer.style.width = updatedImage.width + "px";
+                pageImageContainer.style.height = updatedImage.height + "px";
+
                 pageCanvasInnerContainer.removeChild(oldImage);
                 pageCanvasInnerContainer.appendChild(updatedImage);
             });

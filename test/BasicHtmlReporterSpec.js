@@ -348,6 +348,31 @@ describe("Basic HTML reporter", function () {
             expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24, jasmine.any(Function));
             expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toBe(updatedReferenceImage);
         });
+
+        it("should correctly set the current image size after a resize", function () {
+            updatedReferenceImage = null;
+
+            csscriticTestHelper.createImageOfSize(123, 234, function (img) {
+                updatedReferenceImage = img;
+            });
+
+            waitsFor(function () {
+                return updatedReferenceImage !== null;
+            });
+
+            runs(function () {
+                reporter.reportComparison(paramsOnMissingReference);
+
+                $("#csscritic_basichtmlreporter .comparison .pageImageContainer").css({
+                    width: 42,
+                    height: 24
+                }).trigger("mouseup");
+
+                expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer").width()).toEqual(123);
+                expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer").height()).toEqual(234);
+
+            });
+        });
     });
 
     describe("Erroneous tests", function () {
