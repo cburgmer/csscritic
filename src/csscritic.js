@@ -162,7 +162,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         storage.readReferenceImage(pageUrl, function (referenceImage, viewport) {
             loadPageAndReportResult(pageUrl, viewport.width, viewport.height, referenceImage, callback);
         }, function () {
-            loadPageAndReportResult(pageUrl, 800, 600, null, callback);
+            loadPageAndReportResult(pageUrl, 800, 100, null, callback);
         });
     };
 

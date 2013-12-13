@@ -149,19 +149,6 @@ describe("Reporting", function () {
             }, jasmine.any(Function));
         });
 
-        it("should provide a appropriately sized page rendering on a missing reference image", function () {
-            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
-                callback(htmlImage);
-            });
-            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
-                errorCallback();
-            });
-
-            csscritic.compare("differentpage.html");
-
-            expect(getImageForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 600, null, jasmine.any(Function), jasmine.any(Function));
-        });
-
         it("should report an error if the page does not exist", function () {
             getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
                 errorCallback();
@@ -260,7 +247,7 @@ describe("Reporting", function () {
 
             expect(storeReferenceImageSpy).toHaveBeenCalledWith(jasmine.any(String), htmlImage, {
                 width: 800,
-                height: 600
+                height: 100
             });
         });
 

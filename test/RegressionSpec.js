@@ -146,6 +146,23 @@ describe("Regression testing", function () {
         });
     });
 
+    describe("First generation of a reference image", function () {
+        beforeEach(function () {
+            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
+                callback(htmlImage);
+            });
+            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
+                errorCallback();
+            });
+        });
+
+        it("should provide a appropriately sized page rendering", function () {
+            csscritic.compare("differentpage.html");
+
+            expect(getImageForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 100, null, jasmine.any(Function), jasmine.any(Function));
+        });
+    });
+
     describe("Configuration error handling", function () {
         var imagediffEqual;
 
