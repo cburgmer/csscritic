@@ -687,36 +687,46 @@ window.csscritic = (function (module, fs) {
         fs.write(filePathForKey(key), JSON.stringify(dataObj), "w");
     };
 
+    var parseStoredItem = function (dataObjString) {
+        var dataObj;
+
+        if (! dataObjString) {
+            throw new Error("No data supplied");
+        }
+
+        dataObj = JSON.parse(dataObjString);
+
+        if (!dataObj.referenceImageUri) {
+            throw new Error("No reference image found");
+        }
+
+        return dataObj;
+    };
+
     module.filestorage.readReferenceImage = function (key, successCallback, errorCallback) {
         var filePath = filePathForKey(key),
-            dataObjString, dataObj;
+            dataObj;
 
         if (! fs.exists(filePath)) {
             errorCallback();
             return;
         }
 
-        dataObjString = fs.read(filePath);
         try {
-            dataObj = JSON.parse(dataObjString);
+            dataObj = parseStoredItem(fs.read(filePath));
         } catch (e) {
             errorCallback();
             return;
         }
 
-        if (dataObj.referenceImageUri) {
-            module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
-                var viewport = dataObj.viewport || {
-                    width: img.width,
-                    height: img.height
-                };
+        module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+            var viewport = dataObj.viewport || {
+                width: img.width,
+                height: img.height
+            };
 
-                successCallback(img, viewport);
-            }, errorCallback);
-        } else {
-            errorCallback();
-            return;
-        }
+            successCallback(img, viewport);
+        }, errorCallback);
     };
 
     module.storage.options = module.filestorage.options;

@@ -22,24 +22,40 @@ window.csscritic = (function (module, localStorage) {
         localStorage.setItem(key, JSON.stringify(dataObj));
     };
 
-    module.domstorage.readReferenceImage = function (key, successCallback, errorCallback) {
-        var dataObjString = localStorage.getItem(key),
-            dataObj;
+    var parseStoredItem = function (dataObjString) {
+        var dataObj;
 
-        if (dataObjString) {
-            dataObj = JSON.parse(dataObjString);
-
-            module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
-                var viewport = dataObj.viewport || {
-                    width: img.width,
-                    height: img.height
-                };
-
-                successCallback(img, viewport);
-            }, errorCallback);
-        } else {
-            errorCallback();
+        if (! dataObjString) {
+            throw new Error("No data supplied");
         }
+
+        dataObj = JSON.parse(dataObjString);
+
+        if (!dataObj.referenceImageUri) {
+            throw new Error("No reference image found");
+        }
+
+        return dataObj;
+    };
+
+    module.domstorage.readReferenceImage = function (key, successCallback, errorCallback) {
+        var dataObj;
+
+        try {
+            dataObj = parseStoredItem(localStorage.getItem(key));
+        } catch (e) {
+            errorCallback();
+            return;
+        }
+
+        module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+            var viewport = dataObj.viewport || {
+                width: img.width,
+                height: img.height
+            };
+
+            successCallback(img, viewport);
+        }, errorCallback);
     };
 
     module.storage.storeReferenceImage = module.domstorage.storeReferenceImage;

@@ -18,6 +18,8 @@ function loadCode() {
 }
 
 function loadTests() {
+    phantom.injectJs("./storagePluginSpecs.js");
+
     phantom.injectJs("./FileStorageSpecForPhantom.js");
     phantom.injectJs("./PhantomJSRendererSpecForPhantom.js");
     phantom.injectJs("./HtmlFileReporterSpecForPhantom.js");

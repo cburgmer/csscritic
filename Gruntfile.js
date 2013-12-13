@@ -20,6 +20,7 @@ module.exports = function (grunt) {
                 specs: 'test/*Spec.js',
                 helpers: [
                     'test/helpers.js',
+                    'test/storagePluginSpecs.js',
                     'bower_components/jquery/jquery.js',
                     'bower_components/jasmine-jquery/lib/jasmine-jquery.js',
                     'test/gruntpath.js'
@@ -162,7 +163,8 @@ module.exports = function (grunt) {
                         ifNotInWebkitIt: true,
                         safeLog: true,
                         csscriticTestPath: true,
-                        csscriticTestHelper: true
+                        csscriticTestHelper: true,
+                        loadStoragePluginSpecs: true
                     }
                 },
                 src: [
@@ -191,7 +193,8 @@ module.exports = function (grunt) {
                         csscritic: true,
                         safeLog: true,
                         csscriticTestPath: true,
-                        csscriticTestHelper: true
+                        csscriticTestHelper: true,
+                        loadStoragePluginSpecs: true
                     }
                 },
                 src: [
