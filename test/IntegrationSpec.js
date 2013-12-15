@@ -18,33 +18,33 @@ describe("Integration", function () {
 
     afterEach(function () {
         localStorage.clear();
-        csscritic.clearReporters();
+        csscritic.clear();
         $("#csscritic_basichtmlreporter").remove();
     });
 
     it("should complete in any browser", function () {
-        var resultStatus = null,
-            testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
+        var testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html",
+            passed;
 
         csscritic.addReporter(csscritic.BasicHTMLReporter());
-        csscritic.compare(testPageUrl, function (result) {
-            resultStatus = result;
+        csscritic.add(testPageUrl);
+        csscritic.execute(function (result) {
+            passed = result;
         });
 
         waitsFor(function () {
-            return resultStatus !== null;
+            return passed !== undefined;
         });
 
         runs(function () {
-            expect(resultStatus).toEqual("referenceMissing");
+            expect(passed).toBe(false);
             expect($("#csscritic_basichtmlreporter .referenceMissing.comparison")).toExist();
         });
     });
 
     it("should compare an image with its reference and return true if similar", function () {
-        var resultStatus = null,
-            testImageUrl = csscriticTestPath + "fixtures/redWithLetter.png",
-            theReferenceImageUri;
+        var testImageUrl = csscriticTestPath + "fixtures/redWithLetter.png",
+            theReferenceImageUri, passed;
 
         csscritic.util.getImageForUrl(testImageUrl, function (image) {
             theReferenceImageUri = csscritic.util.getDataURIForImage(image);
@@ -60,62 +60,64 @@ describe("Integration", function () {
                 referenceImageUri: theReferenceImageUri
             }));
 
-            csscritic.compare(testImageUrl, function (result) {
-                resultStatus = result;
+            csscritic.add(testImageUrl);
+            csscritic.execute(function (result) {
+                passed = result;
             });
         });
 
         waitsFor(function () {
-            return resultStatus !== null;
+            return passed !== undefined;
         });
 
         runs(function () {
-            expect(resultStatus).toEqual("passed");
+            expect(passed).toBe(true);
         });
     });
 
     ifNotInWebkitIt("should compare a page with its reference image and return true if similar", function () {
-        var resultStatus = null,
-            testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
+        var testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html",
+            passed;
 
         localStorage.setItem(testPageUrl, JSON.stringify({
             referenceImageUri: theReferenceImageUri
         }));
 
-        csscritic.compare(testPageUrl, function (result) {
-            resultStatus = result;
+        csscritic.add(testPageUrl);
+        csscritic.execute(function (result) {
+            passed = result;
         });
 
         waitsFor(function () {
-            return resultStatus !== null;
+            return passed !== undefined;
         });
 
         runs(function () {
-            expect(resultStatus).toEqual("passed");
+            expect(passed).toBe(true);
         });
     });
 
     ifNotInWebkitIt("should store a reference when a result is accepted", function () {
-        var resultStatus = null,
-            sizeAdjusted = false,
-            testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html",
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
+        var testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html",
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]),
+            passed, sizeAdjusted;
 
         reporter.reportComparison.andCallFake(function (result, callback) {
             callback();
         });
 
         csscritic.addReporter(reporter);
-        csscritic.compare(testPageUrl, function (result) {
-            resultStatus = result;
+        csscritic.add(testPageUrl);
+        csscritic.execute(function (result) {
+            passed = result;
         });
 
         waitsFor(function () {
-            return resultStatus !== null;
+            return passed !== undefined;
         });
 
         runs(function () {
-            expect(resultStatus).toEqual("referenceMissing");
+            expect(passed).toBe(false);
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function));
 
             reporter.reportComparison.mostRecentCall.args[0].resizePageImage(330, 151, function () {
@@ -139,20 +141,21 @@ describe("Integration", function () {
     });
 
     ifNotInWebkitIt("should properly report a failing comparison", function () {
-        var test_result = null,
-            testPageUrl = csscriticTestPath + "fixtures/brokenPage.html";
+        var testPageUrl = csscriticTestPath + "fixtures/brokenPage.html",
+            passed;
 
         localStorage.setItem(testPageUrl, JSON.stringify({
             referenceImageUri: theReferenceImageUri
         }));
 
         csscritic.addReporter(csscritic.BasicHTMLReporter());
-        csscritic.compare(testPageUrl, function (result) {
-            test_result = result;
+        csscritic.add(testPageUrl);
+        csscritic.execute(function (result) {
+            passed = result;
         });
 
         waitsFor(function () {
-            return test_result !== null;
+            return passed !== undefined;
         });
 
         runs(function () {
@@ -179,7 +182,8 @@ describe("Integration", function () {
             result = theResult;
             callback();
         });
-        csscritic.compare(testPageUrl);
+        csscritic.add(testPageUrl);
+        csscritic.execute();
 
         waitsFor(function () {
             return result !== undefined;
@@ -191,7 +195,10 @@ describe("Integration", function () {
 
         // Re-render
         runs(function () {
-            csscritic.compare(testPageUrl, function (theStatus) {
+            csscritic.clear();
+            csscritic.addReporter(reporter);
+            csscritic.add(testPageUrl);
+            csscritic.execute(function (theStatus) {
                 status = theStatus;
             });
         });
@@ -201,7 +208,7 @@ describe("Integration", function () {
         });
 
         runs(function () {
-            expect(status).toEqual('passed');
+            expect(status).toBe(true);
         });
     });
 

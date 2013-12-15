@@ -16,7 +16,7 @@ describe("Workarounds", function () {
 
         // Create reference image first
         csscritic.addReporter(autoAcceptingReporter);
-        csscritic.compare(csscriticTestPath + "fixtures/transparencyBug.html", function (result) {
+        csscritic.compare({url: csscriticTestPath + "fixtures/transparencyBug.html"}, function (result) {
             success = result;
         });
 
@@ -29,7 +29,7 @@ describe("Workarounds", function () {
             success = null;
 
             // Now test against the reference
-            csscritic.compare(csscriticTestPath + "fixtures/transparencyBug.html", function (result) {
+            csscritic.compare({url: csscriticTestPath + "fixtures/transparencyBug.html"}, function (result) {
                 success = result;
             });
         });

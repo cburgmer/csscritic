@@ -101,7 +101,7 @@ describe("Regression testing", function () {
         it("should read the reference image and compare against the rendered page", function () {
             var imagediffEqual = spyOn(imagediff, 'equal');
 
-            csscritic.compare("differentpage.html", function () {});
+            csscritic.compare({url: "differentpage.html"}, function () {});
 
             expect(readReferenceImage).toHaveBeenCalledWith("differentpage.html", jasmine.any(Function), jasmine.any(Function));
             expect(imagediffEqual).toHaveBeenCalledWith(htmlImage, referenceImage);
@@ -110,7 +110,7 @@ describe("Regression testing", function () {
         it("should render page using the viewport's size", function () {
             spyOn(imagediff, 'equal');
 
-            csscritic.compare("samplepage.html", function () {});
+            csscritic.compare({url: "samplepage.html"}, function () {});
 
             expect(getImageForPageUrl).toHaveBeenCalledWith("samplepage.html", 98, 76, null, jasmine.any(Function), jasmine.any(Function));
         });
@@ -120,7 +120,7 @@ describe("Regression testing", function () {
 
             imagediffEqual = spyOn(imagediff, 'equal').andReturn(true);
 
-            csscritic.compare("samplepage.html", function (result) {
+            csscritic.compare({url: "samplepage.html"}, function (result) {
                 status = result;
             });
 
@@ -132,7 +132,7 @@ describe("Regression testing", function () {
 
             imagediffEqual = spyOn(imagediff, 'equal').andReturn(false);
 
-            csscritic.compare("differentpage.html", function (result) {
+            csscritic.compare({url: "differentpage.html"}, function (result) {
                 status = result;
             });
 
@@ -142,7 +142,7 @@ describe("Regression testing", function () {
         it("should make the callback optional", function () {
             spyOn(imagediff, 'equal').andReturn(true);
 
-            csscritic.compare("samplepage.html");
+            csscritic.compare({url: "samplepage.html"});
         });
     });
 
@@ -157,7 +157,7 @@ describe("Regression testing", function () {
         });
 
         it("should provide a appropriately sized page rendering", function () {
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(getImageForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 100, null, jasmine.any(Function), jasmine.any(Function));
         });
@@ -180,7 +180,7 @@ describe("Regression testing", function () {
                 errorCallback();
             });
 
-            csscritic.compare("samplepage.html", function (result) {
+            csscritic.compare({url: "samplepage.html"}, function (result) {
                 status = result;
             });
 
@@ -198,7 +198,7 @@ describe("Regression testing", function () {
                 errorCallback();
             });
 
-            csscritic.compare("samplepage.html", function (result) {
+            csscritic.compare({url: "samplepage.html"}, function (result) {
                 status = result;
             });
 
@@ -216,7 +216,7 @@ describe("Regression testing", function () {
                 successCallback(referenceImage, viewport);
             });
 
-            csscritic.compare("samplepage.html", function (result) {
+            csscritic.compare({url: "samplepage.html"}, function (result) {
                 status = result;
             });
 

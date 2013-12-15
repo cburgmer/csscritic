@@ -433,8 +433,10 @@ window.csscritic = (function (module, document) {
                     callback();
                 }
             },
-            report: function () {
+            report: function (report, callback) {
                 showTimeTaken(timer);
+
+                callback();
             }
         };
     };

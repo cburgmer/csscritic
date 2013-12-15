@@ -78,7 +78,7 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare("samplepage.html", callback);
+            csscritic.compare({url: "samplepage.html"}, callback);
 
             expect(callback).not.toHaveBeenCalled();
             reporter.reportComparison.mostRecentCall.args[1]();
@@ -96,7 +96,7 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -118,7 +118,7 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "failed",
@@ -138,7 +138,7 @@ describe("Reporting", function () {
                 errorCallback();
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
@@ -157,7 +157,7 @@ describe("Reporting", function () {
                 errorCallback();
             });
 
-            csscritic.compare("samplepage.html");
+            csscritic.compare({url: "samplepage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "error",
@@ -183,7 +183,7 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -215,7 +215,7 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -241,7 +241,7 @@ describe("Reporting", function () {
                 callback(htmlImage);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             reporter.reportComparison.mostRecentCall.args[0].acceptPage();
 
@@ -262,7 +262,7 @@ describe("Reporting", function () {
                 callback(htmlImage);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             result = reporter.reportComparison.mostRecentCall.args[0];
 
@@ -286,7 +286,7 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -307,7 +307,7 @@ describe("Reporting", function () {
                 errorCallback();
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
@@ -329,7 +329,7 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare("differentpage.html");
+            csscritic.compare({url: "differentpage.html"});
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -357,7 +357,7 @@ describe("Reporting", function () {
                 expect(callbackTriggered).toBeFalsy();
             });
 
-            csscritic.compare("differentpage.html", function () {
+            csscritic.compare({url: "differentpage.html"}, function () {
                 callbackTriggered = true;
             });
 

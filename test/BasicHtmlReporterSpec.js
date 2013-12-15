@@ -41,10 +41,19 @@ describe("Basic HTML reporter", function () {
         expect($("#csscritic_basichtmlreporter .comparison")).toExist();
     });
 
-    it("should call the callback when finished reporting", function () {
+    it("should call the callback when finished reporting comparison", function () {
         var callback = jasmine.createSpy("callback");
 
         reporter.reportComparison({}, callback);
+
+        expect(callback).toHaveBeenCalled();
+    });
+
+    it("should call the callback when finished reporting test suite", function () {
+        var callback = jasmine.createSpy('callback'),
+            report = {success: 'passed'};
+
+        reporter.report(report, callback);
 
         expect(callback).toHaveBeenCalled();
     });
@@ -133,13 +142,13 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparisonStarting({
                 pageUrl: "some_page.html"
             });
-            reporter.report({success: true});
+            reporter.report({success: true}, function () {});
             expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
             expect($("#csscritic_basichtmlreporter .timeTaken").text()).toEqual("finished in 1.034s");
         });
 
         it("should render the time taken as 0 when no test cases given", function () {
-            reporter.report({success: true});
+            reporter.report({success: true}, function () {});
             expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
             expect($("#csscritic_basichtmlreporter .timeTaken").text()).toEqual("finished in 0.000s");
         });

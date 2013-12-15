@@ -52,10 +52,10 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
     };
 
     var reportComparisonStarting = function (testCases, callback) {
-        module.util.map(testCases, function (pageUrl, finishTestCase) {
+        module.util.map(testCases, function (testCase, finishTestCase) {
             module.util.map(reporters, function (reporter, finishReporter) {
                 if (reporter.reportComparisonStarting) {
-                    reporter.reportComparisonStarting({pageUrl: pageUrl}, finishReporter);
+                    reporter.reportComparisonStarting({pageUrl: testCase.url}, finishReporter);
                 } else {
                     finishReporter();
                 }
@@ -158,23 +158,30 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
         });
     };
 
-    module.compare = function (pageUrl, callback) {
-        storage.readReferenceImage(pageUrl, function (referenceImage, viewport) {
-            loadPageAndReportResult(pageUrl, viewport.width, viewport.height, referenceImage, callback);
+    module.compare = function (testCase, callback) {
+        storage.readReferenceImage(testCase.url, function (referenceImage, viewport) {
+            loadPageAndReportResult(testCase.url, viewport.width, viewport.height, referenceImage, callback);
         }, function () {
-            loadPageAndReportResult(pageUrl, 800, 100, null, callback);
+            loadPageAndReportResult(testCase.url, 800, 100, null, callback);
         });
     };
 
-    module.add = function (pageUrl) {
-        testCases.push(pageUrl);
+    module.add = function (testCase) {
+        // Support url as only test case input
+        if (typeof testCase === 'string') {
+            testCase = {
+                url: testCase
+            };
+        }
+
+        testCases.push(testCase);
     };
 
     module.execute = function (callback) {
         reportComparisonStarting(testCases, function () {
 
-            module.util.map(testCases, function (pageUrl, finish) {
-                module.compare(pageUrl, function (status) {
+            module.util.map(testCases, function (testCase, finish) {
+                module.compare(testCase, function (status) {
                     finish(status === "passed");
                 });
             }, function (results) {
