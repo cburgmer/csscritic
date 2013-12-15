@@ -88,8 +88,6 @@ window.csscritic = (function (module, document) {
             document.getElementsByTagName("body")[0].appendChild(reportBody);
         }
 
-
-
         return reportBody;
     };
 
@@ -241,19 +239,17 @@ window.csscritic = (function (module, document) {
         return differenceCanvasContainer;
     };
 
+    var textualStatus = {
+        passed: 'passed',
+        failed: 'failed',
+        referenceMissing: 'missing reference',
+        error: 'error'
+    };
+
     var createStatus = function (result) {
         var status = document.createElement("span");
         status.className = "status";
-
-        if (result.status === "passed") {
-            status.textContent = "passed";
-        } else if (result.status === "failed") {
-            status.textContent = "failed";
-        } else if (result.status === "referenceMissing") {
-            status.textContent = "missing reference";
-        } else if (result.status === "error") {
-            status.textContent = "error";
-        }
+        status.textContent = textualStatus[result.status];
         return status;
     };
 
@@ -365,6 +361,25 @@ window.csscritic = (function (module, document) {
         return seconds + '.' + padNumber(milliSeconds, 3);
     };
 
+    var createTimer = function () {
+        var timeStarted = Date.now();
+
+        return {
+            stop: function () {
+                var timeTaken = (timeStarted === null) ? 0 : Date.now() - timeStarted;
+                return timeTaken;
+            }
+        };
+    };
+
+    var showTimeTaken = function (timer) {
+        var reportBody = getOrCreateBody(),
+            timeTaken = (timer === null) ? 0 : timer.stop(),
+            timeTakenNode = reportBody.getElementsByClassName("timeTaken")[0];
+
+        timeTakenNode.textContent = "finished in " + renderMilliseconds(timeTaken) + "s";
+    };
+
     var showBrowserWarningIfNeeded = function () {
         var warning;
 
@@ -383,7 +398,7 @@ window.csscritic = (function (module, document) {
 
     module.BasicHTMLReporter = function () {
         var runningComparisonEntries = {},
-            timeStarted = null;
+            timer = null;
 
         showBrowserWarningIfNeeded();
 
@@ -392,8 +407,8 @@ window.csscritic = (function (module, document) {
                 var node = createRunningEntry(comparison),
                     reportBody = getOrCreateBody();
 
-                if (timeStarted === null) {
-                    timeStarted = Date.now();
+                if (timer === null) {
+                    timer = createTimer();
                 }
 
                 reportBody.appendChild(node);
@@ -419,11 +434,7 @@ window.csscritic = (function (module, document) {
                 }
             },
             report: function () {
-                var reportBody = getOrCreateBody(),
-                    timeTaken = (timeStarted === null) ? 0 : Date.now() - timeStarted,
-                    timeTakenNode = reportBody.getElementsByClassName("timeTaken")[0];
-
-                timeTakenNode.textContent = "finished in " + renderMilliseconds(timeTaken) + "s";
+                showTimeTaken(timer);
             }
         };
     };
