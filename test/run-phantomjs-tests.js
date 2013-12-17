@@ -18,11 +18,11 @@ function loadCode() {
 }
 
 function loadTests() {
-    phantom.injectJs("./storagePluginSpecs.js");
+    phantom.injectJs("./specsShared/storagePluginSpecs.js");
 
-    phantom.injectJs("./FileStorageSpecForPhantom.js");
-    phantom.injectJs("./PhantomJSRendererSpecForPhantom.js");
-    phantom.injectJs("./HtmlFileReporterSpecForPhantom.js");
+    phantom.injectJs("./specsPhantom/FileStorageSpec.js");
+    phantom.injectJs("./specsPhantom/PhantomJSRendererSpec.js");
+    phantom.injectJs("./specsPhantom/HtmlFileReporterSpec.js");
 }
 
 function startWebserver() {

@@ -17,10 +17,9 @@ module.exports = function (grunt) {
                 'src/signoffreporter.js'
             ],
             options: {
-                specs: 'test/*Spec.js',
+                specs: ['test/specsShared/*', 'test/specs/*'],
                 helpers: [
                     'test/helpers.js',
-                    'test/storagePluginSpecs.js',
                     'bower_components/jquery/jquery.js',
                     'bower_components/jasmine-jquery/lib/jasmine-jquery.js',
                     'test/gruntpath.js'
