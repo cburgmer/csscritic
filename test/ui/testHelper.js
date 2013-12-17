@@ -43,10 +43,6 @@ window.testHelper = (function () {
         return mocks;
     };
 
-    testHelper.setUp = function () {
-        mockImagediff();
-    };
-
     testHelper.comparison = function (status, renderErrors) {
         var dummyFunc = function () {},
             mocks = setUpMocks(),
@@ -92,6 +88,22 @@ window.testHelper = (function () {
             elem.onclick();
         });
     }
+
+    testHelper.mockTaintedCanvas = function () {
+        CanvasRenderingContext2D.prototype.getImageData = function () {
+            throw new Error();
+        };
+    };
+
+    var mockCanvasReadSupport = function () {
+        // Overwrite method to pass in PhantomJS
+        CanvasRenderingContext2D.prototype.getImageData = function () {};
+    };
+
+    testHelper.setUp = function () {
+        mockImagediff();
+        mockCanvasReadSupport();
+    };
 
     return testHelper;
 }());
