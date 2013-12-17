@@ -197,6 +197,8 @@
     top: 0;
     left: 0;
     width: 100%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
 
     background-color: #922;
