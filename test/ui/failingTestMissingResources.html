@@ -1,0 +1,24 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" href="src/basichtmlreporter.css">
+    <script src="src/basichtmlreporter.js"></script>
+</head>
+<body>
+    <script src="testHelper.js"></script>
+    <script>
+        var reporter = csscritic.BasicHTMLReporter();
+
+        testHelper.setUp();
+
+        reporter.reportComparison(
+            testHelper.comparison('failed',
+                [
+                    'Unable to load stylesheet missing_stylesheet.css',
+                    'TypeError: undefined is not a function'
+                ])
+        );
+    </script>
+</body>
+</html>

@@ -1,4 +1,22 @@
 [{
-    "pageUrl": "test/BasicHtmlReporterLayout.html",
-    "fingerprint": "f384db99355db82dd3e7b99c69f68562a5a9b2ea89122b318a058052"
+    "pageUrl": "test/ui/failingTestMissingResources.html",
+    "fingerprint": "835346ba71cce2539db7c9a5e45da14b1343cec0a2b38d9a95fec321"
+}, {
+    "pageUrl": "test/ui/missingPage.html",
+    "fingerprint": "9e1294be448ee473205f97eca47c66d0d9a9279486149e5f2bf45fed"
+}, {
+    "pageUrl": "test/ui/missingReference.html",
+    "fingerprint": "2a1a54f9aaf12d9f649e7522439c88f941c9f81c32fd1c6e95f3b37d"
+}, {
+    "pageUrl": "test/ui/missingReferenceMissingResources.html",
+    "fingerprint": "942c5e2890ee53b1d0aa5478e9deaa8fd256cf95199aaaec8546c299"
+}, {
+    "pageUrl": "test/ui/passedTest.html",
+    "fingerprint": "308027e069fd6a38f39b5bb9c408c17055ecc8259a9d8851b9e460a1"
+}, {
+    "pageUrl": "test/ui/passedTestMissingResources.html",
+    "fingerprint": "a1228c236245ecd50ecbf91a8ea69e079e2edf5c01aefc2504e5e464"
+}, {
+    "pageUrl": "test/ui/failingTest.html",
+    "fingerprint": "9fa2481a15560b44616807903fd6dc8c9f46249b0f8532cc2b0ff05e"
 }]

@@ -11,7 +11,13 @@
     <script type="text/javascript">
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
-            csscritic.add('test/BasicHtmlReporterLayout.html');
+            csscritic.add('test/ui/failingTest.html');
+            csscritic.add('test/ui/missingReference.html');
+            csscritic.add('test/ui/passedTest.html');
+            csscritic.add('test/ui/missingPage.html');
+            csscritic.add('test/ui/failingTestMissingResources.html');
+            csscritic.add('test/ui/missingReferenceMissingResources.html');
+            csscritic.add('test/ui/passedTestMissingResources.html');
             csscritic.execute();
         };
     </script>

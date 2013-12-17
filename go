@@ -20,7 +20,7 @@ function runPhantomJSOnlyTests {
 
 function runCSSTest {
     # workaround for csscritic currently needing to be called twice
-    phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/BasicHtmlReporterLayout.html || phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/BasicHtmlReporterLayout.html
+    phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/ui/*.html || phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/ui/*.html
 }
 
 if [ ! -d node_modules ]; then
