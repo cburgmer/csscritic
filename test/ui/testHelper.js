@@ -74,6 +74,12 @@ window.testHelper = (function () {
         return comparison;
     };
 
+    testHelper.startingComparison = function () {
+        return {
+            pageUrl: "aPage.html"
+        };
+    };
+
     testHelper.increasePageImageSizeToShowTransparentBackground = function () {
         var elements = document.getElementsByClassName("pageImageContainer");
         Array.prototype.forEach.call(elements, function (elem) {
@@ -98,6 +104,14 @@ window.testHelper = (function () {
     var mockCanvasReadSupport = function () {
         // Overwrite method to pass in PhantomJS
         CanvasRenderingContext2D.prototype.getImageData = function () {};
+    };
+
+    testHelper.mockDateWith = function (date) {
+        window.Date = {
+            now: function () {
+                return date;
+            }
+        };
     };
 
     testHelper.setUp = function () {

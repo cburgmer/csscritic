@@ -1,12 +1,12 @@
 [{
     "pageUrl": "test/ui/failingTestMissingResources.html",
-    "fingerprint": "527c6eaefb0daad980fc018a7d1beee34a591c22754a3395a3db5ddd"
+    "fingerprint": "1ddc3b16f1f4befd33f02cb4921366f369d90b31c4f38252acb36686"
 }, {
     "pageUrl": "test/ui/missingPage.html",
     "fingerprint": "78b02d43ea5594a4af500e363fd244d6ed1bb10eb6612dd11706bb76"
 }, {
     "pageUrl": "test/ui/missingReference.html",
-    "fingerprint": "2c73ac4de07fe1f45e2083b605ff5b1d4dab637016e64fb71ca8b74c"
+    "fingerprint": "358187539e193a458f0f67eed3836616c5ea81796865a837090b4f08"
 }, {
     "pageUrl": "test/ui/missingReferenceMissingResources.html",
     "fingerprint": "8a6cd035ffb8f640aeb8907a2c9c724563951f763945d29ecc0e0abe"
@@ -22,4 +22,10 @@
 }, {
     "pageUrl": "test/ui/missingBrowserSupport.html",
     "fingerprint": "64a028887773d06ac7a4972dc2b5e957222e830cabfc5b0526fc82d4"
+}, {
+    "pageUrl": "test/ui/durationCount.html",
+    "fingerprint": "6dc9c2dace1bd6ce6daa62d142f431b33acb370f7eb9413a16e8cc8f"
+}, {
+    "pageUrl": "test/ui/startingTest.html",
+    "fingerprint": "9cfd5e3d8dc8d7dc9d58be71577a07a67e6ce1d33201317f45ad79c6"
 }]
