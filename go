@@ -14,10 +14,6 @@ function build {
     ./node_modules/.bin/grunt $@
 }
 
-function runPhantomJSOnlyTests {
-    phantomjs test/run-phantomjs-tests.js
-}
-
 function runCSSTest {
     # workaround for csscritic currently needing to be called twice
     phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/ui/*.html || phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/ui/*.html
@@ -32,5 +28,4 @@ if [ ! -d bower_components ]; then
 fi
 
 build
-runPhantomJSOnlyTests
 runCSSTest

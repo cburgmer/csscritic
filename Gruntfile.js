@@ -27,6 +27,14 @@ module.exports = function (grunt) {
                 fixturesPath: './fixtures/'
             }
         },
+        shell: {
+            runPhantomTests: {
+                options: {
+                    stdout: true
+                },
+                command: 'phantomjs test/run-phantomjs-tests.js'
+            }
+        },
         concat: {
             phantomjs: {
                 options: {
@@ -213,11 +221,17 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-csslint');
+    grunt.loadNpmTasks('grunt-shell');
 
-    grunt.registerTask('default', [
+    grunt.registerTask('test', [
         'jshint',
         'csslint',
         'jasmine',
+        'shell:runPhantomTests'
+    ]);
+
+    grunt.registerTask('default', [
+        'test',
         'concat',
         'uglify',
         'cssmin'

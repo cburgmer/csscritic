@@ -29,7 +29,8 @@
     "grunt-contrib-watch": "~0.5.2",
     "grunt-contrib-cssmin": "~0.6.2",
     "bower": "~1.2.0",
-    "grunt-contrib-csslint": "~0.1.2"
+    "grunt-contrib-csslint": "~0.1.2",
+    "grunt-shell": "~0.6.1"
   },
   "scripts": {
     "test": "bash go --verbose"
