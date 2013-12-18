@@ -1,3 +1,9 @@
+/*
+ * Roll-your-own PhantomJS test runner.
+ *
+ * All other runners out there are loading tests inside a PhantomJS page,
+ * but we need to run our tests in the privileged context.
+ */
 var port = 8000;
 window.localserver = "http://localhost:" + port;
 
