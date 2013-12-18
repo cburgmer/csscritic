@@ -50,13 +50,26 @@ function startWebserver() {
 
 }
 
+function runnerFinishListenerReporter() {
+    return {
+        reportRunnerResults: function (suite) {
+            var results = suite.results(),
+                failed = results.totalCount - results.passedCount;
+
+            setTimeout(function () {
+                phantom.exit(failed);
+            }, 10);
+        }
+    };
+}
+
 function startJasmine() {
     var jasmineEnv = jasmine.getEnv();
     jasmineEnv.addReporter(new jasmine.ConsoleReporter(function(msg) {
-        window.console.log(msg.replace('\n', ''));
-    }, function(reporter) {
-        phantom.exit(reporter.results().failedCount);
-    }, true));
+        var stdout = require("system").stdout;
+        stdout.write(msg);
+    }));
+    jasmineEnv.addReporter(runnerFinishListenerReporter());
 
     jasmineEnv.updateInterval = 1000;
     jasmineEnv.execute();
