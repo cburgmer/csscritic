@@ -95,6 +95,15 @@ window.testHelper = (function () {
         });
     };
 
+    testHelper.triggerTooltip = function () {
+        var comparison = document.querySelector(".comparison"),
+            event = {
+                pageX: 95,
+                pageY: 25
+            };
+        comparison.onmouseover(event);
+    };
+
     testHelper.mockTaintedCanvas = function () {
         CanvasRenderingContext2D.prototype.getImageData = function () {
             throw new Error();

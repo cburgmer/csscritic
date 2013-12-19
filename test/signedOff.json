@@ -28,4 +28,7 @@
 }, {
     "pageUrl": "test/ui/startingTest.html",
     "fingerprint": "9cfd5e3d8dc8d7dc9d58be71577a07a67e6ce1d33201317f45ad79c6"
+}, {
+    "pageUrl": "test/ui/previewTooltip.html",
+    "fingerprint": "55a02f1bce129778f9729082c61b94aad69ecc7b62895c0b8f283602"
 }]
