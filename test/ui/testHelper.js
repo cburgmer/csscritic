@@ -13,7 +13,7 @@ window.testHelper = (function () {
                 return imageData;
             }
         };
-    }
+    };
 
     var setUpMocks = function () {
         var mocks = {};
@@ -38,7 +38,7 @@ window.testHelper = (function () {
 
         mocks.differenceImageData = function () {
             return mocks.differenceImageCanvas().getContext("2d").createImageData(100, 100);
-        }
+        };
 
         return mocks;
     };
@@ -86,14 +86,14 @@ window.testHelper = (function () {
             elem.style.setProperty("width", "120px");
             elem.style.setProperty("height", "110px");
         });
-    }
+    };
 
     testHelper.clickAcceptButtonToShowTick = function () {
         var elements = document.getElementsByTagName("button");
         Array.prototype.forEach.call(elements, function (elem) {
             elem.onclick();
         });
-    }
+    };
 
     testHelper.mockTaintedCanvas = function () {
         CanvasRenderingContext2D.prototype.getImageData = function () {

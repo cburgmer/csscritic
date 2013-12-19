@@ -171,12 +171,15 @@ module.exports = function (grunt) {
                         safeLog: true,
                         csscriticTestPath: true,
                         csscriticTestHelper: true,
-                        loadStoragePluginSpecs: true
+                        loadStoragePluginSpecs: true,
+                        CanvasRenderingContext2D: true
                     }
                 },
                 src: [
-                    'test/*Spec.js',
-                    'test/gruntpath.js'
+                    'test/specs/*.js',
+                    'test/specsShared/*.js',
+                    'test/gruntpath.js',
+                    'test/ui/*.js'
                 ]
             },
             phantomjsTests: {
@@ -206,8 +209,8 @@ module.exports = function (grunt) {
                 },
                 src: [
                     'test/helpers.js',
-                    'test/run-phantomjs-tests.js',
-                    'test/*SpecForPhantom.js',
+                    'test/run-*.js',
+                    'test/specsPhantom/*.js',
                     'test/phantomjs-regressionrunner.js'
                 ]
             }

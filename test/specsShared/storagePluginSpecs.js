@@ -1,4 +1,4 @@
-var loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImage, storeMockReferenceImage) {
+window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImage, storeMockReferenceImage) {
     var imgUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
         img = null;
 
