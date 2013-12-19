@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.1.0 - 2013-12-17
+/*! PhantomJS regression runner for CSS Critic - v0.1.0 - 2013-12-19
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2013 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed  */
 /* Integrated dependencies:
@@ -1087,9 +1087,9 @@ window.csscritic = (function (module, console) {
     var reportComparison = function (result, callback) {
         var color = statusColor[result.status] || "",
             statusStr = inColor(result.status, color);
-        if (result.erroneousPageUrls) {
+        if (result.renderErrors) {
             console.log(inColor("Error(s) loading " + result.pageUrl + ":", "red"));
-            result.erroneousPageUrls.forEach(function (msg) {
+            result.renderErrors.forEach(function (msg) {
                 console.log(inColor("  " + msg, "red+bold"));
             });
         }

@@ -67,16 +67,16 @@ describe("TerminalReporter", function () {
         expect(consoleLogSpy).toHaveBeenCalledWith("Testing page_url... \033[31m\033[1merror\033[0m");
     });
 
-    it("should log erroneousPageUrls to output", function () {
+    it("should log render errors to output", function () {
         reporter.reportComparison({
             status: "passed",
             pageUrl: "page_url",
             pageImage: htmlImage,
             referenceImage: referenceImage,
-            erroneousPageUrls: ["some/broken.url"]
+            renderErrors: ["aBrokenURL"]
         });
 
         expect(consoleLogSpy).toHaveBeenCalledWith("\033[31mError(s) loading page_url:\033[0m");
-        expect(consoleLogSpy).toHaveBeenCalledWith("\033[31m\033[1m  some/broken.url\033[0m");
+        expect(consoleLogSpy).toHaveBeenCalledWith("\033[31m\033[1m  aBrokenURL\033[0m");
     });
 });
