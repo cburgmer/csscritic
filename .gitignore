@@ -3,6 +3,6 @@
 /_SpecRunner.html
 /node_modules
 /bower_components/
-/bugs/
+/attic/
 /test/ui/*.json
-/*.png
+/build/

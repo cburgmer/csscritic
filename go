@@ -16,7 +16,8 @@ function build {
 
 function runCSSTest {
     # workaround for csscritic currently needing to be called twice
-    phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/ui/*.html || phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./ test/ui/*.html
+    mkdir -p build
+    phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./build/ test/ui/*.html || phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log=./build/ test/ui/*.html
 }
 
 if [ ! -d node_modules ]; then
