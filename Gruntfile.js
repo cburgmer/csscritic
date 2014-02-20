@@ -49,6 +49,7 @@ module.exports = function (grunt) {
                         ' * url (MIT License),\n' +
                         ' * CSSOM (MIT License),\n' +
                         ' * xmlserializer (MIT License),\n' +
+                        ' * ayepromise (BSD License & WTFPL),\n' +
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
@@ -72,6 +73,7 @@ module.exports = function (grunt) {
                         ' * url (MIT License),\n' +
                         ' * CSSOM (MIT License),\n' +
                         ' * xmlserializer (MIT License),\n' +
+                        ' * ayepromise (BSD License & WTFPL),\n' +
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n'
                 },

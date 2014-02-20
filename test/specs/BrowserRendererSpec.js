@@ -128,6 +128,7 @@ describe("Browser renderer", function () {
 
             runs(function () {
                 expect(errors).not.toBeNull();
+                expect(errors.length).toBe(3);
                 errors.sort();
                 expect(errors).toEqual([
                     "Unable to load background-image " + fixtureUrl + "background_image_does_not_exist.jpg",
