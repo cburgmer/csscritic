@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-03-02
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-03-03
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed  */
 /* Integrated dependencies:
@@ -734,7 +734,7 @@ window.csscritic = (function (module, fs) {
     return module;
 }(window.csscritic || {}, require("fs")));
 
-window.csscritic = (function (module, renderer, storage, window, imagediff) {
+window.csscritic = (function (module, renderer, storage, imagediff) {
     var reporters, testCases, proxyUrl;
 
     var clear = function () {
@@ -935,7 +935,7 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
     module.clear = clear;
 
     return module;
-}(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, window, imagediff));
+}(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, imagediff));
 
 window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
 
@@ -1109,7 +1109,7 @@ window.csscritic = (function (module, console) {
     return module;
 }(window.csscritic || {}, window.console));
 
-window.csscritic = (function (module, webpage) {
+window.csscritic = (function (module) {
 
     var reportComparison = function (result, basePath, callback) {
         var imagesToWrite = [];
@@ -1183,7 +1183,8 @@ window.csscritic = (function (module, webpage) {
     };
 
     var renderUrlToFile = function (url, filePath, width, height, callback) {
-        var page = webpage.create();
+        var webpage = require("webpage"),
+            page = webpage.create();
 
         page.viewportSize = {
             width: width,
@@ -1229,7 +1230,7 @@ window.csscritic = (function (module, webpage) {
     };
 
     return module;
-}(window.csscritic || {}, require("webpage")));
+}(window.csscritic || {}));
 
 window.csscritic = (function (module) {
     var system = require("system");

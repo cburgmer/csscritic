@@ -1,4 +1,4 @@
-window.csscritic = (function (module, renderer, storage, window, imagediff) {
+window.csscritic = (function (module, renderer, storage, imagediff) {
     var reporters, testCases, proxyUrl;
 
     var clear = function () {
@@ -199,4 +199,4 @@ window.csscritic = (function (module, renderer, storage, window, imagediff) {
     module.clear = clear;
 
     return module;
-}(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, window, imagediff));
+}(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, imagediff));
