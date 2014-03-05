@@ -2,8 +2,8 @@
   "name": "csscritic",
   "version": "0.2.0",
   "main": [
-    "csscritic.js",
-    "csscritic.css"
+    "dist/csscritic.allinone.js",
+    "dist/csscritic.min.css"
   ],
   "dependencies": {
     "rasterizeHTML.js": "~0.8.0",
