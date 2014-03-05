@@ -7,9 +7,9 @@ describe("PhantomJS renderer", function () {
         pageMock = jasmine.createSpyObj("page", ["open", "renderBase64"]);
 
         webpageModuleMock = jasmine.createSpyObj("webpage", ["create"]);
-        webpageModuleMock.create.andReturn(pageMock);
+        webpageModuleMock.create.and.returnValue(pageMock);
 
-        window.require = jasmine.createSpy("require").andCallFake(function (moduleName) {
+        window.require = jasmine.createSpy("require").and.callFake(function (moduleName) {
             if (moduleName === "webpage") {
                 return webpageModuleMock;
             } else {
@@ -40,70 +40,40 @@ describe("PhantomJS renderer", function () {
             "RWb0mOQUVbFpvQYZJRVsSk9BhllVWxKj0FGWRWb0mOQUVbFpvQYZJRVsSk9BhllVWxKj0FGWRWb0mOQUVYFAAAAAAAAAAAAAAAAAA" +
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC8+QHYzUrJwyGFmgAAAABJRU5ErkJggg==";
 
-        this.addMatchers(imagediff.jasmine);
+        jasmine.addMatchers(imagediffForJasmine2);
     });
 
     afterEach(function () {
         window.require = oldRequire;
     });
 
-    it("should draw the url to the given canvas", function () {
-        var image = null,
-            referenceImage = null;
+    it("should draw the url to the given canvas", function (done) {
+        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, null, function (image) {
 
-        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, null, function (result_image) {
-            image = result_image;
-        });
+            csscriticTestHelper.loadImageFromUrl(theReferenceImageUri, function (referenceImage) {
 
-        csscriticTestHelper.loadImageFromUrl(theReferenceImageUri, function (result_image) {
-            referenceImage = result_image;
-        });
-
-        waitsFor(function () {
-            return image !== null && referenceImage !== null;
-        });
-
-        runs(function () {
-            expect(image).toImageDiffEqual(referenceImage);
+                expect(image).toImageDiffEqual(referenceImage);
+                done();
+            });
         });
     });
 
-    it("should call the error handler if a page does not exist", function () {
-        var hasError = false;
-
+    it("should call the error handler if a page does not exist", function (done) {
         csscritic.renderer.phantomjsRenderer("the_url_that_doesnt_exist", 42, 7, null, function () {}, function () {
-            hasError = true;
-        });
-
-        waitsFor(function () {
-            return hasError;
-        });
-
-        runs(function () {
-            expect(hasError).toBeTruthy();
+            done();
         });
     });
 
-    it("should call the error handler if a resulting image is erroneous", function () {
-        var hasError = false;
-
+    it("should call the error handler if a resulting image is erroneous", function (done) {
         setupPageMock();
 
-        pageMock.renderBase64.andReturn("broken_img");
-        pageMock.open.andCallFake(function (url, callback) {
+        pageMock.renderBase64.and.returnValue("broken_img");
+        pageMock.open.and.callFake(function (url, callback) {
             callback("success");
         });
 
         csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, null, function () {}, function () {
-            hasError = true;
-        });
-
-        waitsFor(function () {
-            return hasError;
-        });
-
-        runs(function () {
-            expect(hasError).toBeTruthy();
+            done();
         });
     });
 
@@ -111,19 +81,10 @@ describe("PhantomJS renderer", function () {
         csscritic.renderer.phantomjsRenderer("the_url", 42, 7);
     });
 
-    it("should report errors from rendering", function () {
-        var errors = null,
-            pageUrl = fixtureUrl + "brokenPage.html";
+    it("should report errors from rendering", function (done) {
+        var pageUrl = fixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, renderErrors) {
-            errors = renderErrors;
-        });
-
-        waitsFor(function () {
-            return errors !== null;
-        });
-
-        runs(function () {
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, errors) {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
@@ -131,23 +92,16 @@ describe("PhantomJS renderer", function () {
                 getFileUrl(fixtureUrl + "css_does_not_exist.css"),
                 getFileUrl(fixtureUrl + "image_does_not_exist.png")
             ]);
+
+            done();
         });
     });
 
-    it("should report errors from rendering with http urls", function () {
-        var errors = null,
-            servedFixtureUrl = localserver + "/" + fixtureUrl,
+    it("should report errors from rendering with http urls", function (done) {
+        var servedFixtureUrl = localserver + "/" + fixtureUrl,
             pageUrl = servedFixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, renderErrors) {
-            errors = renderErrors;
-        });
-
-        waitsFor(function () {
-            return errors !== null;
-        });
-
-        runs(function () {
+        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, errors) {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
@@ -155,6 +109,8 @@ describe("PhantomJS renderer", function () {
                 servedFixtureUrl + "css_does_not_exist.css",
                 servedFixtureUrl + "image_does_not_exist.png"
             ]);
+
+            done();
         });
     });
 

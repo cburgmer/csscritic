@@ -2,42 +2,32 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     var imgUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
         img = null;
 
-    beforeEach(function () {
+    beforeEach(function (done) {
+        jasmine.addMatchers(imagediffForJasmine2);
+
         csscriticTestHelper.loadImageFromUrl(imgUri, function (image) {
             img = image;
+
+            done();
         });
-        this.addMatchers(imagediff.jasmine);
     });
 
-    it("should store a the rendered page", function () {
-        var stringValue, value,
-            readImage = null;
+    it("should store a the rendered page", function (done) {
+        var stringValue, value;
 
-        waitsFor(function () {
-            return img != null;
+        storagePlugin.storeReferenceImage("somePage.html", img, {
+            width: 47,
+            height: 11
         });
 
-        runs(function () {
-            storagePlugin.storeReferenceImage("somePage.html", img, {
-                width: 47,
-                height: 11
-            });
+        stringValue = readStoredReferenceImage("somePage.html");
+        expect(stringValue).not.toBeNull();
 
-            stringValue = readStoredReferenceImage("somePage.html");
-            expect(stringValue).not.toBeNull();
+        value = JSON.parse(stringValue);
+        csscriticTestHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
+            expect(image).toImageDiffEqual(img);
 
-            value = JSON.parse(stringValue);
-            csscriticTestHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
-                readImage = image;
-            });
-        });
-
-        waitsFor(function () {
-            return readImage != null;
-        });
-
-        runs(function () {
-            expect(img).toImageDiffEqual(readImage);
+            done();
         });
     });
 
@@ -60,7 +50,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
 
     it("should read in a reference image", function () {
         var readImage,
-            getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
+            getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success) {
                 success("read image fake");
             });
 
@@ -79,7 +69,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should return the viewport's size", function () {
         var viewportSize;
 
-        spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
+        spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success) {
             success("read image fake");
         });
 
@@ -102,7 +92,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should return the viewport's size and fallback to the image's size", function () {
         var viewportSize;
 
-        spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success) {
+        spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success) {
             success({
                 width: 12,
                 height: 34
@@ -141,7 +131,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should call error handler if read reference image is invalid", function () {
         var errorCallback = jasmine.createSpy('errorCallback');
 
-        spyOn(csscritic.util, 'getImageForUrl').andCallFake(function (uri, success, error) {
+        spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success, error) {
             error();
         });
 

@@ -5,64 +5,46 @@
     <title>Jasmine Spec Runner</title>
     <meta charset="utf-8"/>
 
-    <link rel="stylesheet" type="text/css" href="../bower_components/jasmine/lib/jasmine-core/jasmine.css">
-    <script type="text/javascript" src="../bower_components/jasmine/lib/jasmine-core/jasmine.js"></script>
-    <script type="text/javascript" src="../bower_components/jasmine/lib/jasmine-core/jasmine-html.js"></script>
-    <script type="text/javascript" src="../bower_components/jquery/jquery.js"></script>
-    <script type="text/javascript" src="../bower_components/jasmine-jquery/lib/jasmine-jquery.js"></script>
-    <script type="text/javascript" src="helpers.js"></script>
+    <link rel="stylesheet" href="../node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
+    <script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine.js"></script>
+    <script src="../node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js"></script>
+    <script src="../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/jasmine-jquery/lib/jasmine-jquery.js"></script>
+    <script src="helpers.js"></script>
 
     <!-- include source files here... -->
-    <script type="text/javascript" src="../bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js"></script>
-    <script type="text/javascript" src="../bower_components/js-imagediff/imagediff.js"></script>
-    <script type="text/javascript" src="../bower_components/jssha/src/sha256.js"></script>
-    <script type="text/javascript" src="../src/utils.js"></script>
-    <script type="text/javascript" src="../src/browserrenderer.js"></script>
-    <script type="text/javascript" src="../src/domstorage.js"></script>
-    <script type="text/javascript" src="../src/csscritic.js"></script>
-    <script type="text/javascript" src="../src/basichtmlreporter.js"></script>
-    <script type="text/javascript" src="../src/terminalreporter.js"></script>
-    <script type="text/javascript" src="../src/signoffreporter.js"></script>
+    <script src="../bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js"></script>
+    <script src="../bower_components/js-imagediff/imagediff.js"></script>
+    <script src="../bower_components/jssha/src/sha256.js"></script>
+    <script src="../src/utils.js"></script>
+    <script src="../src/browserrenderer.js"></script>
+    <script src="../src/domstorage.js"></script>
+    <script src="../src/csscritic.js"></script>
+    <script src="../src/basichtmlreporter.js"></script>
+    <script src="../src/terminalreporter.js"></script>
+    <script src="../src/signoffreporter.js"></script>
 
     <!-- include spec files here... -->
-    <script type="text/javascript" src="specsShared/storagePluginSpecs.js"></script>
+    <script src="specsShared/storagePluginSpecs.js"></script>
 
-    <script type="text/javascript" src="specs/RegressionSpec.js"></script>
-    <script type="text/javascript" src="specs/ReportingSpec.js"></script>
-    <script type="text/javascript" src="specs/UtilSpec.js"></script>
-    <script type="text/javascript" src="specs/DomStorageSpec.js"></script>
-    <script type="text/javascript" src="specs/BrowserRendererSpec.js"></script>
-    <script type="text/javascript" src="specs/BasicHtmlReporterSpec.js"></script>
-    <script type="text/javascript" src="specs/BasicHtmlReporterUtilSpec.js"></script>
-    <script type="text/javascript" src="specs/TerminalReporterSpec.js"></script>
-    <script type="text/javascript" src="specs/IntegrationSpec.js"></script>
-    <script type="text/javascript" src="specs/WorkaroundSpec.js"></script>
-    <script type="text/javascript" src="specs/SignOffReporterUtilSpec.js"></script>
-    <script type="text/javascript" src="specs/SignOffReporterSpec.js"></script>
+    <script src="specs/RegressionSpec.js"></script>
+    <script src="specs/ReportingSpec.js"></script>
+    <script src="specs/UtilSpec.js"></script>
+    <script src="specs/DomStorageSpec.js"></script>
+    <script src="specs/BrowserRendererSpec.js"></script>
+    <script src="specs/BasicHtmlReporterSpec.js"></script>
+    <script src="specs/BasicHtmlReporterUtilSpec.js"></script>
+    <script src="specs/TerminalReporterSpec.js"></script>
+    <script src="specs/IntegrationSpec.js"></script>
+    <script src="specs/WorkaroundSpec.js"></script>
+    <script src="specs/SignOffReporterUtilSpec.js"></script>
+    <script src="specs/SignOffReporterSpec.js"></script>
 
     <script type="text/javascript">
         var csscriticTestPath = '';
 
-        (function() {
-            var jasmineEnv = jasmine.getEnv();
-
-            jasmine.getFixtures().fixturesPath = 'fixtures/';
-
-            var htmlReporter = new jasmine.HtmlReporter();
-            jasmineEnv.addReporter(htmlReporter);
-            jasmineEnv.specFilter = function(spec) {
-                return htmlReporter.specFilter(spec);
-            };
-
-            var currentWindowOnload = window.onload;
-
-            window.onload = function() {
-                if (currentWindowOnload) {
-                    currentWindowOnload();
-                }
-                jasmineEnv.execute();
-            };
-        })();
+        jasmine.getFixtures().fixturesPath = 'fixtures/';
     </script>
 </head>
 <body>

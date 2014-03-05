@@ -4,15 +4,7 @@ describe("HtmlFileReporter", function () {
         htmlImage, referenceImage, differenceImageCanvas,
         reporterOutputPath;
 
-    var finished,
-        callback = function () {
-            finished = true;
-        },
-        isFinished = function () {
-            return finished;
-        };
-
-    beforeEach(function () {
+    beforeEach(function (done) {
         reporterOutputPath = csscriticTestHelper.createTempPath();
         reporter = csscritic.HtmlFileReporter(reporterOutputPath);
 
@@ -20,19 +12,16 @@ describe("HtmlFileReporter", function () {
         referenceImage = null;
         differenceImageCanvas = window.document.createElement("canvas");
 
-        finished = false;
-
-        this.addMatchers(imagediff.jasmine);
+        jasmine.addMatchers(imagediffForJasmine2);
 
         csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "green.png"), function (image) {
             htmlImage = image;
-        });
-        csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "greenWithTransparency.png"), function (image) {
-            referenceImage = image;
-        });
 
-        waitsFor(function () {
-            return htmlImage != null && referenceImage != null;
+            csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "greenWithTransparency.png"), function (image) {
+                referenceImage = image;
+
+                done();
+            });
         });
     });
 
@@ -48,35 +37,18 @@ describe("HtmlFileReporter", function () {
             };
         });
 
-        it("should call the callback when finished reporting", function () {
-            reporter.reportComparison(testResult, callback);
-
-            waitsFor(isFinished);
-
-            runs(function () {
-                expect(isFinished).toBeTruthy();
-            });
+        it("should call the callback when finished reporting", function (done) {
+            reporter.reportComparison(testResult, done);
         });
 
-        it("should save the rendered page", function () {
-            var resultImage = null;
-
-            reporter.reportComparison(testResult, callback);
-
-            waitsFor(isFinished);
-
-            runs(function () {
+        it("should save the rendered page", function (done) {
+            reporter.reportComparison(testResult, function () {
                 csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.png"), function (image) {
-                    resultImage = image;
+                    expect(image).toImageDiffEqual(htmlImage);
+
+                    done();
                 });
-            });
 
-            waitsFor(function () {
-                return resultImage != null;
-            });
-
-            runs(function () {
-                expect(resultImage).toImageDiffEqual(htmlImage);
             });
         });
     });
@@ -85,7 +57,7 @@ describe("HtmlFileReporter", function () {
         var testResult,
             diffImage = null;
 
-        beforeEach(function () {
+        beforeEach(function (done) {
             testResult = {
                 status: "failed",
                 pageUrl: "page_url",
@@ -95,54 +67,28 @@ describe("HtmlFileReporter", function () {
 
             csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "greenWithTransparencyDiff.png"), function (image) {
                 diffImage = image;
-            });
 
-            waitsFor(function () {
-                return diffImage != null;
+                done();
             });
         });
 
-        it("should save the reference image", function () {
-            var resultImage = null;
-
-            reporter.reportComparison(testResult, callback);
-
-            waitsFor(isFinished);
-
-            runs(function () {
+        it("should save the reference image", function (done) {
+            reporter.reportComparison(testResult, function () {
                 csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.reference.png"), function (image) {
-                    resultImage = image;
+                    expect(image).toImageDiffEqual(referenceImage);
+
+                    done();
                 });
-            });
-
-            waitsFor(function () {
-                return resultImage != null;
-            });
-
-            runs(function () {
-                expect(resultImage).toImageDiffEqual(referenceImage);
             });
         });
 
-        it("should save a difference image", function () {
-            var resultImage = null;
-
-            reporter.reportComparison(testResult, callback);
-
-            waitsFor(isFinished);
-
-            runs(function () {
+        it("should save a difference image", function (done) {
+            reporter.reportComparison(testResult, function () {
                 csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.diff.png"), function (image) {
-                    resultImage = image;
+                    expect(image).toImageDiffEqual(diffImage);
+
+                    done();
                 });
-            });
-
-            waitsFor(function () {
-                return resultImage != null;
-            });
-
-            runs(function () {
-                expect(resultImage).toImageDiffEqual(diffImage);
             });
         });
     });
@@ -158,55 +104,39 @@ describe("HtmlFileReporter", function () {
             };
         });
 
-        it("should not save a page image", function () {
-            var imageAvailable = null;
-
-            reporter.reportComparison(testResult, callback);
-
-            waitsFor(isFinished);
-
-            runs(function () {
+        it("should not save a page image", function (done) {
+            reporter.reportComparison(testResult, function () {
                 csscriticTestHelper.testImageUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "erroneous_page_url.reference.png"), function (result) {
-                    imageAvailable = result;
+                    expect(result).toBeFalsy();
+
+                    done();
                 });
-            });
-
-            waitsFor(function () {
-                return imageAvailable != null;
-            });
-
-            runs(function () {
-                expect(imageAvailable).toBeFalsy();
             });
         });
     });
 
     describe("'s page output", function () {
-        it("should save a HTML result page", function () {
+        it("should save a HTML result page", function (done) {
             reporter.report({
                 success: true
-            }, callback);
-
-            waitsFor(isFinished);
-
-            runs(function () {
+            }, function () {
                 var content = require("fs").read(reporterOutputPath + "index.html");
 
                 expect(content).toMatch(/Passed/);
+
+                done();
             });
         });
 
-        it("should mark a failed run", function () {
+        it("should mark a failed run", function (done) {
             reporter.report({
                 success: false
-            }, callback);
-
-            waitsFor(isFinished);
-
-            runs(function () {
+            }, function () {
                 var content = require("fs").read(reporterOutputPath + "index.html");
 
                 expect(content).toMatch(/Failed/);
+
+                done();
             });
         });
     });

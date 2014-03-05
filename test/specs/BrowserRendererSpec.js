@@ -4,7 +4,7 @@ describe("Browser renderer", function () {
     beforeEach(function () {
         the_image = "the_image";
 
-        spyOn(csscritic.util.queue, 'execute').andCallFake(function (func) {
+        spyOn(csscritic.util.queue, 'execute').and.callFake(function (func) {
             func(function () {});
         });
     });
@@ -15,12 +15,12 @@ describe("Browser renderer", function () {
             theBinaryContent = "the content",
             theImage = "the image";
 
-        spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback) {
+        spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback) {
             if (url === theUrl) {
                 successCallback(theBinaryContent);
             }
         });
-        spyOn(csscritic.util, 'getImageForBinaryContent').andCallFake(function (content, callback) {
+        spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content, callback) {
             if (content === theBinaryContent) {
                 callback(theImage);
             } else {
@@ -38,7 +38,7 @@ describe("Browser renderer", function () {
     it("should call the error handler if a page does not exist", function () {
         var successCallback = jasmine.createSpy("success"),
             errorCallback = jasmine.createSpy("error");
-        spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback, errorCallback) {
+        spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback, errorCallback) {
             errorCallback();
         });
 
@@ -49,7 +49,7 @@ describe("Browser renderer", function () {
     });
 
     it("should work without a callback on error", function () {
-        spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback, errorCallback) {
+        spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback, errorCallback) {
             errorCallback();
         });
         csscritic.renderer.browserRenderer("the_url", 42, 7);
@@ -60,7 +60,7 @@ describe("Browser renderer", function () {
             theHtml = "some html";
 
         beforeEach(function () {
-            spyOn(csscritic.util, 'ajax').andCallFake(function (url, successCallback) {
+            spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback) {
                 var relativeFixtureUrl;
                 if (url === theUrl) {
                     successCallback(theHtml);
@@ -69,14 +69,14 @@ describe("Browser renderer", function () {
                     successCallback([readFixtures(relativeFixtureUrl)]);
                 }
             });
-            spyOn(csscritic.util, 'getImageForBinaryContent').andCallFake(function (content, callback) {
+            spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content, callback) {
                 callback(null);
             });
         });
 
         it("should draw the html page if url is not an image, disable caching and execute JavaScript", function () {
             var image = null,
-                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").andCallFake(function (html, options, callback) {
+                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html, options, callback) {
                     if (html === theHtml) {
                         callback(the_image, []);
                     }
@@ -101,7 +101,7 @@ describe("Browser renderer", function () {
         it("should call the error handler if a page could not be rendered", function () {
             var successCallback = jasmine.createSpy("success"),
                 errorCallback = jasmine.createSpy("error");
-            spyOn(rasterizeHTML, "drawHTML").andCallFake(function (html, options, callback) {
+            spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html, options, callback) {
                 callback(null, [{
                     resourceType: "document"
                 }]);
@@ -113,20 +113,11 @@ describe("Browser renderer", function () {
             expect(errorCallback).toHaveBeenCalled();
         });
 
-        it("should report errors from rendering", function () {
-            var errors = null,
-                fixtureUrl = csscriticTestPath + "fixtures/",
+        it("should report errors from rendering", function (done) {
+            var fixtureUrl = csscriticTestPath + "fixtures/",
                 pageUrl = fixtureUrl + "brokenPage.html";
 
-            csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, renderErrors) {
-                errors = renderErrors;
-            });
-
-            waitsFor(function () {
-                return errors !== null;
-            });
-
-            runs(function () {
+            csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, errors) {
                 expect(errors).not.toBeNull();
                 expect(errors.length).toBe(3);
                 errors.sort();
@@ -135,6 +126,8 @@ describe("Browser renderer", function () {
                     "Unable to load image " + fixtureUrl + "image_does_not_exist.png",
                     "Unable to load stylesheet " + fixtureUrl + "css_does_not_exist.css"
                 ]);
+
+                done();
             });
         });
     });

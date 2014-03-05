@@ -5,10 +5,10 @@ describe("SignOffReporter", function () {
 
     beforeEach(function () {
         acceptPageSpy = jasmine.createSpy("acceptPage");
-        loadFullDocumentSpy = spyOn(csscritic.signOffReporterUtil, 'loadFullDocument').andCallFake(function (url, callback) {
+        loadFullDocumentSpy = spyOn(csscritic.signOffReporterUtil, 'loadFullDocument').and.callFake(function (url, callback) {
             callback("some content");
         });
-        calculateFingerprintSpy = spyOn(csscritic.signOffReporterUtil, 'calculateFingerprint').andReturn("fIngRPrinT");
+        calculateFingerprintSpy = spyOn(csscritic.signOffReporterUtil, 'calculateFingerprint').and.returnValue("fIngRPrinT");
     });
 
     it("should call the callback when finished reporting", function () {
@@ -77,7 +77,7 @@ describe("SignOffReporter", function () {
 
         var reporter = csscritic.SignOffReporter('fingerprints.json');
 
-        spyOn(csscritic.signOffReporterUtil, 'loadFingerprintJson').andCallFake(function (url, callback) {
+        spyOn(csscritic.signOffReporterUtil, 'loadFingerprintJson').and.callFake(function (url, callback) {
             callback([{
                 pageUrl: pageUrl,
                 fingerprint: "fIngRPrinT"

@@ -12,13 +12,13 @@ describe("Basic HTML reporter", function () {
         differenceImageCanvas = window.document.createElement("canvas");
         highlightedDifferenceImageCanvas = window.document.createElement("canvas");
 
-        spyOn(csscritic.basicHTMLReporterUtil, 'getDifferenceCanvas').andCallFake(function (imageA, imageB) {
+        spyOn(csscritic.basicHTMLReporterUtil, 'getDifferenceCanvas').and.callFake(function (imageA, imageB) {
             if (imageA === htmlImage && imageB === referenceImage) {
                 return differenceImageCanvas;
             }
         });
 
-        spyOn(csscritic.basicHTMLReporterUtil, 'getHighlightedDifferenceCanvas').andCallFake(function (imageA, imageB) {
+        spyOn(csscritic.basicHTMLReporterUtil, 'getHighlightedDifferenceCanvas').and.callFake(function (imageA, imageB) {
             if (imageA === htmlImage && imageB === referenceImage) {
                 return highlightedDifferenceImageCanvas;
             }
@@ -135,7 +135,7 @@ describe("Basic HTML reporter", function () {
     describe("on completion", function () {
         it("should render the time taken", function () {
             var dateNowValues = [1000, 2034];
-            spyOn(Date, "now").andCallFake(function () {
+            spyOn(Date, "now").and.callFake(function () {
                 return dateNowValues.shift();
             });
 
@@ -184,7 +184,7 @@ describe("Basic HTML reporter", function () {
         var paramsOnFailingTest, resizePageImageSpy, acceptPageSpy;
 
         beforeEach(function () {
-            resizePageImageSpy = jasmine.createSpy("resizePageImage").andCallFake(function (width, height, callback) {
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function (width, height, callback) {
                 callback(updatedReferenceImage);
             });
             acceptPageSpy = jasmine.createSpy("acceptPage");
@@ -283,7 +283,7 @@ describe("Basic HTML reporter", function () {
             }).trigger("mouseup");
 
             expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24, jasmine.any(Function));
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toBe(updatedReferenceImage);
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")[0]).toBe(updatedReferenceImage);
         });
 
     });
@@ -292,7 +292,7 @@ describe("Basic HTML reporter", function () {
         var paramsOnMissingReference, resizePageImageSpy, acceptPageSpy;
 
         beforeEach(function () {
-            resizePageImageSpy = jasmine.createSpy("resizePageImage").andCallFake(function (width, height, callback) {
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function (width, height, callback) {
                 callback(updatedReferenceImage);
             });
             acceptPageSpy = jasmine.createSpy("acceptPage");
@@ -355,21 +355,13 @@ describe("Basic HTML reporter", function () {
             }).trigger("mouseup");
 
             expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24, jasmine.any(Function));
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toBe(updatedReferenceImage);
+            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")[0]).toBe(updatedReferenceImage);
         });
 
-        it("should correctly set the current image size after a resize", function () {
-            updatedReferenceImage = null;
-
+        it("should correctly set the current image size after a resize", function (done) {
             csscriticTestHelper.createImageOfSize(123, 234, function (img) {
                 updatedReferenceImage = img;
-            });
 
-            waitsFor(function () {
-                return updatedReferenceImage !== null;
-            });
-
-            runs(function () {
                 reporter.reportComparison(paramsOnMissingReference);
 
                 $("#csscritic_basichtmlreporter .comparison .pageImageContainer").css({
@@ -380,6 +372,7 @@ describe("Basic HTML reporter", function () {
                 expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer").width()).toEqual(123);
                 expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer").height()).toEqual(234);
 
+                done();
             });
         });
     });
@@ -460,7 +453,7 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should show a warning if the browser is not supported", function () {
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.andCallFake(function (callback) {
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
                 callback(false);
             });
 
@@ -470,7 +463,7 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should not show a warning if the browser is supported", function () {
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.andCallFake(function (callback) {
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
                 callback(true);
             });
 

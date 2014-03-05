@@ -16,7 +16,7 @@ describe("Regression testing", function () {
         getImageForPageUrl = spyOn(csscritic.renderer, 'getImageForPageUrl');
         readReferenceImage = spyOn(csscritic.storage, 'readReferenceImage');
 
-        spyOn(csscritic.util, 'workAroundTransparencyIssueInFirefox').andCallFake(function (image, callback) {
+        spyOn(csscritic.util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image, callback) {
             callback(image);
         });
 
@@ -29,10 +29,10 @@ describe("Regression testing", function () {
 
     describe("adding & executing", function () {
         beforeEach(function () {
-            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
+            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, callback) {
                 callback(htmlImage);
             });
-            readReferenceImage.andCallFake(function (pageUrl, callback) {
+            readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
         });
@@ -41,7 +41,7 @@ describe("Regression testing", function () {
             var passed = null,
                 imagediffEqual;
 
-            imagediffEqual = spyOn(imagediff, 'equal').andReturn(true);
+            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(true);
 
             csscritic.add("samplepage.html");
 
@@ -60,7 +60,7 @@ describe("Regression testing", function () {
             var passed = null,
                 imagediffEqual;
 
-            imagediffEqual = spyOn(imagediff, 'equal').andReturn(false);
+            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(false);
 
             csscritic.add("samplepage.html");
 
@@ -90,10 +90,10 @@ describe("Regression testing", function () {
 
     describe("Reference comparison", function () {
         beforeEach(function () {
-            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
+            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, callback) {
                 callback(htmlImage);
             });
-            readReferenceImage.andCallFake(function (pageUrl, callback) {
+            readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
         });
@@ -118,7 +118,7 @@ describe("Regression testing", function () {
         it("should compare a page and return 'passed' on success", function () {
             var status, imagediffEqual;
 
-            imagediffEqual = spyOn(imagediff, 'equal').andReturn(true);
+            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(true);
 
             csscritic.compare({url: "samplepage.html"}, function (result) {
                 status = result;
@@ -130,7 +130,7 @@ describe("Regression testing", function () {
         it("should compare a page and return 'failed' on failure", function () {
             var status, imagediffEqual;
 
-            imagediffEqual = spyOn(imagediff, 'equal').andReturn(false);
+            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(false);
 
             csscritic.compare({url: "differentpage.html"}, function (result) {
                 status = result;
@@ -140,7 +140,7 @@ describe("Regression testing", function () {
         });
 
         it("should make the callback optional", function () {
-            spyOn(imagediff, 'equal').andReturn(true);
+            spyOn(imagediff, 'equal').and.returnValue(true);
 
             csscritic.compare({url: "samplepage.html"});
         });
@@ -148,10 +148,10 @@ describe("Regression testing", function () {
 
     describe("First generation of a reference image", function () {
         beforeEach(function () {
-            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, callback) {
+            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, callback) {
                 callback(htmlImage);
             });
-            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
+            readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
         });
@@ -173,10 +173,10 @@ describe("Regression testing", function () {
         it("should return 'referenceMissing' if the reference image cannot be loaded", function () {
             var status;
 
-            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, successCallback) {
+            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, successCallback) {
                 successCallback(htmlImage);
             });
-            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
+            readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
@@ -191,10 +191,10 @@ describe("Regression testing", function () {
         it("should return 'error' if the page does not exist", function () {
             var status;
 
-            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
                 errorCallback();
             });
-            readReferenceImage.andCallFake(function (pageUrl, successCallback, errorCallback) {
+            readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
@@ -209,10 +209,10 @@ describe("Regression testing", function () {
         it("should return 'error' if the page does not exist even if the reference image does", function () {
             var status;
 
-            getImageForPageUrl.andCallFake(function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
                 errorCallback();
             });
-            readReferenceImage.andCallFake(function (pageUrl, successCallback) {
+            readReferenceImage.and.callFake(function (pageUrl, successCallback) {
                 successCallback(referenceImage, viewport);
             });
 

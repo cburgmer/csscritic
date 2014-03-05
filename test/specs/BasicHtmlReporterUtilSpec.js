@@ -5,46 +5,30 @@ describe("BasicHTMLReporter utilities", function () {
         beforeEach(function () {
             canvas = jasmine.createSpyObj('canvas', ['getContext']);
             context = jasmine.createSpyObj('context', ['drawImage', 'getImageData']);
-            canvas.getContext.andReturn(context);
+            canvas.getContext.and.returnValue(context);
 
-            spyOn(document, 'createElement').andCallFake(function (tagName) {
+            spyOn(document, 'createElement').and.callFake(function (tagName) {
                 if (tagName === 'canvas') {
                     return canvas;
                 }
             });
         });
 
-        it("should return false when reading HTML from a canvas is not supported", function () {
-            var supported;
+        it("should return false when reading HTML from a canvas is not supported", function (done) {
+            context.getImageData.and.throwError(new Error());
 
-            context.getImageData.andThrow(new Error());
-
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (isSupported) {
-                supported = isSupported;
-            });
-
-            waitsFor(function () {
-                return supported !== undefined;
-            });
-
-            runs(function () {
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
                 expect(supported).toBe(false);
+
+                done();
             });
         });
 
-        it("should return true when reading HTML from a canvas is supported", function () {
-            var supported;
-
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (isSupported) {
-                supported = isSupported;
-            });
-
-            waitsFor(function () {
-                return supported !== undefined;
-            });
-
-            runs(function () {
+        it("should return true when reading HTML from a canvas is supported", function (done) {
+            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
                 expect(supported).toBe(true);
+
+                done();
             });
         });
     });
@@ -67,39 +51,20 @@ describe("BasicHTMLReporter utilities", function () {
             "KQhZCkKWgpClIGQpCFkKQpaCkKUgZCkIWQpCloKQpSBkKQhZCkKWgpClIGT9Ax6gM07b4lNXAAAAAElFTkSuQmCC";
 
         beforeEach(function () {
-            this.addMatchers(imagediff.jasmine);
+            jasmine.addMatchers(imagediffForJasmine2);
         });
 
-        it("should return the canvas with the correct filling", function () {
-            var imageA = null,
-                imageB = null,
-                resultingCanvas = null,
-                referenceImage = null;
+        it("should return the canvas with the correct filling", function (done) {
+            csscriticTestHelper.loadImageFromUrl(csscriticTestPath + "fixtures/green.png", function (imageA) {
+                csscriticTestHelper.loadImageFromUrl(csscriticTestPath + "fixtures/redWithLetter.png", function (imageB) {
+                    csscriticTestHelper.loadImageFromUrl(diffReferenceUrl, function (referenceImage) {
+                        var resultingCanvas = csscritic.basicHTMLReporterUtil.getDifferenceCanvas(imageA, imageB);
 
-            csscriticTestHelper.loadImageFromUrl(csscriticTestPath + "fixtures/green.png", function (image) {
-                imageA = image;
-            });
-            csscriticTestHelper.loadImageFromUrl(csscriticTestPath + "fixtures/redWithLetter.png", function (image) {
-                imageB = image;
-            });
-            csscriticTestHelper.loadImageFromUrl(diffReferenceUrl, function (image) {
-                referenceImage = image;
-            });
+                        expect(resultingCanvas).toImageDiffEqual(referenceImage);
 
-            waitsFor(function () {
-                return imageA !== null && imageB !== null && referenceImage !== null;
-            });
-
-            runs(function () {
-                resultingCanvas = csscritic.basicHTMLReporterUtil.getDifferenceCanvas(imageA, imageB);
-            });
-
-            waitsFor(function () {
-                return resultingCanvas !== null;
-            });
-
-            runs(function () {
-                expect(resultingCanvas).toImageDiffEqual(referenceImage);
+                        done();
+                    });
+                });
             });
         });
     });

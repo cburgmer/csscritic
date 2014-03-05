@@ -20,7 +20,7 @@ describe("Web storage support for reference images", function () {
         var theImage = "the image",
             alertSpy = spyOn(window, 'alert');
 
-        spyOn(csscritic.util, 'getDataURIForImage').andThrow("can't read canvas");
+        spyOn(csscritic.util, 'getDataURIForImage').and.throwError("can't read canvas");
 
         try {
             csscritic.domstorage.storeReferenceImage("somePage.html", theImage, 47, 11);

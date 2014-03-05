@@ -20,8 +20,8 @@ module.exports = function (grunt) {
                 specs: ['test/specsShared/*', 'test/specs/*'],
                 helpers: [
                     'test/helpers.js',
-                    'bower_components/jquery/jquery.js',
-                    'bower_components/jasmine-jquery/lib/jasmine-jquery.js',
+                    'node_modules/jquery/dist/jquery.js',
+                    'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
                     'test/gruntpath.js'
                 ],
                 fixturesPath: './fixtures/'
@@ -169,6 +169,7 @@ module.exports = function (grunt) {
                         readFixtures: true,
                         rasterizeHTML: true,
                         imagediff: true,
+                        imagediffForJasmine2: true,
                         csscritic: true,
                         ifNotInWebkitIt: true,
                         safeLog: true,
@@ -203,18 +204,18 @@ module.exports = function (grunt) {
                         expect: true,
                         spyOn: true,
                         imagediff: true,
+                        imagediffForJasmine2: true,
                         csscritic: true,
                         safeLog: true,
                         csscriticTestPath: true,
                         csscriticTestHelper: true,
-                        loadStoragePluginSpecs: true
+                        loadStoragePluginSpecs: true,
+                        jasmineRequire: true,
+                        executeJasmine: true
                     }
                 },
                 src: [
-                    'test/helpers.js',
-                    'test/run-*.js',
-                    'test/specsPhantom/*.js',
-                    'test/phantomjs-regressionrunner.js'
+                    'test/*.js',
                 ]
             }
         }

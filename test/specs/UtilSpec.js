@@ -1,169 +1,98 @@
 describe("Utility", function () {
     describe("getImageForUrl", function () {
-        it("should load an image", function () {
-            var the_image = null,
-                imgUrl = csscriticTestPath + "fixtures/green.png";
+        it("should load an image", function (done) {
+            var imgUrl = csscriticTestPath + "fixtures/green.png";
 
             csscritic.util.getImageForUrl(imgUrl, function (image) {
-                the_image = image;
-            });
+                expect(image instanceof HTMLElement).toBeTruthy();
+                expect(image.nodeName).toEqual("IMG");
+                expect(image.src.substr(-imgUrl.length)).toEqual(imgUrl);
 
-            waitsFor(function () {
-                return the_image !== null;
+                done();
             });
-
-            runs(function () {
-                expect(the_image instanceof HTMLElement).toBeTruthy();
-                expect(the_image.nodeName).toEqual("IMG");
-                expect(the_image.src.substr(-imgUrl.length)).toEqual(imgUrl);
-            });
-
         });
 
-        it("should handle a missing image", function () {
-            var errorCalled = false;
-
+        it("should handle a missing image", function (done) {
             csscritic.util.getImageForUrl("does_not_exist.png", function () {}, function () {
-                errorCalled = true;
-            });
-
-            waitsFor(function () {
-                return errorCalled;
-            });
-
-            runs(function () {
-                expect(errorCalled).toBeTruthy();
+                done();
             });
         });
     });
 
     describe("getDataURIForImage", function () {
-        it("should return the data URI for the given image", function () {
-            var imageDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=",
-                image = null,
-                dataUri;
+        it("should return the data URI for the given image", function (done) {
+            var imageDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=";
 
-            csscriticTestHelper.loadImageFromUrl(imageDataUri, function (the_image) {
-                image = the_image;
-            });
-
-            waitsFor(function () {
-                return image !== null;
-            });
-
-            runs(function () {
-                dataUri = csscritic.util.getDataURIForImage(image);
+            csscriticTestHelper.loadImageFromUrl(imageDataUri, function (image) {
+                var dataUri = csscritic.util.getDataURIForImage(image);
                 expect(dataUri).toContain(imageDataUri.substr(0, 10));
+
+                done();
             });
         });
     });
 
     describe("getImageForBinaryContent", function () {
-        it("should load an image", function () {
-            var imageData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=',
-                theImage;
+        it("should load an image", function (done) {
+            var imageData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=';
 
             csscritic.util.getImageForBinaryContent(atob(imageData), function (image) {
-                theImage = image;
-            });
+                expect(image instanceof HTMLElement).toBeTruthy();
+                expect(image.nodeName).toEqual("IMG");
+                expect(image.src).toEqual('data:image/png;base64,' + imageData);
 
-            waitsFor(function () {
-                return theImage !== undefined;
+                done();
             });
-
-            runs(function () {
-                expect(theImage instanceof HTMLElement).toBeTruthy();
-                expect(theImage.nodeName).toEqual("IMG");
-                expect(theImage.src).toEqual('data:image/png;base64,' + imageData);
-            });
-
         });
 
-        it("should handle invalid image content", function () {
-            var theImage;
-
+        it("should handle invalid image content", function (done) {
             csscritic.util.getImageForBinaryContent("invalid content", function (image) {
-                theImage = image;
-            });
+                expect(image).toBe(null);
 
-            waitsFor(function () {
-                return theImage !== undefined;
-            });
-
-            runs(function () {
-                expect(theImage).toBe(null);
+                done();
             });
         });
     });
 
     describe("ajax", function () {
 
-        it("should load content from a URL", function () {
-            var loadedContent,
-                errorCallback = jasmine.createSpy("errorCallback");
+        it("should load content from a URL", function (done) {
+            var errorCallback = jasmine.createSpy("errorCallback");
 
             csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "simple.js", function (content) {
-                loadedContent = content;
+                expect(content).toEqual('var s = "hello";\n');
+
+                done();
             }, errorCallback);
-
-            waitsFor(function () {
-                return loadedContent !== undefined;
-            });
-
-            runs(function () {
-                expect(loadedContent).toEqual('var s = "hello";\n');
-                expect(errorCallback).not.toHaveBeenCalled();
-            });
         });
 
-        it("should load binary data", function () {
-            var loadedContent;
-
+        it("should load binary data", function (done) {
             csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "green.png", function (content) {
-                loadedContent = content;
+                expect(btoa(content)).toEqual("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABFElEQVR4nO3OMQ0AAAjAMPybhnsKxrHUQGc2r+iBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YHAAV821mT1w27RAAAAAElFTkSuQmCC");
+
+                done();
             }, function () {});
-
-            waitsFor(function () {
-                return loadedContent !== undefined;
-            });
-
-            runs(function () {
-                expect(btoa(loadedContent)).toEqual("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABFElEQVR4nO3OMQ0AAAjAMPybhnsKxrHUQGc2r+iBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YHAAV821mT1w27RAAAAAElFTkSuQmCC");
-            });
         });
 
-        it("should call error callback on fail", function () {
-            var finished = false,
-                successCallback = jasmine.createSpy("successCallback"),
-                errorCallback = jasmine.createSpy("errorCallback").andCallFake(function () {
-                    finished = true;
-                });
-
-            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "non_existing_url.html", successCallback, errorCallback);
-
-            waitsFor(function () {
-                return finished;
-            });
-
-            runs(function () {
-                expect(successCallback).not.toHaveBeenCalled();
-                expect(errorCallback).toHaveBeenCalled();
+        it("should call error callback on fail", function (done) {
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "non_existing_url.html", function () {}, function () {
+                done();
             });
         });
 
         it("should not cache repeated calls by default", function () {
-            var dateNowSpy = spyOn(window.Date, 'now').andReturn(42),
+            var dateNowSpy = spyOn(window.Date, 'now').and.returnValue(42),
                 ajaxRequest = jasmine.createSpyObj("ajaxRequest", ["open", "addEventListener", "overrideMimeType", "send"]);
 
-            spyOn(window, "XMLHttpRequest").andReturn(ajaxRequest);
+            spyOn(window, "XMLHttpRequest").and.returnValue(ajaxRequest);
 
             csscritic.util.ajax("non_existing_url.html", function () {}, function () {});
 
-            expect(ajaxRequest.open.mostRecentCall.args[1]).toEqual('non_existing_url.html?_=42');
+            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=42');
 
-            dateNowSpy.andReturn(43);
+            dateNowSpy.and.returnValue(43);
             csscritic.util.ajax("non_existing_url.html", function () {}, function () {});
-            expect(ajaxRequest.open.mostRecentCall.args[1]).toEqual('non_existing_url.html?_=43');
+            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=43');
         });
 
     });
@@ -257,7 +186,7 @@ describe("Utility", function () {
             expect(job1).toHaveBeenCalled();
             expect(job2).not.toHaveBeenCalled();
 
-            job1.mostRecentCall.args[0]();
+            job1.calls.mostRecent().args[0]();
             expect(job2).toHaveBeenCalled();
         });
     });
