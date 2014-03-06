@@ -25,11 +25,18 @@ function runCSSTest {
     phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log="${BUILD_DIR}" test/ui/*.html || phantomjs dist/csscritic-phantom.js -f test/signedOff.json --log="${BUILD_DIR}" test/ui/*.html
 }
 
+function checkExample {
+    echo -e "\nChecking example"
+    rm -f example/pageUnderTest.html.json
+    phantomjs test/run-csscritic-phantom.js -f example/signedOff.json example/pageUnderTest.html || phantomjs test/run-csscritic-phantom.js -f example/signedOff.json example/pageUnderTest.html
+}
+
 if [ ! -d node_modules ]; then
     installDependencies
 fi
 
 build
 runCSSTest
+checkExample
 
 echo -e "\n\033[32m\033[1mLooking good!\033[0m"

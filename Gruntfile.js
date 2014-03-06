@@ -3,7 +3,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         clean: {
-            all: ['build', 'test/ui/*.html.json']
+            all: ['build', 'test/ui/*.html.json', 'example/*.html.json']
         },
         jasmine: {
             src: [
