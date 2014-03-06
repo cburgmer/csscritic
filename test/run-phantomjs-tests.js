@@ -15,10 +15,15 @@ function loadJasmine() {
 function loadCode() {
     phantom.injectJs("./test/helpers.js");
 
+    phantom.injectJs("./src/phantomjsbind.js");
+    phantom.injectJs("./bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js");
+    phantom.injectJs("./bower_components/jssha/src/sha256.js");
     phantom.injectJs("./bower_components/js-imagediff/imagediff.js");
     phantom.injectJs("./src/utils.js");
     phantom.injectJs("./src/phantomjsrenderer.js");
+    phantom.injectJs("./src/terminalreporter.js");
     phantom.injectJs("./src/htmlfilereporter.js");
+    phantom.injectJs("./src/signoffreporter.js");
     phantom.injectJs("./src/filestorage.js");
     phantom.injectJs("./src/csscritic.js");
 }
@@ -29,6 +34,10 @@ function loadTests() {
     phantom.injectJs("./specsPhantom/FileStorageSpec.js");
     phantom.injectJs("./specsPhantom/PhantomJSRendererSpec.js");
     phantom.injectJs("./specsPhantom/HtmlFileReporterSpec.js");
+    phantom.injectJs("./specsPhantom/TerminalReporterSpec.js");
+    phantom.injectJs("./specsPhantom/SignOffReporterUtilSpec.js");
+    phantom.injectJs("./specsPhantom/SignOffReporterSpec.js");
+
 }
 
 function startWebserver() {

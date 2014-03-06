@@ -6,15 +6,12 @@ module.exports = function (grunt) {
             src: [
                 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
                 'bower_components/js-imagediff/imagediff.js',
-                'bower_components/jssha/src/sha256.js',
                 'src/utils.js',
                 'src/phantomjsrenderer.js',
                 'src/browserrenderer.js',
                 'src/domstorage.js',
                 'src/<%= pkg.name %>.js',
                 'src/basichtmlreporter.js',
-                'src/terminalreporter.js',
-                'src/signoffreporter.js'
             ],
             options: {
                 specs: ['test/specsShared/*', 'test/specs/*'],
