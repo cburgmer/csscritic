@@ -4,6 +4,7 @@
 phantom.injectJs("bower_components/js-imagediff/imagediff.js");
 phantom.injectJs("bower_components/jssha/src/sha256.js");
 phantom.injectJs("bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js");
+phantom.injectJs("src/phantomjsbind.js");
 phantom.injectJs("src/utils.js");
 phantom.injectJs("src/phantomjsrenderer.js");
 phantom.injectJs("src/signoffreporter.js");
