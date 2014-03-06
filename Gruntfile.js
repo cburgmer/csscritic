@@ -34,7 +34,7 @@ module.exports = function (grunt) {
                         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
                         '* <%= pkg.homepage %>\n' +
                         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
-                        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
+                        ' Licensed <%= pkg.license %> */' +
                         '\n/* Integrated dependencies:\n' +
                         ' * jsSHA.js (BSD License),\n' +
                         ' * url (MIT License),\n' +
@@ -75,7 +75,7 @@ module.exports = function (grunt) {
                         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
                         '* <%= pkg.homepage %>\n' +
                         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
-                        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */' +
+                        ' Licensed <%= pkg.license %> */' +
                         '\n/* Integrated dependencies:\n' +
                         ' * url (MIT License),\n' +
                         ' * CSSOM (MIT License),\n' +
