@@ -50,6 +50,7 @@ module.exports = function (grunt) {
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
                 src: [
+                    'src/phantomjsbind.js',
                     'src/utils.js',
                     'node_modules/jssha/src/sha.js',
                     'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
@@ -159,7 +160,8 @@ module.exports = function (grunt) {
                         console: true,
                         require: true,
                         csscritic: true
-                    }
+                    },
+                    ignores: ['src/phantomjsbind.js']
                 },
                 src: 'src/*.js',
             },

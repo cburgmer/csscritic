@@ -4,6 +4,7 @@
 phantom.injectJs("node_modules/imagediff/imagediff.js");
 phantom.injectJs("node_modules/jssha/src/sha.js");
 phantom.injectJs("node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js");
+phantom.injectJs("src/phantomjsbind.js");
 phantom.injectJs("src/utils.js");
 phantom.injectJs("src/phantomjsrenderer.js");
 phantom.injectJs("src/signoffreporter.js");
