@@ -6,12 +6,7 @@ module.exports = function (grunt) {
             all: ['build', 'test/ui/*.html.json', 'example/*.html.json']
         },
         jasmine: {
-            src: [
-                'node_modules/jssha/src/sha.js',
-                'csscritic.js',
-                'src/terminalreporter.js',
-                'src/signoffreporter.js'
-            ],
+            src: 'csscritic.js',
             options: {
                 specs: ['test/specsShared/*', 'test/specs/*'],
                 helpers: [
