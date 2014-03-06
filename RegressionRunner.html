@@ -4,11 +4,9 @@
     <title>Regression Runner</title>
     <meta charset="utf-8"/>
 
-    <link rel="stylesheet" type="text/css" href="dist/csscritic.min.css">
+    <script src="csscritic.js"></script>
 
-    <script type="text/javascript" src="dist/csscritic.allinone.js"></script>
-
-    <script type="text/javascript">
+    <script>
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
             csscritic.add('test/ui/failingTest.html');
@@ -25,9 +23,7 @@
             csscritic.execute();
         };
     </script>
-
 </head>
-
 <body>
 </body>
 </html>

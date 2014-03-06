@@ -7,15 +7,8 @@ module.exports = function (grunt) {
         },
         jasmine: {
             src: [
-                'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
-                'node_modules/imagediff/imagediff.js',
                 'node_modules/jssha/src/sha.js',
-                'src/utils.js',
-                'src/phantomjsrenderer.js',
-                'src/browserrenderer.js',
-                'src/domstorage.js',
-                'src/<%= pkg.name %>.js',
-                'src/basichtmlreporter.js',
+                'csscritic.js',
                 'src/terminalreporter.js',
                 'src/signoffreporter.js'
             ],
