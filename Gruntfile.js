@@ -2,6 +2,9 @@
 module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        clean: {
+            all: ['build', 'test/ui/*.html.json']
+        },
         jasmine: {
             src: [
                 'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
@@ -243,6 +246,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-csslint');
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-shell');
 
     grunt.registerTask('test', [
@@ -252,11 +256,15 @@ module.exports = function (grunt) {
         'shell:runPhantomTests'
     ]);
 
-    grunt.registerTask('default', [
-        'test',
+    grunt.registerTask('build', [
         'concat',
         'uglify',
         'cssmin'
+    ]);
+
+    grunt.registerTask('default', [
+        'test',
+        'build'
     ]);
 
 };
