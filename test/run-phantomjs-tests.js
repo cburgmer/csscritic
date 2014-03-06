@@ -14,7 +14,7 @@ function loadJasmine() {
 function loadCode() {
     phantom.injectJs("./test/helpers.js");
 
-    phantom.injectJs("./bower_components/js-imagediff/imagediff.js");
+    phantom.injectJs("./node_modules/imagediff/imagediff.js");
     phantom.injectJs("./src/utils.js");
     phantom.injectJs("./src/phantomjsrenderer.js");
     phantom.injectJs("./src/htmlfilereporter.js");

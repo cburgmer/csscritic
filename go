@@ -1,13 +1,8 @@
 #!/bin/bash
 set -e
 
-function installBuildDependencies {
-    npm install
-}
-
 function installDependencies {
-    ./node_modules/.bin/bower --version
-    ./node_modules/.bin/bower install
+    npm install
 }
 
 function build {
@@ -21,10 +16,6 @@ function runCSSTest {
 }
 
 if [ ! -d node_modules ]; then
-    installBuildDependencies
-fi
-
-if [ ! -d bower_components ]; then
     installDependencies
 fi
 

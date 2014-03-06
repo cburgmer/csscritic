@@ -4,9 +4,9 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         jasmine: {
             src: [
-                'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
-                'bower_components/js-imagediff/imagediff.js',
-                'bower_components/jssha/src/sha256.js',
+                'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
+                'node_modules/imagediff/imagediff.js',
+                'node_modules/jssha/src/sha.js',
                 'src/utils.js',
                 'src/phantomjsrenderer.js',
                 'src/browserrenderer.js',
@@ -53,11 +53,26 @@ module.exports = function (grunt) {
                         ' * imagediff.js (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
-                src: ['src/utils.js', 'bower_components/jssha/src/sha256.js', 'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'bower_components/js-imagediff/imagediff.js', 'src/phantomjsrenderer.js', 'src/filestorage.js', 'src/<%= pkg.name %>.js', 'src/signoffreporter.js', 'src/terminalreporter.js', 'src/htmlfilereporter.js', 'src/phantomjs_runner.js'],
+                src: [
+                    'src/utils.js',
+                    'node_modules/jssha/src/sha.js',
+                    'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
+                    'node_modules/imagediff/imagediff.js',
+                    'src/phantomjsrenderer.js',
+                    'src/filestorage.js',
+                    'src/<%= pkg.name %>.js',
+                    'src/signoffreporter.js',
+                    'src/terminalreporter.js',
+                    'src/htmlfilereporter.js',
+                    'src/phantomjs_runner.js'
+                ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
             },
             server: {
-                src: ['bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js', 'src/phantomjs_render_backend.js'],
+                src: [
+                    'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
+                    'src/phantomjs_render_backend.js'
+                ],
                 dest: 'dist/<%= pkg.name %>-server.js'
             }
         },
@@ -79,8 +94,8 @@ module.exports = function (grunt) {
                 },
                 files: {
                     'dist/<%= pkg.name %>.allinone.js': [
-                        'bower_components/rasterizeHTML.js/dist/rasterizeHTML.allinone.js',
-                        'bower_components/js-imagediff/imagediff.js',
+                        'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
+                        'node_modules/imagediff/imagediff.js',
                         'src/utils.js',
                         'src/browserrenderer.js',
                         'src/domstorage.js',
