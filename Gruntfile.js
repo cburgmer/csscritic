@@ -89,10 +89,10 @@ module.exports = function (grunt) {
                         'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
                         'node_modules/imagediff/imagediff.js',
                         'src/utils.js',
-                        'src/browserrenderer.js',
-                        'src/domstorage.js',
+                        'src/browser/browserrenderer.js',
+                        'src/browser/domstorage.js',
                         'src/<%= pkg.name %>.js',
-                        'src/basichtmlreporter.js'
+                        'src/browser/basichtmlreporter.js'
                     ]
                 }
             }
@@ -158,7 +158,7 @@ module.exports = function (grunt) {
                     },
                     ignores: ['src/phantomjsbind.js']
                 },
-                src: 'src/*.js',
+                src: 'src/**/*.js',
             },
             test: {
                 options: {

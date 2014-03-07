@@ -13,10 +13,10 @@
         jsDependencies = [
             'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
             'node_modules/imagediff/imagediff.js',
+            'src/browser/basichtmlreporter.js',
+            'src/browser/browserrenderer.js',
+            'src/browser/domstorage.js',
             'src/utils.js',
-            'src/basichtmlreporter.js',
-            'src/browserrenderer.js',
-            'src/domstorage.js',
             'src/csscritic.js'
         ];
 
