@@ -100,13 +100,13 @@ module.exports = function (grunt) {
         cssmin: {
             dist: {
                 files: {
-                    'dist/<%= pkg.name %>.min.css': ['src/basichtmlreporter.css']
+                    'dist/<%= pkg.name %>.min.css': ['src/browser/basichtmlreporter.css']
                 }
             }
         },
         csslint: {
             basichtmlreporter: {
-                src: 'src/basichtmlreporter.css',
+                src: 'src/browser/basichtmlreporter.css',
                 options: {
                     "ids": false,
                     "adjoining-classes": false,
@@ -118,13 +118,10 @@ module.exports = function (grunt) {
         watch: {
             files: [
                 '*.js',
-                'src/*.js',
-                'test/*.js'
+                'src/**/*.js',
+                'test/**/*.js'
             ],
-            tasks: [
-                'jshint',
-                'jasmine'
-            ]
+            tasks: ['test']
         },
         jshint: {
             options: {
@@ -224,6 +221,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     'test/*.js',
+                    'test/specsPhantom/*.js',
                 ]
             }
         }
