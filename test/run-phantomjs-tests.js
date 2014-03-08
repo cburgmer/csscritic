@@ -14,16 +14,16 @@ function loadJasmine() {
 function loadCode() {
     phantom.injectJs("./test/helpers.js");
 
-    phantom.injectJs("./src/phantomjsbind.js");
+    phantom.injectJs("./src/cli/phantomjsbind.js");
     phantom.injectJs("./node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js");
     phantom.injectJs("./node_modules/jssha/src/sha.js");
     phantom.injectJs("./node_modules/imagediff/imagediff.js");
     phantom.injectJs("./src/utils.js");
-    phantom.injectJs("./src/phantomjsrenderer.js");
-    phantom.injectJs("./src/terminalreporter.js");
-    phantom.injectJs("./src/htmlfilereporter.js");
-    phantom.injectJs("./src/signoffreporter.js");
-    phantom.injectJs("./src/filestorage.js");
+    phantom.injectJs("./src/cli/phantomjsrenderer.js");
+    phantom.injectJs("./src/cli/terminalreporter.js");
+    phantom.injectJs("./src/cli/htmlfilereporter.js");
+    phantom.injectJs("./src/cli/signoffreporter.js");
+    phantom.injectJs("./src/cli/filestorage.js");
     phantom.injectJs("./src/csscritic.js");
 }
 

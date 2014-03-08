@@ -45,18 +45,18 @@ module.exports = function (grunt) {
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
                 src: [
-                    'src/phantomjsbind.js',
+                    'src/cli/phantomjsbind.js',
                     'src/utils.js',
                     'node_modules/jssha/src/sha.js',
                     'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
                     'node_modules/imagediff/imagediff.js',
-                    'src/phantomjsrenderer.js',
-                    'src/filestorage.js',
-                    'src/<%= pkg.name %>.js',
-                    'src/signoffreporter.js',
-                    'src/terminalreporter.js',
-                    'src/htmlfilereporter.js',
-                    'src/phantomjs_runner.js'
+                    'src/cli/phantomjsrenderer.js',
+                    'src/cli/filestorage.js',
+                    'src/csscritic.js',
+                    'src/cli/signoffreporter.js',
+                    'src/cli/terminalreporter.js',
+                    'src/cli/htmlfilereporter.js',
+                    'src/cli/phantomjs_runner.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
             },
@@ -156,7 +156,7 @@ module.exports = function (grunt) {
                         require: true,
                         csscritic: true
                     },
-                    ignores: ['src/phantomjsbind.js']
+                    ignores: ['src/cli/phantomjsbind.js']
                 },
                 src: 'src/**/*.js',
             },
