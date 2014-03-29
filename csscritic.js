@@ -8,7 +8,7 @@
 (function () {
     var thisFileName = 'csscritic.js',
         cssDependencies = [
-            'src/basichtmlreporter.css'
+            'src/browser/basichtmlreporter.css'
         ],
         jsDependencies = [
             'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
