@@ -34,7 +34,7 @@ window.csscritic = (function (module) {
         }, errorCallback);
     };
 
-    module.renderer.phantomjsRenderer = function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+    module.renderer.phantomjsRenderer = function (parameters, successCallback, errorCallback) {
         var page = require("webpage").create(),
             errorneousResources = [],
             handleError = function () {
@@ -54,11 +54,11 @@ window.csscritic = (function (module) {
         };
 
         page.viewportSize = {
-            width: width,
-            height: height
+            width: parameters.width,
+            height: parameters.height
         };
 
-        page.open(getFileUrl(pageUrl), function (status) {
+        page.open(getFileUrl(parameters.url), function (status) {
             if (status === "success") {
                 setTimeout(function () {
                     renderPage(page, function (image) {

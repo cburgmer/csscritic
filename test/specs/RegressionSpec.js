@@ -29,7 +29,7 @@ describe("Regression testing", function () {
 
     describe("adding & executing", function () {
         beforeEach(function () {
-            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, callback) {
+            getImageForPageUrl.and.callFake(function (parameters, callback) {
                 callback(htmlImage);
             });
             readReferenceImage.and.callFake(function (pageUrl, callback) {
@@ -90,7 +90,7 @@ describe("Regression testing", function () {
 
     describe("Reference comparison", function () {
         beforeEach(function () {
-            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, callback) {
+            getImageForPageUrl.and.callFake(function (parameters, callback) {
                 callback(htmlImage);
             });
             readReferenceImage.and.callFake(function (pageUrl, callback) {
@@ -112,7 +112,12 @@ describe("Regression testing", function () {
 
             csscritic.compare({url: "samplepage.html"}, function () {});
 
-            expect(getImageForPageUrl).toHaveBeenCalledWith("samplepage.html", 98, 76, null, jasmine.any(Function), jasmine.any(Function));
+            expect(getImageForPageUrl).toHaveBeenCalledWith({
+                url: "samplepage.html",
+                width: 98,
+                height: 76,
+                proxyUrl: null
+            }, jasmine.any(Function), jasmine.any(Function));
         });
 
         it("should compare a page and return 'passed' on success", function () {
@@ -148,7 +153,7 @@ describe("Regression testing", function () {
 
     describe("First generation of a reference image", function () {
         beforeEach(function () {
-            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, callback) {
+            getImageForPageUrl.and.callFake(function (parameters, callback) {
                 callback(htmlImage);
             });
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
@@ -159,7 +164,12 @@ describe("Regression testing", function () {
         it("should provide a appropriately sized page rendering", function () {
             csscritic.compare({url: "differentpage.html"});
 
-            expect(getImageForPageUrl).toHaveBeenCalledWith("differentpage.html", 800, 100, null, jasmine.any(Function), jasmine.any(Function));
+            expect(getImageForPageUrl).toHaveBeenCalledWith({
+                url: "differentpage.html",
+                width: 800,
+                height: 100,
+                proxyUrl: null
+            }, jasmine.any(Function), jasmine.any(Function));
         });
     });
 
@@ -173,7 +183,7 @@ describe("Regression testing", function () {
         it("should return 'referenceMissing' if the reference image cannot be loaded", function () {
             var status;
 
-            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, successCallback) {
+            getImageForPageUrl.and.callFake(function (parameters, successCallback) {
                 successCallback(htmlImage);
             });
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
@@ -191,7 +201,7 @@ describe("Regression testing", function () {
         it("should return 'error' if the page does not exist", function () {
             var status;
 
-            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+            getImageForPageUrl.and.callFake(function (parameters, successCallback, errorCallback) {
                 errorCallback();
             });
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
@@ -209,7 +219,7 @@ describe("Regression testing", function () {
         it("should return 'error' if the page does not exist even if the reference image does", function () {
             var status;
 
-            getImageForPageUrl.and.callFake(function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+            getImageForPageUrl.and.callFake(function (parameters, successCallback, errorCallback) {
                 errorCallback();
             });
             readReferenceImage.and.callFake(function (pageUrl, successCallback) {

@@ -28,7 +28,11 @@ describe("Browser renderer", function () {
             }
         });
 
-        csscritic.renderer.browserRenderer(theUrl, 42, 7, null, function (resultImage) {
+        csscritic.renderer.browserRenderer({
+            url: theUrl,
+            width: 42,
+            height: 7
+        }, function (resultImage) {
             image = resultImage;
         });
 
@@ -42,7 +46,11 @@ describe("Browser renderer", function () {
             errorCallback();
         });
 
-        csscritic.renderer.browserRenderer("the_url", 42, 7, null, successCallback, errorCallback);
+        csscritic.renderer.browserRenderer({
+            url: "the_url",
+            width: 42,
+            height: 7
+        }, successCallback, errorCallback);
 
         expect(successCallback).not.toHaveBeenCalled();
         expect(errorCallback).toHaveBeenCalled();
@@ -52,7 +60,11 @@ describe("Browser renderer", function () {
         spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback, errorCallback) {
             errorCallback();
         });
-        csscritic.renderer.browserRenderer("the_url", 42, 7);
+        csscritic.renderer.browserRenderer({
+            url: "the_url",
+            width: 42,
+            height: 7
+        });
     });
 
     describe("HTML page rendering", function () {
@@ -82,7 +94,11 @@ describe("Browser renderer", function () {
                     }
                 });
 
-            csscritic.renderer.browserRenderer(theUrl, 42, 7, null, function (result_image) {
+            csscritic.renderer.browserRenderer({
+                url: theUrl,
+                width: 42,
+                height: 7
+            }, function (result_image) {
                 image = result_image;
             });
 
@@ -107,7 +123,11 @@ describe("Browser renderer", function () {
                 }]);
             });
 
-            csscritic.renderer.browserRenderer(theUrl, 42, 7, null, successCallback, errorCallback);
+            csscritic.renderer.browserRenderer({
+                url: theUrl,
+                width: 42,
+                height: 7
+            }, successCallback, errorCallback);
 
             expect(successCallback).not.toHaveBeenCalled();
             expect(errorCallback).toHaveBeenCalled();
@@ -117,7 +137,11 @@ describe("Browser renderer", function () {
             var fixtureUrl = csscriticTestPath + "fixtures/",
                 pageUrl = fixtureUrl + "brokenPage.html";
 
-            csscritic.renderer.browserRenderer(pageUrl, 42, 7, null, function (result_image, errors) {
+            csscritic.renderer.browserRenderer({
+                url: pageUrl,
+                width: 42,
+                height: 7
+            }, function (result_image, errors) {
                 expect(errors).not.toBeNull();
                 expect(errors.length).toBe(3);
                 errors.sort();
@@ -129,6 +153,25 @@ describe("Browser renderer", function () {
 
                 done();
             });
+        });
+
+        it("should render with hover effect", function () {
+            var successCallback = jasmine.createSpy("success"),
+                errorCallback = jasmine.createSpy("error");
+            spyOn(rasterizeHTML, "drawHTML");
+
+            csscritic.renderer.browserRenderer({
+                url: theUrl,
+                width: 42,
+                height: 7,
+                hover: ".someSelector"
+            }, successCallback, errorCallback);
+
+            expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
+                jasmine.any(String),
+                jasmine.objectContaining({hover: ".someSelector"}),
+                jasmine.any(Function)
+            );
         });
     });
 

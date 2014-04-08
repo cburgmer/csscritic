@@ -48,7 +48,11 @@ describe("PhantomJS renderer", function () {
     });
 
     it("should draw the url to the given canvas", function (done) {
-        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, null, function (image) {
+        csscritic.renderer.phantomjsRenderer({
+            url: testPageUrl,
+            width: 330,
+            height: 151
+        }, function (image) {
 
             csscriticTestHelper.loadImageFromUrl(theReferenceImageUri, function (referenceImage) {
 
@@ -59,7 +63,11 @@ describe("PhantomJS renderer", function () {
     });
 
     it("should call the error handler if a page does not exist", function (done) {
-        csscritic.renderer.phantomjsRenderer("the_url_that_doesnt_exist", 42, 7, null, function () {}, function () {
+        csscritic.renderer.phantomjsRenderer({
+            url: "the_url_that_doesnt_exist",
+            width: 42,
+            height: 7
+        }, function () {}, function () {
             done();
         });
     });
@@ -72,19 +80,31 @@ describe("PhantomJS renderer", function () {
             callback("success");
         });
 
-        csscritic.renderer.phantomjsRenderer(testPageUrl, 330, 151, null, function () {}, function () {
+        csscritic.renderer.phantomjsRenderer({
+            url: testPageUrl,
+            width: 330,
+            height: 151
+        }, function () {}, function () {
             done();
         });
     });
 
     it("should work without a callback on error", function () {
-        csscritic.renderer.phantomjsRenderer("the_url", 42, 7);
+        csscritic.renderer.phantomjsRenderer({
+            url: "the_url",
+            width: 42,
+            height: 7
+        });
     });
 
     it("should report errors from rendering", function (done) {
         var pageUrl = fixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, errors) {
+        csscritic.renderer.phantomjsRenderer({
+            url: pageUrl,
+            width: 42,
+            height: 7
+        }, function (result_image, errors) {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
@@ -101,7 +121,11 @@ describe("PhantomJS renderer", function () {
         var servedFixtureUrl = localserver + "/" + fixtureUrl,
             pageUrl = servedFixtureUrl + "brokenPage.html";
 
-        csscritic.renderer.phantomjsRenderer(pageUrl, 42, 7, null, function (result_image, errors) {
+        csscritic.renderer.phantomjsRenderer({
+            url: pageUrl,
+            width: 42,
+            height: 7
+        }, function (result_image, errors) {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([

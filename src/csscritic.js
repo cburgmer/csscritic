@@ -27,7 +27,12 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                 viewportWidth = width;
                 viewportHeight = height;
 
-                renderer.getImageForPageUrl(comparison.pageUrl, width, height, proxyUrl, function (image) {
+                renderer.getImageForPageUrl({
+                    url: comparison.pageUrl,
+                    width: width,
+                    height: height,
+                    proxyUrl: proxyUrl
+                }, function (image) {
                     result.pageImage = image;
                     callback(image);
                 });
@@ -113,7 +118,12 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, proxyUrl, function (htmlImage, renderErrors) {
+        renderer.getImageForPageUrl({
+            url: pageUrl,
+            width: pageWidth,
+            height: pageHeight,
+            proxyUrl: proxyUrl
+        }, function (htmlImage, renderErrors) {
             var isEqual, textualStatus;
 
             workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);
