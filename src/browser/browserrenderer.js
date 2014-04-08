@@ -3,16 +3,10 @@ window.csscritic = (function (module, rasterizeHTML) {
 
     var cache = {};
 
-    var getRenderErrors = function (errors) {
-        var renderErrors = [];
-
-        errors.forEach(function (error) {
-            if (error.msg) {
-                renderErrors.push(error.msg);
-            }
+    var extractErrorMessages = function (errors) {
+        return errors.map(function (error) {
+            return error.msg;
         });
-
-        return renderErrors;
     };
 
     var doRenderHtml = function (parameters, successCallback, errorCallback) {
@@ -32,14 +26,14 @@ window.csscritic = (function (module, rasterizeHTML) {
                 drawOptions.hover = parameters.hover;
             }
 
-            rasterizeHTML.drawHTML(parameters.html, drawOptions, function (image, errors) {
-                var renderErrors = errors === undefined ? [] : getRenderErrors(errors);
+            rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
+                var renderErrors = extractErrorMessages(result.errors);
 
-                if (! image) {
-                    errorCallback();
-                } else {
-                    successCallback(image, renderErrors);
-                }
+                successCallback(result.image, renderErrors);
+
+                doneSignal();
+            }, function () {
+                errorCallback();
 
                 doneSignal();
             });

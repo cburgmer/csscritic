@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-03-07
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-08
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -667,7 +667,7 @@ window.csscritic = (function (module) {
         }, errorCallback);
     };
 
-    module.renderer.phantomjsRenderer = function (pageUrl, width, height, proxyUrl, successCallback, errorCallback) {
+    module.renderer.phantomjsRenderer = function (parameters, successCallback, errorCallback) {
         var page = require("webpage").create(),
             errorneousResources = [],
             handleError = function () {
@@ -687,11 +687,11 @@ window.csscritic = (function (module) {
         };
 
         page.viewportSize = {
-            width: width,
-            height: height
+            width: parameters.width,
+            height: parameters.height
         };
 
-        page.open(getFileUrl(pageUrl), function (status) {
+        page.open(getFileUrl(parameters.url), function (status) {
             if (status === "success") {
                 setTimeout(function () {
                     renderPage(page, function (image) {
@@ -812,7 +812,12 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                 viewportWidth = width;
                 viewportHeight = height;
 
-                renderer.getImageForPageUrl(comparison.pageUrl, width, height, proxyUrl, function (image) {
+                renderer.getImageForPageUrl({
+                    url: comparison.pageUrl,
+                    width: width,
+                    height: height,
+                    proxyUrl: proxyUrl
+                }, function (image) {
                     result.pageImage = image;
                     callback(image);
                 });
@@ -898,7 +903,12 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
     var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
 
-        renderer.getImageForPageUrl(pageUrl, pageWidth, pageHeight, proxyUrl, function (htmlImage, renderErrors) {
+        renderer.getImageForPageUrl({
+            url: pageUrl,
+            width: pageWidth,
+            height: pageHeight,
+            proxyUrl: proxyUrl
+        }, function (htmlImage, renderErrors) {
             var isEqual, textualStatus;
 
             workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);

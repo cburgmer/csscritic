@@ -71,6 +71,22 @@ describe("Browser renderer", function () {
         var theUrl = "the url",
             theHtml = "some html";
 
+        var successfulPromise = function (value) {
+            return {
+                then: function (successHandler) {
+                    successHandler(value);
+                }
+            };
+        };
+
+        var failedPromise = function () {
+            return {
+                then: function (_, failHandler) {
+                    failHandler();
+                }
+            };
+        };
+
         beforeEach(function () {
             spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback) {
                 var relativeFixtureUrl;
@@ -88,9 +104,12 @@ describe("Browser renderer", function () {
 
         it("should draw the html page if url is not an image, disable caching and execute JavaScript", function () {
             var image = null,
-                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html, options, callback) {
+                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html) {
                     if (html === theHtml) {
-                        callback(the_image, []);
+                        return successfulPromise({
+                            image: the_image,
+                            errors: []
+                        });
                     }
                 });
 
@@ -111,17 +130,13 @@ describe("Browser renderer", function () {
                 executeJs: true,
                 executeJsTimeout: 50,
                 baseUrl: theUrl
-            }, jasmine.any(Function));
+            });
         });
 
         it("should call the error handler if a page could not be rendered", function () {
             var successCallback = jasmine.createSpy("success"),
                 errorCallback = jasmine.createSpy("error");
-            spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html, options, callback) {
-                callback(null, [{
-                    resourceType: "document"
-                }]);
-            });
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(failedPromise());
 
             csscritic.renderer.browserRenderer({
                 url: theUrl,
@@ -158,7 +173,10 @@ describe("Browser renderer", function () {
         it("should render with hover effect", function () {
             var successCallback = jasmine.createSpy("success"),
                 errorCallback = jasmine.createSpy("error");
-            spyOn(rasterizeHTML, "drawHTML");
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(successfulPromise({
+                image: "the image",
+                errors: []
+            }));
 
             csscritic.renderer.browserRenderer({
                 url: theUrl,
@@ -169,8 +187,7 @@ describe("Browser renderer", function () {
 
             expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
                 jasmine.any(String),
-                jasmine.objectContaining({hover: ".someSelector"}),
-                jasmine.any(Function)
+                jasmine.objectContaining({hover: ".someSelector"})
             );
         });
     });
