@@ -6,7 +6,7 @@ describe("Browser renderer", function () {
 
         spyOn(csscritic, 'jobQueue').and.returnValue({
             execute: function (func) {
-                func();
+                return func();
             }
         });
     });
@@ -74,19 +74,15 @@ describe("Browser renderer", function () {
             theHtml = "some html";
 
         var successfulPromise = function (value) {
-            return {
-                then: function (successHandler) {
-                    successHandler(value);
-                }
-            };
+            var defer = ayepromise.defer();
+            defer.resolve(value);
+            return defer.promise;
         };
 
         var failedPromise = function () {
-            return {
-                then: function (_, failHandler) {
-                    failHandler();
-                }
-            };
+            var defer = ayepromise.defer();
+            defer.reject();
+            return defer.promise;
         };
 
         beforeEach(function () {
@@ -104,9 +100,8 @@ describe("Browser renderer", function () {
             });
         });
 
-        it("should draw the html page if url is not an image, disable caching and execute JavaScript", function () {
-            var image = null,
-                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html) {
+        it("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
+            var drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html) {
                     if (html === theHtml) {
                         return successfulPromise({
                             image: the_image,
@@ -119,35 +114,30 @@ describe("Browser renderer", function () {
                 url: theUrl,
                 width: 42,
                 height: 7
-            }, function (result_image) {
-                image = result_image;
-            });
+            }, function (image) {
+                expect(image).toBe(the_image);
+                expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {
+                    cache: 'repeated',
+                    cacheBucket: jasmine.any(Object),
+                    width: 42,
+                    height: 7,
+                    executeJs: true,
+                    executeJsTimeout: 50,
+                    baseUrl: theUrl
+                });
 
-            expect(the_image).toBe(image);
-            expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {
-                cache: 'repeated',
-                cacheBucket: jasmine.any(Object),
-                width: 42,
-                height: 7,
-                executeJs: true,
-                executeJsTimeout: 50,
-                baseUrl: theUrl
+                done();
             });
         });
 
-        it("should call the error handler if a page could not be rendered", function () {
-            var successCallback = jasmine.createSpy("success"),
-                errorCallback = jasmine.createSpy("error");
+        it("should call the error handler if a page could not be rendered", function (done) {
             spyOn(rasterizeHTML, "drawHTML").and.returnValue(failedPromise());
 
             csscritic.renderer.browserRenderer({
                 url: theUrl,
                 width: 42,
                 height: 7
-            }, successCallback, errorCallback);
-
-            expect(successCallback).not.toHaveBeenCalled();
-            expect(errorCallback).toHaveBeenCalled();
+            }, null, done);
         });
 
         it("should report errors from rendering", function (done) {

@@ -18,10 +18,10 @@ window.csscritic = (function (module, rasterizeHTML) {
         });
     };
 
-    var doRenderHtml = function (parameters, successCallback, errorCallback) {
+    var doRenderHtml = function (parameters) {
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
-        getOrCreateJobQueue().execute(function () {
+        return getOrCreateJobQueue().execute(function () {
             var drawOptions = {
                     cache: 'repeated',
                     cacheBucket: cache,
@@ -38,8 +38,11 @@ window.csscritic = (function (module, rasterizeHTML) {
             return rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
                 var renderErrors = extractErrorMessages(result.errors);
 
-                successCallback(result.image, renderErrors);
-            }, errorCallback);
+                return {
+                    image: result.image,
+                    errors: renderErrors
+                };
+            });
         });
     };
 
@@ -59,13 +62,11 @@ window.csscritic = (function (module, rasterizeHTML) {
                         width: parameters.width,
                         height: parameters.height,
                         hover: parameters.hover
-                    }, function (image, renderErrors) {
-                        successCallback(image, renderErrors);
-                    }, function () {
-                        if (errorCallback) {
-                            errorCallback();
-                        }
-                    });
+                    })
+                    .then(function (result) {
+                        successCallback(result.image, result.errors);
+                    },
+                    errorCallback);
                 }
             });
         }, function () {

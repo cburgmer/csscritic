@@ -21,7 +21,8 @@
   "dependencies": {
     "rasterizehtml": "~0.8.0",
     "imagediff": "~1.0.6",
-    "jssha": "1.5.0"
+    "jssha": "1.5.0",
+    "ayepromise": "~1.1.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -37,8 +38,7 @@
     "jasmine-core": "~2.0.0",
     "jasmine-jquery": "git://github.com/velesin/jasmine-jquery",
     "jquery": "~2.1.0",
-    "grunt-contrib-clean": "~0.5.0",
-    "ayepromise": "~1.1.0"
+    "grunt-contrib-clean": "~0.5.0"
   },
   "scripts": {
     "test": "bash go --verbose"

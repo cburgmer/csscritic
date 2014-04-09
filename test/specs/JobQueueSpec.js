@@ -54,4 +54,43 @@ describe("Job Queue", function () {
             done();
         });
     });
+
+    it("should return a promise for the job to be executed", function (done) {
+        var defer = ayepromise.defer(),
+            job = jasmine.createSpy("job").and.returnValue(defer.promise),
+            jobExecutionSpy = jasmine.createSpy('jobExecution');
+
+        var executionPromise = subject.execute(job);
+        executionPromise.then(jobExecutionSpy);
+
+        defer.resolve('the_result');
+
+        defer.promise.then(function () {
+            setTimeout(function () {
+                expect(jobExecutionSpy).toHaveBeenCalledWith('the_result');
+
+                done();
+            }, 10);
+        });
+    });
+
+    it("should handle rejection for the returned promise of the executed job", function (done) {
+        var defer = ayepromise.defer(),
+            job = jasmine.createSpy("job").and.returnValue(defer.promise),
+            jobExecutionSpy = jasmine.createSpy('jobExecution'),
+            e = new Error();
+
+        var executionPromise = subject.execute(job);
+        executionPromise.then(null, jobExecutionSpy);
+
+        defer.reject(e);
+
+        defer.promise.then(null, function () {
+            setTimeout(function () {
+                expect(jobExecutionSpy).toHaveBeenCalledWith(e);
+
+                done();
+            }, 10);
+        });
+    });
 });

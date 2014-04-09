@@ -148,6 +148,7 @@ module.exports = function (grunt) {
                         rasterizeHTMLInline: true,
                         jsSHA: true,
                         imagediff: true,
+                        ayepromise: true,
                         phantom: true,
                         console: true,
                         require: true,
