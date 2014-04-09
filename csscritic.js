@@ -16,7 +16,7 @@
             'src/browser/basichtmlreporter.js',
             'src/browser/browserrenderer.js',
             'src/browser/domstorage.js',
-            'src/browser/queue.js',
+            'src/browser/jobqueue.js',
             'src/utils.js',
             'src/csscritic.js'
         ];
