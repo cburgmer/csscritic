@@ -19,30 +19,34 @@ window.csscritic = (function (module, rasterizeHTML) {
     };
 
     var doRenderHtml = function (parameters) {
+        var drawOptions = {
+                cache: 'repeated',
+                cacheBucket: cache,
+                width: parameters.width,
+                height: parameters.height,
+                executeJs: true,
+                executeJsTimeout: 50,
+                baseUrl: parameters.baseUrl
+            };
+        if (parameters.hover) {
+            drawOptions.hover = parameters.hover;
+        }
+
+        return rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
+            var renderErrors = extractErrorMessages(result.errors);
+
+            return {
+                image: result.image,
+                errors: renderErrors
+            };
+        });
+    };
+
+    var enqueueRenderHtmlJob = function (parameters) {
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
         return getOrCreateJobQueue().execute(function () {
-            var drawOptions = {
-                    cache: 'repeated',
-                    cacheBucket: cache,
-                    width: parameters.width,
-                    height: parameters.height,
-                    executeJs: true,
-                    executeJsTimeout: 50,
-                    baseUrl: parameters.baseUrl
-                };
-            if (parameters.hover) {
-                drawOptions.hover = parameters.hover;
-            }
-
-            return rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
-                var renderErrors = extractErrorMessages(result.errors);
-
-                return {
-                    image: result.image,
-                    errors: renderErrors
-                };
-            });
+            return doRenderHtml(parameters);
         });
     };
 
@@ -56,7 +60,7 @@ window.csscritic = (function (module, rasterizeHTML) {
                 if (image) {
                     successCallback(image, []);
                 } else {
-                    doRenderHtml({
+                    enqueueRenderHtmlJob({
                         baseUrl: url,
                         html: content,
                         width: parameters.width,
