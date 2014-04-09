@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-08
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-09
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -156,34 +156,6 @@ window.csscritic = (function (module) {
         for(i = 0; i < list.length; i++) {
             callForItem(i);
         }
-    };
-
-    module.util.queue = {};
-
-    var jobQueue = [],
-        busy = false;
-
-    var nextInQueue = function () {
-        var func;
-        if (jobQueue.length > 0) {
-            busy = true;
-            func = jobQueue.shift();
-            func(nextInQueue);
-        } else {
-            busy = false;
-        }
-    };
-
-    module.util.queue.execute = function (func) {
-        jobQueue.push(func);
-        if (!busy) {
-            nextInQueue();
-        }
-    };
-
-    module.util.queue.clear = function () {
-        jobQueue = [];
-        busy = false;
     };
 
     return module;

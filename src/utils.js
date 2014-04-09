@@ -121,33 +121,5 @@ window.csscritic = (function (module) {
         }
     };
 
-    module.util.queue = {};
-
-    var jobQueue = [],
-        busy = false;
-
-    var nextInQueue = function () {
-        var func;
-        if (jobQueue.length > 0) {
-            busy = true;
-            func = jobQueue.shift();
-            func(nextInQueue);
-        } else {
-            busy = false;
-        }
-    };
-
-    module.util.queue.execute = function (func) {
-        jobQueue.push(func);
-        if (!busy) {
-            nextInQueue();
-        }
-    };
-
-    module.util.queue.clear = function () {
-        jobQueue = [];
-        busy = false;
-    };
-
     return module;
 }(window.csscritic || {}));
