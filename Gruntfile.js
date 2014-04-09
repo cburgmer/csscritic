@@ -181,7 +181,8 @@ module.exports = function (grunt) {
                         csscriticTestPath: true,
                         csscriticTestHelper: true,
                         loadStoragePluginSpecs: true,
-                        CanvasRenderingContext2D: true
+                        CanvasRenderingContext2D: true,
+                        ayepromise: true
                     }
                 },
                 src: [

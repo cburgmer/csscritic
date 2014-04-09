@@ -6,7 +6,7 @@ describe("Browser renderer", function () {
 
         spyOn(csscritic, 'jobQueue').and.returnValue({
             execute: function (func) {
-                func(function () {});
+                func();
             }
         });
     });

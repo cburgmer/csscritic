@@ -11,7 +11,7 @@ window.csscritic.jobQueue = function () {
         if (jobQueue.length > 0) {
             busy = true;
             func = jobQueue.shift();
-            func(nextInQueue);
+            func().then(nextInQueue, nextInQueue);
         } else {
             busy = false;
         }

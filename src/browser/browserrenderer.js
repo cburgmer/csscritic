@@ -21,7 +21,7 @@ window.csscritic = (function (module, rasterizeHTML) {
     var doRenderHtml = function (parameters, successCallback, errorCallback) {
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
-        getOrCreateJobQueue().execute(function (doneSignal) {
+        getOrCreateJobQueue().execute(function () {
             var drawOptions = {
                     cache: 'repeated',
                     cacheBucket: cache,
@@ -35,17 +35,11 @@ window.csscritic = (function (module, rasterizeHTML) {
                 drawOptions.hover = parameters.hover;
             }
 
-            rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
+            return rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
                 var renderErrors = extractErrorMessages(result.errors);
 
                 successCallback(result.image, renderErrors);
-
-                doneSignal();
-            }, function () {
-                errorCallback();
-
-                doneSignal();
-            });
+            }, errorCallback);
         });
     };
 
