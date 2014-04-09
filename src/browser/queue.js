@@ -1,6 +1,6 @@
 window.csscritic = window.csscritic || {};
 
-window.csscritic.queue = (function () {
+window.csscritic.queue = function () {
     var module = {};
 
     var jobQueue = [],
@@ -24,10 +24,5 @@ window.csscritic.queue = (function () {
         }
     };
 
-    module.clear = function () {
-        jobQueue = [];
-        busy = false;
-    };
-
     return module;
-}());
+};

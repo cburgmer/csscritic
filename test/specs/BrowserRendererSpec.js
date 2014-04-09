@@ -4,8 +4,10 @@ describe("Browser renderer", function () {
     beforeEach(function () {
         the_image = "the_image";
 
-        spyOn(csscritic.queue, 'execute').and.callFake(function (func) {
-            func(function () {});
+        spyOn(csscritic, 'queue').and.returnValue({
+            execute: function (func) {
+                func(function () {});
+            }
         });
     });
 

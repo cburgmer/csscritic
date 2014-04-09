@@ -1,11 +1,13 @@
 describe("Queue", function () {
-    afterEach(function () {
-        csscritic.queue.clear();
+    var subject;
+
+    beforeEach(function () {
+        subject = csscritic.queue();
     });
 
     it("should execute a single job", function () {
         var job = jasmine.createSpy("job");
-        csscritic.queue.execute(job);
+        subject.execute(job);
 
         expect(job).toHaveBeenCalled();
     });
@@ -13,8 +15,8 @@ describe("Queue", function () {
     it("should execute two jobs sequencially", function () {
         var job1 = jasmine.createSpy("job1"),
             job2 = jasmine.createSpy("job2");
-        csscritic.queue.execute(job1);
-        csscritic.queue.execute(job2);
+        subject.execute(job1);
+        subject.execute(job2);
 
         expect(job1).toHaveBeenCalled();
         expect(job2).not.toHaveBeenCalled();
@@ -23,4 +25,3 @@ describe("Queue", function () {
         expect(job2).toHaveBeenCalled();
     });
 });
-
