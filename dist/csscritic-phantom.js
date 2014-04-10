@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-09
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-10
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -63,15 +63,20 @@ window.csscritic = (function (module) {
     };
 
     module.util.getImageForBinaryContent = function (content, callback) {
-        var image = new window.Image();
+        var defer = ayepromise.defer(),
+            image = new window.Image();
+
+        defer.promise.then(callback, callback);
 
         image.onload = function () {
-            callback(image);
+            defer.resolve(image);
         };
         image.onerror = function () {
-            callback(null);
+            defer.reject();
         };
         image.src = 'data:image/png;base64,' + btoa(content);
+
+        return defer.promise;
     };
 
     var getBinary = function (data) {
@@ -87,19 +92,20 @@ window.csscritic = (function (module) {
         return url + "?_=" + Date.now();
     };
 
-    module.util.ajax = function (url, successCallback, errorCallback) {
-        var xhr = new XMLHttpRequest();
+    module.util.ajax = function (url) {
+        var defer = ayepromise.defer(),
+            xhr = new XMLHttpRequest();
 
         xhr.onload = function () {
             if (xhr.status === 200 || xhr.status === 0) {
-                successCallback(getBinary(xhr.response));
+                defer.resolve(getBinary(xhr.response));
             } else {
-                errorCallback();
+                defer.reject();
             }
         };
 
         xhr.onerror = function () {
-            errorCallback();
+            defer.reject();
         };
 
         try {
@@ -107,8 +113,10 @@ window.csscritic = (function (module) {
             xhr.overrideMimeType('text/plain; charset=x-user-defined');
             xhr.send();
         } catch (e) {
-            errorCallback();
+            defer.reject();
         }
+
+        return defer.promise;
     };
 
     module.util.workAroundTransparencyIssueInFirefox = function (image, callback) {
@@ -988,8 +996,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         var absolutePageUrl = getFileUrl(pageUrl),
             doc = window.document.implementation.createHTMLDocument("");
 
-        // TODO remove reference to rasterizeHTMLInline.util
-        rasterizeHTMLInline.util.ajax(absolutePageUrl, {cache: false}).then(function (content) {
+        module.util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
             rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
@@ -1005,7 +1012,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     module.signOffReporterUtil.loadFingerprintJson = function (url, callback) {
         var absoluteUrl = getFileUrl(url);
 
-        rasterizeHTMLInline.util.ajax(absoluteUrl, {cache: false}).then(function (content) {
+        module.util.ajax(absoluteUrl).then(function (content) {
             callback(JSON.parse(content));
         });
     };

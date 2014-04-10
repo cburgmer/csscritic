@@ -26,15 +26,20 @@ window.csscritic = (function (module) {
     };
 
     module.util.getImageForBinaryContent = function (content, callback) {
-        var image = new window.Image();
+        var defer = ayepromise.defer(),
+            image = new window.Image();
+
+        defer.promise.then(callback, callback);
 
         image.onload = function () {
-            callback(image);
+            defer.resolve(image);
         };
         image.onerror = function () {
-            callback(null);
+            defer.reject();
         };
         image.src = 'data:image/png;base64,' + btoa(content);
+
+        return defer.promise;
     };
 
     var getBinary = function (data) {

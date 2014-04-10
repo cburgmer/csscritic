@@ -33,11 +33,11 @@ describe("Browser renderer", function () {
                 return successfulPromise(theBinaryContent);
             }
         });
-        spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content, callback) {
+        spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content) {
             if (content === theBinaryContent) {
-                callback(theImage);
+                return successfulPromise(theImage);
             } else {
-                callback(null);
+                return failedPromise();
             }
         });
 
@@ -76,9 +76,7 @@ describe("Browser renderer", function () {
                     return successfulPromise([readFixtures(relativeFixtureUrl)]);
                 }
             });
-            spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content, callback) {
-                callback(null);
-            });
+            spyOn(csscritic.util, 'getImageForBinaryContent').and.returnValue(failedPromise());
         });
 
         it("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {

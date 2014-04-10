@@ -36,7 +36,7 @@ describe("Utility", function () {
         it("should load an image", function (done) {
             var imageData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=';
 
-            csscritic.util.getImageForBinaryContent(atob(imageData), function (image) {
+            csscritic.util.getImageForBinaryContent(atob(imageData)).then(function (image) {
                 expect(image instanceof HTMLElement).toBeTruthy();
                 expect(image.nodeName).toEqual("IMG");
                 expect(image.src).toEqual('data:image/png;base64,' + imageData);
@@ -46,11 +46,8 @@ describe("Utility", function () {
         });
 
         it("should handle invalid image content", function (done) {
-            csscritic.util.getImageForBinaryContent("invalid content", function (image) {
-                expect(image).toBe(null);
-
-                done();
-            });
+            csscritic.util.getImageForBinaryContent("invalid content")
+                .then(null, done);
         });
     });
 

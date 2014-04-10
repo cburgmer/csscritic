@@ -56,22 +56,20 @@ window.csscritic = (function (module, rasterizeHTML) {
             url = parameters.proxyUrl + "/inline?url=" + parameters.url;
         }
         module.util.ajax(url).then(function (content) {
-            module.util.getImageForBinaryContent(content, function (image) {
-                if (image) {
-                    successCallback(image, []);
-                } else {
-                    enqueueRenderHtmlJob({
-                        baseUrl: url,
-                        html: content,
-                        width: parameters.width,
-                        height: parameters.height,
-                        hover: parameters.hover
-                    })
-                    .then(function (result) {
-                        successCallback(result.image, result.errors);
-                    },
-                    errorCallback);
-                }
+            module.util.getImageForBinaryContent(content).then(function (image) {
+                successCallback(image, []);
+            }, function () {
+                enqueueRenderHtmlJob({
+                    baseUrl: url,
+                    html: content,
+                    width: parameters.width,
+                    height: parameters.height,
+                    hover: parameters.hover
+                })
+                .then(function (result) {
+                    successCallback(result.image, result.errors);
+                },
+                errorCallback);
             });
         }, errorCallback);
     };
