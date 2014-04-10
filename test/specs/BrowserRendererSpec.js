@@ -1,8 +1,20 @@
 describe("Browser renderer", function () {
-    var the_image;
+    var ajaxSpy;
+
+    var successfulPromise = function (value) {
+        var defer = ayepromise.defer();
+        defer.resolve(value);
+        return defer.promise;
+    };
+
+    var failedPromise = function () {
+        var defer = ayepromise.defer();
+        defer.reject();
+        return defer.promise;
+    };
 
     beforeEach(function () {
-        the_image = "the_image";
+        ajaxSpy = spyOn(csscritic.util, 'ajax');
 
         spyOn(csscritic, 'jobQueue').and.returnValue({
             execute: function (func) {
@@ -11,15 +23,14 @@ describe("Browser renderer", function () {
         });
     });
 
-    it("should draw an image directly", function () {
-        var image = null,
-            theUrl = "the url",
+    it("should draw an image directly", function (done) {
+        var theUrl = "the url",
             theBinaryContent = "the content",
             theImage = "the image";
 
-        spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback) {
+        ajaxSpy.and.callFake(function (url) {
             if (url === theUrl) {
-                successCallback(theBinaryContent);
+                return successfulPromise(theBinaryContent);
             }
         });
         spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content, callback) {
@@ -34,65 +45,35 @@ describe("Browser renderer", function () {
             url: theUrl,
             width: 42,
             height: 7
-        }, function (resultImage) {
-            image = resultImage;
-        });
+        }, function (image) {
+            expect(image).toBe(theImage);
 
-        expect(image).toBe(theImage);
+            done();
+        });
     });
 
-    it("should call the error handler if a page does not exist", function () {
-        var successCallback = jasmine.createSpy("success"),
-            errorCallback = jasmine.createSpy("error");
-        spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback, errorCallback) {
-            errorCallback();
-        });
+    it("should call the error handler if a page does not exist", function (done) {
+        ajaxSpy.and.returnValue(failedPromise());
 
         csscritic.renderer.browserRenderer({
             url: "the_url",
             width: 42,
             height: 7
-        }, successCallback, errorCallback);
-
-        expect(successCallback).not.toHaveBeenCalled();
-        expect(errorCallback).toHaveBeenCalled();
-    });
-
-    it("should work without a callback on error", function () {
-        spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback, errorCallback) {
-            errorCallback();
-        });
-        csscritic.renderer.browserRenderer({
-            url: "the_url",
-            width: 42,
-            height: 7
-        });
+        }, null, done);
     });
 
     describe("HTML page rendering", function () {
         var theUrl = "the url",
             theHtml = "some html";
 
-        var successfulPromise = function (value) {
-            var defer = ayepromise.defer();
-            defer.resolve(value);
-            return defer.promise;
-        };
-
-        var failedPromise = function () {
-            var defer = ayepromise.defer();
-            defer.reject();
-            return defer.promise;
-        };
-
         beforeEach(function () {
-            spyOn(csscritic.util, 'ajax').and.callFake(function (url, successCallback) {
+            ajaxSpy.and.callFake(function (url) {
                 var relativeFixtureUrl;
                 if (url === theUrl) {
-                    successCallback(theHtml);
+                    return successfulPromise(theHtml);
                 } else {
                     relativeFixtureUrl = url.replace(jasmine.getFixtures().fixturesPath, "");
-                    successCallback([readFixtures(relativeFixtureUrl)]);
+                    return successfulPromise([readFixtures(relativeFixtureUrl)]);
                 }
             });
             spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content, callback) {
@@ -101,7 +82,8 @@ describe("Browser renderer", function () {
         });
 
         it("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
-            var drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html) {
+            var the_image = "the_image",
+                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html) {
                     if (html === theHtml) {
                         return successfulPromise({
                             image: the_image,
@@ -162,9 +144,7 @@ describe("Browser renderer", function () {
             });
         });
 
-        it("should render with hover effect", function () {
-            var successCallback = jasmine.createSpy("success"),
-                errorCallback = jasmine.createSpy("error");
+        it("should render with hover effect", function (done) {
             spyOn(rasterizeHTML, "drawHTML").and.returnValue(successfulPromise({
                 image: "the image",
                 errors: []
@@ -175,12 +155,13 @@ describe("Browser renderer", function () {
                 width: 42,
                 height: 7,
                 hover: ".someSelector"
-            }, successCallback, errorCallback);
-
-            expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
-                jasmine.any(String),
-                jasmine.objectContaining({hover: ".someSelector"})
-            );
+            }, function () {
+                expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
+                    jasmine.any(String),
+                    jasmine.objectContaining({hover: ".someSelector"})
+                );
+                done();
+            });
         });
     });
 

@@ -50,19 +50,20 @@ window.csscritic = (function (module) {
         return url + "?_=" + Date.now();
     };
 
-    module.util.ajax = function (url, successCallback, errorCallback) {
-        var xhr = new XMLHttpRequest();
+    module.util.ajax = function (url) {
+        var defer = ayepromise.defer(),
+            xhr = new XMLHttpRequest();
 
         xhr.onload = function () {
             if (xhr.status === 200 || xhr.status === 0) {
-                successCallback(getBinary(xhr.response));
+                defer.resolve(getBinary(xhr.response));
             } else {
-                errorCallback();
+                defer.reject();
             }
         };
 
         xhr.onerror = function () {
-            errorCallback();
+            defer.reject();
         };
 
         try {
@@ -70,8 +71,10 @@ window.csscritic = (function (module) {
             xhr.overrideMimeType('text/plain; charset=x-user-defined');
             xhr.send();
         } catch (e) {
-            errorCallback();
+            defer.reject();
         }
+
+        return defer.promise;
     };
 
     module.util.workAroundTransparencyIssueInFirefox = function (image, callback) {

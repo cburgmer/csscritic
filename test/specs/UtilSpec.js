@@ -57,25 +57,23 @@ describe("Utility", function () {
     describe("ajax", function () {
 
         it("should load content from a URL", function (done) {
-            var errorCallback = jasmine.createSpy("errorCallback");
-
-            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "simple.js", function (content) {
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "simple.js").then(function (content) {
                 expect(content).toEqual('var s = "hello";\n');
 
                 done();
-            }, errorCallback);
+            });
         });
 
         it("should load binary data", function (done) {
-            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "green.png", function (content) {
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "green.png").then(function (content) {
                 expect(btoa(content)).toEqual("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABFElEQVR4nO3OMQ0AAAjAMPybhnsKxrHUQGc2r+iBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YHAAV821mT1w27RAAAAAElFTkSuQmCC");
 
                 done();
-            }, function () {});
+            });
         });
 
         it("should call error callback on fail", function (done) {
-            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "non_existing_url.html", function () {}, function () {
+            csscritic.util.ajax(jasmine.getFixtures().fixturesPath + "non_existing_url.html").then(null, function () {
                 done();
             });
         });
@@ -86,12 +84,12 @@ describe("Utility", function () {
 
             spyOn(window, "XMLHttpRequest").and.returnValue(ajaxRequest);
 
-            csscritic.util.ajax("non_existing_url.html", function () {}, function () {});
+            csscritic.util.ajax("non_existing_url.html");
 
             expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=42');
 
             dateNowSpy.and.returnValue(43);
-            csscritic.util.ajax("non_existing_url.html", function () {}, function () {});
+            csscritic.util.ajax("non_existing_url.html");
             expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=43');
         });
 

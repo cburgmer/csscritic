@@ -55,7 +55,7 @@ window.csscritic = (function (module, rasterizeHTML) {
         if (parameters.proxyUrl) {
             url = parameters.proxyUrl + "/inline?url=" + parameters.url;
         }
-        module.util.ajax(url, function (content) {
+        module.util.ajax(url).then(function (content) {
             module.util.getImageForBinaryContent(content, function (image) {
                 if (image) {
                     successCallback(image, []);
@@ -73,11 +73,7 @@ window.csscritic = (function (module, rasterizeHTML) {
                     errorCallback);
                 }
             });
-        }, function () {
-            if (errorCallback) {
-                errorCallback();
-            }
-        });
+        }, errorCallback);
     };
 
     module.renderer.getImageForPageUrl = module.renderer.browserRenderer;
