@@ -73,8 +73,8 @@ window.csscritic = (function (module) {
         return defer.promise;
     };
 
-    module.renderer.phantomjsRenderer = function (parameters, successCallback, errorCallback) {
-        openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
+    module.renderer.phantomjsRenderer = function (parameters) {
+        return openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
             .then(function (result) {
                 return waitFor(200)
                     .then(function () {
@@ -86,10 +86,7 @@ window.csscritic = (function (module) {
                             errors: result.errorneousResources
                         };
                     });
-            })
-            .then(function (result) {
-                successCallback(result.image, result.errors);
-            }, errorCallback);
+            });
     };
 
     module.renderer.getImageForPageUrl = module.renderer.phantomjsRenderer;

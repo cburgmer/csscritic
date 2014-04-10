@@ -686,8 +686,8 @@ window.csscritic = (function (module) {
         return defer.promise;
     };
 
-    module.renderer.phantomjsRenderer = function (parameters, successCallback, errorCallback) {
-        openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
+    module.renderer.phantomjsRenderer = function (parameters) {
+        return openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
             .then(function (result) {
                 return waitFor(200)
                     .then(function () {
@@ -699,10 +699,7 @@ window.csscritic = (function (module) {
                             errors: result.errorneousResources
                         };
                     });
-            })
-            .then(function (result) {
-                successCallback(result.image, result.errors);
-            }, errorCallback);
+            });
     };
 
     module.renderer.getImageForPageUrl = module.renderer.phantomjsRenderer;
@@ -818,9 +815,9 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                     width: width,
                     height: height,
                     proxyUrl: proxyUrl
-                }, function (image) {
-                    result.pageImage = image;
-                    callback(image);
+                }).then(function (renderResult) {
+                    result.pageImage = renderResult.image;
+                    callback(renderResult.image);
                 });
             };
             result.acceptPage = function () {
@@ -909,12 +906,12 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
             width: pageWidth,
             height: pageHeight,
             proxyUrl: proxyUrl
-        }, function (htmlImage, renderErrors) {
+        }).then(function (renderResult) {
             var isEqual, textualStatus;
 
-            workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);
+            workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
 
-            module.util.workAroundTransparencyIssueInFirefox(htmlImage, function (adaptedHtmlImage) {
+            module.util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
                 if (referenceImage) {
                     isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
                     textualStatus = isEqual ? "passed" : "failed";
@@ -925,9 +922,9 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                 reportComparison({
                         status: textualStatus,
                         pageUrl: pageUrl,
-                        htmlImage: htmlImage,
+                        htmlImage: renderResult.image,
                         referenceImage: referenceImage,
-                        renderErrors: renderErrors,
+                        renderErrors: renderResult.errors,
                         viewportWidth: pageWidth,
                         viewportHeight: pageHeight
                     },

@@ -52,11 +52,9 @@ describe("PhantomJS renderer", function () {
             url: testPageUrl,
             width: 330,
             height: 151
-        }, function (image) {
-
+        }).then(function (result) {
             csscriticTestHelper.loadImageFromUrl(theReferenceImageUri, function (referenceImage) {
-
-                expect(image).toImageDiffEqual(referenceImage);
+                expect(result.image).toImageDiffEqual(referenceImage);
                 done();
             });
         });
@@ -67,9 +65,7 @@ describe("PhantomJS renderer", function () {
             url: "the_url_that_doesnt_exist",
             width: 42,
             height: 7
-        }, function () {}, function () {
-            done();
-        });
+        }).then(null, done);
     });
 
     it("should call the error handler if a resulting image is erroneous", function (done) {
@@ -84,17 +80,7 @@ describe("PhantomJS renderer", function () {
             url: testPageUrl,
             width: 330,
             height: 151
-        }, function () {}, function () {
-            done();
-        });
-    });
-
-    it("should work without a callback on error", function () {
-        csscritic.renderer.phantomjsRenderer({
-            url: "the_url",
-            width: 42,
-            height: 7
-        });
+        }).then(null, done);
     });
 
     it("should report errors from rendering", function (done) {
@@ -104,7 +90,8 @@ describe("PhantomJS renderer", function () {
             url: pageUrl,
             width: 42,
             height: 7
-        }, function (result_image, errors) {
+        }).then(function (result) {
+            var errors = result.errors;
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
@@ -125,7 +112,8 @@ describe("PhantomJS renderer", function () {
             url: pageUrl,
             width: 42,
             height: 7
-        }, function (result_image, errors) {
+        }).then(function (result) {
+            var errors = result.errors;
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([

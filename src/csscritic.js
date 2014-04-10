@@ -32,9 +32,9 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                     width: width,
                     height: height,
                     proxyUrl: proxyUrl
-                }, function (image) {
-                    result.pageImage = image;
-                    callback(image);
+                }).then(function (renderResult) {
+                    result.pageImage = renderResult.image;
+                    callback(renderResult.image);
                 });
             };
             result.acceptPage = function () {
@@ -123,12 +123,12 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
             width: pageWidth,
             height: pageHeight,
             proxyUrl: proxyUrl
-        }, function (htmlImage, renderErrors) {
+        }).then(function (renderResult) {
             var isEqual, textualStatus;
 
-            workaroundFirefoxResourcesSporadicallyMissing(htmlImage, referenceImage);
+            workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
 
-            module.util.workAroundTransparencyIssueInFirefox(htmlImage, function (adaptedHtmlImage) {
+            module.util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
                 if (referenceImage) {
                     isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
                     textualStatus = isEqual ? "passed" : "failed";
@@ -139,9 +139,9 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                 reportComparison({
                         status: textualStatus,
                         pageUrl: pageUrl,
-                        htmlImage: htmlImage,
+                        htmlImage: renderResult.image,
                         referenceImage: referenceImage,
-                        renderErrors: renderErrors,
+                        renderErrors: renderResult.errors,
                         viewportWidth: pageWidth,
                         viewportHeight: pageHeight
                     },

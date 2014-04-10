@@ -3,6 +3,30 @@ describe("Reporting", function () {
         getImageForPageUrl, readReferenceImage,
         htmlImage, referenceImage, viewport;
 
+    var successfulPromiseFake = function (value) {
+        return {
+            then: function (successHandler) {
+                successHandler(value);
+            }
+        };
+    };
+
+    var failedPromise = function () {
+        return {
+            then: function (_, failHandler) {
+                failHandler();
+            }
+        };
+    };
+
+    var setUpGetImageForPageUrl = function (image, errors) {
+        errors = errors || [];
+        getImageForPageUrl.and.returnValue(successfulPromiseFake({
+            image: image,
+            errors: errors
+        }));
+    };
+
     beforeEach(function () {
         htmlImage = jasmine.createSpy('htmlImage');
         referenceImage = {
@@ -46,10 +70,8 @@ describe("Reporting", function () {
         });
 
         it("should only procede once the reporter returned", function () {
+            setUpGetImageForPageUrl(htmlImage);
             spyOn(imagediff, 'equal').and.returnValue(true);
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage, []);
-            });
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -71,9 +93,7 @@ describe("Reporting", function () {
 
             spyOn(imagediff, 'equal').and.returnValue(true);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -89,9 +109,7 @@ describe("Reporting", function () {
         it("should report a successful comparison", function () {
             spyOn(imagediff, 'equal').and.returnValue(true);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -111,9 +129,7 @@ describe("Reporting", function () {
         it("should report a canvas showing the difference on a failing comparison", function () {
             spyOn(imagediff, 'equal').and.returnValue(false);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -131,9 +147,7 @@ describe("Reporting", function () {
         });
 
         it("should report a missing reference image", function () {
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
@@ -150,9 +164,7 @@ describe("Reporting", function () {
         });
 
         it("should report an error if the page does not exist", function () {
-            getImageForPageUrl.and.callFake(function (parameters, successCallback, errorCallback) {
-                errorCallback();
-            });
+            getImageForPageUrl.and.returnValue(failedPromise());
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
@@ -168,15 +180,21 @@ describe("Reporting", function () {
 
         it("should provide a method to repaint the HTML given width and height", function () {
             var finished = false,
-                newHtmlImage = jasmine.createSpy("newHtmlImage"),
+                newHtmlImage = "newHtmlImage",
                 result;
             spyOn(imagediff, 'equal').and.returnValue(true);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
+            getImageForPageUrl.and.callFake(function (parameters) {
                 if (parameters.width === 16) {
-                    callback(newHtmlImage);
+                    return successfulPromiseFake({
+                        image: newHtmlImage,
+                        errors: []
+                    });
                 } else {
-                    callback(htmlImage);
+                    return successfulPromiseFake({
+                        image: htmlImage,
+                        errors: []
+                    });
                 }
             });
             readReferenceImage.and.callFake(function (pageUrl, callback) {
@@ -205,7 +223,7 @@ describe("Reporting", function () {
                 width: 16,
                 height: 34,
                 proxyUrl: null
-            }, jasmine.any(Function));
+            });
             expect(result.pageImage).toBe(newHtmlImage);
         });
 
@@ -213,9 +231,7 @@ describe("Reporting", function () {
             var storeReferenceImageSpy = spyOn(csscritic.storage, 'storeReferenceImage');
             spyOn(imagediff, 'equal').and.returnValue(true);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -242,9 +258,7 @@ describe("Reporting", function () {
             readReferenceImage.and.callFake(function (pageUrl, callback, errorCallback) {
                 errorCallback();
             });
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
 
             csscritic.compare({url: "differentpage.html"});
 
@@ -263,9 +277,7 @@ describe("Reporting", function () {
             readReferenceImage.and.callFake(function (pageUrl, callback, errorCallback) {
                 errorCallback();
             });
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
 
             csscritic.compare({url: "differentpage.html"});
 
@@ -284,9 +296,10 @@ describe("Reporting", function () {
         it("should provide a list of errors during rendering", function () {
             spyOn(imagediff, 'equal').and.returnValue(true);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage, ["oneUrl", "anotherUrl"]);
-            });
+            getImageForPageUrl.and.returnValue(successfulPromiseFake({
+                image: htmlImage,
+                errors: ["oneUrl", "anotherUrl"]
+            }));
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -305,9 +318,7 @@ describe("Reporting", function () {
         });
 
         it("should provide a list of errors during rendering independently of whether the reference image exists", function () {
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage, ["oneUrl", "anotherUrl"]);
-            });
+            setUpGetImageForPageUrl(htmlImage, ["oneUrl", "anotherUrl"]);
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
@@ -327,9 +338,7 @@ describe("Reporting", function () {
         it("should not pass along a list if no errors exist", function () {
             spyOn(imagediff, 'equal').and.returnValue(true);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage, []);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -351,9 +360,7 @@ describe("Reporting", function () {
 
             spyOn(imagediff, 'equal').and.returnValue(true);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage, []);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -383,9 +390,7 @@ describe("Reporting", function () {
         it("should indicate fail in final report", function () {
             spyOn(imagediff, 'equal').and.returnValue(false);
 
-            getImageForPageUrl.and.callFake(function (parameters, callback) {
-                callback(htmlImage);
-            });
+            setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });

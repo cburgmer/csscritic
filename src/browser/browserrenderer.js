@@ -69,17 +69,14 @@ window.csscritic = (function (module, rasterizeHTML) {
             });
     };
 
-    module.renderer.browserRenderer = function (parameters, successCallback, errorCallback) {
+    module.renderer.browserRenderer = function (parameters) {
         if (parameters.proxyUrl) {
             parameters.url = parameters.proxyUrl + "/inline?url=" + parameters.url;
         }
-        module.util.ajax(parameters.url)
+        return module.util.ajax(parameters.url)
             .then(function (content) {
                 return loadImageFromContent(content, parameters);
-            })
-            .then(function (result) {
-                successCallback(result.image, result.errors);
-            }, errorCallback);
+            });
     };
 
     module.renderer.getImageForPageUrl = module.renderer.browserRenderer;

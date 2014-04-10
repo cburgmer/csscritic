@@ -45,8 +45,8 @@ describe("Browser renderer", function () {
             url: theUrl,
             width: 42,
             height: 7
-        }, function (image) {
-            expect(image).toBe(theImage);
+        }).then(function (result) {
+            expect(result.image).toBe(theImage);
 
             done();
         });
@@ -59,7 +59,7 @@ describe("Browser renderer", function () {
             url: "the_url",
             width: 42,
             height: 7
-        }, null, done);
+        }).then(null, done);
     });
 
     describe("HTML page rendering", function () {
@@ -94,8 +94,8 @@ describe("Browser renderer", function () {
                 url: theUrl,
                 width: 42,
                 height: 7
-            }, function (image) {
-                expect(image).toBe(the_image);
+            }).then(function (result) {
+                expect(result.image).toBe(the_image);
                 expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {
                     cache: 'repeated',
                     cacheBucket: jasmine.any(Object),
@@ -117,7 +117,7 @@ describe("Browser renderer", function () {
                 url: theUrl,
                 width: 42,
                 height: 7
-            }, null, done);
+            }).then(null, done);
         });
 
         it("should report errors from rendering", function (done) {
@@ -128,11 +128,11 @@ describe("Browser renderer", function () {
                 url: pageUrl,
                 width: 42,
                 height: 7
-            }, function (result_image, errors) {
-                expect(errors).not.toBeNull();
-                expect(errors.length).toBe(3);
-                errors.sort();
-                expect(errors).toEqual([
+            }).then(function (result) {
+                expect(result.errors).not.toBeNull();
+                expect(result.errors.length).toBe(3);
+                result.errors.sort();
+                expect(result.errors).toEqual([
                     "Unable to load background-image " + fixtureUrl + "background_image_does_not_exist.jpg",
                     "Unable to load image " + fixtureUrl + "image_does_not_exist.png",
                     "Unable to load stylesheet " + fixtureUrl + "css_does_not_exist.css"
@@ -153,7 +153,7 @@ describe("Browser renderer", function () {
                 width: 42,
                 height: 7,
                 hover: ".someSelector"
-            }, function () {
+            }).then(function () {
                 expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
                     jasmine.any(String),
                     jasmine.objectContaining({hover: ".someSelector"})
