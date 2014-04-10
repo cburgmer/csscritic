@@ -11,37 +11,38 @@ window.csscritic = (function (module) {
         return "data:image/png;base64," + pngBase64;
     };
 
-    var getImageForUrl = function (url, successCallback, errorCallback) {
-        var image = new window.Image();
+    var getImageForUrl = function (url) {
+        var defer = ayepromise.defer(),
+            image = new window.Image();
 
         image.onload = function () {
-            successCallback(image);
+            defer.resolve(image);
         };
-        if (errorCallback) {
-            image.onerror = errorCallback;
-        }
+        image.onerror = defer.reject;
         image.src = url;
+
+        return defer.promise;
     };
 
-    var renderPage = function (page, successCallback, errorCallback) {
+    var renderPage = function (page) {
         var base64PNG, imgURI;
 
         base64PNG = page.renderBase64("PNG");
         imgURI = getDataUriForBase64PNG(base64PNG);
 
-        getImageForUrl(imgURI, function (image) {
-            successCallback(image);
-        }, errorCallback);
+        return getImageForUrl(imgURI);
     };
 
-    module.renderer.phantomjsRenderer = function (parameters, successCallback, errorCallback) {
-        var page = require("webpage").create(),
-            errorneousResources = [],
-            handleError = function () {
-                if (errorCallback) {
-                    errorCallback();
-                }
-            };
+    var waitFor = function (millis) {
+        var defer = ayepromise.defer();
+        setTimeout(defer.resolve, millis);
+        return defer.promise;
+    };
+
+    var openPage = function (url, width, height) {
+        var defer = ayepromise.defer(),
+            page = require("webpage").create(),
+            errorneousResources = [];
 
         page.onResourceReceived = function (response) {
             var protocol = response.url.substr(0, 7);
@@ -54,21 +55,41 @@ window.csscritic = (function (module) {
         };
 
         page.viewportSize = {
-            width: parameters.width,
-            height: parameters.height
+            width: width,
+            height: height
         };
 
-        page.open(getFileUrl(parameters.url), function (status) {
+        page.open(url, function (status) {
             if (status === "success") {
-                setTimeout(function () {
-                    renderPage(page, function (image) {
-                        successCallback(image, errorneousResources);
-                    }, handleError);
-                }, 200);
+                defer.resolve({
+                    page: page,
+                    errorneousResources: errorneousResources
+                });
             } else {
-                handleError();
+                defer.reject();
             }
         });
+
+        return defer.promise;
+    };
+
+    module.renderer.phantomjsRenderer = function (parameters, successCallback, errorCallback) {
+        openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
+            .then(function (result) {
+                return waitFor(200)
+                    .then(function () {
+                        return renderPage(result.page);
+                    })
+                    .then(function (image) {
+                        return {
+                            image: image,
+                            errors: result.errorneousResources
+                        };
+                    });
+            })
+            .then(function (result) {
+                successCallback(result.image, result.errors);
+            }, errorCallback);
     };
 
     module.renderer.getImageForPageUrl = module.renderer.phantomjsRenderer;
