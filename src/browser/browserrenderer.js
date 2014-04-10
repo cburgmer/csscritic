@@ -50,28 +50,36 @@ window.csscritic = (function (module, rasterizeHTML) {
         });
     };
 
-    module.renderer.browserRenderer = function (parameters, successCallback, errorCallback) {
-        var url = parameters.url;
-        if (parameters.proxyUrl) {
-            url = parameters.proxyUrl + "/inline?url=" + parameters.url;
-        }
-        module.util.ajax(url).then(function (content) {
-            module.util.getImageForBinaryContent(content).then(function (image) {
-                successCallback(image, []);
+    var loadImageFromContent = function (content, parameters) {
+        return module.util.getImageForBinaryContent(content)
+            .then(function (image) {
+                return {
+                    image: image,
+                    errors: []
+                };
             }, function () {
-                enqueueRenderHtmlJob({
-                    baseUrl: url,
+                // It's not an image, so it must be a HTML page
+                return enqueueRenderHtmlJob({
                     html: content,
+                    baseUrl: parameters.url,
                     width: parameters.width,
                     height: parameters.height,
                     hover: parameters.hover
-                })
-                .then(function (result) {
-                    successCallback(result.image, result.errors);
-                },
-                errorCallback);
+                });
             });
-        }, errorCallback);
+    };
+
+    module.renderer.browserRenderer = function (parameters, successCallback, errorCallback) {
+        if (parameters.proxyUrl) {
+            parameters.url = parameters.proxyUrl + "/inline?url=" + parameters.url;
+        }
+        module.util.ajax(parameters.url)
+            .then(function (content) {
+                return loadImageFromContent(content, parameters);
+            })
+            .then(function (result) {
+                successCallback(result.image, result.errors);
+            }, errorCallback);
     };
 
     module.renderer.getImageForPageUrl = module.renderer.browserRenderer;
