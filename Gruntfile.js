@@ -59,13 +59,6 @@ module.exports = function (grunt) {
                     'src/cli/phantomjs_runner.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
-            },
-            server: {
-                src: [
-                    'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
-                    'src/phantomjs_render_backend.js'
-                ],
-                dest: 'dist/<%= pkg.name %>-server.js'
             }
         },
         uglify: {
