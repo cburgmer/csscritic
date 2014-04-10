@@ -18,8 +18,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         var absolutePageUrl = getFileUrl(pageUrl),
             doc = window.document.implementation.createHTMLDocument("");
 
-        // TODO remove reference to rasterizeHTMLInline.util
-        rasterizeHTMLInline.util.ajax(absolutePageUrl, {cache: false}).then(function (content) {
+        module.util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
             rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
@@ -35,7 +34,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     module.signOffReporterUtil.loadFingerprintJson = function (url, callback) {
         var absoluteUrl = getFileUrl(url);
 
-        rasterizeHTMLInline.util.ajax(absoluteUrl, {cache: false}).then(function (content) {
+        module.util.ajax(absoluteUrl).then(function (content) {
             callback(JSON.parse(content));
         });
     };
