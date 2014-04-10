@@ -1,4 +1,4 @@
-describe("BasicHTMLReporter utilities", function () {
+describe("Reporter utilities", function () {
 
     describe("supportsReadingHtmlFromCanvas", function () {
         var canvas, context;
@@ -17,7 +17,7 @@ describe("BasicHTMLReporter utilities", function () {
         it("should return false when reading HTML from a canvas is not supported", function (done) {
             context.getImageData.and.throwError(new Error());
 
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
+            csscritic.reporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
                 expect(supported).toBe(false);
 
                 done();
@@ -25,7 +25,7 @@ describe("BasicHTMLReporter utilities", function () {
         });
 
         it("should return true when reading HTML from a canvas is supported", function (done) {
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
+            csscritic.reporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
                 expect(supported).toBe(true);
 
                 done();
@@ -58,7 +58,7 @@ describe("BasicHTMLReporter utilities", function () {
             csscriticTestHelper.loadImageFromUrl(csscriticTestPath + "fixtures/green.png", function (imageA) {
                 csscriticTestHelper.loadImageFromUrl(csscriticTestPath + "fixtures/redWithLetter.png", function (imageB) {
                     csscriticTestHelper.loadImageFromUrl(diffReferenceUrl, function (referenceImage) {
-                        var resultingCanvas = csscritic.basicHTMLReporterUtil.getDifferenceCanvas(imageA, imageB);
+                        var resultingCanvas = csscritic.reporterUtil.getDifferenceCanvas(imageA, imageB);
 
                         expect(resultingCanvas).toImageDiffEqual(referenceImage);
 

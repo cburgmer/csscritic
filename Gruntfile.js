@@ -87,6 +87,7 @@ module.exports = function (grunt) {
                         'src/browser/browserrenderer.js',
                         'src/browser/domstorage.js',
                         'src/<%= pkg.name %>.js',
+                        'src/browser/reporterutil.js',
                         'src/browser/basichtmlreporter.js'
                     ]
                 }

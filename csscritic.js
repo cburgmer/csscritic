@@ -14,6 +14,7 @@
             'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
             'node_modules/imagediff/imagediff.js',
             'node_modules/ayepromise/ayepromise.js',
+            'src/browser/reporterutil.js',
             'src/browser/basichtmlreporter.js',
             'src/browser/browserrenderer.js',
             'src/browser/domstorage.js',

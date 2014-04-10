@@ -1,63 +1,4 @@
 window.csscritic = (function (module, document) {
-    module.basicHTMLReporterUtil = {};
-
-    module.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas = function (callback) {
-        var canvas = document.createElement("canvas"),
-            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><foreignObject></foreignObject></svg>',
-            image = new Image();
-
-        image.onload = function () {
-            var context = canvas.getContext("2d");
-            try {
-                context.drawImage(image, 0, 0);
-                // This will fail in Chrome & Safari
-                context.getImageData(0, 0, 1, 1);
-            } catch (e) {
-                callback(false);
-                // Firefox throws a 'NS_ERROR_NOT_AVAILABLE' if the SVG is faulty
-                return false;
-            }
-            callback(true);
-        };
-        image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    };
-
-    var canvasForImageCanvas = function (imageData) {
-        var canvas = document.createElement("canvas"),
-            context;
-
-        canvas.height = imageData.height;
-        canvas.width  = imageData.width;
-
-        context = canvas.getContext("2d");
-        context.putImageData(imageData, 0, 0);
-
-        return canvas;
-    };
-
-    module.basicHTMLReporterUtil.getDifferenceCanvas = function (imageA, imageB) {
-        var differenceImageData = imagediff.diff(imageA, imageB);
-
-        return canvasForImageCanvas(differenceImageData);
-    };
-
-    var scale = function (byte) {
-        var normalize = Math.log(256);
-
-        return Math.floor(255 * Math.log(byte + 1) / normalize);
-    };
-
-    module.basicHTMLReporterUtil.getHighlightedDifferenceCanvas = function (imageA, imageB) {
-        var differenceImageData = imagediff.diff(imageA, imageB);
-
-        for (var i = 0; i < differenceImageData.data.length; i++) {
-            if (i % 4 < 3) {
-                differenceImageData.data[i] = scale(differenceImageData.data[i]);
-            }
-        }
-
-        return canvasForImageCanvas(differenceImageData);
-    };
 
     var registerResizeHandler = function (element, handler) {
         var width = element.style.width,
@@ -222,8 +163,8 @@ window.csscritic = (function (module, document) {
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = document.createElement("div"),
             innerDifferenceCanvasContainer = document.createElement("div"),
-            differenceCanvas = module.basicHTMLReporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage),
-            highlightedDifferenceCanvas = module.basicHTMLReporterUtil.getHighlightedDifferenceCanvas(result.pageImage, result.referenceImage);
+            differenceCanvas = module.reporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage),
+            highlightedDifferenceCanvas = module.reporterUtil.getHighlightedDifferenceCanvas(result.pageImage, result.referenceImage);
 
         differenceCanvasContainer.className = "differenceCanvasContainer";
 
@@ -383,7 +324,7 @@ window.csscritic = (function (module, document) {
     var showBrowserWarningIfNeeded = function () {
         var warning;
 
-        module.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
+        module.reporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
             if (!supported) {
                 warning = document.createElement('div');
                 warning.className = "browserWarning";

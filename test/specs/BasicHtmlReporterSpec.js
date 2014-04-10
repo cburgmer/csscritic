@@ -2,7 +2,7 @@ describe("Basic HTML reporter", function () {
     var reporter, htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas;
 
     beforeEach(function () {
-        spyOn(csscritic.basicHTMLReporterUtil, 'supportsReadingHtmlFromCanvas');
+        spyOn(csscritic.reporterUtil, 'supportsReadingHtmlFromCanvas');
 
         reporter = csscritic.BasicHTMLReporter();
 
@@ -12,13 +12,13 @@ describe("Basic HTML reporter", function () {
         differenceImageCanvas = window.document.createElement("canvas");
         highlightedDifferenceImageCanvas = window.document.createElement("canvas");
 
-        spyOn(csscritic.basicHTMLReporterUtil, 'getDifferenceCanvas').and.callFake(function (imageA, imageB) {
+        spyOn(csscritic.reporterUtil, 'getDifferenceCanvas').and.callFake(function (imageA, imageB) {
             if (imageA === htmlImage && imageB === referenceImage) {
                 return differenceImageCanvas;
             }
         });
 
-        spyOn(csscritic.basicHTMLReporterUtil, 'getHighlightedDifferenceCanvas').and.callFake(function (imageA, imageB) {
+        spyOn(csscritic.reporterUtil, 'getHighlightedDifferenceCanvas').and.callFake(function (imageA, imageB) {
             if (imageA === htmlImage && imageB === referenceImage) {
                 return highlightedDifferenceImageCanvas;
             }
@@ -453,7 +453,7 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should show a warning if the browser is not supported", function () {
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
+            csscritic.reporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
                 callback(false);
             });
 
@@ -463,7 +463,7 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should not show a warning if the browser is supported", function () {
-            csscritic.basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
+            csscritic.reporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
                 callback(true);
             });
 
