@@ -1,5 +1,8 @@
-window.csscritic = (function (module) {
-    module.renderer = module.renderer || {};
+window.csscritic = window.csscritic || {};
+
+csscritic.phantomjsRenderer = (function () {
+
+    var module = {};
 
     var getFileUrl = function (address) {
         var fs = require("fs");
@@ -73,7 +76,7 @@ window.csscritic = (function (module) {
         return defer.promise;
     };
 
-    module.renderer.phantomjsRenderer = function (parameters) {
+    module.render = function (parameters) {
         return openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
             .then(function (result) {
                 return waitFor(200)
@@ -89,6 +92,9 @@ window.csscritic = (function (module) {
             });
     };
 
-    module.renderer.getImageForPageUrl = module.renderer.phantomjsRenderer;
     return module;
-}(window.csscritic || {}));
+}());
+
+csscritic.renderer = {};
+csscritic.renderer.getImageForPageUrl = csscritic.phantomjsRenderer.render;
+

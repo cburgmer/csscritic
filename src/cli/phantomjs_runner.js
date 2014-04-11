@@ -1,7 +1,9 @@
-window.csscritic = (function (module) {
+window.csscritic = window.csscritic || {};
+
+csscritic.phantomjsRunner = (function () {
     var system = require("system");
 
-    module.phantomjsRunner = {};
+    var module = {};
 
     var parseArguments = function (args) {
         var i = 0,
@@ -62,7 +64,7 @@ window.csscritic = (function (module) {
         csscritic.execute(doneHandler);
     };
 
-    module.phantomjsRunner.main = function () {
+    module.main = function () {
         var parsedArguments = parseArguments(system.args.slice(1)),
             signedOffPages = parsedArguments.opts['-f'],
             logToPath = parsedArguments.opts['--log'];
@@ -81,6 +83,6 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+}());
 
 csscritic.phantomjsRunner.main();

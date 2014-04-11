@@ -1,6 +1,6 @@
 window.csscritic = window.csscritic || {};
 
-window.csscritic.reporterUtil = (function () {
+csscritic.reporterUtil = (function () {
 
     var module = {};
 

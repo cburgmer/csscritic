@@ -1,5 +1,7 @@
-window.csscritic = (function (module, rasterizeHTML) {
-    module.renderer = module.renderer || {};
+window.csscritic = window.csscritic || {};
+
+csscritic.browserRenderer = (function (rasterizeHTML) {
+    var module = {};
 
     var cache = {};
 
@@ -7,7 +9,7 @@ window.csscritic = (function (module, rasterizeHTML) {
 
     var getOrCreateJobQueue = function () {
         if (!jobQueue) {
-            jobQueue = module.jobQueue();
+            jobQueue = csscritic.jobQueue();
         }
         return jobQueue;
     };
@@ -51,7 +53,7 @@ window.csscritic = (function (module, rasterizeHTML) {
     };
 
     var loadImageFromContent = function (content, parameters) {
-        return module.util.getImageForBinaryContent(content)
+        return csscritic.util.getImageForBinaryContent(content)
             .then(function (image) {
                 return {
                     image: image,
@@ -69,16 +71,18 @@ window.csscritic = (function (module, rasterizeHTML) {
             });
     };
 
-    module.renderer.browserRenderer = function (parameters) {
+    module.render = function (parameters) {
         if (parameters.proxyUrl) {
             parameters.url = parameters.proxyUrl + "/inline?url=" + parameters.url;
         }
-        return module.util.ajax(parameters.url)
+        return csscritic.util.ajax(parameters.url)
             .then(function (content) {
                 return loadImageFromContent(content, parameters);
             });
     };
 
-    module.renderer.getImageForPageUrl = module.renderer.browserRenderer;
     return module;
-}(window.csscritic || {}, rasterizeHTML));
+}(rasterizeHTML));
+
+csscritic.renderer = {};
+csscritic.renderer.getImageForPageUrl = csscritic.browserRenderer.render;

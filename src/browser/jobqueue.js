@@ -1,6 +1,6 @@
 window.csscritic = window.csscritic || {};
 
-window.csscritic.jobQueue = function () {
+csscritic.jobQueue = function () {
     var module = {};
 
     var jobQueue = [],

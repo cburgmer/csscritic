@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-10
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-11
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -611,8 +611,11 @@ return a.util.all(d.map(function(a){return n(a,c).then(function(b){l(a,b.content
   return imagediff;
 });
 
-window.csscritic = (function (module) {
-    module.renderer = module.renderer || {};
+window.csscritic = window.csscritic || {};
+
+csscritic.phantomjsRenderer = (function () {
+
+    var module = {};
 
     var getFileUrl = function (address) {
         var fs = require("fs");
@@ -686,7 +689,7 @@ window.csscritic = (function (module) {
         return defer.promise;
     };
 
-    module.renderer.phantomjsRenderer = function (parameters) {
+    module.render = function (parameters) {
         return openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
             .then(function (result) {
                 return waitFor(200)
@@ -702,26 +705,30 @@ window.csscritic = (function (module) {
             });
     };
 
-    module.renderer.getImageForPageUrl = module.renderer.phantomjsRenderer;
     return module;
-}(window.csscritic || {}));
+}());
 
-window.csscritic = (function (module, fs) {
-    module.storage = module.storage || {};
-    module.filestorage = {};
+csscritic.renderer = {};
+csscritic.renderer.getImageForPageUrl = csscritic.phantomjsRenderer.render;
 
-    module.filestorage.options = {
+
+window.csscritic = window.csscritic || {};
+
+csscritic.filestorage = (function (fs) {
+    var module = {};
+
+    module.options = {
         basePath: "./"
     };
 
     var filePathForKey = function (key) {
-        return module.filestorage.options.basePath + key + ".json";
+        return module.options.basePath + key + ".json";
     };
 
-    module.filestorage.storeReferenceImage = function (key, pageImage, viewport) {
+    module.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
-        uri = module.util.getDataURIForImage(pageImage);
+        uri = csscritic.util.getDataURIForImage(pageImage);
         dataObj = {
             referenceImageUri: uri,
             viewport: {
@@ -749,7 +756,7 @@ window.csscritic = (function (module, fs) {
         return dataObj;
     };
 
-    module.filestorage.readReferenceImage = function (key, successCallback, errorCallback) {
+    module.readReferenceImage = function (key, successCallback, errorCallback) {
         var filePath = filePathForKey(key),
             dataObj;
 
@@ -765,7 +772,7 @@ window.csscritic = (function (module, fs) {
             return;
         }
 
-        module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+        csscritic.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -775,11 +782,12 @@ window.csscritic = (function (module, fs) {
         }, errorCallback);
     };
 
-    module.storage.options = module.filestorage.options;
-    module.storage.storeReferenceImage = module.filestorage.storeReferenceImage;
-    module.storage.readReferenceImage = module.filestorage.readReferenceImage;
     return module;
-}(window.csscritic || {}, require("fs")));
+}(require("fs")));
+
+csscritic.storage = {};
+csscritic.storage.storeReferenceImage = csscritic.filestorage.storeReferenceImage;
+csscritic.storage.readReferenceImage = csscritic.filestorage.readReferenceImage;
 
 window.csscritic = (function (module, renderer, storage, imagediff) {
     var reporters, testCases, proxyUrl;
@@ -1288,10 +1296,12 @@ window.csscritic = (function (module) {
     return module;
 }(window.csscritic || {}));
 
-window.csscritic = (function (module) {
+window.csscritic = window.csscritic || {};
+
+csscritic.phantomjsRunner = (function () {
     var system = require("system");
 
-    module.phantomjsRunner = {};
+    var module = {};
 
     var parseArguments = function (args) {
         var i = 0,
@@ -1352,7 +1362,7 @@ window.csscritic = (function (module) {
         csscritic.execute(doneHandler);
     };
 
-    module.phantomjsRunner.main = function () {
+    module.main = function () {
         var parsedArguments = parseArguments(system.args.slice(1)),
             signedOffPages = parsedArguments.opts['-f'],
             logToPath = parsedArguments.opts['--log'];
@@ -1371,6 +1381,6 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+}());
 
 csscritic.phantomjsRunner.main();

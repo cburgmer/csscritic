@@ -1,19 +1,20 @@
-window.csscritic = (function (module, fs) {
-    module.storage = module.storage || {};
-    module.filestorage = {};
+window.csscritic = window.csscritic || {};
 
-    module.filestorage.options = {
+csscritic.filestorage = (function (fs) {
+    var module = {};
+
+    module.options = {
         basePath: "./"
     };
 
     var filePathForKey = function (key) {
-        return module.filestorage.options.basePath + key + ".json";
+        return module.options.basePath + key + ".json";
     };
 
-    module.filestorage.storeReferenceImage = function (key, pageImage, viewport) {
+    module.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
-        uri = module.util.getDataURIForImage(pageImage);
+        uri = csscritic.util.getDataURIForImage(pageImage);
         dataObj = {
             referenceImageUri: uri,
             viewport: {
@@ -41,7 +42,7 @@ window.csscritic = (function (module, fs) {
         return dataObj;
     };
 
-    module.filestorage.readReferenceImage = function (key, successCallback, errorCallback) {
+    module.readReferenceImage = function (key, successCallback, errorCallback) {
         var filePath = filePathForKey(key),
             dataObj;
 
@@ -57,7 +58,7 @@ window.csscritic = (function (module, fs) {
             return;
         }
 
-        module.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+        csscritic.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -67,8 +68,9 @@ window.csscritic = (function (module, fs) {
         }, errorCallback);
     };
 
-    module.storage.options = module.filestorage.options;
-    module.storage.storeReferenceImage = module.filestorage.storeReferenceImage;
-    module.storage.readReferenceImage = module.filestorage.readReferenceImage;
     return module;
-}(window.csscritic || {}, require("fs")));
+}(require("fs")));
+
+csscritic.storage = {};
+csscritic.storage.storeReferenceImage = csscritic.filestorage.storeReferenceImage;
+csscritic.storage.readReferenceImage = csscritic.filestorage.readReferenceImage;

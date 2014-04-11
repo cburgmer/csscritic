@@ -41,7 +41,7 @@ describe("Browser renderer", function () {
             }
         });
 
-        csscritic.renderer.browserRenderer({
+        csscritic.browserRenderer.render({
             url: theUrl,
             width: 42,
             height: 7
@@ -55,7 +55,7 @@ describe("Browser renderer", function () {
     it("should call the error handler if a page does not exist", function (done) {
         ajaxSpy.and.returnValue(failedPromise());
 
-        csscritic.renderer.browserRenderer({
+        csscritic.browserRenderer.render({
             url: "the_url",
             width: 42,
             height: 7
@@ -90,7 +90,7 @@ describe("Browser renderer", function () {
                     }
                 });
 
-            csscritic.renderer.browserRenderer({
+            csscritic.browserRenderer.render({
                 url: theUrl,
                 width: 42,
                 height: 7
@@ -113,7 +113,7 @@ describe("Browser renderer", function () {
         it("should call the error handler if a page could not be rendered", function (done) {
             spyOn(rasterizeHTML, "drawHTML").and.returnValue(failedPromise());
 
-            csscritic.renderer.browserRenderer({
+            csscritic.browserRenderer.render({
                 url: theUrl,
                 width: 42,
                 height: 7
@@ -124,7 +124,7 @@ describe("Browser renderer", function () {
             var fixtureUrl = csscriticTestPath + "fixtures/",
                 pageUrl = fixtureUrl + "brokenPage.html";
 
-            csscritic.renderer.browserRenderer({
+            csscritic.browserRenderer.render({
                 url: pageUrl,
                 width: 42,
                 height: 7
@@ -148,7 +148,7 @@ describe("Browser renderer", function () {
                 errors: []
             }));
 
-            csscritic.renderer.browserRenderer({
+            csscritic.browserRenderer.render({
                 url: theUrl,
                 width: 42,
                 height: 7,
