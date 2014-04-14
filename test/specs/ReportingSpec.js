@@ -1,6 +1,5 @@
 describe("Reporting", function () {
-    var reporter,
-        getImageForPageUrl, readReferenceImage,
+    var getImageForPageUrl, readReferenceImage,
         htmlImage, referenceImage, viewport;
 
     var successfulPromiseFake = function (value) {
@@ -46,9 +45,6 @@ describe("Reporting", function () {
         });
 
         spyOn(imagediff, 'diff');
-
-        reporter = jasmine.createSpyObj("Reporter", ["reportComparison", "report"]);
-        csscritic.addReporter(reporter);
     });
 
     afterEach(function () {
@@ -56,8 +52,11 @@ describe("Reporting", function () {
     });
 
     describe("reportComparisonStarting", function () {
+        var reporter;
+
         beforeEach(function () {
-            reporter.reportComparisonStarting = jasmine.createSpy("reportComparisonStarting");
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting", "reportComparison"]);
+            csscritic.addReporter(reporter);
         });
 
         it("should report a starting comparison", function () {
@@ -87,6 +86,12 @@ describe("Reporting", function () {
     });
 
     describe("reportComparison", function () {
+        var reporter;
+
+        beforeEach(function () {
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
+            csscritic.addReporter(reporter);
+        });
 
         it("should call the callback only after the reporter finished", function () {
             var callback = jasmine.createSpy("callback");
@@ -98,12 +103,13 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "samplepage.html"}, callback);
+            csscritic.add({url: "samplepage.html"});
+            csscritic.execute(callback);
 
             expect(callback).not.toHaveBeenCalled();
             reporter.reportComparison.calls.mostRecent().args[1]();
-            expect(callback).toHaveBeenCalled();
 
+            expect(callback).toHaveBeenCalled();
         });
 
         it("should report a successful comparison", function () {
@@ -114,7 +120,8 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -134,7 +141,8 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "failed",
@@ -152,7 +160,8 @@ describe("Reporting", function () {
                 errorCallback();
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
@@ -169,7 +178,8 @@ describe("Reporting", function () {
                 errorCallback();
             });
 
-            csscritic.compare({url: "samplepage.html"});
+            csscritic.add({url: "samplepage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "error",
@@ -201,7 +211,8 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -236,7 +247,8 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -260,7 +272,8 @@ describe("Reporting", function () {
             });
             setUpGetImageForPageUrl(htmlImage);
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
@@ -279,7 +292,8 @@ describe("Reporting", function () {
             });
             setUpGetImageForPageUrl(htmlImage);
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             result = reporter.reportComparison.calls.mostRecent().args[0];
 
@@ -304,7 +318,8 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -323,7 +338,8 @@ describe("Reporting", function () {
                 errorCallback();
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
@@ -343,7 +359,8 @@ describe("Reporting", function () {
                 callback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "differentpage.html"});
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute();
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
@@ -369,7 +386,8 @@ describe("Reporting", function () {
                 expect(callbackTriggered).toBeFalsy();
             });
 
-            csscritic.compare({url: "differentpage.html"}, function () {
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute(function () {
                 callbackTriggered = true;
             });
 
@@ -378,6 +396,12 @@ describe("Reporting", function () {
     });
 
     describe("report", function () {
+        var reporter;
+
+        beforeEach(function () {
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison", "report"]);
+            csscritic.addReporter(reporter);
+        });
 
         it("should call final report", function () {
             csscritic.execute();

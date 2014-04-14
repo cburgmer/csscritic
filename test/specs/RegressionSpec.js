@@ -48,7 +48,15 @@ describe("Regression testing", function () {
     });
 
     describe("adding & executing", function () {
+        var imagediffEqual;
+
+        var setUpImageDiffAndReturn = function (equal) {
+            imagediffEqual.and.returnValue(equal);
+        };
+
         beforeEach(function () {
+            imagediffEqual = spyOn(imagediff, 'equal');
+
             setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
@@ -56,9 +64,7 @@ describe("Regression testing", function () {
         });
 
         it("should compare a page", function (done) {
-            var imagediffEqual;
-
-            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(true);
+            setUpImageDiffAndReturn(true);
 
             csscritic.add("samplepage.html");
 
@@ -74,9 +80,7 @@ describe("Regression testing", function () {
         });
 
         it("should report fail on a failing test case", function (done) {
-            var imagediffEqual;
-
-            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(false);
+            setUpImageDiffAndReturn(false);
 
             csscritic.add("samplepage.html");
 
@@ -100,21 +104,12 @@ describe("Regression testing", function () {
         it("should handle a missing callback", function () {
             csscritic.execute();
         });
-    });
 
-    describe("Reference comparison", function () {
-        beforeEach(function () {
-            setUpGetImageForPageUrl(htmlImage);
+        it("should compare the rendered page against the reference image", function (done) {
+            setUpImageDiffAndReturn(true);
 
-            readReferenceImage.and.callFake(function (pageUrl, callback) {
-                callback(referenceImage, viewport);
-            });
-        });
-
-        it("should read the reference image and compare against the rendered page", function (done) {
-            var imagediffEqual = spyOn(imagediff, 'equal');
-
-            csscritic.compare({url: "differentpage.html"}, function () {
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute(function () {
                 expect(readReferenceImage).toHaveBeenCalledWith("differentpage.html", jasmine.any(Function), jasmine.any(Function));
                 expect(imagediffEqual).toHaveBeenCalledWith(htmlImage, referenceImage);
 
@@ -123,9 +118,10 @@ describe("Regression testing", function () {
         });
 
         it("should render page using the viewport's size", function (done) {
-            spyOn(imagediff, 'equal');
+            setUpImageDiffAndReturn(true);
 
-            csscritic.compare({url: "samplepage.html"}, function () {
+            csscritic.add({url: "samplepage.html"});
+            csscritic.execute(function () {
                 expect(getImageForPageUrl).toHaveBeenCalledWith({
                     url: "samplepage.html",
                     width: 98,
@@ -137,35 +133,6 @@ describe("Regression testing", function () {
             });
         });
 
-        it("should compare a page and return 'passed' on success", function (done) {
-            var imagediffEqual;
-
-            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(true);
-
-            csscritic.compare({url: "samplepage.html"}, function (status) {
-                expect(status).toEqual('passed');
-
-                done();
-            });
-        });
-
-        it("should compare a page and return 'failed' on failure", function (done) {
-            var imagediffEqual;
-
-            imagediffEqual = spyOn(imagediff, 'equal').and.returnValue(false);
-
-            csscritic.compare({url: "differentpage.html"}, function (status) {
-                expect(status).toEqual("failed");
-
-                done();
-            });
-        });
-
-        it("should make the callback optional", function () {
-            spyOn(imagediff, 'equal').and.returnValue(true);
-
-            csscritic.compare({url: "samplepage.html"});
-        });
     });
 
     describe("First generation of a reference image", function () {
@@ -178,7 +145,8 @@ describe("Regression testing", function () {
         });
 
         it("should provide a appropriately sized page rendering", function (done) {
-            csscritic.compare({url: "differentpage.html"}, function () {
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute(function () {
                 expect(getImageForPageUrl).toHaveBeenCalledWith({
                     url: "differentpage.html",
                     width: 800,
@@ -198,43 +166,46 @@ describe("Regression testing", function () {
             imagediffEqual = spyOn(imagediff, 'equal');
         });
 
-        it("should return 'referenceMissing' if the reference image cannot be loaded", function (done) {
+        it("should handle missing reference image", function (done) {
             setUpGetImageForPageUrl(htmlImage);
 
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
-            csscritic.compare({url: "samplepage.html"}, function (status) {
-                expect(status).toEqual('referenceMissing');
+            csscritic.add({url: "samplepage.html"});
+            csscritic.execute(function (passed) {
+                expect(passed).toBe(false);
                 expect(imagediffEqual).not.toHaveBeenCalled();
 
                 done();
             });
         });
 
-        it("should return 'error' if the page does not exist", function (done) {
+        it("should handle page render error", function (done) {
             getImageForPageUrl.and.returnValue(failedPromise());
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
 
-            csscritic.compare({url: "samplepage.html"}, function (status) {
-                expect(status).toEqual('error');
+            csscritic.add({url: "samplepage.html"});
+            csscritic.execute(function (passed) {
+                expect(passed).toBe(false);
                 expect(imagediffEqual).not.toHaveBeenCalled();
 
                 done();
             });
         });
 
-        it("should return 'error' if the page does not exist even if the reference image does", function (done) {
+        it("should handle page render error even when reference image exists", function (done) {
             getImageForPageUrl.and.returnValue(failedPromise());
             readReferenceImage.and.callFake(function (pageUrl, successCallback) {
                 successCallback(referenceImage, viewport);
             });
 
-            csscritic.compare({url: "samplepage.html"}, function (status) {
-                expect(status).toEqual('error');
+            csscritic.add({url: "samplepage.html"});
+            csscritic.execute(function (passed) {
+                expect(passed).toBe(false);
                 expect(imagediffEqual).not.toHaveBeenCalled();
 
                 done();

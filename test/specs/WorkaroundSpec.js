@@ -14,12 +14,14 @@ describe("Workarounds", function () {
     ifNotInWebkitIt("should work around transparency making pages non-comparable", function (done) {
         // Create reference image first
         csscritic.addReporter(autoAcceptingReporter);
-        csscritic.compare({url: csscriticTestPath + "fixtures/transparencyBug.html"}, function () {
+        csscritic.add({url: csscriticTestPath + "fixtures/transparencyBug.html"});
+        csscritic.execute(function () {
             csscritic.clearReporters();
 
             // Now test against the reference
-            csscritic.compare({url: csscriticTestPath + "fixtures/transparencyBug.html"}, function (result) {
-                expect(result).toEqual("passed");
+            csscritic.add({url: csscriticTestPath + "fixtures/transparencyBug.html"});
+            csscritic.execute(function (passed) {
+                expect(passed).toBe(true);
 
                 done();
             });

@@ -116,12 +116,12 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
         }
     };
 
-    var loadPageAndReportResult = function (pageUrl, pageWidth, pageHeight, referenceImage, callback) {
+    var loadPageAndReportResult = function (testCase, viewport, referenceImage, callback) {
 
         renderer.getImageForPageUrl({
-            url: pageUrl,
-            width: pageWidth,
-            height: pageHeight,
+            url: testCase.url,
+            width: viewport.width,
+            height: viewport.height,
             proxyUrl: proxyUrl
         }).then(function (renderResult) {
             var isEqual, textualStatus;
@@ -138,17 +138,15 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
                 reportComparison({
                         status: textualStatus,
-                        pageUrl: pageUrl,
+                        pageUrl: testCase.url,
                         htmlImage: renderResult.image,
                         referenceImage: referenceImage,
                         renderErrors: renderResult.errors,
-                        viewportWidth: pageWidth,
-                        viewportHeight: pageHeight
+                        viewportWidth: viewport.width,
+                        viewportHeight: viewport.height
                     },
                     function () {
-                        if (callback) {
-                            callback(textualStatus);
-                        }
+                        callback(textualStatus);
                     }
                 );
             });
@@ -157,22 +155,22 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
             reportComparison({
                     status: textualStatus,
-                    pageUrl: pageUrl
+                    pageUrl: testCase.url
                 },
                 function () {
-                    if (callback) {
-                        callback(textualStatus);
-                    }
+                    callback(textualStatus);
                 }
             );
         });
     };
 
-    module.compare = function (testCase, callback) {
+    var compare = function (testCase, callback) {
+        var defaultViewport = {width: 800, height: 100};
+
         storage.readReferenceImage(testCase.url, function (referenceImage, viewport) {
-            loadPageAndReportResult(testCase.url, viewport.width, viewport.height, referenceImage, callback);
+            loadPageAndReportResult(testCase, viewport, referenceImage, callback);
         }, function () {
-            loadPageAndReportResult(testCase.url, 800, 100, null, callback);
+            loadPageAndReportResult(testCase, defaultViewport, null, callback);
         });
     };
 
@@ -191,7 +189,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
         reportComparisonStarting(testCases, function () {
 
             module.util.map(testCases, function (testCase, finish) {
-                module.compare(testCase, function (status) {
+                compare(testCase, function (status) {
                     finish(status === "passed");
                 });
             }, function (results) {
