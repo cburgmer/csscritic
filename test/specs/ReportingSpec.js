@@ -249,8 +249,7 @@ describe("Reporting", function () {
             expect(getImageForPageUrl).toHaveBeenCalledWith({
                 url: "differentpage.html",
                 width: 16,
-                height: 34,
-                proxyUrl: null
+                height: 34
             });
             expect(result.pageImage).toBe(newHtmlImage);
         });

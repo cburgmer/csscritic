@@ -72,9 +72,6 @@ csscritic.browserRenderer = (function (rasterizeHTML) {
     };
 
     module.render = function (parameters) {
-        if (parameters.proxyUrl) {
-            parameters.url = parameters.proxyUrl + "/inline?url=" + parameters.url;
-        }
         return csscritic.util.ajax(parameters.url)
             .then(function (content) {
                 return loadImageFromContent(content, parameters);

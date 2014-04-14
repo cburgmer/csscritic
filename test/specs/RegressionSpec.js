@@ -125,8 +125,7 @@ describe("Regression testing", function () {
                 expect(getImageForPageUrl).toHaveBeenCalledWith({
                     url: "samplepage.html",
                     width: 98,
-                    height: 76,
-                    proxyUrl: null
+                    height: 76
                 });
 
                 done();
@@ -150,8 +149,7 @@ describe("Regression testing", function () {
                 expect(getImageForPageUrl).toHaveBeenCalledWith({
                     url: "differentpage.html",
                     width: 800,
-                    height: 100,
-                    proxyUrl: null
+                    height: 100
                 });
 
                 done();

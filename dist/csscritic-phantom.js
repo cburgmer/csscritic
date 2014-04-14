@@ -792,19 +792,14 @@ csscritic.storage.storeReferenceImage = csscritic.filestorage.storeReferenceImag
 csscritic.storage.readReferenceImage = csscritic.filestorage.readReferenceImage;
 
 window.csscritic = (function (module, renderer, storage, imagediff) {
-    var reporters, testCases, proxyUrl;
+    var reporters, testCases;
 
     var clear = function () {
         reporters = [];
         testCases = [];
-        proxyUrl = null;
     };
 
     clear();
-
-    module.setProxy = function (newProxyUrl) {
-        proxyUrl = newProxyUrl;
-    };
 
     var buildReportResult = function (comparison) {
         var viewportWidth = comparison.viewportWidth,
@@ -823,8 +818,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                 renderer.getImageForPageUrl({
                     url: comparison.pageUrl,
                     width: width,
-                    height: height,
-                    proxyUrl: proxyUrl
+                    height: height
                 }).then(function (renderResult) {
                     result.pageImage = renderResult.image;
                     callback(renderResult.image);
@@ -903,8 +897,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
         renderer.getImageForPageUrl({
             url: testCase.url,
             width: viewport.width,
-            height: viewport.height,
-            proxyUrl: proxyUrl
+            height: viewport.height
         }).then(function (renderResult) {
             var isEqual, textualStatus;
 
