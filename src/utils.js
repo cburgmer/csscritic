@@ -1,7 +1,9 @@
-window.csscritic = (function (module) {
-    module.util = {};
+window.csscritic = window.csscritic || {};
 
-    module.util.getDataURIForImage = function (image) {
+csscritic.util = (function () {
+    var module = {};
+
+    module.getDataURIForImage = function (image) {
         var canvas = window.document.createElement("canvas"),
             context = canvas.getContext("2d");
 
@@ -13,7 +15,7 @@ window.csscritic = (function (module) {
         return canvas.toDataURL("image/png");
     };
 
-    module.util.getImageForUrl = function (url, successCallback, errorCallback) {
+    module.getImageForUrl = function (url, successCallback, errorCallback) {
         var image = new window.Image();
 
         image.onload = function () {
@@ -25,7 +27,7 @@ window.csscritic = (function (module) {
         image.src = url;
     };
 
-    module.util.getImageForBinaryContent = function (content, callback) {
+    module.getImageForBinaryContent = function (content, callback) {
         var defer = ayepromise.defer(),
             image = new window.Image();
 
@@ -55,7 +57,7 @@ window.csscritic = (function (module) {
         return url + "?_=" + Date.now();
     };
 
-    module.util.ajax = function (url) {
+    module.ajax = function (url) {
         var defer = ayepromise.defer(),
             xhr = new XMLHttpRequest();
 
@@ -82,26 +84,26 @@ window.csscritic = (function (module) {
         return defer.promise;
     };
 
-    module.util.workAroundTransparencyIssueInFirefox = function (image, callback) {
+    module.workAroundTransparencyIssueInFirefox = function (image, callback) {
         // Work around bug https://bugzilla.mozilla.org/show_bug.cgi?id=790468 where the content of a canvas
         //   drawn to another one will be slightly different if transparency is involved.
         // Here the reference image has been drawn to a canvas once (to serialize it to localStorage), while the
         //   image of the newly rendered page hasn't.  Solution: apply the same transformation to the second image, too.
         var dataUri;
         try {
-            dataUri = module.util.getDataURIForImage(image);
+            dataUri = module.getDataURIForImage(image);
         } catch (e) {
             // Fallback for Chrome & Safari
             callback(image);
             return;
         }
 
-        module.util.getImageForUrl(dataUri, function (newImage) {
+        module.getImageForUrl(dataUri, function (newImage) {
             callback(newImage);
         });
     };
 
-    module.util.map = function (list, func, callback) {
+    module.map = function (list, func, callback) {
         var completedCount = 0,
             results = [],
             i;
@@ -130,4 +132,4 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+}());
