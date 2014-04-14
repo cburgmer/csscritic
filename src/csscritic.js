@@ -69,26 +69,15 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     };
 
     var reportComparison = function (comparison, callback) {
-        var i, result,
-            finishedReporterCount = 0,
-            reporterCount = reporters.length,
-            finishUp = function () {
-                finishedReporterCount += 1;
-                if (finishedReporterCount === reporterCount) {
-                    callback();
-                }
-            };
+        var result = buildReportResult(comparison);
 
-        if (!reporterCount) {
-            callback();
-            return;
-        }
-
-        result = buildReportResult(comparison);
-
-        for (i = 0; i < reporterCount; i++) {
-            reporters[i].reportComparison(result, finishUp);
-        }
+        module.util.map(reporters, function (reporter, finishUp) {
+            if (reporter.reportComparison) {
+                reporter.reportComparison(result, finishUp);
+            } else {
+                finishUp();
+            }
+        }, callback);
     };
 
     var reportTestSuite = function (passed, callback) {

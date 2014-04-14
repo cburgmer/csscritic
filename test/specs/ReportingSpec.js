@@ -27,11 +27,8 @@ describe("Reporting", function () {
     };
 
     beforeEach(function () {
-        htmlImage = jasmine.createSpy('htmlImage');
-        referenceImage = {
-            width: 42,
-            height: 7
-        };
+        htmlImage = "the_html_image";
+        referenceImage = "the_reference_image";
         viewport = {
             width: 98,
             height: 76
@@ -51,11 +48,26 @@ describe("Reporting", function () {
         csscritic.clear();
     });
 
+    describe("genereal", function () {
+        it("should make all reporter methods optional", function () {
+            spyOn(imagediff, 'equal');
+            setUpGetImageForPageUrl(htmlImage);
+            readReferenceImage.and.callFake(function (pageUrl, callback) {
+                callback(referenceImage, viewport);
+            });
+
+            csscritic.addReporter({});
+
+            csscritic.add("samplepage.html");
+            csscritic.execute();
+        });
+    });
+
     describe("reportComparisonStarting", function () {
         var reporter;
 
         beforeEach(function () {
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting", "reportComparison"]);
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting"]);
             csscritic.addReporter(reporter);
         });
 
@@ -78,25 +90,32 @@ describe("Reporting", function () {
             csscritic.add("samplepage.html");
             csscritic.execute();
 
-            expect(reporter.reportComparison).not.toHaveBeenCalled();
+            expect(readReferenceImage).not.toHaveBeenCalled();
             reporter.reportComparisonStarting.calls.mostRecent().args[1]();
-            expect(reporter.reportComparison).toHaveBeenCalled();
+            expect(readReferenceImage).toHaveBeenCalled();
         });
 
     });
 
     describe("reportComparison", function () {
-        var reporter;
+        var reporter,
+            imagediffEqual;
+
+        var setUpImageDiffAndReturn = function (equal) {
+            imagediffEqual.and.returnValue(equal);
+        };
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
             csscritic.addReporter(reporter);
+
+            imagediffEqual = spyOn(imagediff, 'equal');
         });
 
         it("should call the callback only after the reporter finished", function () {
             var callback = jasmine.createSpy("callback");
 
-            spyOn(imagediff, 'equal').and.returnValue(true);
+            setUpImageDiffAndReturn(true);
 
             setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
@@ -113,8 +132,7 @@ describe("Reporting", function () {
         });
 
         it("should report a successful comparison", function () {
-            spyOn(imagediff, 'equal').and.returnValue(true);
-
+            setUpImageDiffAndReturn(true);
             setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
@@ -134,8 +152,7 @@ describe("Reporting", function () {
         });
 
         it("should report a canvas showing the difference on a failing comparison", function () {
-            spyOn(imagediff, 'equal').and.returnValue(false);
-
+            setUpImageDiffAndReturn(false);
             setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
@@ -192,7 +209,7 @@ describe("Reporting", function () {
             var finished = false,
                 newHtmlImage = "newHtmlImage",
                 result;
-            spyOn(imagediff, 'equal').and.returnValue(true);
+            setUpImageDiffAndReturn(true);
 
             getImageForPageUrl.and.callFake(function (parameters) {
                 if (parameters.width === 16) {
@@ -240,7 +257,7 @@ describe("Reporting", function () {
 
         it("should provide a method to accept the rendered page and store as new reference", function () {
             var storeReferenceImageSpy = spyOn(csscritic.storage, 'storeReferenceImage');
-            spyOn(imagediff, 'equal').and.returnValue(true);
+            setUpImageDiffAndReturn(true);
 
             setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
@@ -308,8 +325,7 @@ describe("Reporting", function () {
         });
 
         it("should provide a list of errors during rendering", function () {
-            spyOn(imagediff, 'equal').and.returnValue(true);
-
+            setUpImageDiffAndReturn(true);
             getImageForPageUrl.and.returnValue(successfulPromiseFake({
                 image: htmlImage,
                 errors: ["oneUrl", "anotherUrl"]
@@ -352,8 +368,7 @@ describe("Reporting", function () {
         });
 
         it("should not pass along a list if no errors exist", function () {
-            spyOn(imagediff, 'equal').and.returnValue(true);
-
+            setUpImageDiffAndReturn(true);
             setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
@@ -375,8 +390,7 @@ describe("Reporting", function () {
         it("should get called before the success handler returns so that user actions don't interfere with reporting", function () {
             var callbackTriggered = false;
 
-            spyOn(imagediff, 'equal').and.returnValue(true);
-
+            setUpImageDiffAndReturn(true);
             setUpGetImageForPageUrl(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
@@ -399,7 +413,7 @@ describe("Reporting", function () {
         var reporter;
 
         beforeEach(function () {
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparison", "report"]);
+            reporter = jasmine.createSpyObj("Reporter", ["report"]);
             csscritic.addReporter(reporter);
         });
 
@@ -423,7 +437,6 @@ describe("Reporting", function () {
 
             csscritic.execute();
 
-            reporter.reportComparison.calls.mostRecent().args[1]();
             expect(reporter.report).toHaveBeenCalledWith({
                 success: false
             }, jasmine.any(Function));
