@@ -1,4 +1,7 @@
-window.csscritic = (function (module, console) {
+window.csscritic = window.csscritic || {};
+
+csscritic.terminalReporter = function (console) {
+    var module = {};
 
     var ATTRIBUTES_TO_ANSI = {
             "off": 0,
@@ -54,4 +57,6 @@ window.csscritic = (function (module, console) {
     };
 
     return module;
-}(window.csscritic || {}, window.console));
+};
+
+csscritic.TerminalReporter = csscritic.terminalReporter(window.console).TerminalReporter;

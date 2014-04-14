@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-11
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-14
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -1002,9 +1002,10 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     return module;
 }(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, imagediff));
 
-window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
+window.csscritic = window.csscritic || {};
 
-    module.signOffReporterUtil = {};
+csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
+    var module = {};
 
     var getFileUrl = function (address) {
         var fs;
@@ -1018,11 +1019,11 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         }
     };
 
-    module.signOffReporterUtil.loadFullDocument = function (pageUrl, callback) {
+    module.loadFullDocument = function (pageUrl, callback) {
         var absolutePageUrl = getFileUrl(pageUrl),
             doc = window.document.implementation.createHTMLDocument("");
 
-        module.util.ajax(absolutePageUrl).then(function (content) {
+        csscritic.util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
             rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
@@ -1035,23 +1036,31 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         });
     };
 
-    module.signOffReporterUtil.loadFingerprintJson = function (url, callback) {
+    module.loadFingerprintJson = function (url, callback) {
         var absoluteUrl = getFileUrl(url);
 
-        module.util.ajax(absoluteUrl).then(function (content) {
+        csscritic.util.ajax(absoluteUrl).then(function (content) {
             callback(JSON.parse(content));
         });
     };
 
-    module.signOffReporterUtil.calculateFingerprint = function (content) {
+    module.calculateFingerprint = function (content) {
         var shaObj = new JsSHA(content, "TEXT");
 
         return shaObj.getHash("SHA-224", "HEX");
     };
 
+    return module;
+}(rasterizeHTMLInline, jsSHA));
+
+window.csscritic = window.csscritic || {};
+
+csscritic.signOffReporter = function () {
+    var module = {};
+
     var calculateFingerprintForPage = function (pageUrl, callback) {
-        module.signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
-            var actualFingerprint = module.signOffReporterUtil.calculateFingerprint(content);
+        csscritic.signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+            var actualFingerprint = csscritic.signOffReporterUtil.calculateFingerprint(content);
 
             callback(actualFingerprint);
         });
@@ -1102,7 +1111,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         return {
             reportComparison: function (result, callback) {
                 if (! Array.isArray(signedOffPages)) {
-                    module.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
+                    csscritic.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
                         acceptSignedOffPage(result, json, callback);
                     });
                 } else {
@@ -1113,9 +1122,14 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     };
 
     return module;
-}(window.csscritic || {}, rasterizeHTMLInline, jsSHA));
+};
 
-window.csscritic = (function (module, console) {
+csscritic.SignOffReporter = csscritic.signOffReporter().SignOffReporter;
+
+window.csscritic = window.csscritic || {};
+
+csscritic.terminalReporter = function (console) {
+    var module = {};
 
     var ATTRIBUTES_TO_ANSI = {
             "off": 0,
@@ -1171,9 +1185,14 @@ window.csscritic = (function (module, console) {
     };
 
     return module;
-}(window.csscritic || {}, window.console));
+};
 
-window.csscritic = (function (module) {
+csscritic.TerminalReporter = csscritic.terminalReporter(window.console).TerminalReporter;
+
+window.csscritic = window.csscritic || {};
+
+csscritic.htmlFileReporter = function () {
+    var module = {};
 
     var reportComparison = function (result, basePath, callback) {
         var imagesToWrite = [];
@@ -1294,7 +1313,9 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+};
+
+csscritic.HtmlFileReporter = csscritic.htmlFileReporter().HtmlFileReporter;
 
 window.csscritic = window.csscritic || {};
 

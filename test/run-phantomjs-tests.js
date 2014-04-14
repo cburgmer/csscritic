@@ -22,6 +22,7 @@ function loadCode() {
     phantom.injectJs("./src/cli/phantomjsrenderer.js");
     phantom.injectJs("./src/cli/terminalreporter.js");
     phantom.injectJs("./src/cli/htmlfilereporter.js");
+    phantom.injectJs("./src/cli/signoffreporterutil.js");
     phantom.injectJs("./src/cli/signoffreporter.js");
     phantom.injectJs("./src/cli/filestorage.js");
     phantom.injectJs("./src/csscritic.js");

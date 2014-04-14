@@ -1,4 +1,7 @@
-window.csscritic = (function (module) {
+window.csscritic = window.csscritic || {};
+
+csscritic.htmlFileReporter = function () {
+    var module = {};
 
     var reportComparison = function (result, basePath, callback) {
         var imagesToWrite = [];
@@ -119,4 +122,6 @@ window.csscritic = (function (module) {
     };
 
     return module;
-}(window.csscritic || {}));
+};
+
+csscritic.HtmlFileReporter = csscritic.htmlFileReporter().HtmlFileReporter;

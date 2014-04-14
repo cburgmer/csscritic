@@ -1,53 +1,11 @@
-window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
+window.csscritic = window.csscritic || {};
 
-    module.signOffReporterUtil = {};
-
-    var getFileUrl = function (address) {
-        var fs;
-
-        if (window.require) {
-            fs = require("fs");
-
-            return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
-        } else {
-            return address;
-        }
-    };
-
-    module.signOffReporterUtil.loadFullDocument = function (pageUrl, callback) {
-        var absolutePageUrl = getFileUrl(pageUrl),
-            doc = window.document.implementation.createHTMLDocument("");
-
-        module.util.ajax(absolutePageUrl).then(function (content) {
-            doc.documentElement.innerHTML = content;
-
-            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
-                callback('<html>' +
-                    doc.documentElement.innerHTML +
-                    '</html>');
-            });
-        }, function () {
-            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
-        });
-    };
-
-    module.signOffReporterUtil.loadFingerprintJson = function (url, callback) {
-        var absoluteUrl = getFileUrl(url);
-
-        module.util.ajax(absoluteUrl).then(function (content) {
-            callback(JSON.parse(content));
-        });
-    };
-
-    module.signOffReporterUtil.calculateFingerprint = function (content) {
-        var shaObj = new JsSHA(content, "TEXT");
-
-        return shaObj.getHash("SHA-224", "HEX");
-    };
+csscritic.signOffReporter = function () {
+    var module = {};
 
     var calculateFingerprintForPage = function (pageUrl, callback) {
-        module.signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
-            var actualFingerprint = module.signOffReporterUtil.calculateFingerprint(content);
+        csscritic.signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+            var actualFingerprint = csscritic.signOffReporterUtil.calculateFingerprint(content);
 
             callback(actualFingerprint);
         });
@@ -98,7 +56,7 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
         return {
             reportComparison: function (result, callback) {
                 if (! Array.isArray(signedOffPages)) {
-                    module.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
+                    csscritic.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
                         acceptSignedOffPage(result, json, callback);
                     });
                 } else {
@@ -109,4 +67,6 @@ window.csscritic = (function (module, rasterizeHTMLInline, JsSHA) {
     };
 
     return module;
-}(window.csscritic || {}, rasterizeHTMLInline, jsSHA));
+};
+
+csscritic.SignOffReporter = csscritic.signOffReporter().SignOffReporter;

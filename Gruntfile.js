@@ -53,6 +53,7 @@ module.exports = function (grunt) {
                     'src/cli/phantomjsrenderer.js',
                     'src/cli/filestorage.js',
                     'src/csscritic.js',
+                    'src/cli/signoffreporterutil.js',
                     'src/cli/signoffreporter.js',
                     'src/cli/terminalreporter.js',
                     'src/cli/htmlfilereporter.js',

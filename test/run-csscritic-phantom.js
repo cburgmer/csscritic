@@ -7,6 +7,7 @@ phantom.injectJs("node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js");
 phantom.injectJs("src/cli/phantomjsbind.js");
 phantom.injectJs("src/utils.js");
 phantom.injectJs("src/cli/phantomjsrenderer.js");
+phantom.injectJs("src/cli/signoffreporterutil.js");
 phantom.injectJs("src/cli/signoffreporter.js");
 phantom.injectJs("src/cli/terminalreporter.js");
 phantom.injectJs("src/cli/htmlfilereporter.js");
