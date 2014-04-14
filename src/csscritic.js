@@ -128,7 +128,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                         viewportHeight: viewport.height
                     },
                     function () {
-                        callback(textualStatus);
+                        callback(textualStatus === "passed");
                     }
                 );
             });
@@ -140,7 +140,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                     pageUrl: testCase.url
                 },
                 function () {
-                    callback(textualStatus);
+                    callback(false);
                 }
             );
         });
@@ -171,9 +171,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
         reportComparisonStarting(testCases, function () {
 
             module.util.map(testCases, function (testCase, finish) {
-                compare(testCase, function (status) {
-                    finish(status === "passed");
-                });
+                compare(testCase, finish);
             }, function (results) {
                 var allPassed = results.indexOf(false) === -1;
 
