@@ -1,4 +1,6 @@
 describe("PhantomJS renderer", function () {
+    var phantomjsRenderer;
+
     var oldRequire = window.require,
         fixtureUrl = csscriticTestPath + "fixtures/",
         webpageModuleMock, pageMock, testPageUrl, theReferenceImageUri;
@@ -25,6 +27,8 @@ describe("PhantomJS renderer", function () {
     };
 
     beforeEach(function () {
+        phantomjsRenderer = csscriticLib.phantomjsRenderer();
+
         testPageUrl = fixtureUrl + "pageUnderTest.html";
 
         theReferenceImageUri = "data:image/png;base64," +
@@ -48,7 +52,7 @@ describe("PhantomJS renderer", function () {
     });
 
     it("should draw the url to the given canvas", function (done) {
-        csscritic.phantomjsRenderer.render({
+        phantomjsRenderer.render({
             url: testPageUrl,
             width: 330,
             height: 151
@@ -61,7 +65,7 @@ describe("PhantomJS renderer", function () {
     });
 
     it("should call the error handler if a page does not exist", function (done) {
-        csscritic.phantomjsRenderer.render({
+        phantomjsRenderer.render({
             url: "the_url_that_doesnt_exist",
             width: 42,
             height: 7
@@ -76,7 +80,7 @@ describe("PhantomJS renderer", function () {
             callback("success");
         });
 
-        csscritic.phantomjsRenderer.render({
+        phantomjsRenderer.render({
             url: testPageUrl,
             width: 330,
             height: 151
@@ -86,7 +90,7 @@ describe("PhantomJS renderer", function () {
     it("should report errors from rendering", function (done) {
         var pageUrl = fixtureUrl + "brokenPage.html";
 
-        csscritic.phantomjsRenderer.render({
+        phantomjsRenderer.render({
             url: pageUrl,
             width: 42,
             height: 7
@@ -108,7 +112,7 @@ describe("PhantomJS renderer", function () {
         var servedFixtureUrl = localserver + "/" + fixtureUrl,
             pageUrl = servedFixtureUrl + "brokenPage.html";
 
-        csscritic.phantomjsRenderer.render({
+        phantomjsRenderer.render({
             url: pageUrl,
             width: 42,
             height: 7

@@ -1,6 +1,4 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.htmlFileReporter = function () {
+csscriticLib.htmlFileReporter = function () {
     var module = {};
 
     var reportComparison = function (result, basePath, callback) {
@@ -123,5 +121,3 @@ csscritic.htmlFileReporter = function () {
 
     return module;
 };
-
-csscritic.HtmlFileReporter = csscritic.htmlFileReporter().HtmlFileReporter;

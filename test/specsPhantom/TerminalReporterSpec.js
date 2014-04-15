@@ -4,7 +4,8 @@ describe("TerminalReporter", function () {
         consoleLogSpy;
 
     beforeEach(function () {
-        reporter = csscritic.TerminalReporter();
+        var terminalReporter = csscriticLib.terminalReporter(window.console);
+        reporter = terminalReporter.TerminalReporter();
 
         htmlImage = window.document.createElement("img");
         referenceImage = new window.Image();

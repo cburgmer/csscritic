@@ -1,20 +1,26 @@
 describe("SignOffReporter", function () {
+    var util = csscriticLib.util(),
+        signOffReporterUtil = csscriticLib.signOffReporterUtil(util, rasterizeHTMLInline, jsSHA),
+        signOffReporter;
+
     var htmlImage = "html image",
         referenceImage = "reference image",
         acceptPageSpy, loadFullDocumentSpy, calculateFingerprintSpy;
 
     beforeEach(function () {
+        signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil);
+
         acceptPageSpy = jasmine.createSpy("acceptPage");
-        loadFullDocumentSpy = spyOn(csscritic.signOffReporterUtil, 'loadFullDocument').and.callFake(function (url, callback) {
+        loadFullDocumentSpy = spyOn(signOffReporterUtil, 'loadFullDocument').and.callFake(function (url, callback) {
             callback("some content");
         });
-        calculateFingerprintSpy = spyOn(csscritic.signOffReporterUtil, 'calculateFingerprint').and.returnValue("fIngRPrinT");
+        calculateFingerprintSpy = spyOn(signOffReporterUtil, 'calculateFingerprint').and.returnValue("fIngRPrinT");
     });
 
     it("should call the callback when finished reporting", function () {
         var callback = jasmine.createSpy("callback");
 
-        var reporter = csscritic.SignOffReporter([{
+        var reporter = signOffReporter.SignOffReporter([{
             pageUrl: "something",
             fingerprint: "fIngRPrinT"
         }]);
@@ -28,7 +34,7 @@ describe("SignOffReporter", function () {
         var fixtureUrl = csscriticTestPath + "fixtures/",
             pageUrl = fixtureUrl + 'pageUnderTest.html';
 
-        var reporter = csscritic.SignOffReporter([{
+        var reporter = signOffReporter.SignOffReporter([{
             pageUrl: pageUrl,
             fingerprint: "fIngRPrinT"
         }]);
@@ -52,7 +58,7 @@ describe("SignOffReporter", function () {
         var fixtureUrl = csscriticTestPath + "fixtures/",
             pageUrl = fixtureUrl + 'pageUnderTest.html';
 
-        var reporter = csscritic.SignOffReporter([{
+        var reporter = signOffReporter.SignOffReporter([{
             pageUrl: pageUrl,
             fingerprint: "fIngRPrinT"
         }]);
@@ -75,9 +81,9 @@ describe("SignOffReporter", function () {
         var fixtureUrl = csscriticTestPath + "fixtures/",
             pageUrl = fixtureUrl + 'pageUnderTest.html';
 
-        var reporter = csscritic.SignOffReporter('fingerprints.json');
+        var reporter = signOffReporter.SignOffReporter('fingerprints.json');
 
-        spyOn(csscritic.signOffReporterUtil, 'loadFingerprintJson').and.callFake(function (url, callback) {
+        spyOn(signOffReporterUtil, 'loadFingerprintJson').and.callFake(function (url, callback) {
             callback([{
                 pageUrl: pageUrl,
                 fingerprint: "fIngRPrinT"

@@ -1,7 +1,7 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.filestorage = (function (fs) {
+csscriticLib.filestorage = function (util) {
     var module = {};
+
+    var fs = require("fs");
 
     module.options = {
         basePath: "./"
@@ -14,7 +14,7 @@ csscritic.filestorage = (function (fs) {
     module.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
-        uri = csscritic.util.getDataURIForImage(pageImage);
+        uri = util.getDataURIForImage(pageImage);
         dataObj = {
             referenceImageUri: uri,
             viewport: {
@@ -58,7 +58,7 @@ csscritic.filestorage = (function (fs) {
             return;
         }
 
-        csscritic.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+        util.getImageForUrl(dataObj.referenceImageUri, function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -69,8 +69,4 @@ csscritic.filestorage = (function (fs) {
     };
 
     return module;
-}(require("fs")));
-
-csscritic.storage = {};
-csscritic.storage.storeReferenceImage = csscritic.filestorage.storeReferenceImage;
-csscritic.storage.readReferenceImage = csscritic.filestorage.readReferenceImage;
+};

@@ -1,6 +1,4 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
+csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
     var module = {};
 
     var getFileUrl = function (address) {
@@ -19,7 +17,7 @@ csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
         var absolutePageUrl = getFileUrl(pageUrl),
             doc = window.document.implementation.createHTMLDocument("");
 
-        csscritic.util.ajax(absolutePageUrl).then(function (content) {
+        util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
             rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
@@ -35,7 +33,7 @@ csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
     module.loadFingerprintJson = function (url, callback) {
         var absoluteUrl = getFileUrl(url);
 
-        csscritic.util.ajax(absoluteUrl).then(function (content) {
+        util.ajax(absoluteUrl).then(function (content) {
             callback(JSON.parse(content));
         });
     };
@@ -47,4 +45,4 @@ csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
     };
 
     return module;
-}(rasterizeHTMLInline, jsSHA));
+};

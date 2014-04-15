@@ -1,16 +1,23 @@
 describe("Phantom storage support for reference images", function () {
-    var fs = require("fs");
+    var fs = require("fs"),
+        tempPath;
+
+    var constructStorage = function (util) {
+        var filestorage = csscriticLib.filestorage(util);
+        filestorage.options.basePath = tempPath;
+        return filestorage;
+    };
 
     beforeEach(function () {
-        csscritic.filestorage.options.basePath = csscriticTestHelper.createTempPath();
+        tempPath = csscriticTestHelper.createTempPath();
     });
 
     var readStoredReferenceImage = function (key) {
-            return fs.read(csscritic.filestorage.options.basePath + key + ".json");
+            return fs.read(tempPath + key + ".json");
         },
         storeReferenceImage = function (key, stringData) {
-            fs.write(csscritic.filestorage.options.basePath + key + ".json", stringData, 'w');
+            fs.write(tempPath + key + ".json", stringData, 'w');
         };
 
-    loadStoragePluginSpecs(csscritic.filestorage, readStoredReferenceImage, storeReferenceImage);
+    loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);
 });

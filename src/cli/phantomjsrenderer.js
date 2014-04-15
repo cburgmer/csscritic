@@ -1,6 +1,4 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.phantomjsRenderer = (function () {
+csscriticLib.phantomjsRenderer = function () {
 
     var module = {};
 
@@ -93,8 +91,4 @@ csscritic.phantomjsRenderer = (function () {
     };
 
     return module;
-}());
-
-csscritic.renderer = {};
-csscritic.renderer.getImageForPageUrl = csscritic.phantomjsRenderer.render;
-
+};

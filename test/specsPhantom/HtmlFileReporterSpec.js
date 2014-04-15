@@ -5,8 +5,6 @@ describe("HtmlFileReporter", function () {
         reporterOutputPath;
 
     beforeEach(function (done) {
-        reporterOutputPath = csscriticTestHelper.createTempPath();
-        reporter = csscritic.HtmlFileReporter(reporterOutputPath);
 
         htmlImage = null;
         referenceImage = null;
@@ -23,6 +21,11 @@ describe("HtmlFileReporter", function () {
                 done();
             });
         });
+
+        reporterOutputPath = csscriticTestHelper.createTempPath();
+
+        var htmlFileReporter = csscriticLib.htmlFileReporter();
+        reporter = htmlFileReporter.HtmlFileReporter(reporterOutputPath);
     });
 
     describe("on status passed", function () {

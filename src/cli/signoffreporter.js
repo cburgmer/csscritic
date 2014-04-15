@@ -1,11 +1,9 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.signOffReporter = function () {
+csscriticLib.signOffReporter = function (signOffReporterUtil) {
     var module = {};
 
     var calculateFingerprintForPage = function (pageUrl, callback) {
-        csscritic.signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
-            var actualFingerprint = csscritic.signOffReporterUtil.calculateFingerprint(content);
+        signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+            var actualFingerprint = signOffReporterUtil.calculateFingerprint(content);
 
             callback(actualFingerprint);
         });
@@ -56,7 +54,7 @@ csscritic.signOffReporter = function () {
         return {
             reportComparison: function (result, callback) {
                 if (! Array.isArray(signedOffPages)) {
-                    csscritic.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
+                    signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
                         acceptSignedOffPage(result, json, callback);
                     });
                 } else {
@@ -68,5 +66,3 @@ csscritic.signOffReporter = function () {
 
     return module;
 };
-
-csscritic.SignOffReporter = csscritic.signOffReporter().SignOffReporter;

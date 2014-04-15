@@ -18,6 +18,7 @@ function loadCode() {
     phantom.injectJs("./node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js");
     phantom.injectJs("./node_modules/jssha/src/sha.js");
     phantom.injectJs("./node_modules/imagediff/imagediff.js");
+    phantom.injectJs("./src/scope.js");
     phantom.injectJs("./src/utils.js");
     phantom.injectJs("./src/cli/phantomjsrenderer.js");
     phantom.injectJs("./src/cli/terminalreporter.js");

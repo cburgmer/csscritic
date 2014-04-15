@@ -46,6 +46,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     'src/cli/phantomjsbind.js',
+                    'src/scope.js',
                     'src/utils.js',
                     'node_modules/jssha/src/sha.js',
                     'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
@@ -57,6 +58,7 @@ module.exports = function (grunt) {
                     'src/cli/signoffreporter.js',
                     'src/cli/terminalreporter.js',
                     'src/cli/htmlfilereporter.js',
+                    'src/bootPhantom.js',
                     'src/cli/phantomjs_runner.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
@@ -212,9 +214,11 @@ module.exports = function (grunt) {
                         runs: true,
                         expect: true,
                         spyOn: true,
+                        rasterizeHTMLInline: true,
+                        jsSHA: true,
                         imagediff: true,
                         imagediffForJasmine2: true,
-                        csscritic: true,
+                        csscriticLib: true,
                         safeLog: true,
                         csscriticTestPath: true,
                         csscriticTestHelper: true,
