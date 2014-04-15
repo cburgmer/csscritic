@@ -3,13 +3,14 @@
     <meta charset="utf-8"/>
 
     <link rel="stylesheet" href="src/browser/basichtmlreporter.css">
+    <script src="src/scope.js"></script>
     <script src="src/browser/reporterutil.js"></script>
     <script src="src/browser/basichtmlreporter.js"></script>
 </head>
 <body>
     <script src="testHelper.js"></script>
     <script>
-        var reporter = csscritic.BasicHTMLReporter();
+        var reporter = testHelper.constructBasicHTMLReporter();
 
         testHelper.setUp();
 

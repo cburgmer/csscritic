@@ -14,13 +14,15 @@
             'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
             'node_modules/imagediff/imagediff.js',
             'node_modules/ayepromise/ayepromise.js',
+            'src/scope.js',
             'src/browser/reporterutil.js',
             'src/browser/basichtmlreporter.js',
             'src/browser/browserrenderer.js',
             'src/browser/domstorage.js',
             'src/browser/jobqueue.js',
             'src/utils.js',
-            'src/csscritic.js'
+            'src/csscritic.js',
+            'src/boot.js'
         ];
 
     var getBasePath = function () {
@@ -43,6 +45,7 @@
     cssDependencies.forEach(function (path) {
         loadCssDependency(basePath + path);
     });
+
     jsDependencies.forEach(function (path) {
         loadJsDependency(basePath + path);
     });

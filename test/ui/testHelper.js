@@ -128,5 +128,12 @@ window.testHelper = (function () {
         mockCanvasReadSupport();
     };
 
+    testHelper.constructBasicHTMLReporter = function () {
+        var reporterUtil = csscriticLib.reporterUtil(),
+            basicHTMLReporter = csscriticLib.basicHTMLReporter(reporterUtil, window.document);
+
+        return basicHTMLReporter.BasicHTMLReporter();
+    };
+
     return testHelper;
 }());

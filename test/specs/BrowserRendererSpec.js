@@ -1,4 +1,7 @@
 describe("Browser renderer", function () {
+    var util = csscriticLib.util(),
+        browserRenderer;
+
     var ajaxSpy;
 
     var successfulPromise = function (value) {
@@ -14,13 +17,15 @@ describe("Browser renderer", function () {
     };
 
     beforeEach(function () {
-        ajaxSpy = spyOn(csscritic.util, 'ajax');
+        ajaxSpy = spyOn(util, 'ajax');
 
-        spyOn(csscritic, 'jobQueue').and.returnValue({
+        var jobQueue = jasmine.createSpy('jobQueue').and.returnValue({
             execute: function (func) {
                 return func();
             }
         });
+
+        browserRenderer = csscriticLib.browserRenderer(util, jobQueue, rasterizeHTML);
     });
 
     it("should draw an image directly", function (done) {
@@ -33,7 +38,7 @@ describe("Browser renderer", function () {
                 return successfulPromise(theBinaryContent);
             }
         });
-        spyOn(csscritic.util, 'getImageForBinaryContent').and.callFake(function (content) {
+        spyOn(util, 'getImageForBinaryContent').and.callFake(function (content) {
             if (content === theBinaryContent) {
                 return successfulPromise(theImage);
             } else {
@@ -41,7 +46,7 @@ describe("Browser renderer", function () {
             }
         });
 
-        csscritic.browserRenderer.render({
+        browserRenderer.render({
             url: theUrl,
             width: 42,
             height: 7
@@ -55,7 +60,7 @@ describe("Browser renderer", function () {
     it("should call the error handler if a page does not exist", function (done) {
         ajaxSpy.and.returnValue(failedPromise());
 
-        csscritic.browserRenderer.render({
+        browserRenderer.render({
             url: "the_url",
             width: 42,
             height: 7
@@ -76,7 +81,7 @@ describe("Browser renderer", function () {
                     return successfulPromise([readFixtures(relativeFixtureUrl)]);
                 }
             });
-            spyOn(csscritic.util, 'getImageForBinaryContent').and.returnValue(failedPromise());
+            spyOn(util, 'getImageForBinaryContent').and.returnValue(failedPromise());
         });
 
         it("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
@@ -90,7 +95,7 @@ describe("Browser renderer", function () {
                     }
                 });
 
-            csscritic.browserRenderer.render({
+            browserRenderer.render({
                 url: theUrl,
                 width: 42,
                 height: 7
@@ -113,7 +118,7 @@ describe("Browser renderer", function () {
         it("should call the error handler if a page could not be rendered", function (done) {
             spyOn(rasterizeHTML, "drawHTML").and.returnValue(failedPromise());
 
-            csscritic.browserRenderer.render({
+            browserRenderer.render({
                 url: theUrl,
                 width: 42,
                 height: 7
@@ -124,7 +129,7 @@ describe("Browser renderer", function () {
             var fixtureUrl = csscriticTestPath + "fixtures/",
                 pageUrl = fixtureUrl + "brokenPage.html";
 
-            csscritic.browserRenderer.render({
+            browserRenderer.render({
                 url: pageUrl,
                 width: 42,
                 height: 7
@@ -148,7 +153,7 @@ describe("Browser renderer", function () {
                 errors: []
             }));
 
-            csscritic.browserRenderer.render({
+            browserRenderer.render({
                 url: theUrl,
                 width: 42,
                 height: 7,

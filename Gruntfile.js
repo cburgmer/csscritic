@@ -83,13 +83,15 @@ module.exports = function (grunt) {
                         'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
                         'node_modules/imagediff/imagediff.js',
                         // TODO ayepromise is needed, but currently included in the rasterizeHTML.allinone.js bundle
+                        'src/scope.js',
                         'src/utils.js',
                         'src/browser/jobqueue.js',
                         'src/browser/browserrenderer.js',
                         'src/browser/domstorage.js',
                         'src/<%= pkg.name %>.js',
                         'src/browser/reporterutil.js',
-                        'src/browser/basichtmlreporter.js'
+                        'src/browser/basichtmlreporter.js',
+                        'src/boot.js',
                     ]
                 }
             }
@@ -149,8 +151,10 @@ module.exports = function (grunt) {
                         phantom: true,
                         console: true,
                         require: true,
+                        csscriticLib: true,
                         csscritic: true
                     },
+                    exported: ['csscriticLib'],
                     ignores: ['src/cli/phantomjsbind.js']
                 },
                 src: 'src/**/*.js',
@@ -173,7 +177,7 @@ module.exports = function (grunt) {
                         rasterizeHTML: true,
                         imagediff: true,
                         imagediffForJasmine2: true,
-                        csscritic: true,
+                        csscriticLib: true,
                         ifNotInWebkitIt: true,
                         safeLog: true,
                         csscriticTestPath: true,
@@ -181,7 +185,8 @@ module.exports = function (grunt) {
                         loadStoragePluginSpecs: true,
                         CanvasRenderingContext2D: true,
                         ayepromise: true
-                    }
+                    },
+                    exported: ['loadStoragePluginSpecs']
                 },
                 src: [
                     'test/specs/*.js',

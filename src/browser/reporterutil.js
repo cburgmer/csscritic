@@ -1,6 +1,4 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.reporterUtil = (function () {
+csscriticLib.reporterUtil = function () {
 
     var module = {};
 
@@ -63,5 +61,5 @@ csscritic.reporterUtil = (function () {
     };
 
     return module;
-}());
+};
 

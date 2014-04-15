@@ -2,7 +2,7 @@ describe("Job Queue", function () {
     var subject;
 
     beforeEach(function () {
-        subject = csscritic.jobQueue();
+        subject = csscriticLib.jobQueue();
     });
 
     it("should execute a single job", function () {

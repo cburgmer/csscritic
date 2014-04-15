@@ -1,6 +1,4 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.basicHTMLReporter = function (document) {
+csscriticLib.basicHTMLReporter = function (reporterUtil, document) {
     var module = {};
 
     var registerResizeHandler = function (element, handler) {
@@ -166,8 +164,8 @@ csscritic.basicHTMLReporter = function (document) {
     var createDifferenceCanvasContainer = function (result) {
         var differenceCanvasContainer = document.createElement("div"),
             innerDifferenceCanvasContainer = document.createElement("div"),
-            differenceCanvas = csscritic.reporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage),
-            highlightedDifferenceCanvas = csscritic.reporterUtil.getHighlightedDifferenceCanvas(result.pageImage, result.referenceImage);
+            differenceCanvas = reporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage),
+            highlightedDifferenceCanvas = reporterUtil.getHighlightedDifferenceCanvas(result.pageImage, result.referenceImage);
 
         differenceCanvasContainer.className = "differenceCanvasContainer";
 
@@ -327,7 +325,7 @@ csscritic.basicHTMLReporter = function (document) {
     var showBrowserWarningIfNeeded = function () {
         var warning;
 
-        csscritic.reporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
+        reporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
             if (!supported) {
                 warning = document.createElement('div');
                 warning.className = "browserWarning";
@@ -387,5 +385,3 @@ csscritic.basicHTMLReporter = function (document) {
 
     return module;
 };
-
-csscritic.BasicHTMLReporter = csscritic.basicHTMLReporter(window.document).BasicHTMLReporter;

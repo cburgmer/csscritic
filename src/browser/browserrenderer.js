@@ -1,17 +1,15 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.browserRenderer = (function (rasterizeHTML) {
+csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
     var module = {};
 
     var cache = {};
 
-    var jobQueue;
+    var queue;
 
     var getOrCreateJobQueue = function () {
-        if (!jobQueue) {
-            jobQueue = csscritic.jobQueue();
+        if (!queue) {
+            queue = jobQueue();
         }
-        return jobQueue;
+        return queue;
     };
 
     var extractErrorMessages = function (errors) {
@@ -53,7 +51,7 @@ csscritic.browserRenderer = (function (rasterizeHTML) {
     };
 
     var loadImageFromContent = function (content, parameters) {
-        return csscritic.util.getImageForBinaryContent(content)
+        return util.getImageForBinaryContent(content)
             .then(function (image) {
                 return {
                     image: image,
@@ -72,14 +70,11 @@ csscritic.browserRenderer = (function (rasterizeHTML) {
     };
 
     module.render = function (parameters) {
-        return csscritic.util.ajax(parameters.url)
+        return util.ajax(parameters.url)
             .then(function (content) {
                 return loadImageFromContent(content, parameters);
             });
     };
 
     return module;
-}(rasterizeHTML));
-
-csscritic.renderer = {};
-csscritic.renderer.getImageForPageUrl = csscritic.browserRenderer.render;
+};

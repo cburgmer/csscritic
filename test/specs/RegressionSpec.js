@@ -1,5 +1,11 @@
 describe("Regression testing", function () {
-    var getImageForPageUrl, readReferenceImage,
+    var csscritic, imagediff;
+
+    var util = csscriticLib.util(),
+        browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
+        domstorage = csscriticLib.domstorage(util, localStorage);
+
+    var render, readReferenceImage,
         htmlImage, referenceImage, viewport;
 
     var successfulPromise = function (value) {
@@ -14,9 +20,9 @@ describe("Regression testing", function () {
         return defer.promise;
     };
 
-    var setUpGetImageForPageUrl = function (image, errors) {
+    var setUpRenderer = function (image, errors) {
         errors = errors || [];
-        getImageForPageUrl.and.returnValue(successfulPromise({
+        render.and.returnValue(successfulPromise({
             image: image,
             errors: errors
         }));
@@ -33,31 +39,29 @@ describe("Regression testing", function () {
             height: 76
         };
 
-        getImageForPageUrl = spyOn(csscritic.renderer, 'getImageForPageUrl');
-        readReferenceImage = spyOn(csscritic.storage, 'readReferenceImage');
+        render = spyOn(browserRenderer, 'render');
+        readReferenceImage = spyOn(domstorage, 'readReferenceImage');
 
-        spyOn(csscritic.util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image, callback) {
+        spyOn(util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image, callback) {
             callback(image);
         });
 
-        spyOn(imagediff, 'diff');
-    });
+        imagediff = jasmine.createSpyObj('imagediff', ['diff', 'equal']);
 
-    afterEach(function () {
-        csscritic.clear();
+        csscritic = csscriticLib.main(
+            browserRenderer,
+            domstorage,
+            util,
+            imagediff);
     });
 
     describe("adding & executing", function () {
-        var imagediffEqual;
-
         var setUpImageDiffAndReturn = function (equal) {
-            imagediffEqual.and.returnValue(equal);
+            imagediff.equal.and.returnValue(equal);
         };
 
         beforeEach(function () {
-            imagediffEqual = spyOn(imagediff, 'equal');
-
-            setUpGetImageForPageUrl(htmlImage);
+            setUpRenderer(htmlImage);
             readReferenceImage.and.callFake(function (pageUrl, callback) {
                 callback(referenceImage, viewport);
             });
@@ -68,10 +72,10 @@ describe("Regression testing", function () {
 
             csscritic.add("samplepage.html");
 
-            expect(imagediffEqual).not.toHaveBeenCalled();
+            expect(imagediff.equal).not.toHaveBeenCalled();
 
             csscritic.execute(function (passed) {
-                expect(imagediffEqual).toHaveBeenCalledWith(htmlImage, referenceImage);
+                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
 
                 expect(passed).toBeTruthy();
 
@@ -85,7 +89,7 @@ describe("Regression testing", function () {
             csscritic.add("samplepage.html");
 
             csscritic.execute(function (passed) {
-                expect(imagediffEqual).toHaveBeenCalledWith(htmlImage, referenceImage);
+                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
 
                 expect(passed).toBeFalsy();
 
@@ -111,7 +115,7 @@ describe("Regression testing", function () {
             csscritic.add({url: "differentpage.html"});
             csscritic.execute(function () {
                 expect(readReferenceImage).toHaveBeenCalledWith("differentpage.html", jasmine.any(Function), jasmine.any(Function));
-                expect(imagediffEqual).toHaveBeenCalledWith(htmlImage, referenceImage);
+                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
 
                 done();
             });
@@ -122,7 +126,7 @@ describe("Regression testing", function () {
 
             csscritic.add({url: "samplepage.html"});
             csscritic.execute(function () {
-                expect(getImageForPageUrl).toHaveBeenCalledWith({
+                expect(render).toHaveBeenCalledWith({
                     url: "samplepage.html",
                     width: 98,
                     height: 76
@@ -136,7 +140,7 @@ describe("Regression testing", function () {
 
     describe("First generation of a reference image", function () {
         beforeEach(function () {
-            setUpGetImageForPageUrl(htmlImage);
+            setUpRenderer(htmlImage);
 
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
@@ -146,7 +150,7 @@ describe("Regression testing", function () {
         it("should provide a appropriately sized page rendering", function (done) {
             csscritic.add({url: "differentpage.html"});
             csscritic.execute(function () {
-                expect(getImageForPageUrl).toHaveBeenCalledWith({
+                expect(render).toHaveBeenCalledWith({
                     url: "differentpage.html",
                     width: 800,
                     height: 100
@@ -158,14 +162,8 @@ describe("Regression testing", function () {
     });
 
     describe("Configuration error handling", function () {
-        var imagediffEqual;
-
-        beforeEach(function () {
-            imagediffEqual = spyOn(imagediff, 'equal');
-        });
-
         it("should handle missing reference image", function (done) {
-            setUpGetImageForPageUrl(htmlImage);
+            setUpRenderer(htmlImage);
 
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
@@ -174,14 +172,14 @@ describe("Regression testing", function () {
             csscritic.add({url: "samplepage.html"});
             csscritic.execute(function (passed) {
                 expect(passed).toBe(false);
-                expect(imagediffEqual).not.toHaveBeenCalled();
+                expect(imagediff.equal).not.toHaveBeenCalled();
 
                 done();
             });
         });
 
         it("should handle page render error", function (done) {
-            getImageForPageUrl.and.returnValue(failedPromise());
+            render.and.returnValue(failedPromise());
             readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
                 errorCallback();
             });
@@ -189,14 +187,14 @@ describe("Regression testing", function () {
             csscritic.add({url: "samplepage.html"});
             csscritic.execute(function (passed) {
                 expect(passed).toBe(false);
-                expect(imagediffEqual).not.toHaveBeenCalled();
+                expect(imagediff.equal).not.toHaveBeenCalled();
 
                 done();
             });
         });
 
         it("should handle page render error even when reference image exists", function (done) {
-            getImageForPageUrl.and.returnValue(failedPromise());
+            render.and.returnValue(failedPromise());
             readReferenceImage.and.callFake(function (pageUrl, successCallback) {
                 successCallback(referenceImage, viewport);
             });
@@ -204,7 +202,7 @@ describe("Regression testing", function () {
             csscritic.add({url: "samplepage.html"});
             csscritic.execute(function (passed) {
                 expect(passed).toBe(false);
-                expect(imagediffEqual).not.toHaveBeenCalled();
+                expect(imagediff.equal).not.toHaveBeenCalled();
 
                 done();
             });

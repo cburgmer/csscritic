@@ -1,6 +1,25 @@
 describe("Integration", function () {
     var theReferenceImageUri;
 
+    var util = csscriticLib.util(),
+        csscritic;
+
+    beforeEach(function () {
+        var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
+            domstorage = csscriticLib.domstorage(util, localStorage);
+
+        csscritic = csscriticLib.main(
+            browserRenderer,
+            domstorage,
+            util,
+            imagediff);
+
+        var reporterUtil = csscriticLib.reporterUtil(),
+            basicHTMLReporter = csscriticLib.basicHTMLReporter(reporterUtil, window.document);
+
+        csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
+    });
+
     beforeEach(function () {
         theReferenceImageUri = "data:image/png;base64," +
             "iVBORw0KGgoAAAANSUhEUgAAAUoAAACXCAYAAABz/hJAAAADB0lEQVR4nO3UsQ3EMAADMY+ezf39I70iiARuhTv3nKvvdP495+pDs" +
@@ -18,7 +37,6 @@ describe("Integration", function () {
 
     afterEach(function () {
         localStorage.clear();
-        csscritic.clear();
         $("#csscritic_basichtmlreporter").remove();
     });
 
@@ -38,8 +56,8 @@ describe("Integration", function () {
     it("should compare an image with its reference and return true if similar", function (done) {
         var testImageUrl = csscriticTestPath + "fixtures/redWithLetter.png";
 
-        csscritic.util.getImageForUrl(testImageUrl, function (image) {
-            var theReferenceImageUri = csscritic.util.getDataURIForImage(image);
+        util.getImageForUrl(testImageUrl, function (image) {
+            var theReferenceImageUri = util.getDataURIForImage(image);
 
             localStorage.setItem(testImageUrl, JSON.stringify({
                 referenceImageUri: theReferenceImageUri

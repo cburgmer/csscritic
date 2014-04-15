@@ -1,4 +1,10 @@
 describe("Web storage support for reference images", function () {
+    var util = csscriticLib.util();
+
+    var constructDomstorage = function (util) {
+        return csscriticLib.domstorage(util, localStorage);
+    };
+
     beforeEach(function () {
         localStorage.clear();
     });
@@ -14,16 +20,18 @@ describe("Web storage support for reference images", function () {
             localStorage.setItem(key, stringData);
         };
 
-    loadStoragePluginSpecs(csscritic.domstorage, readStoredReferenceImage, storeReferenceImage);
+    loadStoragePluginSpecs(constructDomstorage, readStoredReferenceImage, storeReferenceImage);
 
     it("should alert the user that possibly the wrong browser is used", function () {
+        var storage = constructDomstorage(util);
+
         var theImage = "the image",
             alertSpy = spyOn(window, 'alert');
 
-        spyOn(csscritic.util, 'getDataURIForImage').and.throwError("can't read canvas");
+        spyOn(util, 'getDataURIForImage').and.throwError("can't read canvas");
 
         try {
-            csscritic.domstorage.storeReferenceImage("somePage.html", theImage, 47, 11);
+            storage.storeReferenceImage("somePage.html", theImage, 47, 11);
             expect(true).toBe(false);
         } catch (e) {}
 

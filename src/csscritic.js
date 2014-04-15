@@ -1,4 +1,6 @@
-window.csscritic = (function (module, renderer, storage, imagediff) {
+csscriticLib.main = function (renderer, storage, util, imagediff) {
+    var module = {};
+
     var reporters, testCases;
 
     var clear = function () {
@@ -22,7 +24,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                 viewportWidth = width;
                 viewportHeight = height;
 
-                renderer.getImageForPageUrl({
+                renderer.render({
                     url: comparison.pageUrl,
                     width: width,
                     height: height
@@ -51,8 +53,8 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     };
 
     var reportComparisonStarting = function (testCases, callback) {
-        module.util.map(testCases, function (testCase, finishTestCase) {
-            module.util.map(reporters, function (reporter, finishReporter) {
+        util.map(testCases, function (testCase, finishTestCase) {
+            util.map(reporters, function (reporter, finishReporter) {
                 if (reporter.reportComparisonStarting) {
                     reporter.reportComparisonStarting({pageUrl: testCase.url}, finishReporter);
                 } else {
@@ -65,7 +67,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     var reportComparison = function (comparison, callback) {
         var result = buildReportResult(comparison);
 
-        module.util.map(reporters, function (reporter, finishUp) {
+        util.map(reporters, function (reporter, finishUp) {
             if (reporter.reportComparison) {
                 reporter.reportComparison(result, finishUp);
             } else {
@@ -75,7 +77,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     };
 
     var reportTestSuite = function (passed, callback) {
-        module.util.map(reporters, function (reporter, finish) {
+        util.map(reporters, function (reporter, finish) {
             if (reporter.report) {
                 reporter.report({success: passed}, finish);
             } else {
@@ -101,7 +103,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
     var loadPageAndReportResult = function (testCase, viewport, referenceImage, callback) {
 
-        renderer.getImageForPageUrl({
+        renderer.render({
             url: testCase.url,
             width: viewport.width,
             height: viewport.height
@@ -110,7 +112,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
             workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
 
-            module.util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
+            util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
                 if (referenceImage) {
                     isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
                     textualStatus = isEqual ? "passed" : "failed";
@@ -170,7 +172,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     module.execute = function (callback) {
         reportComparisonStarting(testCases, function () {
 
-            module.util.map(testCases, function (testCase, finish) {
+            util.map(testCases, function (testCase, finish) {
                 compare(testCase, finish);
             }, function (results) {
                 var allPassed = results.indexOf(false) === -1;
@@ -187,4 +189,4 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     module.clear = clear;
 
     return module;
-}(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, imagediff));
+};

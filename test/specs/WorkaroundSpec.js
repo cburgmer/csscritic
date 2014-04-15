@@ -6,9 +6,22 @@ describe("Workarounds", function () {
             }
         };
 
+    var csscritic;
+
+    beforeEach(function () {
+        var util = csscriticLib.util(),
+            browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
+            domstorage = csscriticLib.domstorage(util, localStorage);
+
+        csscritic = csscriticLib.main(
+            browserRenderer,
+            domstorage,
+            util,
+            imagediff);
+    });
+
     afterEach(function () {
         localStorage.clear();
-        csscritic.clearReporters();
     });
 
     ifNotInWebkitIt("should work around transparency making pages non-comparable", function (done) {

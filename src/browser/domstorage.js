@@ -1,13 +1,11 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.domstorage = (function (localStorage) {
+csscriticLib.domstorage = function (util, localStorage) {
     var module = {};
 
     module.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
         try {
-            uri = csscritic.util.getDataURIForImage(pageImage);
+            uri = util.getDataURIForImage(pageImage);
         } catch (e) {
             window.alert("An error occurred reading the canvas. Are you sure you are using Firefox?\n" + e);
             throw e;
@@ -49,7 +47,7 @@ csscritic.domstorage = (function (localStorage) {
             return;
         }
 
-        csscritic.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+        util.getImageForUrl(dataObj.referenceImageUri, function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -60,8 +58,4 @@ csscritic.domstorage = (function (localStorage) {
     };
 
     return module;
-}(localStorage));
-
-csscritic.storage = {};
-csscritic.storage.storeReferenceImage = csscritic.domstorage.storeReferenceImage;
-csscritic.storage.readReferenceImage = csscritic.domstorage.readReferenceImage;
+};

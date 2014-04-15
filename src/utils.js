@@ -1,6 +1,4 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.util = (function () {
+csscriticLib.util = function () {
     var module = {};
 
     module.getDataURIForImage = function (image) {
@@ -132,4 +130,4 @@ csscritic.util = (function () {
     };
 
     return module;
-}());
+};

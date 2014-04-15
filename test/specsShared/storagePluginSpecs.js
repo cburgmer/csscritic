@@ -1,8 +1,13 @@
-window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImage, storeMockReferenceImage) {
+var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceImage, storeMockReferenceImage) {
     var imgUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
-        img = null;
+        img = null,
+        storage;
+
+    var util = csscriticLib.util();
 
     beforeEach(function (done) {
+        storage = constructDomstorage(util);
+
         jasmine.addMatchers(imagediffForJasmine2);
 
         csscriticTestHelper.loadImageFromUrl(imgUri, function (image) {
@@ -15,7 +20,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should store a the rendered page", function (done) {
         var stringValue, value;
 
-        storagePlugin.storeReferenceImage("somePage.html", img, {
+        storage.storeReferenceImage("somePage.html", img, {
             width: 47,
             height: 11
         });
@@ -35,9 +40,9 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
         var image = "the image",
             storedValue;
 
-        spyOn(csscritic.util, 'getDataURIForImage');
+        spyOn(util, 'getDataURIForImage');
 
-        storagePlugin.storeReferenceImage("somePage.html", image, {
+        storage.storeReferenceImage("somePage.html", image, {
             width: 47,
             height: 11
         });
@@ -50,7 +55,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
 
     it("should read in a reference image", function () {
         var readImage,
-            getImageForUrlSpy = spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success) {
+            getImageForUrlSpy = spyOn(util, 'getImageForUrl').and.callFake(function (uri, success) {
                 success("read image fake");
             });
 
@@ -58,7 +63,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
             referenceImageUri: imgUri
         }));
 
-        storagePlugin.readReferenceImage("somePage.html", function (img) {
+        storage.readReferenceImage("somePage.html", function (img) {
             readImage = img;
         }, function () {});
 
@@ -69,7 +74,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should return the viewport's size", function () {
         var viewportSize;
 
-        spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success) {
+        spyOn(util, 'getImageForUrl').and.callFake(function (uri, success) {
             success("read image fake");
         });
 
@@ -81,7 +86,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
             }
         }));
 
-        storagePlugin.readReferenceImage("somePage.html", function (img, theViewportSize) {
+        storage.readReferenceImage("somePage.html", function (img, theViewportSize) {
             viewportSize = theViewportSize;
         });
 
@@ -92,7 +97,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should return the viewport's size and fallback to the image's size", function () {
         var viewportSize;
 
-        spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success) {
+        spyOn(util, 'getImageForUrl').and.callFake(function (uri, success) {
             success({
                 width: 12,
                 height: 34
@@ -103,7 +108,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
             referenceImageUri: imgUri
         }));
 
-        storagePlugin.readReferenceImage("somePage.html", function (img, theViewportSize) {
+        storage.readReferenceImage("somePage.html", function (img, theViewportSize) {
             viewportSize = theViewportSize;
         });
 
@@ -114,7 +119,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should call error handler if no reference image has been stored", function () {
         var errorCallback = jasmine.createSpy('errorCallback');
 
-        storagePlugin.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
     });
@@ -123,7 +128,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
         var errorCallback = jasmine.createSpy('errorCallback');
 
         storeMockReferenceImage("somePage.html", JSON.stringify({}));
-        storagePlugin.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
     });
@@ -131,14 +136,14 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
     it("should call error handler if read reference image is invalid", function () {
         var errorCallback = jasmine.createSpy('errorCallback');
 
-        spyOn(csscritic.util, 'getImageForUrl').and.callFake(function (uri, success, error) {
+        spyOn(util, 'getImageForUrl').and.callFake(function (uri, success, error) {
             error();
         });
 
         storeMockReferenceImage( "somePage.html", JSON.stringify({
             referenceImageUri: "broken uri"
         }));
-        storagePlugin.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
     });
@@ -147,7 +152,7 @@ window.loadStoragePluginSpecs = function (storagePlugin, readStoredReferenceImag
         var errorCallback = jasmine.createSpy('errorCallback');
 
         storeMockReferenceImage("somePage.html", ';');
-        storagePlugin.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
     });
