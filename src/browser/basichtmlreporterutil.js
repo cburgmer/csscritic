@@ -1,4 +1,4 @@
-csscriticLib.reporterUtil = function () {
+csscriticLib.basicHTMLReporterUtil = function () {
 
     var module = {};
 

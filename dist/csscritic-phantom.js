@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-14
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-15
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -35,9 +35,9 @@ if (!Function.prototype.bind) {
   };
 }
 
-window.csscritic = window.csscritic || {};
+var csscriticLib = {};
 
-csscritic.util = (function () {
+csscriticLib.util = function () {
     var module = {};
 
     module.getDataURIForImage = function (image) {
@@ -169,7 +169,7 @@ csscritic.util = (function () {
     };
 
     return module;
-}());
+};
 
 /*
  A JavaScript implementation of the SHA family of hashes, as
@@ -613,9 +613,7 @@ return a.util.all(d.map(function(a){return n(a,c).then(function(b){l(a,b.content
   return imagediff;
 });
 
-window.csscritic = window.csscritic || {};
-
-csscritic.phantomjsRenderer = (function () {
+csscriticLib.phantomjsRenderer = function () {
 
     var module = {};
 
@@ -708,16 +706,12 @@ csscritic.phantomjsRenderer = (function () {
     };
 
     return module;
-}());
+};
 
-csscritic.renderer = {};
-csscritic.renderer.getImageForPageUrl = csscritic.phantomjsRenderer.render;
-
-
-window.csscritic = window.csscritic || {};
-
-csscritic.filestorage = (function (fs) {
+csscriticLib.filestorage = function (util) {
     var module = {};
+
+    var fs = require("fs");
 
     module.options = {
         basePath: "./"
@@ -730,7 +724,7 @@ csscritic.filestorage = (function (fs) {
     module.storeReferenceImage = function (key, pageImage, viewport) {
         var uri, dataObj;
 
-        uri = csscritic.util.getDataURIForImage(pageImage);
+        uri = util.getDataURIForImage(pageImage);
         dataObj = {
             referenceImageUri: uri,
             viewport: {
@@ -774,7 +768,7 @@ csscritic.filestorage = (function (fs) {
             return;
         }
 
-        csscritic.util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+        util.getImageForUrl(dataObj.referenceImageUri, function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -785,13 +779,11 @@ csscritic.filestorage = (function (fs) {
     };
 
     return module;
-}(require("fs")));
+};
 
-csscritic.storage = {};
-csscritic.storage.storeReferenceImage = csscritic.filestorage.storeReferenceImage;
-csscritic.storage.readReferenceImage = csscritic.filestorage.readReferenceImage;
+csscriticLib.main = function (renderer, storage, util, imagediff) {
+    var module = {};
 
-window.csscritic = (function (module, renderer, storage, imagediff) {
     var reporters, testCases;
 
     var clear = function () {
@@ -815,7 +807,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
                 viewportWidth = width;
                 viewportHeight = height;
 
-                renderer.getImageForPageUrl({
+                renderer.render({
                     url: comparison.pageUrl,
                     width: width,
                     height: height
@@ -844,8 +836,8 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     };
 
     var reportComparisonStarting = function (testCases, callback) {
-        module.util.map(testCases, function (testCase, finishTestCase) {
-            module.util.map(reporters, function (reporter, finishReporter) {
+        util.map(testCases, function (testCase, finishTestCase) {
+            util.map(reporters, function (reporter, finishReporter) {
                 if (reporter.reportComparisonStarting) {
                     reporter.reportComparisonStarting({pageUrl: testCase.url}, finishReporter);
                 } else {
@@ -858,7 +850,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     var reportComparison = function (comparison, callback) {
         var result = buildReportResult(comparison);
 
-        module.util.map(reporters, function (reporter, finishUp) {
+        util.map(reporters, function (reporter, finishUp) {
             if (reporter.reportComparison) {
                 reporter.reportComparison(result, finishUp);
             } else {
@@ -868,7 +860,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     };
 
     var reportTestSuite = function (passed, callback) {
-        module.util.map(reporters, function (reporter, finish) {
+        util.map(reporters, function (reporter, finish) {
             if (reporter.report) {
                 reporter.report({success: passed}, finish);
             } else {
@@ -894,7 +886,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
     var loadPageAndReportResult = function (testCase, viewport, referenceImage, callback) {
 
-        renderer.getImageForPageUrl({
+        renderer.render({
             url: testCase.url,
             width: viewport.width,
             height: viewport.height
@@ -903,7 +895,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
 
             workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
 
-            module.util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
+            util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
                 if (referenceImage) {
                     isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
                     textualStatus = isEqual ? "passed" : "failed";
@@ -963,7 +955,7 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     module.execute = function (callback) {
         reportComparisonStarting(testCases, function () {
 
-            module.util.map(testCases, function (testCase, finish) {
+            util.map(testCases, function (testCase, finish) {
                 compare(testCase, finish);
             }, function (results) {
                 var allPassed = results.indexOf(false) === -1;
@@ -980,11 +972,9 @@ window.csscritic = (function (module, renderer, storage, imagediff) {
     module.clear = clear;
 
     return module;
-}(window.csscritic || {}, window.csscritic.renderer, window.csscritic.storage, imagediff));
+};
 
-window.csscritic = window.csscritic || {};
-
-csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
+csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
     var module = {};
 
     var getFileUrl = function (address) {
@@ -1003,7 +993,7 @@ csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
         var absolutePageUrl = getFileUrl(pageUrl),
             doc = window.document.implementation.createHTMLDocument("");
 
-        csscritic.util.ajax(absolutePageUrl).then(function (content) {
+        util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
             rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
@@ -1019,7 +1009,7 @@ csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
     module.loadFingerprintJson = function (url, callback) {
         var absoluteUrl = getFileUrl(url);
 
-        csscritic.util.ajax(absoluteUrl).then(function (content) {
+        util.ajax(absoluteUrl).then(function (content) {
             callback(JSON.parse(content));
         });
     };
@@ -1031,16 +1021,14 @@ csscritic.signOffReporterUtil = (function (rasterizeHTMLInline, JsSHA) {
     };
 
     return module;
-}(rasterizeHTMLInline, jsSHA));
+};
 
-window.csscritic = window.csscritic || {};
-
-csscritic.signOffReporter = function () {
+csscriticLib.signOffReporter = function (signOffReporterUtil) {
     var module = {};
 
     var calculateFingerprintForPage = function (pageUrl, callback) {
-        csscritic.signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
-            var actualFingerprint = csscritic.signOffReporterUtil.calculateFingerprint(content);
+        signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+            var actualFingerprint = signOffReporterUtil.calculateFingerprint(content);
 
             callback(actualFingerprint);
         });
@@ -1091,7 +1079,7 @@ csscritic.signOffReporter = function () {
         return {
             reportComparison: function (result, callback) {
                 if (! Array.isArray(signedOffPages)) {
-                    csscritic.signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
+                    signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
                         acceptSignedOffPage(result, json, callback);
                     });
                 } else {
@@ -1104,11 +1092,7 @@ csscritic.signOffReporter = function () {
     return module;
 };
 
-csscritic.SignOffReporter = csscritic.signOffReporter().SignOffReporter;
-
-window.csscritic = window.csscritic || {};
-
-csscritic.terminalReporter = function (console) {
+csscriticLib.terminalReporter = function (console) {
     var module = {};
 
     var ATTRIBUTES_TO_ANSI = {
@@ -1167,11 +1151,7 @@ csscritic.terminalReporter = function (console) {
     return module;
 };
 
-csscritic.TerminalReporter = csscritic.terminalReporter(window.console).TerminalReporter;
-
-window.csscritic = window.csscritic || {};
-
-csscritic.htmlFileReporter = function () {
+csscriticLib.htmlFileReporter = function () {
     var module = {};
 
     var reportComparison = function (result, basePath, callback) {
@@ -1295,11 +1275,7 @@ csscritic.htmlFileReporter = function () {
     return module;
 };
 
-csscritic.HtmlFileReporter = csscritic.htmlFileReporter().HtmlFileReporter;
-
-window.csscritic = window.csscritic || {};
-
-csscritic.phantomjsRunner = (function () {
+csscriticLib.phantomjsRunner = function (csscritic) {
     var system = require("system");
 
     var module = {};
@@ -1382,6 +1358,31 @@ csscritic.phantomjsRunner = (function () {
     };
 
     return module;
-}());
+};
 
-csscritic.phantomjsRunner.main();
+(function () {
+    "use strict";
+
+    var util = csscriticLib.util(),
+        phantomRenderer = csscriticLib.phantomjsRenderer(),
+        filestorage = csscriticLib.filestorage(util);
+
+    var csscritic = csscriticLib.main(
+        phantomRenderer,
+        filestorage,
+        util,
+        imagediff);
+
+    // Export convenience constructors
+    var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, rasterizeHTMLInline, jsSHA),
+        signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil),
+        htmlFileReporter = csscriticLib.htmlFileReporter(),
+        terminalReporter = csscriticLib.terminalReporter(window.console);
+
+    csscritic.HtmlFileReporter = htmlFileReporter.HtmlFileReporter;
+    csscritic.SignOffReporter = signOffReporter.SignOffReporter;
+    csscritic.TerminalReporter = terminalReporter.TerminalReporter;
+
+    var runner = csscriticLib.phantomjsRunner(csscritic);
+    runner.main();
+}());

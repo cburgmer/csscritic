@@ -1,11 +1,11 @@
 describe("Basic HTML reporter", function () {
-    var reporterUtil = csscriticLib.reporterUtil(),
+    var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
         reporter;
 
     var htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas;
 
     beforeEach(function () {
-        spyOn(reporterUtil, 'supportsReadingHtmlFromCanvas');
+        spyOn(basicHTMLReporterUtil, 'supportsReadingHtmlFromCanvas');
 
         htmlImage = window.document.createElement("img");
         referenceImage = new window.Image();
@@ -13,19 +13,19 @@ describe("Basic HTML reporter", function () {
         differenceImageCanvas = window.document.createElement("canvas");
         highlightedDifferenceImageCanvas = window.document.createElement("canvas");
 
-        spyOn(reporterUtil, 'getDifferenceCanvas').and.callFake(function (imageA, imageB) {
+        spyOn(basicHTMLReporterUtil, 'getDifferenceCanvas').and.callFake(function (imageA, imageB) {
             if (imageA === htmlImage && imageB === referenceImage) {
                 return differenceImageCanvas;
             }
         });
 
-        spyOn(reporterUtil, 'getHighlightedDifferenceCanvas').and.callFake(function (imageA, imageB) {
+        spyOn(basicHTMLReporterUtil, 'getHighlightedDifferenceCanvas').and.callFake(function (imageA, imageB) {
             if (imageA === htmlImage && imageB === referenceImage) {
                 return highlightedDifferenceImageCanvas;
             }
         });
 
-        reporter = csscriticLib.basicHTMLReporter(reporterUtil, window.document).BasicHTMLReporter();
+        reporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document).BasicHTMLReporter();
     });
 
     afterEach(function () {
@@ -456,21 +456,21 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should show a warning if the browser is not supported", function () {
-            reporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
+            basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
                 callback(false);
             });
 
-            reporter = csscriticLib.basicHTMLReporter(reporterUtil, window.document).BasicHTMLReporter();
+            reporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document).BasicHTMLReporter();
 
             expect($(".browserWarning")).toExist();
         });
 
         it("should not show a warning if the browser is supported", function () {
-            reporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
+            basicHTMLReporterUtil.supportsReadingHtmlFromCanvas.and.callFake(function (callback) {
                 callback(true);
             });
 
-            reporter = csscriticLib.basicHTMLReporter(reporterUtil, window.document).BasicHTMLReporter();
+            reporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document).BasicHTMLReporter();
 
             expect($(".browserWarning")).not.toExist();
         });

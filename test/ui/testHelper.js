@@ -129,8 +129,8 @@ window.testHelper = (function () {
     };
 
     testHelper.constructBasicHTMLReporter = function () {
-        var reporterUtil = csscriticLib.reporterUtil(),
-            basicHTMLReporter = csscriticLib.basicHTMLReporter(reporterUtil, window.document);
+        var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
+            basicHTMLReporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document);
 
         return basicHTMLReporter.BasicHTMLReporter();
     };

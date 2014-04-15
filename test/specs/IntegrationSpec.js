@@ -14,8 +14,8 @@ describe("Integration", function () {
             util,
             imagediff);
 
-        var reporterUtil = csscriticLib.reporterUtil(),
-            basicHTMLReporter = csscriticLib.basicHTMLReporter(reporterUtil, window.document);
+        var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
+            basicHTMLReporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document);
 
         csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
     });

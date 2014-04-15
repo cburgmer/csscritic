@@ -15,7 +15,7 @@
             'node_modules/imagediff/imagediff.js',
             'node_modules/ayepromise/ayepromise.js',
             'src/scope.js',
-            'src/browser/reporterutil.js',
+            'src/browser/basichtmlreporterutil.js',
             'src/browser/basichtmlreporter.js',
             'src/browser/browserrenderer.js',
             'src/browser/domstorage.js',
