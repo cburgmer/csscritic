@@ -58,8 +58,8 @@ module.exports = function (grunt) {
                     'src/cli/signoffreporter.js',
                     'src/cli/terminalreporter.js',
                     'src/cli/htmlfilereporter.js',
-                    'src/bootPhantom.js',
-                    'src/cli/phantomjs_runner.js'
+                    'src/cli/phantomjs_runner.js',
+                    'src/bootPhantom.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
             }

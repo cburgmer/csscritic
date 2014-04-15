@@ -13,6 +13,6 @@ phantom.injectJs("src/cli/signoffreporter.js");
 phantom.injectJs("src/cli/terminalreporter.js");
 phantom.injectJs("src/cli/htmlfilereporter.js");
 phantom.injectJs("src/cli/filestorage.js");
+phantom.injectJs("src/cli/phantomjs_runner.js");
 phantom.injectJs("src/csscritic.js");
 phantom.injectJs("src/bootPhantom.js");
-phantom.injectJs("src/cli/phantomjs_runner.js");

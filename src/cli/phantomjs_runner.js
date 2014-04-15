@@ -1,6 +1,4 @@
-window.csscritic = window.csscritic || {};
-
-csscritic.phantomjsRunner = (function () {
+csscriticLib.phantomjsRunner = function (csscritic) {
     var system = require("system");
 
     var module = {};
@@ -83,6 +81,4 @@ csscritic.phantomjsRunner = (function () {
     };
 
     return module;
-}());
-
-csscritic.phantomjsRunner.main();
+};

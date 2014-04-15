@@ -1,5 +1,3 @@
-var csscritic;
-
 (function () {
     "use strict";
 
@@ -7,7 +5,7 @@ var csscritic;
         phantomRenderer = csscriticLib.phantomjsRenderer(),
         filestorage = csscriticLib.filestorage(util);
 
-    csscritic = csscriticLib.main(
+    var csscritic = csscriticLib.main(
         phantomRenderer,
         filestorage,
         util,
@@ -22,4 +20,7 @@ var csscritic;
     csscritic.HtmlFileReporter = htmlFileReporter.HtmlFileReporter;
     csscritic.SignOffReporter = signOffReporter.SignOffReporter;
     csscritic.TerminalReporter = terminalReporter.TerminalReporter;
+
+    var runner = csscriticLib.phantomjsRunner(csscritic);
+    runner.main();
 }());
