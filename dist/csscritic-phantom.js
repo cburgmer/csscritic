@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-15
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-16
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -9,167 +9,6 @@
  * ayepromise (BSD License & WTFPL),
  * imagediff.js (MIT License),
  * rasterizeHTML.js (MIT License) */
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
-if (!Function.prototype.bind) {
-  Function.prototype.bind = function (oThis) {
-    if (typeof this !== "function") {
-      // closest thing possible to the ECMAScript 5 internal IsCallable function
-      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
-    }
-
-    var aArgs = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP = function () {},
-        fBound = function () {
-          return fToBind.apply(this instanceof fNOP && oThis
-                                 ? this
-                                 : oThis,
-                               aArgs.concat(Array.prototype.slice.call(arguments)));
-        };
-
-    fNOP.prototype = this.prototype;
-    fBound.prototype = new fNOP();
-
-    return fBound;
-  };
-}
-
-var csscriticLib = {};
-
-csscriticLib.util = function () {
-    var module = {};
-
-    module.getDataURIForImage = function (image) {
-        var canvas = window.document.createElement("canvas"),
-            context = canvas.getContext("2d");
-
-        canvas.width = image.width;
-        canvas.height = image.height;
-
-        context.drawImage(image, 0, 0);
-
-        return canvas.toDataURL("image/png");
-    };
-
-    module.getImageForUrl = function (url, successCallback, errorCallback) {
-        var image = new window.Image();
-
-        image.onload = function () {
-            successCallback(image);
-        };
-        if (errorCallback) {
-            image.onerror = errorCallback;
-        }
-        image.src = url;
-    };
-
-    module.getImageForBinaryContent = function (content, callback) {
-        var defer = ayepromise.defer(),
-            image = new window.Image();
-
-        defer.promise.then(callback, callback);
-
-        image.onload = function () {
-            defer.resolve(image);
-        };
-        image.onerror = function () {
-            defer.reject();
-        };
-        image.src = 'data:image/png;base64,' + btoa(content);
-
-        return defer.promise;
-    };
-
-    var getBinary = function (data) {
-        var binaryContent = "";
-
-        for (var i = 0; i < data.length; i++) {
-            binaryContent += String.fromCharCode(data.charCodeAt(i) & 0xFF);
-        }
-        return binaryContent;
-    };
-
-    var getUncachableURL = function (url) {
-        return url + "?_=" + Date.now();
-    };
-
-    module.ajax = function (url) {
-        var defer = ayepromise.defer(),
-            xhr = new XMLHttpRequest();
-
-        xhr.onload = function () {
-            if (xhr.status === 200 || xhr.status === 0) {
-                defer.resolve(getBinary(xhr.response));
-            } else {
-                defer.reject();
-            }
-        };
-
-        xhr.onerror = function () {
-            defer.reject();
-        };
-
-        try {
-            xhr.open('get', getUncachableURL(url), true);
-            xhr.overrideMimeType('text/plain; charset=x-user-defined');
-            xhr.send();
-        } catch (e) {
-            defer.reject();
-        }
-
-        return defer.promise;
-    };
-
-    module.workAroundTransparencyIssueInFirefox = function (image, callback) {
-        // Work around bug https://bugzilla.mozilla.org/show_bug.cgi?id=790468 where the content of a canvas
-        //   drawn to another one will be slightly different if transparency is involved.
-        // Here the reference image has been drawn to a canvas once (to serialize it to localStorage), while the
-        //   image of the newly rendered page hasn't.  Solution: apply the same transformation to the second image, too.
-        var dataUri;
-        try {
-            dataUri = module.getDataURIForImage(image);
-        } catch (e) {
-            // Fallback for Chrome & Safari
-            callback(image);
-            return;
-        }
-
-        module.getImageForUrl(dataUri, function (newImage) {
-            callback(newImage);
-        });
-    };
-
-    module.map = function (list, func, callback) {
-        var completedCount = 0,
-            results = [],
-            i;
-
-        if (list.length === 0) {
-            callback(results);
-        }
-
-        var callForItem = function (idx) {
-            function funcFinishCallback(result) {
-                completedCount += 1;
-
-                results[idx] = result;
-
-                if (completedCount === list.length) {
-                    callback(results);
-                }
-            }
-
-            func(list[idx], funcFinishCallback);
-        };
-
-        for(i = 0; i < list.length; i++) {
-            callForItem(i);
-        }
-    };
-
-    return module;
-};
 
 /*
  A JavaScript implementation of the SHA family of hashes, as
@@ -613,100 +452,7 @@ return a.util.all(d.map(function(a){return n(a,c).then(function(b){l(a,b.content
   return imagediff;
 });
 
-csscriticLib.phantomjsRenderer = function () {
-
-    var module = {};
-
-    var getFileUrl = function (address) {
-        var fs = require("fs");
-
-        return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
-    };
-
-    var getDataUriForBase64PNG = function (pngBase64) {
-        return "data:image/png;base64," + pngBase64;
-    };
-
-    var getImageForUrl = function (url) {
-        var defer = ayepromise.defer(),
-            image = new window.Image();
-
-        image.onload = function () {
-            defer.resolve(image);
-        };
-        image.onerror = defer.reject;
-        image.src = url;
-
-        return defer.promise;
-    };
-
-    var renderPage = function (page) {
-        var base64PNG, imgURI;
-
-        base64PNG = page.renderBase64("PNG");
-        imgURI = getDataUriForBase64PNG(base64PNG);
-
-        return getImageForUrl(imgURI);
-    };
-
-    var waitFor = function (millis) {
-        var defer = ayepromise.defer();
-        setTimeout(defer.resolve, millis);
-        return defer.promise;
-    };
-
-    var openPage = function (url, width, height) {
-        var defer = ayepromise.defer(),
-            page = require("webpage").create(),
-            errorneousResources = [];
-
-        page.onResourceReceived = function (response) {
-            var protocol = response.url.substr(0, 7);
-
-            if (response.stage === "end" &&
-                ((protocol !== "file://" && response.status >= 400) ||
-                    (protocol === "file://" && !response.headers.length))) {
-                errorneousResources.push(response.url);
-            }
-        };
-
-        page.viewportSize = {
-            width: width,
-            height: height
-        };
-
-        page.open(url, function (status) {
-            if (status === "success") {
-                defer.resolve({
-                    page: page,
-                    errorneousResources: errorneousResources
-                });
-            } else {
-                defer.reject();
-            }
-        });
-
-        return defer.promise;
-    };
-
-    module.render = function (parameters) {
-        return openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
-            .then(function (result) {
-                return waitFor(200)
-                    .then(function () {
-                        return renderPage(result.page);
-                    })
-                    .then(function (image) {
-                        return {
-                            image: image,
-                            errors: result.errorneousResources
-                        };
-                    });
-            });
-    };
-
-    return module;
-};
+var csscriticLib = {};
 
 csscriticLib.filestorage = function (util) {
     var module = {};
@@ -776,376 +522,6 @@ csscriticLib.filestorage = function (util) {
 
             successCallback(img, viewport);
         }, errorCallback);
-    };
-
-    return module;
-};
-
-csscriticLib.main = function (renderer, storage, util, imagediff) {
-    var module = {};
-
-    var reporters, testCases;
-
-    var clear = function () {
-        reporters = [];
-        testCases = [];
-    };
-
-    clear();
-
-    var buildReportResult = function (comparison) {
-        var viewportWidth = comparison.viewportWidth,
-            viewportHeight = comparison.viewportHeight;
-        var result = {
-                status: comparison.status,
-                pageUrl: comparison.pageUrl,
-                pageImage: comparison.htmlImage
-            };
-
-        if (comparison.htmlImage) {
-            result.resizePageImage = function (width, height, callback) {
-                viewportWidth = width;
-                viewportHeight = height;
-
-                renderer.render({
-                    url: comparison.pageUrl,
-                    width: width,
-                    height: height
-                }).then(function (renderResult) {
-                    result.pageImage = renderResult.image;
-                    callback(renderResult.image);
-                });
-            };
-            result.acceptPage = function () {
-                storage.storeReferenceImage(comparison.pageUrl, result.pageImage, {
-                    width: viewportWidth,
-                    height: viewportHeight
-                });
-            };
-        }
-
-        if (comparison.referenceImage) {
-            result.referenceImage = comparison.referenceImage;
-        }
-
-        if (comparison.renderErrors && comparison.renderErrors.length) {
-            result.renderErrors = comparison.renderErrors;
-        }
-
-        return result;
-    };
-
-    var reportComparisonStarting = function (testCases, callback) {
-        util.map(testCases, function (testCase, finishTestCase) {
-            util.map(reporters, function (reporter, finishReporter) {
-                if (reporter.reportComparisonStarting) {
-                    reporter.reportComparisonStarting({pageUrl: testCase.url}, finishReporter);
-                } else {
-                    finishReporter();
-                }
-            }, finishTestCase);
-        }, callback);
-    };
-
-    var reportComparison = function (comparison, callback) {
-        var result = buildReportResult(comparison);
-
-        util.map(reporters, function (reporter, finishUp) {
-            if (reporter.reportComparison) {
-                reporter.reportComparison(result, finishUp);
-            } else {
-                finishUp();
-            }
-        }, callback);
-    };
-
-    var reportTestSuite = function (passed, callback) {
-        util.map(reporters, function (reporter, finish) {
-            if (reporter.report) {
-                reporter.report({success: passed}, finish);
-            } else {
-                finish();
-            }
-        }, callback);
-    };
-
-    module.addReporter = function (reporter) {
-        reporters.push(reporter);
-    };
-
-    module.clearReporters = function () {
-        reporters = [];
-    };
-
-    var workaroundFirefoxResourcesSporadicallyMissing = function (htmlImage, referenceImage) {
-        if (referenceImage) {
-            // This does nothing meaningful for us, but seems to trigger Firefox to load any missing resources.
-            imagediff.diff(htmlImage, referenceImage);
-        }
-    };
-
-    var loadPageAndReportResult = function (testCase, viewport, referenceImage, callback) {
-
-        renderer.render({
-            url: testCase.url,
-            width: viewport.width,
-            height: viewport.height
-        }).then(function (renderResult) {
-            var isEqual, textualStatus;
-
-            workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
-
-            util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
-                if (referenceImage) {
-                    isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
-                    textualStatus = isEqual ? "passed" : "failed";
-                } else {
-                    textualStatus = "referenceMissing";
-                }
-
-                reportComparison({
-                        status: textualStatus,
-                        pageUrl: testCase.url,
-                        htmlImage: renderResult.image,
-                        referenceImage: referenceImage,
-                        renderErrors: renderResult.errors,
-                        viewportWidth: viewport.width,
-                        viewportHeight: viewport.height
-                    },
-                    function () {
-                        callback(textualStatus === "passed");
-                    }
-                );
-            });
-        }, function () {
-            var textualStatus = "error";
-
-            reportComparison({
-                    status: textualStatus,
-                    pageUrl: testCase.url
-                },
-                function () {
-                    callback(false);
-                }
-            );
-        });
-    };
-
-    var compare = function (testCase, callback) {
-        var defaultViewport = {width: 800, height: 100};
-
-        storage.readReferenceImage(testCase.url, function (referenceImage, viewport) {
-            loadPageAndReportResult(testCase, viewport, referenceImage, callback);
-        }, function () {
-            loadPageAndReportResult(testCase, defaultViewport, null, callback);
-        });
-    };
-
-    module.add = function (testCase) {
-        // Support url as only test case input
-        if (typeof testCase === 'string') {
-            testCase = {
-                url: testCase
-            };
-        }
-
-        testCases.push(testCase);
-    };
-
-    module.execute = function (callback) {
-        reportComparisonStarting(testCases, function () {
-
-            util.map(testCases, function (testCase, finish) {
-                compare(testCase, finish);
-            }, function (results) {
-                var allPassed = results.indexOf(false) === -1;
-
-                reportTestSuite(allPassed, function () {
-                    if (callback) {
-                        callback(allPassed);
-                    }
-                });
-            });
-        });
-    };
-
-    module.clear = clear;
-
-    return module;
-};
-
-csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
-    var module = {};
-
-    var getFileUrl = function (address) {
-        var fs;
-
-        if (window.require) {
-            fs = require("fs");
-
-            return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
-        } else {
-            return address;
-        }
-    };
-
-    module.loadFullDocument = function (pageUrl, callback) {
-        var absolutePageUrl = getFileUrl(pageUrl),
-            doc = window.document.implementation.createHTMLDocument("");
-
-        util.ajax(absolutePageUrl).then(function (content) {
-            doc.documentElement.innerHTML = content;
-
-            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
-                callback('<html>' +
-                    doc.documentElement.innerHTML +
-                    '</html>');
-            });
-        }, function () {
-            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
-        });
-    };
-
-    module.loadFingerprintJson = function (url, callback) {
-        var absoluteUrl = getFileUrl(url);
-
-        util.ajax(absoluteUrl).then(function (content) {
-            callback(JSON.parse(content));
-        });
-    };
-
-    module.calculateFingerprint = function (content) {
-        var shaObj = new JsSHA(content, "TEXT");
-
-        return shaObj.getHash("SHA-224", "HEX");
-    };
-
-    return module;
-};
-
-csscriticLib.signOffReporter = function (signOffReporterUtil) {
-    var module = {};
-
-    var calculateFingerprintForPage = function (pageUrl, callback) {
-        signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
-            var actualFingerprint = signOffReporterUtil.calculateFingerprint(content);
-
-            callback(actualFingerprint);
-        });
-    };
-
-    var findPage = function (pageUrl, signedOffPages) {
-        var signedOffPage = null;
-
-        signedOffPages.forEach(function (entry) {
-            if (entry.pageUrl === pageUrl) {
-                signedOffPage = entry;
-            }
-        });
-
-        return signedOffPage;
-    };
-
-    var acceptSignedOffPage = function (result, signedOffPages, callback) {
-        var signedOffPageEntry;
-
-        if (result.status === "failed" || result.status === "referenceMissing") {
-            signedOffPageEntry = findPage(result.pageUrl, signedOffPages);
-
-            calculateFingerprintForPage(result.pageUrl, function (actualFingerprint) {
-                if (signedOffPageEntry) {
-                    if (actualFingerprint === signedOffPageEntry.fingerprint) {
-                        console.log("Generating reference image for " + result.pageUrl);
-                        result.acceptPage();
-                    } else {
-                        console.log("Fingerprint does not match for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
-                    }
-                } else {
-                    console.log("No sign-off for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
-                }
-
-                if (callback) {
-                    callback();
-                }
-            });
-        } else {
-            if (callback) {
-                callback();
-            }
-        }
-    };
-
-    module.SignOffReporter = function (signedOffPages) {
-        return {
-            reportComparison: function (result, callback) {
-                if (! Array.isArray(signedOffPages)) {
-                    signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
-                        acceptSignedOffPage(result, json, callback);
-                    });
-                } else {
-                    acceptSignedOffPage(result, signedOffPages, callback);
-                }
-            }
-        };
-    };
-
-    return module;
-};
-
-csscriticLib.terminalReporter = function (console) {
-    var module = {};
-
-    var ATTRIBUTES_TO_ANSI = {
-            "off": 0,
-            "bold": 1,
-            "red": 31,
-            "green": 32
-        };
-
-    var inColor = function (string, color) {
-        var color_attributes = color && color.split("+"),
-            ansi_string = "";
-
-        if (!color_attributes) {
-            return string;
-        }
-
-        color_attributes.forEach(function (colorAttr) {
-            ansi_string += "\033[" + ATTRIBUTES_TO_ANSI[colorAttr] + "m";
-        });
-        ansi_string += string + "\033[" + ATTRIBUTES_TO_ANSI['off'] + "m";
-
-        return ansi_string;
-    };
-
-    var statusColor = {
-            passed: "green+bold",
-            failed: "red+bold",
-            error: "red+bold",
-            referenceMissing: "red+bold"
-        };
-
-    var reportComparison = function (result, callback) {
-        var color = statusColor[result.status] || "",
-            statusStr = inColor(result.status, color);
-        if (result.renderErrors) {
-            console.log(inColor("Error(s) loading " + result.pageUrl + ":", "red"));
-            result.renderErrors.forEach(function (msg) {
-                console.log(inColor("  " + msg, "red+bold"));
-            });
-        }
-
-        console.log("Testing " + result.pageUrl + "... " + statusStr);
-
-        if (callback) {
-            callback();
-        }
-    };
-
-    module.TerminalReporter = function () {
-        return {
-            reportComparison: reportComparison
-        };
     };
 
     return module;
@@ -1354,6 +730,630 @@ csscriticLib.phantomjsRunner = function (csscritic) {
 
                 phantom.exit(ret);
             });
+        }
+    };
+
+    return module;
+};
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function (oThis) {
+    if (typeof this !== "function") {
+      // closest thing possible to the ECMAScript 5 internal IsCallable function
+      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+
+    var aArgs = Array.prototype.slice.call(arguments, 1),
+        fToBind = this,
+        fNOP = function () {},
+        fBound = function () {
+          return fToBind.apply(this instanceof fNOP && oThis
+                                 ? this
+                                 : oThis,
+                               aArgs.concat(Array.prototype.slice.call(arguments)));
+        };
+
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+}
+
+csscriticLib.phantomjsRenderer = function () {
+
+    var module = {};
+
+    var getFileUrl = function (address) {
+        var fs = require("fs");
+
+        return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
+    };
+
+    var getDataUriForBase64PNG = function (pngBase64) {
+        return "data:image/png;base64," + pngBase64;
+    };
+
+    var getImageForUrl = function (url) {
+        var defer = ayepromise.defer(),
+            image = new window.Image();
+
+        image.onload = function () {
+            defer.resolve(image);
+        };
+        image.onerror = defer.reject;
+        image.src = url;
+
+        return defer.promise;
+    };
+
+    var renderPage = function (page) {
+        var base64PNG, imgURI;
+
+        base64PNG = page.renderBase64("PNG");
+        imgURI = getDataUriForBase64PNG(base64PNG);
+
+        return getImageForUrl(imgURI);
+    };
+
+    var waitFor = function (millis) {
+        var defer = ayepromise.defer();
+        setTimeout(defer.resolve, millis);
+        return defer.promise;
+    };
+
+    var openPage = function (url, width, height) {
+        var defer = ayepromise.defer(),
+            page = require("webpage").create(),
+            errorneousResources = [];
+
+        page.onResourceReceived = function (response) {
+            var protocol = response.url.substr(0, 7);
+
+            if (response.stage === "end" &&
+                ((protocol !== "file://" && response.status >= 400) ||
+                    (protocol === "file://" && !response.headers.length))) {
+                errorneousResources.push(response.url);
+            }
+        };
+
+        page.viewportSize = {
+            width: width,
+            height: height
+        };
+
+        page.open(url, function (status) {
+            if (status === "success") {
+                defer.resolve({
+                    page: page,
+                    errorneousResources: errorneousResources
+                });
+            } else {
+                defer.reject();
+            }
+        });
+
+        return defer.promise;
+    };
+
+    module.render = function (parameters) {
+        return openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
+            .then(function (result) {
+                return waitFor(200)
+                    .then(function () {
+                        return renderPage(result.page);
+                    })
+                    .then(function (image) {
+                        return {
+                            image: image,
+                            errors: result.errorneousResources
+                        };
+                    });
+            });
+    };
+
+    return module;
+};
+
+csscriticLib.signOffReporter = function (signOffReporterUtil) {
+    var module = {};
+
+    var calculateFingerprintForPage = function (pageUrl, callback) {
+        signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+            var actualFingerprint = signOffReporterUtil.calculateFingerprint(content);
+
+            callback(actualFingerprint);
+        });
+    };
+
+    var findPage = function (pageUrl, signedOffPages) {
+        var signedOffPage = null;
+
+        signedOffPages.forEach(function (entry) {
+            if (entry.pageUrl === pageUrl) {
+                signedOffPage = entry;
+            }
+        });
+
+        return signedOffPage;
+    };
+
+    var acceptSignedOffPage = function (result, signedOffPages, callback) {
+        var signedOffPageEntry;
+
+        if (result.status === "failed" || result.status === "referenceMissing") {
+            signedOffPageEntry = findPage(result.pageUrl, signedOffPages);
+
+            calculateFingerprintForPage(result.pageUrl, function (actualFingerprint) {
+                if (signedOffPageEntry) {
+                    if (actualFingerprint === signedOffPageEntry.fingerprint) {
+                        console.log("Generating reference image for " + result.pageUrl);
+                        result.acceptPage();
+                    } else {
+                        console.log("Fingerprint does not match for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
+                    }
+                } else {
+                    console.log("No sign-off for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
+                }
+
+                if (callback) {
+                    callback();
+                }
+            });
+        } else {
+            if (callback) {
+                callback();
+            }
+        }
+    };
+
+    module.SignOffReporter = function (signedOffPages) {
+        return {
+            reportComparison: function (result, callback) {
+                if (! Array.isArray(signedOffPages)) {
+                    signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
+                        acceptSignedOffPage(result, json, callback);
+                    });
+                } else {
+                    acceptSignedOffPage(result, signedOffPages, callback);
+                }
+            }
+        };
+    };
+
+    return module;
+};
+
+csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
+    var module = {};
+
+    var getFileUrl = function (address) {
+        var fs;
+
+        if (window.require) {
+            fs = require("fs");
+
+            return address.indexOf("://") === -1 ? "file://" + fs.absolute(address) : address;
+        } else {
+            return address;
+        }
+    };
+
+    module.loadFullDocument = function (pageUrl, callback) {
+        var absolutePageUrl = getFileUrl(pageUrl),
+            doc = window.document.implementation.createHTMLDocument("");
+
+        util.ajax(absolutePageUrl).then(function (content) {
+            doc.documentElement.innerHTML = content;
+
+            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
+                callback('<html>' +
+                    doc.documentElement.innerHTML +
+                    '</html>');
+            });
+        }, function () {
+            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
+        });
+    };
+
+    module.loadFingerprintJson = function (url, callback) {
+        var absoluteUrl = getFileUrl(url);
+
+        util.ajax(absoluteUrl).then(function (content) {
+            callback(JSON.parse(content));
+        });
+    };
+
+    module.calculateFingerprint = function (content) {
+        var shaObj = new JsSHA(content, "TEXT");
+
+        return shaObj.getHash("SHA-224", "HEX");
+    };
+
+    return module;
+};
+
+csscriticLib.terminalReporter = function (console) {
+    var module = {};
+
+    var ATTRIBUTES_TO_ANSI = {
+            "off": 0,
+            "bold": 1,
+            "red": 31,
+            "green": 32
+        };
+
+    var inColor = function (string, color) {
+        var color_attributes = color && color.split("+"),
+            ansi_string = "";
+
+        if (!color_attributes) {
+            return string;
+        }
+
+        color_attributes.forEach(function (colorAttr) {
+            ansi_string += "\033[" + ATTRIBUTES_TO_ANSI[colorAttr] + "m";
+        });
+        ansi_string += string + "\033[" + ATTRIBUTES_TO_ANSI['off'] + "m";
+
+        return ansi_string;
+    };
+
+    var statusColor = {
+            passed: "green+bold",
+            failed: "red+bold",
+            error: "red+bold",
+            referenceMissing: "red+bold"
+        };
+
+    var reportComparison = function (result, callback) {
+        var color = statusColor[result.status] || "",
+            statusStr = inColor(result.status, color);
+        if (result.renderErrors) {
+            console.log(inColor("Error(s) loading " + result.pageUrl + ":", "red"));
+            result.renderErrors.forEach(function (msg) {
+                console.log(inColor("  " + msg, "red+bold"));
+            });
+        }
+
+        console.log("Testing " + result.pageUrl + "... " + statusStr);
+
+        if (callback) {
+            callback();
+        }
+    };
+
+    module.TerminalReporter = function () {
+        return {
+            reportComparison: reportComparison
+        };
+    };
+
+    return module;
+};
+
+csscriticLib.main = function (renderer, storage, util, imagediff) {
+    var module = {};
+
+    var reporters, testCases;
+
+    var clear = function () {
+        reporters = [];
+        testCases = [];
+    };
+
+    clear();
+
+    var buildReportResult = function (comparison) {
+        var viewportWidth = comparison.viewportWidth,
+            viewportHeight = comparison.viewportHeight;
+        var result = {
+                status: comparison.status,
+                pageUrl: comparison.pageUrl,
+                pageImage: comparison.htmlImage
+            };
+
+        if (comparison.htmlImage) {
+            result.resizePageImage = function (width, height, callback) {
+                viewportWidth = width;
+                viewportHeight = height;
+
+                renderer.render({
+                    url: comparison.pageUrl,
+                    width: width,
+                    height: height
+                }).then(function (renderResult) {
+                    result.pageImage = renderResult.image;
+                    callback(renderResult.image);
+                });
+            };
+            result.acceptPage = function () {
+                storage.storeReferenceImage(comparison.pageUrl, result.pageImage, {
+                    width: viewportWidth,
+                    height: viewportHeight
+                });
+            };
+        }
+
+        if (comparison.referenceImage) {
+            result.referenceImage = comparison.referenceImage;
+        }
+
+        if (comparison.renderErrors && comparison.renderErrors.length) {
+            result.renderErrors = comparison.renderErrors;
+        }
+
+        return result;
+    };
+
+    var reportComparisonStarting = function (testCases, callback) {
+        util.map(testCases, function (testCase, finishTestCase) {
+            util.map(reporters, function (reporter, finishReporter) {
+                if (reporter.reportComparisonStarting) {
+                    reporter.reportComparisonStarting({pageUrl: testCase.url}, finishReporter);
+                } else {
+                    finishReporter();
+                }
+            }, finishTestCase);
+        }, callback);
+    };
+
+    var reportComparison = function (comparison, callback) {
+        var result = buildReportResult(comparison);
+
+        util.map(reporters, function (reporter, finishUp) {
+            if (reporter.reportComparison) {
+                reporter.reportComparison(result, finishUp);
+            } else {
+                finishUp();
+            }
+        }, callback);
+    };
+
+    var reportTestSuite = function (passed, callback) {
+        util.map(reporters, function (reporter, finish) {
+            if (reporter.report) {
+                reporter.report({success: passed}, finish);
+            } else {
+                finish();
+            }
+        }, callback);
+    };
+
+    module.addReporter = function (reporter) {
+        reporters.push(reporter);
+    };
+
+    module.clearReporters = function () {
+        reporters = [];
+    };
+
+    var workaroundFirefoxResourcesSporadicallyMissing = function (htmlImage, referenceImage) {
+        if (referenceImage) {
+            // This does nothing meaningful for us, but seems to trigger Firefox to load any missing resources.
+            imagediff.diff(htmlImage, referenceImage);
+        }
+    };
+
+    var loadPageAndReportResult = function (testCase, viewport, referenceImage, callback) {
+
+        renderer.render({
+            url: testCase.url,
+            width: viewport.width,
+            height: viewport.height
+        }).then(function (renderResult) {
+            var isEqual, textualStatus;
+
+            workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
+
+            util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
+                if (referenceImage) {
+                    isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
+                    textualStatus = isEqual ? "passed" : "failed";
+                } else {
+                    textualStatus = "referenceMissing";
+                }
+
+                reportComparison({
+                        status: textualStatus,
+                        pageUrl: testCase.url,
+                        htmlImage: renderResult.image,
+                        referenceImage: referenceImage,
+                        renderErrors: renderResult.errors,
+                        viewportWidth: viewport.width,
+                        viewportHeight: viewport.height
+                    },
+                    function () {
+                        callback(textualStatus === "passed");
+                    }
+                );
+            });
+        }, function () {
+            var textualStatus = "error";
+
+            reportComparison({
+                    status: textualStatus,
+                    pageUrl: testCase.url
+                },
+                function () {
+                    callback(false);
+                }
+            );
+        });
+    };
+
+    var compare = function (testCase, callback) {
+        var defaultViewport = {width: 800, height: 100};
+
+        storage.readReferenceImage(testCase.url, function (referenceImage, viewport) {
+            loadPageAndReportResult(testCase, viewport, referenceImage, callback);
+        }, function () {
+            loadPageAndReportResult(testCase, defaultViewport, null, callback);
+        });
+    };
+
+    module.add = function (testCase) {
+        // Support url as only test case input
+        if (typeof testCase === 'string') {
+            testCase = {
+                url: testCase
+            };
+        }
+
+        testCases.push(testCase);
+    };
+
+    module.execute = function (callback) {
+        reportComparisonStarting(testCases, function () {
+
+            util.map(testCases, function (testCase, finish) {
+                compare(testCase, finish);
+            }, function (results) {
+                var allPassed = results.indexOf(false) === -1;
+
+                reportTestSuite(allPassed, function () {
+                    if (callback) {
+                        callback(allPassed);
+                    }
+                });
+            });
+        });
+    };
+
+    module.clear = clear;
+
+    return module;
+};
+
+csscriticLib.util = function () {
+    var module = {};
+
+    module.getDataURIForImage = function (image) {
+        var canvas = window.document.createElement("canvas"),
+            context = canvas.getContext("2d");
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+
+        context.drawImage(image, 0, 0);
+
+        return canvas.toDataURL("image/png");
+    };
+
+    module.getImageForUrl = function (url, successCallback, errorCallback) {
+        var image = new window.Image();
+
+        image.onload = function () {
+            successCallback(image);
+        };
+        if (errorCallback) {
+            image.onerror = errorCallback;
+        }
+        image.src = url;
+    };
+
+    module.getImageForBinaryContent = function (content, callback) {
+        var defer = ayepromise.defer(),
+            image = new window.Image();
+
+        defer.promise.then(callback, callback);
+
+        image.onload = function () {
+            defer.resolve(image);
+        };
+        image.onerror = function () {
+            defer.reject();
+        };
+        image.src = 'data:image/png;base64,' + btoa(content);
+
+        return defer.promise;
+    };
+
+    var getBinary = function (data) {
+        var binaryContent = "";
+
+        for (var i = 0; i < data.length; i++) {
+            binaryContent += String.fromCharCode(data.charCodeAt(i) & 0xFF);
+        }
+        return binaryContent;
+    };
+
+    var getUncachableURL = function (url) {
+        return url + "?_=" + Date.now();
+    };
+
+    module.ajax = function (url) {
+        var defer = ayepromise.defer(),
+            xhr = new XMLHttpRequest();
+
+        xhr.onload = function () {
+            if (xhr.status === 200 || xhr.status === 0) {
+                defer.resolve(getBinary(xhr.response));
+            } else {
+                defer.reject();
+            }
+        };
+
+        xhr.onerror = function () {
+            defer.reject();
+        };
+
+        try {
+            xhr.open('get', getUncachableURL(url), true);
+            xhr.overrideMimeType('text/plain; charset=x-user-defined');
+            xhr.send();
+        } catch (e) {
+            defer.reject();
+        }
+
+        return defer.promise;
+    };
+
+    module.workAroundTransparencyIssueInFirefox = function (image, callback) {
+        // Work around bug https://bugzilla.mozilla.org/show_bug.cgi?id=790468 where the content of a canvas
+        //   drawn to another one will be slightly different if transparency is involved.
+        // Here the reference image has been drawn to a canvas once (to serialize it to localStorage), while the
+        //   image of the newly rendered page hasn't.  Solution: apply the same transformation to the second image, too.
+        var dataUri;
+        try {
+            dataUri = module.getDataURIForImage(image);
+        } catch (e) {
+            // Fallback for Chrome & Safari
+            callback(image);
+            return;
+        }
+
+        module.getImageForUrl(dataUri, function (newImage) {
+            callback(newImage);
+        });
+    };
+
+    module.map = function (list, func, callback) {
+        var completedCount = 0,
+            results = [],
+            i;
+
+        if (list.length === 0) {
+            callback(results);
+        }
+
+        var callForItem = function (idx) {
+            function funcFinishCallback(result) {
+                completedCount += 1;
+
+                results[idx] = result;
+
+                if (completedCount === list.length) {
+                    callback(results);
+                }
+            }
+
+            func(list[idx], funcFinishCallback);
+        };
+
+        for(i = 0; i < list.length; i++) {
+            callForItem(i);
         }
     };
 

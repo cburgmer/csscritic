@@ -8,7 +8,7 @@ module.exports = function (grunt) {
         jasmine: {
             src: 'csscritic.js',
             options: {
-                specs: ['test/specsShared/*', 'test/specs/*'],
+                specs: ['test/specs/shared/', 'test/specs/*.js', 'test/specs/browser/'],
                 helpers: [
                     'test/helpers.js',
                     'node_modules/jquery/dist/jquery.js',
@@ -45,21 +45,13 @@ module.exports = function (grunt) {
                         ' * rasterizeHTML.js (MIT License) */\n\n'
                 },
                 src: [
-                    'src/cli/phantomjsbind.js',
-                    'src/scope.js',
-                    'src/utils.js',
                     'node_modules/jssha/src/sha.js',
                     'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
                     'node_modules/imagediff/imagediff.js',
-                    'src/cli/phantomjsrenderer.js',
-                    'src/cli/filestorage.js',
-                    'src/csscritic.js',
-                    'src/cli/signoffreporterutil.js',
-                    'src/cli/signoffreporter.js',
-                    'src/cli/terminalreporter.js',
-                    'src/cli/htmlfilereporter.js',
-                    'src/cli/phantomjs_runner.js',
-                    'src/bootPhantom.js'
+                    'src/boot/scope.js',
+                    'src/cli/*.js',
+                    'src/*.js',
+                    'src/boot/cli.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
             }
@@ -85,15 +77,10 @@ module.exports = function (grunt) {
                         'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
                         'node_modules/imagediff/imagediff.js',
                         // TODO ayepromise is needed, but currently included in the rasterizeHTML.allinone.js bundle
-                        'src/scope.js',
-                        'src/utils.js',
-                        'src/browser/jobqueue.js',
-                        'src/browser/browserrenderer.js',
-                        'src/browser/domstorage.js',
-                        'src/<%= pkg.name %>.js',
-                        'src/browser/reporterutil.js',
-                        'src/browser/basichtmlreporter.js',
-                        'src/boot.js',
+                        'src/boot/scope.js',
+                        'src/*.js',
+                        'src/browser/*.js',
+                        'src/boot/browser.js',
                     ]
                 }
             }
@@ -101,13 +88,13 @@ module.exports = function (grunt) {
         cssmin: {
             dist: {
                 files: {
-                    'dist/<%= pkg.name %>.min.css': ['src/browser/basichtmlreporter.css']
+                    'dist/<%= pkg.name %>.min.css': ['src/browser/*.css']
                 }
             }
         },
         csslint: {
             basichtmlreporter: {
-                src: 'src/browser/basichtmlreporter.css',
+                src: 'src/**/*.css',
                 options: {
                     "ids": false,
                     "adjoining-classes": false,
@@ -192,7 +179,8 @@ module.exports = function (grunt) {
                 },
                 src: [
                     'test/specs/*.js',
-                    'test/specsShared/*.js',
+                    'test/specs/browser/',
+                    'test/specs/shared/',
                     'test/gruntpath.js',
                     'test/ui/*.js'
                 ]
@@ -229,7 +217,7 @@ module.exports = function (grunt) {
                 },
                 src: [
                     'test/*.js',
-                    'test/specsPhantom/*.js',
+                    'test/specs/cli/',
                 ]
             }
         }

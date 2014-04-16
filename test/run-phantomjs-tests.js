@@ -18,7 +18,7 @@ function loadCode() {
     phantom.injectJs("./node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js");
     phantom.injectJs("./node_modules/jssha/src/sha.js");
     phantom.injectJs("./node_modules/imagediff/imagediff.js");
-    phantom.injectJs("./src/scope.js");
+    phantom.injectJs("./src/boot/scope.js");
     phantom.injectJs("./src/utils.js");
     phantom.injectJs("./src/cli/phantomjsrenderer.js");
     phantom.injectJs("./src/cli/terminalreporter.js");
@@ -30,14 +30,14 @@ function loadCode() {
 }
 
 function loadTests() {
-    phantom.injectJs("./specsShared/storagePluginSpecs.js");
+    phantom.injectJs("./test/specs/shared/storagePluginSpecs.js");
 
-    phantom.injectJs("./specsPhantom/FileStorageSpec.js");
-    phantom.injectJs("./specsPhantom/PhantomJSRendererSpec.js");
-    phantom.injectJs("./specsPhantom/HtmlFileReporterSpec.js");
-    phantom.injectJs("./specsPhantom/TerminalReporterSpec.js");
-    phantom.injectJs("./specsPhantom/SignOffReporterUtilSpec.js");
-    phantom.injectJs("./specsPhantom/SignOffReporterSpec.js");
+    phantom.injectJs("./test/specs/cli/FileStorageSpec.js");
+    phantom.injectJs("./test/specs/cli/PhantomJSRendererSpec.js");
+    phantom.injectJs("./test/specs/cli/HtmlFileReporterSpec.js");
+    phantom.injectJs("./test/specs/cli/TerminalReporterSpec.js");
+    phantom.injectJs("./test/specs/cli/SignOffReporterUtilSpec.js");
+    phantom.injectJs("./test/specs/cli/SignOffReporterSpec.js");
 
 }
 
