@@ -1148,11 +1148,11 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
             width: viewport.width,
             height: viewport.height
         }).then(function (renderResult) {
-            var isEqual, textualStatus;
-
             workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
 
             util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
+                var isEqual, textualStatus;
+
                 if (referenceImage) {
                     isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
                     textualStatus = isEqual ? "passed" : "failed";
@@ -1198,15 +1198,17 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         });
     };
 
-    module.add = function (testCase) {
-        // Support url as only test case input
+    var supportUrlAsOnlyTestCaseInput = function (testCase) {
         if (typeof testCase === 'string') {
-            testCase = {
+            return {
                 url: testCase
             };
         }
+        return testCase;
+    };
 
-        testCases.push(testCase);
+    module.add = function (testCase) {
+        testCases.push(supportUrlAsOnlyTestCaseInput(testCase));
     };
 
     module.execute = function (callback) {
