@@ -1,14 +1,20 @@
 describe("Workarounds", function () {
     "use strict";
 
-    var autoAcceptingReporter = {
-            reportComparison: function (result, callback) {
-                result.acceptPage();
-                callback();
-            }
-        };
-
     var csscritic;
+
+    var aOnceAutoAcceptingReporter = function () {
+            var onceAutoAcceptingReporterCalled = false;
+            return {
+                reportComparison: function (result, callback) {
+                    if (!onceAutoAcceptingReporterCalled) {
+                        onceAutoAcceptingReporterCalled = true;
+                        result.acceptPage();
+                    }
+                    callback();
+                }
+            };
+        };
 
     beforeEach(function () {
         var util = csscriticLib.util(),
@@ -28,10 +34,9 @@ describe("Workarounds", function () {
 
     ifNotInWebkitIt("should work around transparency making pages non-comparable", function (done) {
         // Create reference image first
-        csscritic.addReporter(autoAcceptingReporter);
+        csscritic.addReporter(aOnceAutoAcceptingReporter());
         csscritic.add({url: csscriticTestPath + "fixtures/transparencyBug.html"});
         csscritic.execute(function () {
-            csscritic.clearReporters();
 
             // Now test against the reference
             csscritic.add({url: csscriticTestPath + "fixtures/transparencyBug.html"});

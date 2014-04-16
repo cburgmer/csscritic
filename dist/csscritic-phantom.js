@@ -455,6 +455,8 @@ return a.util.all(d.map(function(a){return n(a,c).then(function(b){l(a,b.content
 var csscriticLib = {};
 
 csscriticLib.filestorage = function (util) {
+    "use strict";
+
     var module = {};
 
     var fs = require("fs");
@@ -528,6 +530,8 @@ csscriticLib.filestorage = function (util) {
 };
 
 csscriticLib.htmlFileReporter = function () {
+    "use strict";
+
     var module = {};
 
     var reportComparison = function (result, basePath, callback) {
@@ -652,6 +656,8 @@ csscriticLib.htmlFileReporter = function () {
 };
 
 csscriticLib.phantomjsRunner = function (csscritic) {
+    "use strict";
+
     var system = require("system");
 
     var module = {};
@@ -762,6 +768,7 @@ if (!Function.prototype.bind) {
 }
 
 csscriticLib.phantomjsRenderer = function () {
+    "use strict";
 
     var module = {};
 
@@ -857,6 +864,8 @@ csscriticLib.phantomjsRenderer = function () {
 };
 
 csscriticLib.signOffReporter = function (signOffReporterUtil) {
+    "use strict";
+
     var module = {};
 
     var calculateFingerprintForPage = function (pageUrl, callback) {
@@ -926,6 +935,8 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
 };
 
 csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
+    "use strict";
+
     var module = {};
 
     var getFileUrl = function (address) {
@@ -975,6 +986,8 @@ csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
 };
 
 csscriticLib.terminalReporter = function (console) {
+    "use strict";
+
     var module = {};
 
     var ATTRIBUTES_TO_ANSI = {
@@ -993,9 +1006,9 @@ csscriticLib.terminalReporter = function (console) {
         }
 
         color_attributes.forEach(function (colorAttr) {
-            ansi_string += "\033[" + ATTRIBUTES_TO_ANSI[colorAttr] + "m";
+            ansi_string += "\u001b[" + ATTRIBUTES_TO_ANSI[colorAttr] + "m";
         });
-        ansi_string += string + "\033[" + ATTRIBUTES_TO_ANSI['off'] + "m";
+        ansi_string += string + "\u001b[" + ATTRIBUTES_TO_ANSI['off'] + "m";
 
         return ansi_string;
     };
@@ -1034,16 +1047,12 @@ csscriticLib.terminalReporter = function (console) {
 };
 
 csscriticLib.main = function (renderer, storage, util, imagediff) {
+    "use strict";
+
     var module = {};
 
-    var reporters, testCases;
-
-    var clear = function () {
-        reporters = [];
+    var reporters = [],
         testCases = [];
-    };
-
-    clear();
 
     var buildReportResult = function (comparison) {
         var viewportWidth = comparison.viewportWidth,
@@ -1123,10 +1132,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
     module.addReporter = function (reporter) {
         reporters.push(reporter);
-    };
-
-    module.clearReporters = function () {
-        reporters = [];
     };
 
     var workaroundFirefoxResourcesSporadicallyMissing = function (htmlImage, referenceImage) {
@@ -1221,12 +1226,12 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         });
     };
 
-    module.clear = clear;
-
     return module;
 };
 
 csscriticLib.util = function () {
+    "use strict";
+
     var module = {};
 
     module.getDataURIForImage = function (image) {

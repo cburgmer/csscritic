@@ -3,14 +3,8 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
     var module = {};
 
-    var reporters, testCases;
-
-    var clear = function () {
-        reporters = [];
+    var reporters = [],
         testCases = [];
-    };
-
-    clear();
 
     var buildReportResult = function (comparison) {
         var viewportWidth = comparison.viewportWidth,
@@ -90,10 +84,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
     module.addReporter = function (reporter) {
         reporters.push(reporter);
-    };
-
-    module.clearReporters = function () {
-        reporters = [];
     };
 
     var workaroundFirefoxResourcesSporadicallyMissing = function (htmlImage, referenceImage) {
@@ -187,8 +177,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
             });
         });
     };
-
-    module.clear = clear;
 
     return module;
 };

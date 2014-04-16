@@ -6,11 +6,11 @@ describe("Integration", function () {
     var util = csscriticLib.util(),
         csscritic;
 
-    beforeEach(function () {
+    var aCssCriticInstance = function () {
         var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
             domstorage = csscriticLib.domstorage(util, localStorage);
 
-        csscritic = csscriticLib.main(
+        var csscritic = csscriticLib.main(
             browserRenderer,
             domstorage,
             util,
@@ -20,6 +20,12 @@ describe("Integration", function () {
             basicHTMLReporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document);
 
         csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
+
+        return csscritic;
+    };
+
+    beforeEach(function () {
+        csscritic = aCssCriticInstance();
     });
 
     beforeEach(function () {
@@ -154,12 +160,12 @@ describe("Integration", function () {
         });
         csscritic.add(testPageUrl);
         csscritic.execute(function () {
+            var anothercsscritic = aCssCriticInstance();
             result.acceptPage();
 
-            csscritic.clear();
-            csscritic.addReporter(reporter);
-            csscritic.add(testPageUrl);
-            csscritic.execute(function (status) {
+            anothercsscritic.addReporter(reporter);
+            anothercsscritic.add(testPageUrl);
+            anothercsscritic.execute(function (status) {
                 expect(status).toBe(true);
 
                 done();
