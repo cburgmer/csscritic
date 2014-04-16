@@ -1,4 +1,6 @@
 csscriticLib.filestorage = function (util) {
+    "use strict";
+
     var module = {};
 
     var fs = require("fs");

@@ -1,4 +1,6 @@
 describe("SignOffReporterUtil", function () {
+    "use strict";
+
     var util = csscriticLib.util(),
         signOffReporterUtil;
 

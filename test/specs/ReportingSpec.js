@@ -1,4 +1,6 @@
 describe("Reporting", function () {
+    "use strict";
+
     var csscritic, rendererBackend, storageBackend, imagediff;
 
     var util = csscriticLib.util();

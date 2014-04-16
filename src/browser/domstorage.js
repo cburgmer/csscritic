@@ -1,4 +1,6 @@
 csscriticLib.domstorage = function (util, localStorage) {
+    "use strict";
+
     var module = {};
 
     module.storeReferenceImage = function (key, pageImage, viewport) {

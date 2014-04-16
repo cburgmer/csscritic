@@ -1,4 +1,6 @@
 describe("HtmlFileReporter", function () {
+    "use strict";
+
     var fixtureUrl = csscriticTestPath + "fixtures/",
         reporter,
         htmlImage, referenceImage, differenceImageCanvas,

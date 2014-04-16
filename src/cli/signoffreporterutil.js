@@ -1,4 +1,6 @@
 csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
+    "use strict";
+
     var module = {};
 
     var getFileUrl = function (address) {

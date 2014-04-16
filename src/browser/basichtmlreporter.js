@@ -1,4 +1,6 @@
 csscriticLib.basicHTMLReporter = function (reporterUtil, document) {
+    "use strict";
+
     var module = {};
 
     var registerResizeHandler = function (element, handler) {

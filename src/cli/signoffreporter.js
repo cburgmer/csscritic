@@ -1,4 +1,6 @@
 csscriticLib.signOffReporter = function (signOffReporterUtil) {
+    "use strict";
+
     var module = {};
 
     var calculateFingerprintForPage = function (pageUrl, callback) {

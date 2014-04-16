@@ -1,4 +1,6 @@
 describe("Web storage support for reference images", function () {
+    "use strict";
+
     var util = csscriticLib.util();
 
     var constructDomstorage = function (util) {

@@ -1,4 +1,6 @@
 describe("Phantom storage support for reference images", function () {
+    "use strict";
+
     var fs = require("fs"),
         tempPath;
 

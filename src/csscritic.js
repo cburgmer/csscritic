@@ -1,4 +1,6 @@
 csscriticLib.main = function (renderer, storage, util, imagediff) {
+    "use strict";
+
     var module = {};
 
     var reporters, testCases;

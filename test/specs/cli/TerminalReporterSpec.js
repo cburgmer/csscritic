@@ -1,4 +1,6 @@
 describe("TerminalReporter", function () {
+    "use strict";
+
     var reporter,
         htmlImage, referenceImage, differenceImageCanvas,
         consoleLogSpy;
@@ -22,7 +24,7 @@ describe("TerminalReporter", function () {
             referenceImage: referenceImage
         });
 
-        expect(consoleLogSpy).toHaveBeenCalledWith("Testing page_url... \033[32m\033[1mpassed\033[0m");
+        expect(consoleLogSpy).toHaveBeenCalledWith("Testing page_url... \u001b[32m\u001b[1mpassed\u001b[0m");
     });
 
     it("should call the callback when finished reporting", function () {
@@ -43,7 +45,7 @@ describe("TerminalReporter", function () {
             referenceImage: referenceImage
         });
 
-        expect(consoleLogSpy).toHaveBeenCalledWith("Testing the_page_url... \033[31m\033[1mfailed\033[0m");
+        expect(consoleLogSpy).toHaveBeenCalledWith("Testing the_page_url... \u001b[31m\u001b[1mfailed\u001b[0m");
     });
 
     it("should log referenceMissing status to output", function () {
@@ -55,7 +57,7 @@ describe("TerminalReporter", function () {
             acceptPage: function () {}
         });
 
-        expect(consoleLogSpy).toHaveBeenCalledWith("Testing the_page_url... \033[31m\033[1mreferenceMissing\033[0m");
+        expect(consoleLogSpy).toHaveBeenCalledWith("Testing the_page_url... \u001b[31m\u001b[1mreferenceMissing\u001b[0m");
     });
 
     it("should log error status to output", function () {
@@ -65,7 +67,7 @@ describe("TerminalReporter", function () {
             pageImage: null
         });
 
-        expect(consoleLogSpy).toHaveBeenCalledWith("Testing page_url... \033[31m\033[1merror\033[0m");
+        expect(consoleLogSpy).toHaveBeenCalledWith("Testing page_url... \u001b[31m\u001b[1merror\u001b[0m");
     });
 
     it("should log render errors to output", function () {
@@ -77,7 +79,7 @@ describe("TerminalReporter", function () {
             renderErrors: ["aBrokenURL"]
         });
 
-        expect(consoleLogSpy).toHaveBeenCalledWith("\033[31mError(s) loading page_url:\033[0m");
-        expect(consoleLogSpy).toHaveBeenCalledWith("\033[31m\033[1m  aBrokenURL\033[0m");
+        expect(consoleLogSpy).toHaveBeenCalledWith("\u001b[31mError(s) loading page_url:\u001b[0m");
+        expect(consoleLogSpy).toHaveBeenCalledWith("\u001b[31m\u001b[1m  aBrokenURL\u001b[0m");
     });
 });

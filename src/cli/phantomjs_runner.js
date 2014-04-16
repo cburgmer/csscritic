@@ -1,4 +1,6 @@
 csscriticLib.phantomjsRunner = function (csscritic) {
+    "use strict";
+
     var system = require("system");
 
     var module = {};

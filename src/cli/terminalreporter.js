@@ -1,4 +1,6 @@
 csscriticLib.terminalReporter = function (console) {
+    "use strict";
+
     var module = {};
 
     var ATTRIBUTES_TO_ANSI = {
@@ -17,9 +19,9 @@ csscriticLib.terminalReporter = function (console) {
         }
 
         color_attributes.forEach(function (colorAttr) {
-            ansi_string += "\033[" + ATTRIBUTES_TO_ANSI[colorAttr] + "m";
+            ansi_string += "\u001b[" + ATTRIBUTES_TO_ANSI[colorAttr] + "m";
         });
-        ansi_string += string + "\033[" + ATTRIBUTES_TO_ANSI['off'] + "m";
+        ansi_string += string + "\u001b[" + ATTRIBUTES_TO_ANSI['off'] + "m";
 
         return ansi_string;
     };

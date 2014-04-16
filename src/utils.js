@@ -1,4 +1,6 @@
 csscriticLib.util = function () {
+    "use strict";
+
     var module = {};
 
     module.getDataURIForImage = function (image) {

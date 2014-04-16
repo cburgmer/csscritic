@@ -1,4 +1,6 @@
 describe("Utility", function () {
+    "use strict";
+
     var util = csscriticLib.util();
 
     describe("getImageForUrl", function () {

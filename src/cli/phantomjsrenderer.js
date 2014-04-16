@@ -1,4 +1,5 @@
 csscriticLib.phantomjsRenderer = function () {
+    "use strict";
 
     var module = {};
 

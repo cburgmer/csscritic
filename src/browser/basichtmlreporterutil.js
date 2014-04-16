@@ -1,4 +1,5 @@
 csscriticLib.basicHTMLReporterUtil = function () {
+    "use strict";
 
     var module = {};
 

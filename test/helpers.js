@@ -1,3 +1,5 @@
+"use strict";
+
 window.isWebkit = navigator.userAgent.indexOf("WebKit") >= 0;
 window.ifNotInWebkitIt = function(text, functionHandle) {
     if (! window.isWebkit) {

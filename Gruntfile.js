@@ -1,5 +1,7 @@
 /*global module:false*/
 module.exports = function (grunt) {
+    "use strict";
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         clean: {
@@ -124,7 +126,8 @@ module.exports = function (grunt) {
                 eqnull: true,
                 trailing: true,
                 browser: true,
-                sub: true
+                sub: true,
+                strict: true
             },
             grunt: {
                 src: 'Gruntfile.js',
@@ -181,12 +184,12 @@ module.exports = function (grunt) {
                     'test/specs/*.js',
                     'test/specs/browser/',
                     'test/specs/shared/',
-                    'test/gruntpath.js',
                     'test/ui/*.js'
                 ]
             },
             phantomjsTests: {
                 options: {
+                    globalstrict: true,
                     globals: {
                         phantom: true,
                         require: true,

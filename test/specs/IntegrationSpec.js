@@ -1,4 +1,6 @@
 describe("Integration", function () {
+    "use strict";
+
     var theReferenceImageUri;
 
     var util = csscriticLib.util(),

@@ -1,4 +1,6 @@
 csscriticLib.htmlFileReporter = function () {
+    "use strict";
+
     var module = {};
 
     var reportComparison = function (result, basePath, callback) {

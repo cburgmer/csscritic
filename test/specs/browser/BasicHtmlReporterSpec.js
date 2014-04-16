@@ -1,4 +1,6 @@
 describe("Basic HTML reporter", function () {
+    "use strict";
+
     var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
         reporter;
 

@@ -1,4 +1,6 @@
 csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
+    "use strict";
+
     var module = {};
 
     var cache = {};

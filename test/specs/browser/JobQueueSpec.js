@@ -1,4 +1,6 @@
 describe("Job Queue", function () {
+    "use strict";
+
     var subject;
 
     beforeEach(function () {

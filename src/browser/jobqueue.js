@@ -1,4 +1,6 @@
 csscriticLib.jobQueue = function () {
+    "use strict";
+
     var module = {};
 
     var jobQueue = [],

@@ -1,4 +1,6 @@
 describe("Reporter utilities", function () {
+    "use strict";
+
     var basicHTMLReporterUtil;
 
     beforeEach(function () {

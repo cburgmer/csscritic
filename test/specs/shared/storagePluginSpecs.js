@@ -1,4 +1,6 @@
 var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceImage, storeMockReferenceImage) {
+    "use strict";
+
     var imgUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
         img = null,
         storage;

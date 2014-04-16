@@ -1,4 +1,6 @@
 describe("Browser renderer", function () {
+    "use strict";
+
     var util = csscriticLib.util(),
         browserRenderer;
 

@@ -1,4 +1,6 @@
 describe("Workarounds", function () {
+    "use strict";
+
     var autoAcceptingReporter = {
             reportComparison: function (result, callback) {
                 result.acceptPage();

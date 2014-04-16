@@ -1,4 +1,6 @@
 describe("PhantomJS renderer", function () {
+    "use strict";
+
     var phantomjsRenderer;
 
     var oldRequire = window.require,

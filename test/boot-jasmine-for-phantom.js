@@ -1,4 +1,6 @@
 (function() {
+  "use strict";
+
   phantom.injectJs("./node_modules/jasmine-core/lib/jasmine-core/jasmine.js");
   phantom.injectJs("./node_modules/jasmine-core/lib/console/console.js");
 

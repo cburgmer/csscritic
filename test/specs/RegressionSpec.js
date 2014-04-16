@@ -1,4 +1,6 @@
 describe("Regression testing", function () {
+    "use strict";
+
     var csscritic, rendererBackend, storageBackend, imagediff;
 
     var util = csscriticLib.util();
