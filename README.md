@@ -5,7 +5,7 @@ A lightweight framework for regression testing of Cascading Style Sheets.
 
 [Project page](http://cburgmer.github.com/csscritic)
 
-[Watch the screencast](http://youtu.be/AqQ2bNPtF60) to get an idea what this is about. Also check out [CSS Critic Examples](https://github.com/cburgmer/csscritic-examples) which collects example applications with a UI test suite built on top of CSS Critic.
+[Watch the screencast](http://youtu.be/AqQ2bNPtF60) to get an idea what this is about. Also check out [CSS Critic Examples](https://github.com/cburgmer/csscritic-examples) which collects example applications with a UI test suite built on top of CSS Critic or [see it in action testing the TodoMVC application](http://cburgmer.github.io/csscritic-examples/angularjs/).
 
 [![Build Status](https://secure.travis-ci.org/cburgmer/csscritic.png?branch=master)](http://travis-ci.org/cburgmer/csscritic)
 
