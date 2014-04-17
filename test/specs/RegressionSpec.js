@@ -56,8 +56,8 @@ describe("Regression testing", function () {
 
         storageBackend = jasmine.createSpyObj('storageBackend', ['readReferenceImage', 'storeReferenceImage']);
 
-        spyOn(util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image, callback) {
-            callback(image);
+        spyOn(util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image) {
+            return successfulPromise(image);
         });
 
         rendererBackend = jasmine.createSpyObj('renderer', ['render']);

@@ -7,7 +7,33 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
 
     var util = csscriticLib.util();
 
+    var successfulPromiseFake = function (value) {
+        return {
+            then: function (successHandler) {
+                successHandler(value);
+            }
+        };
+    };
+
+    var failedPromiseFake = function (e) {
+        return {
+            then: function (successHandler, failHandler) {
+                failHandler(e);
+            }
+        };
+    };
+
+    var setUpImageReturnedForUrl = function (image) {
+        util.getImageForUrl.and.returnValue(successfulPromiseFake(image));
+    };
+
+    var setUpImageForUrlToFail = function (e) {
+        util.getImageForUrl.and.returnValue(failedPromiseFake(e));
+    };
+
     beforeEach(function (done) {
+        spyOn(util, 'getImageForUrl');
+
         storage = constructDomstorage(util);
 
         jasmine.addMatchers(imagediffForJasmine2);
@@ -56,10 +82,9 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     });
 
     it("should read in a reference image", function () {
-        var readImage,
-            getImageForUrlSpy = spyOn(util, 'getImageForUrl').and.callFake(function (uri, success) {
-                success("read image fake");
-            });
+        var readImage;
+
+        setUpImageReturnedForUrl("read image fake");
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
             referenceImageUri: imgUri
@@ -69,16 +94,14 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
             readImage = img;
         }, function () {});
 
-        expect(getImageForUrlSpy).toHaveBeenCalledWith(imgUri, jasmine.any(Function), jasmine.any(Function));
+        expect(util.getImageForUrl).toHaveBeenCalledWith(imgUri);
         expect(readImage).toEqual("read image fake");
     });
 
     it("should return the viewport's size", function () {
         var viewportSize;
 
-        spyOn(util, 'getImageForUrl').and.callFake(function (uri, success) {
-            success("read image fake");
-        });
+        setUpImageReturnedForUrl("read image fake");
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
             referenceImageUri: "some image uri",
@@ -99,11 +122,9 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     it("should return the viewport's size and fallback to the image's size", function () {
         var viewportSize;
 
-        spyOn(util, 'getImageForUrl').and.callFake(function (uri, success) {
-            success({
-                width: 12,
-                height: 34
-            });
+        setUpImageReturnedForUrl({
+            width: 12,
+            height: 34
         });
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
@@ -138,9 +159,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     it("should call error handler if read reference image is invalid", function () {
         var errorCallback = jasmine.createSpy('errorCallback');
 
-        spyOn(util, 'getImageForUrl').and.callFake(function (uri, success, error) {
-            error();
-        });
+        setUpImageForUrlToFail();
 
         storeMockReferenceImage( "somePage.html", JSON.stringify({
             referenceImageUri: "broken uri"

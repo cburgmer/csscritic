@@ -49,7 +49,7 @@ csscriticLib.domstorage = function (util, localStorage) {
             return;
         }
 
-        util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+        util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height

@@ -102,7 +102,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         }).then(function (renderResult) {
             workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
 
-            util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
+            util.workAroundTransparencyIssueInFirefox(renderResult.image).then(function (adaptedHtmlImage) {
                 var isEqual, textualStatus;
 
                 if (referenceImage) {

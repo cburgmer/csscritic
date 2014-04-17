@@ -56,8 +56,8 @@ describe("Reporting", function () {
         };
 
 
-        spyOn(util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image, callback) {
-            callback(image);
+        spyOn(util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image) {
+            return successfulPromiseFake(image);
         });
 
         rendererBackend = jasmine.createSpyObj('renderer', ['render']);

@@ -64,7 +64,7 @@ describe("Integration", function () {
     it("should compare an image with its reference and return true if similar", function (done) {
         var testImageUrl = csscriticTestPath + "fixtures/redWithLetter.png";
 
-        util.getImageForUrl(testImageUrl, function (image) {
+        util.getImageForUrl(testImageUrl).then(function (image) {
             var theReferenceImageUri = util.getDataURIForImage(image);
 
             localStorage.setItem(testImageUrl, JSON.stringify({

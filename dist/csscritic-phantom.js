@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-16
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-17
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -516,7 +516,7 @@ csscriticLib.filestorage = function (util) {
             return;
         }
 
-        util.getImageForUrl(dataObj.referenceImageUri, function (img) {
+        util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -1150,7 +1150,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         }).then(function (renderResult) {
             workaroundFirefoxResourcesSporadicallyMissing(renderResult.image, referenceImage);
 
-            util.workAroundTransparencyIssueInFirefox(renderResult.image, function (adaptedHtmlImage) {
+            util.workAroundTransparencyIssueInFirefox(renderResult.image).then(function (adaptedHtmlImage) {
                 var isEqual, textualStatus;
 
                 if (referenceImage) {
@@ -1248,16 +1248,19 @@ csscriticLib.util = function () {
         return canvas.toDataURL("image/png");
     };
 
-    module.getImageForUrl = function (url, successCallback, errorCallback) {
-        var image = new window.Image();
+    module.getImageForUrl = function (url) {
+        var defer = ayepromise.defer(),
+            image = new window.Image();
 
         image.onload = function () {
-            successCallback(image);
+            defer.resolve(image);
         };
-        if (errorCallback) {
-            image.onerror = errorCallback;
-        }
+        image.onerror = function () {
+            defer.reject();
+        };
         image.src = url;
+
+        return defer.promise;
     };
 
     module.getImageForBinaryContent = function (content, callback) {
@@ -1317,7 +1320,13 @@ csscriticLib.util = function () {
         return defer.promise;
     };
 
-    module.workAroundTransparencyIssueInFirefox = function (image, callback) {
+    var successfulPromise = function (value) {
+        var defer = ayepromise.defer();
+        defer.resolve(value);
+        return defer.promise;
+    };
+
+    module.workAroundTransparencyIssueInFirefox = function (image) {
         // Work around bug https://bugzilla.mozilla.org/show_bug.cgi?id=790468 where the content of a canvas
         //   drawn to another one will be slightly different if transparency is involved.
         // Here the reference image has been drawn to a canvas once (to serialize it to localStorage), while the
@@ -1327,13 +1336,10 @@ csscriticLib.util = function () {
             dataUri = module.getDataURIForImage(image);
         } catch (e) {
             // Fallback for Chrome & Safari
-            callback(image);
-            return;
+            return successfulPromise(image);
         }
 
-        module.getImageForUrl(dataUri, function (newImage) {
-            callback(newImage);
-        });
+        return module.getImageForUrl(dataUri);
     };
 
     module.map = function (list, func, callback) {

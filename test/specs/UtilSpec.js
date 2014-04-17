@@ -7,7 +7,7 @@ describe("Utility", function () {
         it("should load an image", function (done) {
             var imgUrl = csscriticTestPath + "fixtures/green.png";
 
-            util.getImageForUrl(imgUrl, function (image) {
+            util.getImageForUrl(imgUrl).then(function (image) {
                 expect(image instanceof HTMLElement).toBeTruthy();
                 expect(image.nodeName).toEqual("IMG");
                 expect(image.src.substr(-imgUrl.length)).toEqual(imgUrl);
@@ -17,9 +17,8 @@ describe("Utility", function () {
         });
 
         it("should handle a missing image", function (done) {
-            util.getImageForUrl("does_not_exist.png", function () {}, function () {
-                done();
-            });
+            util.getImageForUrl("does_not_exist.png")
+                .then(null, done);
         });
     });
 
