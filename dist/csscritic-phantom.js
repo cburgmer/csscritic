@@ -1,14 +1,13 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-17
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-19
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
  * jsSHA.js (BSD License),
- * url (MIT License),
- * CSSOM (MIT License),
- * xmlserializer (MIT License),
  * ayepromise (BSD License & WTFPL),
  * imagediff.js (MIT License),
- * rasterizeHTML.js (MIT License) */
+ * url (MIT License),
+ * CSSOM (MIT License),
+ * inlineresources (MIT License) */
 
 /*
  A JavaScript implementation of the SHA family of hashes, as
@@ -45,17 +44,6 @@ d[2]),new e(355462360,d[3]),new e(1731405415,d[4]),new e(41048885895,d[5]),new e
 new e(a[m*x+p],a[m*x+p+1]):y(E(A[m-2]),A[m-7],D(A[m-15]),A[m-16]),v=C(u,G(l),H(l,r,t),k[m],A[m]),z=q(F(c),I(c,g,f)),u=t,t=r,r=l,l=q(h,v),h=f,f=g,g=c,c=q(v,z);d[0]=q(c,d[0]);d[1]=q(g,d[1]);d[2]=q(f,d[2]);d[3]=q(h,d[3]);d[4]=q(l,d[4]);d[5]=q(r,d[5]);d[6]=q(t,d[6]);d[7]=q(u,d[7])}if("SHA-224"===b)a=[d[0],d[1],d[2],d[3],d[4],d[5],d[6]];else if("SHA-256"===b)a=d;else if("SHA-384"===b)a=[d[0].a,d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b];else if("SHA-512"===b)a=[d[0].a,
 d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6].a,d[6].b,d[7].a,d[7].b];else throw"Unexpected error in SHA-2 implementation";return a}"function"===typeof define&&typeof define.amd?define(function(){return z}):"undefined"!==typeof exports?"undefined"!==typeof module&&module.exports?module.exports=exports=z:exports=z:T.jsSHA=z})(this);
 
-/*! rasterizeHTML.js - v0.8.0 - 2014-02-17
-* http://www.github.com/cburgmer/rasterizeHTML.js
-* Copyright (c) 2014 Christoph Burgmer; Licensed MIT */
-/* Integrated dependencies:
- * url (MIT License),
- * CSSOM (MIT License),
- * ayepromise (BSD License & WTFPL),
- * xmlserializer (MIT License) */
-!function(a){"object"==typeof exports?module.exports=a():"function"==typeof define&&define.amd?define(a):"undefined"!=typeof window?window.CSSOM=a():"undefined"!=typeof global?global.CSSOM=a():"undefined"!=typeof self&&(self.CSSOM=a())}(function(){return function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);throw new Error("Cannot find module '"+g+"'")}var j=c[g]={exports:{}};b[g][0].call(j.exports,function(a){var c=b[g][1][a];return e(c?c:a)},j,j.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){var d={CSSRule:a("./CSSRule").CSSRule,MatcherList:a("./MatcherList").MatcherList};d.CSSDocumentRule=function(){d.CSSRule.call(this),this.matcher=new d.MatcherList,this.cssRules=[]},d.CSSDocumentRule.prototype=new d.CSSRule,d.CSSDocumentRule.prototype.constructor=d.CSSDocumentRule,d.CSSDocumentRule.prototype.type=10,Object.defineProperty(d.CSSDocumentRule.prototype,"cssText",{get:function(){for(var a=[],b=0,c=this.cssRules.length;c>b;b++)a.push(this.cssRules[b].cssText);return"@-moz-document "+this.matcher.matcherText+" {"+a.join("")+"}"}}),c.CSSDocumentRule=d.CSSDocumentRule},{"./CSSRule":7,"./MatcherList":13}],2:[function(a,b,c){var d={CSSStyleDeclaration:a("./CSSStyleDeclaration").CSSStyleDeclaration,CSSRule:a("./CSSRule").CSSRule};d.CSSFontFaceRule=function(){d.CSSRule.call(this),this.style=new d.CSSStyleDeclaration,this.style.parentRule=this},d.CSSFontFaceRule.prototype=new d.CSSRule,d.CSSFontFaceRule.prototype.constructor=d.CSSFontFaceRule,d.CSSFontFaceRule.prototype.type=5,Object.defineProperty(d.CSSFontFaceRule.prototype,"cssText",{get:function(){return"@font-face {"+this.style.cssText+"}"}}),c.CSSFontFaceRule=d.CSSFontFaceRule},{"./CSSRule":7,"./CSSStyleDeclaration":8}],3:[function(a,b,c){var d={CSSRule:a("./CSSRule").CSSRule,CSSStyleSheet:a("./CSSStyleSheet").CSSStyleSheet,MediaList:a("./MediaList").MediaList};d.CSSImportRule=function(){d.CSSRule.call(this),this.href="",this.media=new d.MediaList,this.styleSheet=new d.CSSStyleSheet},d.CSSImportRule.prototype=new d.CSSRule,d.CSSImportRule.prototype.constructor=d.CSSImportRule,d.CSSImportRule.prototype.type=3,Object.defineProperty(d.CSSImportRule.prototype,"cssText",{get:function(){var a=this.media.mediaText;return"@import url("+this.href+")"+(a?" "+a:"")+";"},set:function(a){for(var b,c,d=0,e="",f="";c=a.charAt(d);d++)switch(c){case" ":case"	":case"\r":case"\n":case"\f":"after-import"===e?e="url":f+=c;break;case"@":e||a.indexOf("@import",d)!==d||(e="after-import",d+="import".length,f="");break;case"u":if("url"===e&&a.indexOf("url(",d)===d){if(b=a.indexOf(")",d+1),-1===b)throw d+': ")" not found';d+="url(".length;var g=a.slice(d,b);g[0]===g[g.length-1]&&('"'===g[0]||"'"===g[0])&&(g=g.slice(1,-1)),this.href=g,d=b,e="media"}break;case'"':if("url"===e){if(b=a.indexOf('"',d+1),!b)throw d+": '\"' not found";this.href=a.slice(d+1,b),d=b,e="media"}break;case"'":if("url"===e){if(b=a.indexOf("'",d+1),!b)throw d+': "\'" not found';this.href=a.slice(d+1,b),d=b,e="media"}break;case";":"media"===e&&f&&(this.media.mediaText=f.trim());break;default:"media"===e&&(f+=c)}}}),c.CSSImportRule=d.CSSImportRule},{"./CSSRule":7,"./CSSStyleSheet":10,"./MediaList":14}],4:[function(a,b,c){var d={CSSRule:a("./CSSRule").CSSRule,CSSStyleDeclaration:a("./CSSStyleDeclaration").CSSStyleDeclaration};d.CSSKeyframeRule=function(){d.CSSRule.call(this),this.keyText="",this.style=new d.CSSStyleDeclaration,this.style.parentRule=this},d.CSSKeyframeRule.prototype=new d.CSSRule,d.CSSKeyframeRule.prototype.constructor=d.CSSKeyframeRule,d.CSSKeyframeRule.prototype.type=9,Object.defineProperty(d.CSSKeyframeRule.prototype,"cssText",{get:function(){return this.keyText+" {"+this.style.cssText+"} "}}),c.CSSKeyframeRule=d.CSSKeyframeRule},{"./CSSRule":7,"./CSSStyleDeclaration":8}],5:[function(a,b,c){var d={CSSRule:a("./CSSRule").CSSRule};d.CSSKeyframesRule=function(){d.CSSRule.call(this),this.name="",this.cssRules=[]},d.CSSKeyframesRule.prototype=new d.CSSRule,d.CSSKeyframesRule.prototype.constructor=d.CSSKeyframesRule,d.CSSKeyframesRule.prototype.type=8,Object.defineProperty(d.CSSKeyframesRule.prototype,"cssText",{get:function(){for(var a=[],b=0,c=this.cssRules.length;c>b;b++)a.push("  "+this.cssRules[b].cssText);return"@"+(this._vendorPrefix||"")+"keyframes "+this.name+" { \n"+a.join("\n")+"\n}"}}),c.CSSKeyframesRule=d.CSSKeyframesRule},{"./CSSRule":7}],6:[function(a,b,c){var d={CSSRule:a("./CSSRule").CSSRule,MediaList:a("./MediaList").MediaList};d.CSSMediaRule=function(){d.CSSRule.call(this),this.media=new d.MediaList,this.cssRules=[]},d.CSSMediaRule.prototype=new d.CSSRule,d.CSSMediaRule.prototype.constructor=d.CSSMediaRule,d.CSSMediaRule.prototype.type=4,Object.defineProperty(d.CSSMediaRule.prototype,"cssText",{get:function(){for(var a=[],b=0,c=this.cssRules.length;c>b;b++)a.push(this.cssRules[b].cssText);return"@media "+this.media.mediaText+" {"+a.join("")+"}"}}),c.CSSMediaRule=d.CSSMediaRule},{"./CSSRule":7,"./MediaList":14}],7:[function(a,b,c){var d={};d.CSSRule=function(){this.parentRule=null,this.parentStyleSheet=null},d.CSSRule.STYLE_RULE=1,d.CSSRule.IMPORT_RULE=3,d.CSSRule.MEDIA_RULE=4,d.CSSRule.FONT_FACE_RULE=5,d.CSSRule.PAGE_RULE=6,d.CSSRule.WEBKIT_KEYFRAMES_RULE=8,d.CSSRule.WEBKIT_KEYFRAME_RULE=9,d.CSSRule.prototype={constructor:d.CSSRule},c.CSSRule=d.CSSRule},{}],8:[function(a,b,c){var d={};d.CSSStyleDeclaration=function(){this.length=0,this.parentRule=null,this._importants={}},d.CSSStyleDeclaration.prototype={constructor:d.CSSStyleDeclaration,getPropertyValue:function(a){return this[a]||""},setProperty:function(a,b,c){if(this[a]){var d=Array.prototype.indexOf.call(this,a);0>d&&(this[this.length]=a,this.length++)}else this[this.length]=a,this.length++;this[a]=b,this._importants[a]=c},removeProperty:function(a){if(!(a in this))return"";var b=Array.prototype.indexOf.call(this,a);if(0>b)return"";var c=this[a];return this[a]="",Array.prototype.splice.call(this,b,1),c},getPropertyCSSValue:function(){},getPropertyPriority:function(a){return this._importants[a]||""},getPropertyShorthand:function(){},isPropertyImplicit:function(){},get cssText(){for(var a=[],b=0,c=this.length;c>b;++b){var d=this[b],e=this.getPropertyValue(d),f=this.getPropertyPriority(d);f&&(f=" !"+f),a[b]=d+": "+e+f+";"}return a.join(" ")},set cssText(a){var b,c;for(b=this.length;b--;)c=this[b],this[c]="";Array.prototype.splice.call(this,0,this.length),this._importants={};var e=d.parse("#bogus{"+a+"}").cssRules[0].style,f=e.length;for(b=0;f>b;++b)c=e[b],this.setProperty(e[b],e.getPropertyValue(c),e.getPropertyPriority(c))}},c.CSSStyleDeclaration=d.CSSStyleDeclaration,d.parse=a("./parse").parse},{"./parse":18}],9:[function(a,b,c){var d={CSSStyleDeclaration:a("./CSSStyleDeclaration").CSSStyleDeclaration,CSSRule:a("./CSSRule").CSSRule};d.CSSStyleRule=function(){d.CSSRule.call(this),this.selectorText="",this.style=new d.CSSStyleDeclaration,this.style.parentRule=this},d.CSSStyleRule.prototype=new d.CSSRule,d.CSSStyleRule.prototype.constructor=d.CSSStyleRule,d.CSSStyleRule.prototype.type=1,Object.defineProperty(d.CSSStyleRule.prototype,"cssText",{get:function(){var a;return a=this.selectorText?this.selectorText+" {"+this.style.cssText+"}":""},set:function(a){var b=d.CSSStyleRule.parse(a);this.style=b.style,this.selectorText=b.selectorText}}),d.CSSStyleRule.parse=function(a){for(var b,c,e,f=0,g="selector",h=f,i="",j={selector:!0,value:!0},k=new d.CSSStyleRule,l="";e=a.charAt(f);f++)switch(e){case" ":case"	":case"\r":case"\n":case"\f":if(j[g])switch(a.charAt(f-1)){case" ":case"	":case"\r":case"\n":case"\f":break;default:i+=" "}break;case'"':if(h=f+1,b=a.indexOf('"',h)+1,!b)throw'" is missing';i+=a.slice(f,b),f=b-1;break;case"'":if(h=f+1,b=a.indexOf("'",h)+1,!b)throw"' is missing";i+=a.slice(f,b),f=b-1;break;case"/":if("*"===a.charAt(f+1)){if(f+=2,b=a.indexOf("*/",f),-1===b)throw new SyntaxError("Missing */");f=b+1}else i+=e;break;case"{":"selector"===g&&(k.selectorText=i.trim(),i="",g="name");break;case":":"name"===g?(c=i.trim(),i="",g="value"):i+=e;break;case"!":"value"===g&&a.indexOf("!important",f)===f?(l="important",f+="important".length):i+=e;break;case";":"value"===g?(k.style.setProperty(c,i.trim(),l),l="",i="",g="name"):i+=e;break;case"}":if("value"===g)k.style.setProperty(c,i.trim(),l),l="",i="";else{if("name"===g)break;i+=e}g="selector";break;default:i+=e}return k},c.CSSStyleRule=d.CSSStyleRule},{"./CSSRule":7,"./CSSStyleDeclaration":8}],10:[function(a,b,c){var d={StyleSheet:a("./StyleSheet").StyleSheet,CSSStyleRule:a("./CSSStyleRule").CSSStyleRule};d.CSSStyleSheet=function(){d.StyleSheet.call(this),this.cssRules=[]},d.CSSStyleSheet.prototype=new d.StyleSheet,d.CSSStyleSheet.prototype.constructor=d.CSSStyleSheet,d.CSSStyleSheet.prototype.insertRule=function(a,b){if(0>b||b>this.cssRules.length)throw new RangeError("INDEX_SIZE_ERR");var c=d.parse(a).cssRules[0];return c.parentStyleSheet=this,this.cssRules.splice(b,0,c),b},d.CSSStyleSheet.prototype.deleteRule=function(a){if(0>a||a>=this.cssRules.length)throw new RangeError("INDEX_SIZE_ERR");this.cssRules.splice(a,1)},d.CSSStyleSheet.prototype.toString=function(){for(var a="",b=this.cssRules,c=0;c<b.length;c++)a+=b[c].cssText+"\n";return a},c.CSSStyleSheet=d.CSSStyleSheet,d.parse=a("./parse").parse},{"./CSSStyleRule":9,"./StyleSheet":15,"./parse":18}],11:[function(a,b,c){var d={};d.CSSValue=function(){},d.CSSValue.prototype={constructor:d.CSSValue,set cssText(a){var b=this._getConstructorName();throw new Exception('DOMException: property "cssText" of "'+b+'" is readonly!')},get cssText(){var a=this._getConstructorName();throw new Exception('getter "cssText" of "'+a+'" is not implemented!')},_getConstructorName:function(){var a=this.constructor.toString(),b=a.match(/function\s([^\(]+)/),c=b[1];return c}},c.CSSValue=d.CSSValue},{}],12:[function(a,b,c){var d={CSSValue:a("./CSSValue").CSSValue};d.CSSValueExpression=function(a,b){this._token=a,this._idx=b},d.CSSValueExpression.prototype=new d.CSSValue,d.CSSValueExpression.prototype.constructor=d.CSSValueExpression,d.CSSValueExpression.prototype.parse=function(){for(var a,b=this._token,c=this._idx,d="",e="",f="",g=[];;++c){if(d=b.charAt(c),""==d){f="css expression error: unfinished expression!";break}switch(d){case"(":g.push(d),e+=d;break;case")":g.pop(d),e+=d;break;case"/":(a=this._parseJSComment(b,c))?a.error?f="css expression error: unfinished comment in expression!":c=a.idx:(a=this._parseJSRexExp(b,c))?(c=a.idx,e+=a.text):e+=d;break;case"'":case'"':a=this._parseJSString(b,c,d),a?(c=a.idx,e+=a.text):e+=d;break;default:e+=d}if(f)break;if(0==g.length)break}var h;return h=f?{error:f}:{idx:c,expression:e}},d.CSSValueExpression.prototype._parseJSComment=function(a,b){var c,d=a.charAt(b+1);if("/"==d||"*"==d){var e,f,g=b;return"/"==d?f="\n":"*"==d&&(f="*/"),e=a.indexOf(f,g+1+1),-1!==e?(e=e+f.length-1,c=a.substring(b,e+1),{idx:e,text:c}):(error="css expression error: unfinished comment in expression!",{error:error})}return!1},d.CSSValueExpression.prototype._parseJSString=function(a,b,c){var d,e=this._findMatchedIdx(a,b,c);return-1===e?!1:(d=a.substring(b,e+c.length),{idx:e,text:d})},d.CSSValueExpression.prototype._parseJSRexExp=function(a,b){var c=a.substring(0,b).replace(/\s+$/,""),d=[/^$/,/\($/,/\[$/,/\!$/,/\+$/,/\-$/,/\*$/,/\/\s+/,/\%$/,/\=$/,/\>$/,/\<$/,/\&$/,/\|$/,/\^$/,/\~$/,/\?$/,/\,$/,/delete$/,/in$/,/instanceof$/,/new$/,/typeof$/,/void$/],e=d.some(function(a){return a.test(c)});if(e){var f="/";return this._parseJSString(a,b,f)}return!1},d.CSSValueExpression.prototype._findMatchedIdx=function(a,b,c){for(var d,e=b,f=-1;;){if(d=a.indexOf(c,e+1),-1===d){d=f;break}var g=a.substring(b+1,d),h=g.match(/\\+$/);if(!h||h[0]%2==0)break;e=d}var i=a.indexOf("\n",b+1);return d>i&&(d=f),d},c.CSSValueExpression=d.CSSValueExpression},{"./CSSValue":11}],13:[function(a,b,c){var d={};d.MatcherList=function(){this.length=0},d.MatcherList.prototype={constructor:d.MatcherList,get matcherText(){return Array.prototype.join.call(this,", ")},set matcherText(a){for(var b=a.split(","),c=this.length=b.length,d=0;c>d;d++)this[d]=b[d].trim()},appendMatcher:function(a){-1===Array.prototype.indexOf.call(this,a)&&(this[this.length]=a,this.length++)},deleteMatcher:function(a){var b=Array.prototype.indexOf.call(this,a);-1!==b&&Array.prototype.splice.call(this,b,1)}},c.MatcherList=d.MatcherList},{}],14:[function(a,b,c){var d={};d.MediaList=function(){this.length=0},d.MediaList.prototype={constructor:d.MediaList,get mediaText(){return Array.prototype.join.call(this,", ")},set mediaText(a){for(var b=a.split(","),c=this.length=b.length,d=0;c>d;d++)this[d]=b[d].trim()},appendMedium:function(a){-1===Array.prototype.indexOf.call(this,a)&&(this[this.length]=a,this.length++)},deleteMedium:function(a){var b=Array.prototype.indexOf.call(this,a);-1!==b&&Array.prototype.splice.call(this,b,1)}},c.MediaList=d.MediaList},{}],15:[function(a,b,c){var d={};d.StyleSheet=function(){this.parentStyleSheet=null},c.StyleSheet=d.StyleSheet},{}],16:[function(a,b,c){var d={CSSStyleSheet:a("./CSSStyleSheet").CSSStyleSheet,CSSStyleRule:a("./CSSStyleRule").CSSStyleRule,CSSMediaRule:a("./CSSMediaRule").CSSMediaRule,CSSStyleDeclaration:a("./CSSStyleDeclaration").CSSStyleDeclaration,CSSKeyframeRule:a("./CSSKeyframeRule").CSSKeyframeRule,CSSKeyframesRule:a("./CSSKeyframesRule").CSSKeyframesRule};d.clone=function e(a){var b=new d.CSSStyleSheet,c=a.cssRules;if(!c)return b;for(var f={1:d.CSSStyleRule,4:d.CSSMediaRule,8:d.CSSKeyframesRule,9:d.CSSKeyframeRule},g=0,h=c.length;h>g;g++){var i=c[g],j=b.cssRules[g]=new f[i.type],k=i.style;if(k){for(var l=j.style=new d.CSSStyleDeclaration,m=0,n=k.length;n>m;m++){var o=l[m]=k[m];l[o]=k[o],l._importants[o]=k.getPropertyPriority(o)}l.length=k.length}i.hasOwnProperty("keyText")&&(j.keyText=i.keyText),i.hasOwnProperty("selectorText")&&(j.selectorText=i.selectorText),i.hasOwnProperty("mediaText")&&(j.mediaText=i.mediaText),i.hasOwnProperty("cssRules")&&(j.cssRules=e(i).cssRules)}return b},c.clone=d.clone},{"./CSSKeyframeRule":4,"./CSSKeyframesRule":5,"./CSSMediaRule":6,"./CSSStyleDeclaration":8,"./CSSStyleRule":9,"./CSSStyleSheet":10}],17:[function(a,b,c){"use strict";c.CSSStyleDeclaration=a("./CSSStyleDeclaration").CSSStyleDeclaration,c.CSSRule=a("./CSSRule").CSSRule,c.CSSStyleRule=a("./CSSStyleRule").CSSStyleRule,c.MediaList=a("./MediaList").MediaList,c.CSSMediaRule=a("./CSSMediaRule").CSSMediaRule,c.CSSImportRule=a("./CSSImportRule").CSSImportRule,c.CSSFontFaceRule=a("./CSSFontFaceRule").CSSFontFaceRule,c.StyleSheet=a("./StyleSheet").StyleSheet,c.CSSStyleSheet=a("./CSSStyleSheet").CSSStyleSheet,c.CSSKeyframesRule=a("./CSSKeyframesRule").CSSKeyframesRule,c.CSSKeyframeRule=a("./CSSKeyframeRule").CSSKeyframeRule,c.MatcherList=a("./MatcherList").MatcherList,c.CSSDocumentRule=a("./CSSDocumentRule").CSSDocumentRule,c.CSSValue=a("./CSSValue").CSSValue,c.CSSValueExpression=a("./CSSValueExpression").CSSValueExpression,c.parse=a("./parse").parse,c.clone=a("./clone").clone},{"./CSSDocumentRule":1,"./CSSFontFaceRule":2,"./CSSImportRule":3,"./CSSKeyframeRule":4,"./CSSKeyframesRule":5,"./CSSMediaRule":6,"./CSSRule":7,"./CSSStyleDeclaration":8,"./CSSStyleRule":9,"./CSSStyleSheet":10,"./CSSValue":11,"./CSSValueExpression":12,"./MatcherList":13,"./MediaList":14,"./StyleSheet":15,"./clone":16,"./parse":18}],18:[function(a,b,c){var d={};d.parse=function(a){for(var b,c,e,f,g,h,i,j,k,l,m=0,n="before-selector",o="",p={selector:!0,value:!0,atRule:!0,"importRule-begin":!0,importRule:!0,atBlock:!0,"documentRule-begin":!0},q=new d.CSSStyleSheet,r=q,s="",t=/@(-(?:\w+-)+)?keyframes/g,u=function(b){var c=a.substring(0,m).split("\n"),d=c.length,e=c.pop().length+1,f=new Error(b+" (line "+d+", char "+e+")");throw f.line=d,f.char=e,f.styleSheet=q,f};l=a.charAt(m);m++)switch(l){case" ":case"	":case"\r":case"\n":case"\f":p[n]&&(o+=l);break;case'"':b=m+1;do b=a.indexOf('"',b)+1,b||u('Unmatched "');while("\\"===a[b-2]);switch(o+=a.slice(m,b),m=b-1,n){case"before-value":n="value";break;case"importRule-begin":n="importRule"}break;case"'":b=m+1;do b=a.indexOf("'",b)+1,b||u("Unmatched '");while("\\"===a[b-2]);switch(o+=a.slice(m,b),m=b-1,n){case"before-value":n="value";break;case"importRule-begin":n="importRule"}break;case"/":"*"===a.charAt(m+1)?(m+=2,b=a.indexOf("*/",m),-1===b?u("Missing */"):m=b+1):o+=l,"importRule-begin"===n&&(o+=" ",n="importRule");break;case"@":if(a.indexOf("@-moz-document",m)===m){n="documentRule-begin",k=new d.CSSDocumentRule,k.__starts=m,m+="-moz-document".length,o="";break}if(a.indexOf("@media",m)===m){n="atBlock",g=new d.CSSMediaRule,g.__starts=m,m+="media".length,o="";break}if(a.indexOf("@import",m)===m){n="importRule-begin",m+="import".length,o+="@import";break}if(a.indexOf("@font-face",m)===m){n="fontFaceRule-begin",m+="font-face".length,i=new d.CSSFontFaceRule,i.__starts=m,o="";break}t.lastIndex=m;var v=t.exec(a);if(v&&v.index===m){n="keyframesRule-begin",j=new d.CSSKeyframesRule,j.__starts=m,j._vendorPrefix=v[1],m+=v[0].length-1,o="";break}"selector"==n&&(n="atRule"),o+=l;break;case"{":"selector"===n||"atRule"===n?(f.selectorText=o.trim(),f.style.__starts=m,o="",n="before-name"):"atBlock"===n?(g.media.mediaText=o.trim(),r=c=g,g.parentStyleSheet=q,o="",n="before-selector"):"fontFaceRule-begin"===n?(c&&(i.parentRule=c),i.parentStyleSheet=q,f=i,o="",n="before-name"):"keyframesRule-begin"===n?(j.name=o.trim(),c&&(j.parentRule=c),j.parentStyleSheet=q,r=c=j,o="",n="keyframeRule-begin"):"keyframeRule-begin"===n?(f=new d.CSSKeyframeRule,f.keyText=o.trim(),f.__starts=m,o="",n="before-name"):"documentRule-begin"===n&&(k.matcher.matcherText=o.trim(),c&&(k.parentRule=c),r=c=k,k.parentStyleSheet=q,o="",n="before-selector");break;case":":"name"===n?(e=o.trim(),o="",n="before-value"):o+=l;break;case"(":if("value"===n)if("expression"==o.trim()){var w=new d.CSSValueExpression(a,m).parse();w.error?u(w.error):(o+=w.expression,m=w.idx)}else b=a.indexOf(")",m+1),-1===b&&u('Unmatched "("'),o+=a.slice(m,b+1),m=b;else o+=l;break;case"!":"value"===n&&a.indexOf("!important",m)===m?(s="important",m+="important".length):o+=l;break;case";":switch(n){case"value":f.style.setProperty(e,o.trim(),s),s="",o="",n="before-name";break;case"atRule":o="",n="before-selector";break;case"importRule":h=new d.CSSImportRule,h.parentStyleSheet=h.styleSheet.parentStyleSheet=q,h.cssText=o+l,q.cssRules.push(h),o="",n="before-selector";break;default:o+=l}break;case"}":switch(n){case"value":f.style.setProperty(e,o.trim(),s),s="";case"before-name":case"name":f.__ends=m+1,c&&(f.parentRule=c),f.parentStyleSheet=q,r.cssRules.push(f),o="",n=r.constructor===d.CSSKeyframesRule?"keyframeRule-begin":"before-selector";break;case"keyframeRule-begin":case"before-selector":case"selector":c||u("Unexpected }"),r.__ends=m+1,q.cssRules.push(r),r=q,c=null,o="",n="before-selector"}break;default:switch(n){case"before-selector":n="selector",f=new d.CSSStyleRule,f.__starts=m;break;case"before-name":n="name";break;case"before-value":n="value";break;case"importRule-begin":n="importRule"}o+=l}return q},c.parse=d.parse,d.CSSStyleSheet=a("./CSSStyleSheet").CSSStyleSheet,d.CSSStyleRule=a("./CSSStyleRule").CSSStyleRule,d.CSSImportRule=a("./CSSImportRule").CSSImportRule,d.CSSMediaRule=a("./CSSMediaRule").CSSMediaRule,d.CSSFontFaceRule=a("./CSSFontFaceRule").CSSFontFaceRule,d.CSSStyleDeclaration=a("./CSSStyleDeclaration").CSSStyleDeclaration,d.CSSKeyframeRule=a("./CSSKeyframeRule").CSSKeyframeRule,d.CSSKeyframesRule=a("./CSSKeyframesRule").CSSKeyframesRule,d.CSSValueExpression=a("./CSSValueExpression").CSSValueExpression,d.CSSDocumentRule=a("./CSSDocumentRule").CSSDocumentRule},{"./CSSDocumentRule":1,"./CSSFontFaceRule":2,"./CSSImportRule":3,"./CSSKeyframeRule":4,"./CSSKeyframesRule":5,"./CSSMediaRule":6,"./CSSStyleDeclaration":8,"./CSSStyleRule":9,"./CSSStyleSheet":10,"./CSSValueExpression":12}]},{},[17])(17)}),!function(a){"object"==typeof exports?module.exports=a():"function"==typeof define&&define.amd?define(a):"undefined"!=typeof window?window.url=a():"undefined"!=typeof global?global.url=a():"undefined"!=typeof self&&(self.url=a())}(function(){var a;return function b(a,c,d){function e(g,h){if(!c[g]){if(!a[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);throw new Error("Cannot find module '"+g+"'")}var j=c[g]={exports:{}};a[g][0].call(j.exports,function(b){var c=a[g][1][b];return e(c?c:b)},j,j.exports,b,a,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){function d(a){return"[object Array]"===j.call(a)}function e(a,b){var c;if(null===a)c={__proto__:null};else{if("object"!=typeof a)throw new TypeError("typeof prototype["+typeof a+"] != 'object'");var d=function(){};d.prototype=a,c=new d,c.__proto__=a}return"undefined"!=typeof b&&Object.defineProperties&&Object.defineProperties(c,b),c}function f(a){return"object"!=typeof a&&"function"!=typeof a||null===a}function g(a){if(f(a))throw new TypeError("Object.keys called on a non-object");var b=[];for(var c in a)k.call(a,c)&&b.push(c);return b}function h(a){if(f(a))throw new TypeError("Object.getOwnPropertyNames called on a non-object");var b=g(a);return c.isArray(a)&&-1===c.indexOf(a,"length")&&b.push("length"),b}function i(a,b){return{value:a[b]}}var j=Object.prototype.toString,k=Object.prototype.hasOwnProperty;c.isArray="function"==typeof Array.isArray?Array.isArray:d,c.indexOf=function(a,b){if(a.indexOf)return a.indexOf(b);for(var c=0;c<a.length;c++)if(b===a[c])return c;return-1},c.filter=function(a,b){if(a.filter)return a.filter(b);for(var c=[],d=0;d<a.length;d++)b(a[d],d,a)&&c.push(a[d]);return c},c.forEach=function(a,b,c){if(a.forEach)return a.forEach(b,c);for(var d=0;d<a.length;d++)b.call(c,a[d],d,a)},c.map=function(a,b){if(a.map)return a.map(b);for(var c=new Array(a.length),d=0;d<a.length;d++)c[d]=b(a[d],d,a);return c},c.reduce=function(a,b,c){if(a.reduce)return a.reduce(b,c);var d,e=!1;2<arguments.length&&(d=c,e=!0);for(var f=0,g=a.length;g>f;++f)a.hasOwnProperty(f)&&(e?d=b(d,a[f],f,a):(d=a[f],e=!0));return d},c.substr="b"!=="ab".substr(-1)?function(a,b,c){return 0>b&&(b=a.length+b),a.substr(b,c)}:function(a,b,c){return a.substr(b,c)},c.trim=function(a){return a.trim?a.trim():a.replace(/^\s+|\s+$/g,"")},c.bind=function(){var a=Array.prototype.slice.call(arguments),b=a.shift();if(b.bind)return b.bind.apply(b,a);var c=a.shift();return function(){b.apply(c,a.concat([Array.prototype.slice.call(arguments)]))}},c.create="function"==typeof Object.create?Object.create:e;var l="function"==typeof Object.keys?Object.keys:g,m="function"==typeof Object.getOwnPropertyNames?Object.getOwnPropertyNames:h;if((new Error).hasOwnProperty("description")){var n=function(a,b){return"[object Error]"===j.call(a)&&(b=c.filter(b,function(a){return"description"!==a&&"number"!==a&&"message"!==a})),b};c.keys=function(a){return n(a,l(a))},c.getOwnPropertyNames=function(a){return n(a,m(a))}}else c.keys=l,c.getOwnPropertyNames=m;if("function"==typeof Object.getOwnPropertyDescriptor)try{Object.getOwnPropertyDescriptor({a:1},"a"),c.getOwnPropertyDescriptor=Object.getOwnPropertyDescriptor}catch(o){c.getOwnPropertyDescriptor=function(a,b){try{return Object.getOwnPropertyDescriptor(a,b)}catch(c){return i(a,b)}}}else c.getOwnPropertyDescriptor=i},{}],2:[function(a,b){function c(a,b){return m.isUndefined(b)?""+b:!m.isNumber(b)||!isNaN(b)&&isFinite(b)?m.isFunction(b)||m.isRegExp(b)?b.toString():b:b.toString()}function d(a,b){return m.isString(a)?a.length<b?a:a.slice(0,b):a}function e(a){return d(JSON.stringify(a.actual,c),128)+" "+a.operator+" "+d(JSON.stringify(a.expected,c),128)}function f(a,b,c,d,e){throw new p.AssertionError({message:c,actual:a,expected:b,operator:d,stackStartFunction:e})}function g(a,b){a||f(a,!0,b,"==",p.ok)}function h(a,b){if(a===b)return!0;if(m.isBuffer(a)&&m.isBuffer(b)){if(a.length!=b.length)return!1;for(var c=0;c<a.length;c++)if(a[c]!==b[c])return!1;return!0}return m.isDate(a)&&m.isDate(b)?a.getTime()===b.getTime():m.isRegExp(a)&&m.isRegExp(b)?a.source===b.source&&a.global===b.global&&a.multiline===b.multiline&&a.lastIndex===b.lastIndex&&a.ignoreCase===b.ignoreCase:m.isObject(a)||m.isObject(b)?j(a,b):a==b}function i(a){return"[object Arguments]"==Object.prototype.toString.call(a)}function j(a,b){if(m.isNullOrUndefined(a)||m.isNullOrUndefined(b))return!1;if(a.prototype!==b.prototype)return!1;if(i(a))return i(b)?(a=o.call(a),b=o.call(b),h(a,b)):!1;try{var c,d,e=n.keys(a),f=n.keys(b)}catch(g){return!1}if(e.length!=f.length)return!1;for(e.sort(),f.sort(),d=e.length-1;d>=0;d--)if(e[d]!=f[d])return!1;for(d=e.length-1;d>=0;d--)if(c=e[d],!h(a[c],b[c]))return!1;return!0}function k(a,b){return a&&b?"[object RegExp]"==Object.prototype.toString.call(b)?b.test(a):a instanceof b?!0:b.call({},a)===!0?!0:!1:!1}function l(a,b,c,d){var e;m.isString(c)&&(d=c,c=null);try{b()}catch(g){e=g}if(d=(c&&c.name?" ("+c.name+").":".")+(d?" "+d:"."),a&&!e&&f(e,c,"Missing expected exception"+d),!a&&k(e,c)&&f(e,c,"Got unwanted exception"+d),a&&e&&c&&!k(e,c)||!a&&e)throw e}var m=a("util"),n=a("_shims"),o=Array.prototype.slice,p=b.exports=g;p.AssertionError=function(a){this.name="AssertionError",this.actual=a.actual,this.expected=a.expected,this.operator=a.operator,this.message=a.message||e(this)},m.inherits(p.AssertionError,Error),p.fail=f,p.ok=g,p.equal=function(a,b,c){a!=b&&f(a,b,c,"==",p.equal)},p.notEqual=function(a,b,c){a==b&&f(a,b,c,"!=",p.notEqual)},p.deepEqual=function(a,b,c){h(a,b)||f(a,b,c,"deepEqual",p.deepEqual)},p.notDeepEqual=function(a,b,c){h(a,b)&&f(a,b,c,"notDeepEqual",p.notDeepEqual)},p.strictEqual=function(a,b,c){a!==b&&f(a,b,c,"===",p.strictEqual)},p.notStrictEqual=function(a,b,c){a===b&&f(a,b,c,"!==",p.notStrictEqual)},p.throws=function(){l.apply(this,[!0].concat(o.call(arguments)))},p.doesNotThrow=function(){l.apply(this,[!1].concat(o.call(arguments)))},p.ifError=function(a){if(a)throw a}},{_shims:1,util:4}],3:[function(a,b,c){function d(a,b){return Object.prototype.hasOwnProperty.call(a,b)}function e(a){return a.charCodeAt(0)}var f=c,g=a("util"),h=a("_shims"),i=a("buffer").Buffer;f.unescapeBuffer=function(a,b){for(var c,d,f,g=new i(a.length),h="CHAR",j=0,k=0;j<=a.length;j++){var l=a.charCodeAt(j);switch(h){case"CHAR":switch(l){case e("%"):c=0,d=0,h="HEX0";break;case e("+"):b&&(l=e(" "));default:g[k++]=l}break;case"HEX0":if(h="HEX1",f=l,e("0")<=l&&l<=e("9"))c=l-e("0");else if(e("a")<=l&&l<=e("f"))c=l-e("a")+10;else{if(!(e("A")<=l&&l<=e("F"))){g[k++]=e("%"),g[k++]=l,h="CHAR";break}c=l-e("A")+10}break;case"HEX1":if(h="CHAR",e("0")<=l&&l<=e("9"))d=l-e("0");else if(e("a")<=l&&l<=e("f"))d=l-e("a")+10;else{if(!(e("A")<=l&&l<=e("F"))){g[k++]=e("%"),g[k++]=f,g[k++]=l;break}d=l-e("A")+10}g[k++]=16*c+d}}return g.slice(0,k-1)},f.unescape=function(a,b){return f.unescapeBuffer(a,b).toString()},f.escape=function(a){return encodeURIComponent(a)};var j=function(a){return g.isString(a)?a:g.isBoolean(a)?a?"true":"false":g.isNumber(a)?isFinite(a)?a:"":""};f.stringify=f.encode=function(a,b,c,d){return b=b||"&",c=c||"=",g.isNull(a)&&(a=void 0),g.isObject(a)?h.map(h.keys(a),function(d){var e=f.escape(j(d))+c;return g.isArray(a[d])?h.map(a[d],function(a){return e+f.escape(j(a))}).join(b):e+f.escape(j(a[d]))}).join(b):d?f.escape(j(d))+c+f.escape(j(a)):""},f.parse=f.decode=function(a,b,c,e){b=b||"&",c=c||"=";var h={};if(!g.isString(a)||0===a.length)return h;var i=/\+/g;a=a.split(b);var j=1e3;e&&g.isNumber(e.maxKeys)&&(j=e.maxKeys);var k=a.length;j>0&&k>j&&(k=j);for(var l=0;k>l;++l){var m,n,o,p,q=a[l].replace(i,"%20"),r=q.indexOf(c);r>=0?(m=q.substr(0,r),n=q.substr(r+1)):(m=q,n="");try{o=decodeURIComponent(m),p=decodeURIComponent(n)}catch(s){o=f.unescape(m,!0),p=f.unescape(n,!0)}d(h,o)?g.isArray(h[o])?h[o].push(p):h[o]=[h[o],p]:h[o]=p}return h}},{_shims:1,buffer:6,util:4}],4:[function(a,b,c){function d(a,b){var d={seen:[],stylize:f};return arguments.length>=3&&(d.depth=arguments[2]),arguments.length>=4&&(d.colors=arguments[3]),o(b)?d.showHidden=b:b&&c._extend(d,b),u(d.showHidden)&&(d.showHidden=!1),u(d.depth)&&(d.depth=2),u(d.colors)&&(d.colors=!1),u(d.customInspect)&&(d.customInspect=!0),d.colors&&(d.stylize=e),h(d,a,d.depth)}function e(a,b){var c=d.styles[b];return c?"["+d.colors[c][0]+"m"+a+"["+d.colors[c][1]+"m":a}function f(a){return a}function g(a){var b={};return G.forEach(a,function(a){b[a]=!0}),b}function h(a,b,d){if(a.customInspect&&b&&z(b.inspect)&&b.inspect!==c.inspect&&(!b.constructor||b.constructor.prototype!==b)){var e=b.inspect(d);return s(e)||(e=h(a,e,d)),e}var f=i(a,b);if(f)return f;var o=G.keys(b),p=g(o);if(a.showHidden&&(o=G.getOwnPropertyNames(b)),0===o.length){if(z(b)){var q=b.name?": "+b.name:"";return a.stylize("[Function"+q+"]","special")}if(v(b))return a.stylize(RegExp.prototype.toString.call(b),"regexp");if(x(b))return a.stylize(Date.prototype.toString.call(b),"date");if(y(b))return j(b)}var r="",t=!1,u=["{","}"];if(n(b)&&(t=!0,u=["[","]"]),z(b)){var w=b.name?": "+b.name:"";r=" [Function"+w+"]"}if(v(b)&&(r=" "+RegExp.prototype.toString.call(b)),x(b)&&(r=" "+Date.prototype.toUTCString.call(b)),y(b)&&(r=" "+j(b)),0===o.length&&(!t||0==b.length))return u[0]+r+u[1];if(0>d)return v(b)?a.stylize(RegExp.prototype.toString.call(b),"regexp"):a.stylize("[Object]","special");a.seen.push(b);var A;return A=t?k(a,b,d,p,o):o.map(function(c){return l(a,b,d,p,c,t)}),a.seen.pop(),m(A,r,u)}function i(a,b){if(u(b))return a.stylize("undefined","undefined");if(s(b)){var c="'"+JSON.stringify(b).replace(/^"|"$/g,"").replace(/'/g,"\\'").replace(/\\"/g,'"')+"'";return a.stylize(c,"string")}return r(b)?a.stylize(""+b,"number"):o(b)?a.stylize(""+b,"boolean"):p(b)?a.stylize("null","null"):void 0}function j(a){return"["+Error.prototype.toString.call(a)+"]"}function k(a,b,c,d,e){for(var f=[],g=0,h=b.length;h>g;++g)F(b,String(g))?f.push(l(a,b,c,d,String(g),!0)):f.push("");return G.forEach(e,function(e){e.match(/^\d+$/)||f.push(l(a,b,c,d,e,!0))}),f}function l(a,b,c,d,e,f){var g,i,j;if(j=G.getOwnPropertyDescriptor(b,e)||{value:b[e]},j.get?i=j.set?a.stylize("[Getter/Setter]","special"):a.stylize("[Getter]","special"):j.set&&(i=a.stylize("[Setter]","special")),F(d,e)||(g="["+e+"]"),i||(G.indexOf(a.seen,j.value)<0?(i=p(c)?h(a,j.value,null):h(a,j.value,c-1),i.indexOf("\n")>-1&&(i=f?i.split("\n").map(function(a){return"  "+a}).join("\n").substr(2):"\n"+i.split("\n").map(function(a){return"   "+a}).join("\n"))):i=a.stylize("[Circular]","special")),u(g)){if(f&&e.match(/^\d+$/))return i;g=JSON.stringify(""+e),g.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)?(g=g.substr(1,g.length-2),g=a.stylize(g,"name")):(g=g.replace(/'/g,"\\'").replace(/\\"/g,'"').replace(/(^"|"$)/g,"'"),g=a.stylize(g,"string"))}return g+": "+i}function m(a,b,c){var d=0,e=G.reduce(a,function(a,b){return d++,b.indexOf("\n")>=0&&d++,a+b.replace(/\u001b\[\d\d?m/g,"").length+1},0);return e>60?c[0]+(""===b?"":b+"\n ")+" "+a.join(",\n  ")+" "+c[1]:c[0]+b+" "+a.join(", ")+" "+c[1]}function n(a){return G.isArray(a)}function o(a){return"boolean"==typeof a}function p(a){return null===a}function q(a){return null==a}function r(a){return"number"==typeof a}function s(a){return"string"==typeof a}function t(a){return"symbol"==typeof a}function u(a){return void 0===a}function v(a){return w(a)&&"[object RegExp]"===C(a)}function w(a){return"object"==typeof a&&a}function x(a){return w(a)&&"[object Date]"===C(a)}function y(a){return w(a)&&"[object Error]"===C(a)}function z(a){return"function"==typeof a}function A(a){return null===a||"boolean"==typeof a||"number"==typeof a||"string"==typeof a||"symbol"==typeof a||"undefined"==typeof a}function B(a){return a&&"object"==typeof a&&"function"==typeof a.copy&&"function"==typeof a.fill&&"function"==typeof a.binarySlice}function C(a){return Object.prototype.toString.call(a)}function D(a){return 10>a?"0"+a.toString(10):a.toString(10)}function E(){var a=new Date,b=[D(a.getHours()),D(a.getMinutes()),D(a.getSeconds())].join(":");return[a.getDate(),I[a.getMonth()],b].join(" ")
-}function F(a,b){return Object.prototype.hasOwnProperty.call(a,b)}var G=a("_shims"),H=/%[sdj%]/g;c.format=function(a){if(!s(a)){for(var b=[],c=0;c<arguments.length;c++)b.push(d(arguments[c]));return b.join(" ")}for(var c=1,e=arguments,f=e.length,g=String(a).replace(H,function(a){if("%%"===a)return"%";if(c>=f)return a;switch(a){case"%s":return String(e[c++]);case"%d":return Number(e[c++]);case"%j":try{return JSON.stringify(e[c++])}catch(b){return"[Circular]"}default:return a}}),h=e[c];f>c;h=e[++c])g+=p(h)||!w(h)?" "+h:" "+d(h);return g},c.inspect=d,d.colors={bold:[1,22],italic:[3,23],underline:[4,24],inverse:[7,27],white:[37,39],grey:[90,39],black:[30,39],blue:[34,39],cyan:[36,39],green:[32,39],magenta:[35,39],red:[31,39],yellow:[33,39]},d.styles={special:"cyan",number:"yellow","boolean":"yellow",undefined:"grey","null":"bold",string:"green",date:"magenta",regexp:"red"},c.isArray=n,c.isBoolean=o,c.isNull=p,c.isNullOrUndefined=q,c.isNumber=r,c.isString=s,c.isSymbol=t,c.isUndefined=u,c.isRegExp=v,c.isObject=w,c.isDate=x,c.isError=y,c.isFunction=z,c.isPrimitive=A,c.isBuffer=B;var I=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];c.log=function(){console.log("%s - %s",E(),c.format.apply(c,arguments))},c.inherits=function(a,b){a.super_=b,a.prototype=G.create(b.prototype,{constructor:{value:a,enumerable:!1,writable:!0,configurable:!0}})},c._extend=function(a,b){if(!b||!w(b))return a;for(var c=G.keys(b),d=c.length;d--;)a[c[d]]=b[c[d]];return a}},{_shims:1}],5:[function(a,b,c){c.readIEEE754=function(a,b,c,d,e){var f,g,h=8*e-d-1,i=(1<<h)-1,j=i>>1,k=-7,l=c?0:e-1,m=c?1:-1,n=a[b+l];for(l+=m,f=n&(1<<-k)-1,n>>=-k,k+=h;k>0;f=256*f+a[b+l],l+=m,k-=8);for(g=f&(1<<-k)-1,f>>=-k,k+=d;k>0;g=256*g+a[b+l],l+=m,k-=8);if(0===f)f=1-j;else{if(f===i)return g?0/0:1/0*(n?-1:1);g+=Math.pow(2,d),f-=j}return(n?-1:1)*g*Math.pow(2,f-d)},c.writeIEEE754=function(a,b,c,d,e,f){var g,h,i,j=8*f-e-1,k=(1<<j)-1,l=k>>1,m=23===e?Math.pow(2,-24)-Math.pow(2,-77):0,n=d?f-1:0,o=d?-1:1,p=0>b||0===b&&0>1/b?1:0;for(b=Math.abs(b),isNaN(b)||1/0===b?(h=isNaN(b)?1:0,g=k):(g=Math.floor(Math.log(b)/Math.LN2),b*(i=Math.pow(2,-g))<1&&(g--,i*=2),b+=g+l>=1?m/i:m*Math.pow(2,1-l),b*i>=2&&(g++,i/=2),g+l>=k?(h=0,g=k):g+l>=1?(h=(b*i-1)*Math.pow(2,e),g+=l):(h=b*Math.pow(2,l-1)*Math.pow(2,e),g=0));e>=8;a[c+n]=255&h,n+=o,h/=256,e-=8);for(g=g<<e|h,j+=e;j>0;a[c+n]=255&g,n+=o,g/=256,j-=8);a[c+n-o]|=128*p}},{}],6:[function(a,b,c){function d(a){return a.trim?a.trim():a.replace(/^\s+|\s+$/g,"")}function e(b,c,f){if(E||(E=a("assert")),!(this instanceof e))return new e(b,c,f);if(this.parent=this,this.offset=0,"base64"==c&&"string"==typeof b)for(b=d(b);b.length%4!=0;)b+="=";var h;if("number"==typeof f){this.length=g(c);for(var j=0;j<this.length;j++)this[j]=b.get(j+f)}else{switch(h=typeof b){case"number":this.length=g(b);break;case"string":this.length=e.byteLength(b,c);break;case"object":this.length=g(b.length);break;default:throw new Error("First argument needs to be a number, array or string.")}if(i(b))for(var j=0;j<this.length;j++)this[j]=b instanceof e?b.readUInt8(j):b[j];else if("string"==h)this.length=this.write(b,0,c);else if("number"===h)for(var j=0;j<this.length;j++)this[j]=0}}function f(a,b,c){return"number"!=typeof a?c:(a=~~a,a>=b?b:a>=0?a:(a+=b,a>=0?a:0))}function g(a){return a=~~Math.ceil(+a),0>a?0:a}function h(a){return(Array.isArray||function(a){return"[object Array]"=={}.toString.apply(a)})(a)}function i(a){return h(a)||e.isBuffer(a)||a&&"object"==typeof a&&"number"==typeof a.length}function j(a){return 16>a?"0"+a.toString(16):a.toString(16)}function k(a){for(var b=[],c=0;c<a.length;c++)if(a.charCodeAt(c)<=127)b.push(a.charCodeAt(c));else for(var d=encodeURIComponent(a.charAt(c)).substr(1).split("%"),e=0;e<d.length;e++)b.push(parseInt(d[e],16));return b}function l(a){for(var b=[],c=0;c<a.length;c++)b.push(255&a.charCodeAt(c));return b}function m(b){return a("base64-js").toByteArray(b)}function n(a,b,c,d){for(var e=0;d>e&&!(e+c>=b.length||e>=a.length);)b[e+c]=a[e],e++;return e}function o(a){try{return decodeURIComponent(a)}catch(b){return String.fromCharCode(65533)}}function p(a,b,c,d){var e=0;return d||(E.ok("boolean"==typeof c,"missing or invalid endian"),E.ok(void 0!==b&&null!==b,"missing offset"),E.ok(b+1<a.length,"Trying to read beyond buffer length")),b>=a.length?0:(c?(e=a[b]<<8,b+1<a.length&&(e|=a[b+1])):(e=a[b],b+1<a.length&&(e|=a[b+1]<<8)),e)}function q(a,b,c,d){var e=0;return d||(E.ok("boolean"==typeof c,"missing or invalid endian"),E.ok(void 0!==b&&null!==b,"missing offset"),E.ok(b+3<a.length,"Trying to read beyond buffer length")),b>=a.length?0:(c?(b+1<a.length&&(e=a[b+1]<<16),b+2<a.length&&(e|=a[b+2]<<8),b+3<a.length&&(e|=a[b+3]),e+=a[b]<<24>>>0):(b+2<a.length&&(e=a[b+2]<<16),b+1<a.length&&(e|=a[b+1]<<8),e|=a[b],b+3<a.length&&(e+=a[b+3]<<24>>>0)),e)}function r(a,b,c,d){var e,f;return d||(E.ok("boolean"==typeof c,"missing or invalid endian"),E.ok(void 0!==b&&null!==b,"missing offset"),E.ok(b+1<a.length,"Trying to read beyond buffer length")),f=p(a,b,c,d),e=32768&f,e?-1*(65535-f+1):f}function s(a,b,c,d){var e,f;return d||(E.ok("boolean"==typeof c,"missing or invalid endian"),E.ok(void 0!==b&&null!==b,"missing offset"),E.ok(b+3<a.length,"Trying to read beyond buffer length")),f=q(a,b,c,d),e=2147483648&f,e?-1*(4294967295-f+1):f}function t(b,c,d,e){return e||(E.ok("boolean"==typeof d,"missing or invalid endian"),E.ok(c+3<b.length,"Trying to read beyond buffer length")),a("./buffer_ieee754").readIEEE754(b,c,d,23,4)}function u(b,c,d,e){return e||(E.ok("boolean"==typeof d,"missing or invalid endian"),E.ok(c+7<b.length,"Trying to read beyond buffer length")),a("./buffer_ieee754").readIEEE754(b,c,d,52,8)}function v(a,b){E.ok("number"==typeof a,"cannot write a non-number as a number"),E.ok(a>=0,"specified a negative value for writing an unsigned value"),E.ok(b>=a,"value is larger than maximum value for type"),E.ok(Math.floor(a)===a,"value has a fractional component")}function w(a,b,c,d,e){e||(E.ok(void 0!==b&&null!==b,"missing value"),E.ok("boolean"==typeof d,"missing or invalid endian"),E.ok(void 0!==c&&null!==c,"missing offset"),E.ok(c+1<a.length,"trying to write beyond buffer length"),v(b,65535));for(var f=0;f<Math.min(a.length-c,2);f++)a[c+f]=(b&255<<8*(d?1-f:f))>>>8*(d?1-f:f)}function x(a,b,c,d,e){e||(E.ok(void 0!==b&&null!==b,"missing value"),E.ok("boolean"==typeof d,"missing or invalid endian"),E.ok(void 0!==c&&null!==c,"missing offset"),E.ok(c+3<a.length,"trying to write beyond buffer length"),v(b,4294967295));for(var f=0;f<Math.min(a.length-c,4);f++)a[c+f]=b>>>8*(d?3-f:f)&255}function y(a,b,c){E.ok("number"==typeof a,"cannot write a non-number as a number"),E.ok(b>=a,"value larger than maximum allowed value"),E.ok(a>=c,"value smaller than minimum allowed value"),E.ok(Math.floor(a)===a,"value has a fractional component")}function z(a,b,c){E.ok("number"==typeof a,"cannot write a non-number as a number"),E.ok(b>=a,"value larger than maximum allowed value"),E.ok(a>=c,"value smaller than minimum allowed value")}function A(a,b,c,d,e){e||(E.ok(void 0!==b&&null!==b,"missing value"),E.ok("boolean"==typeof d,"missing or invalid endian"),E.ok(void 0!==c&&null!==c,"missing offset"),E.ok(c+1<a.length,"Trying to write beyond buffer length"),y(b,32767,-32768)),b>=0?w(a,b,c,d,e):w(a,65535+b+1,c,d,e)}function B(a,b,c,d,e){e||(E.ok(void 0!==b&&null!==b,"missing value"),E.ok("boolean"==typeof d,"missing or invalid endian"),E.ok(void 0!==c&&null!==c,"missing offset"),E.ok(c+3<a.length,"Trying to write beyond buffer length"),y(b,2147483647,-2147483648)),b>=0?x(a,b,c,d,e):x(a,4294967295+b+1,c,d,e)}function C(b,c,d,e,f){f||(E.ok(void 0!==c&&null!==c,"missing value"),E.ok("boolean"==typeof e,"missing or invalid endian"),E.ok(void 0!==d&&null!==d,"missing offset"),E.ok(d+3<b.length,"Trying to write beyond buffer length"),z(c,3.4028234663852886e38,-3.4028234663852886e38)),a("./buffer_ieee754").writeIEEE754(b,c,d,e,23,4)}function D(b,c,d,e,f){f||(E.ok(void 0!==c&&null!==c,"missing value"),E.ok("boolean"==typeof e,"missing or invalid endian"),E.ok(void 0!==d&&null!==d,"missing offset"),E.ok(d+7<b.length,"Trying to write beyond buffer length"),z(c,1.7976931348623157e308,-1.7976931348623157e308)),a("./buffer_ieee754").writeIEEE754(b,c,d,e,52,8)}var E;c.Buffer=e,c.SlowBuffer=e,e.poolSize=8192,c.INSPECT_MAX_BYTES=50,e.prototype.get=function(a){if(0>a||a>=this.length)throw new Error("oob");return this[a]},e.prototype.set=function(a,b){if(0>a||a>=this.length)throw new Error("oob");return this[a]=b},e.byteLength=function(a,b){switch(b||"utf8"){case"hex":return a.length/2;case"utf8":case"utf-8":return k(a).length;case"ascii":case"binary":return a.length;case"base64":return m(a).length;default:throw new Error("Unknown encoding")}},e.prototype.utf8Write=function(a,b,c){return e._charsWritten=n(k(a),this,b,c)},e.prototype.asciiWrite=function(a,b,c){return e._charsWritten=n(l(a),this,b,c)},e.prototype.binaryWrite=e.prototype.asciiWrite,e.prototype.base64Write=function(a,b,c){return e._charsWritten=n(m(a),this,b,c)},e.prototype.base64Slice=function(){var b=Array.prototype.slice.apply(this,arguments);return a("base64-js").fromByteArray(b)},e.prototype.utf8Slice=function(){for(var a=Array.prototype.slice.apply(this,arguments),b="",c="",d=0;d<a.length;)a[d]<=127?(b+=o(c)+String.fromCharCode(a[d]),c=""):c+="%"+a[d].toString(16),d++;return b+o(c)},e.prototype.asciiSlice=function(){for(var a=Array.prototype.slice.apply(this,arguments),b="",c=0;c<a.length;c++)b+=String.fromCharCode(a[c]);return b},e.prototype.binarySlice=e.prototype.asciiSlice,e.prototype.inspect=function(){for(var a=[],b=this.length,d=0;b>d;d++)if(a[d]=j(this[d]),d==c.INSPECT_MAX_BYTES){a[d+1]="...";break}return"<Buffer "+a.join(" ")+">"},e.prototype.hexSlice=function(a,b){var c=this.length;(!a||0>a)&&(a=0),(!b||0>b||b>c)&&(b=c);for(var d="",e=a;b>e;e++)d+=j(this[e]);return d},e.prototype.toString=function(a,b,c){if(a=String(a||"utf8").toLowerCase(),b=+b||0,"undefined"==typeof c&&(c=this.length),+c==b)return"";switch(a){case"hex":return this.hexSlice(b,c);case"utf8":case"utf-8":return this.utf8Slice(b,c);case"ascii":return this.asciiSlice(b,c);case"binary":return this.binarySlice(b,c);case"base64":return this.base64Slice(b,c);case"ucs2":case"ucs-2":return this.ucs2Slice(b,c);default:throw new Error("Unknown encoding")}},e.prototype.hexWrite=function(a,b,c){b=+b||0;var d=this.length-b;c?(c=+c,c>d&&(c=d)):c=d;var f=a.length;if(f%2)throw new Error("Invalid hex string");c>f/2&&(c=f/2);for(var g=0;c>g;g++){var h=parseInt(a.substr(2*g,2),16);if(isNaN(h))throw new Error("Invalid hex string");this[b+g]=h}return e._charsWritten=2*g,g},e.prototype.write=function(a,b,c,d){if(isFinite(b))isFinite(c)||(d=c,c=void 0);else{var e=d;d=b,b=c,c=e}b=+b||0;var f=this.length-b;switch(c?(c=+c,c>f&&(c=f)):c=f,d=String(d||"utf8").toLowerCase()){case"hex":return this.hexWrite(a,b,c);case"utf8":case"utf-8":return this.utf8Write(a,b,c);case"ascii":return this.asciiWrite(a,b,c);case"binary":return this.binaryWrite(a,b,c);case"base64":return this.base64Write(a,b,c);case"ucs2":case"ucs-2":return this.ucs2Write(a,b,c);default:throw new Error("Unknown encoding")}},e.prototype.slice=function(a,b){var c=this.length;return a=f(a,c,0),b=f(b,c,c),new e(this,b-a,+a)},e.prototype.copy=function(a,b,c,d){var e=this;if(c||(c=0),(void 0===d||isNaN(d))&&(d=this.length),b||(b=0),c>d)throw new Error("sourceEnd < sourceStart");if(d===c)return 0;if(0==a.length||0==e.length)return 0;if(0>b||b>=a.length)throw new Error("targetStart out of bounds");if(0>c||c>=e.length)throw new Error("sourceStart out of bounds");if(0>d||d>e.length)throw new Error("sourceEnd out of bounds");d>this.length&&(d=this.length),a.length-b<d-c&&(d=a.length-b+c);for(var f=[],g=c;d>g;g++)E.ok("undefined"!=typeof this[g],"copying undefined buffer bytes!"),f.push(this[g]);for(var g=b;g<b+f.length;g++)a[g]=f[g-b]},e.prototype.fill=function(a,b,c){if(a||(a=0),b||(b=0),c||(c=this.length),"string"==typeof a&&(a=a.charCodeAt(0)),"number"!=typeof a||isNaN(a))throw new Error("value is not a number");if(b>c)throw new Error("end < start");if(c===b)return 0;if(0==this.length)return 0;if(0>b||b>=this.length)throw new Error("start out of bounds");if(0>c||c>this.length)throw new Error("end out of bounds");for(var d=b;c>d;d++)this[d]=a},e.isBuffer=function(a){return a instanceof e||a instanceof e},e.concat=function(a,b){if(!h(a))throw new Error("Usage: Buffer.concat(list, [totalLength])\n       list should be an Array.");if(0===a.length)return new e(0);if(1===a.length)return a[0];if("number"!=typeof b){b=0;for(var c=0;c<a.length;c++){var d=a[c];b+=d.length}}for(var f=new e(b),g=0,c=0;c<a.length;c++){var d=a[c];d.copy(f,g),g+=d.length}return f},e.isEncoding=function(a){switch((a+"").toLowerCase()){case"hex":case"utf8":case"utf-8":case"ascii":case"binary":case"base64":case"ucs2":case"ucs-2":case"utf16le":case"utf-16le":case"raw":return!0;default:return!1}},e.prototype.readUInt8=function(a,b){var c=this;return b||(E.ok(void 0!==a&&null!==a,"missing offset"),E.ok(a<c.length,"Trying to read beyond buffer length")),a>=c.length?void 0:c[a]},e.prototype.readUInt16LE=function(a,b){return p(this,a,!1,b)},e.prototype.readUInt16BE=function(a,b){return p(this,a,!0,b)},e.prototype.readUInt32LE=function(a,b){return q(this,a,!1,b)},e.prototype.readUInt32BE=function(a,b){return q(this,a,!0,b)},e.prototype.readInt8=function(a,b){var c,d=this;return b||(E.ok(void 0!==a&&null!==a,"missing offset"),E.ok(a<d.length,"Trying to read beyond buffer length")),a>=d.length?void 0:(c=128&d[a],c?-1*(255-d[a]+1):d[a])},e.prototype.readInt16LE=function(a,b){return r(this,a,!1,b)},e.prototype.readInt16BE=function(a,b){return r(this,a,!0,b)},e.prototype.readInt32LE=function(a,b){return s(this,a,!1,b)},e.prototype.readInt32BE=function(a,b){return s(this,a,!0,b)},e.prototype.readFloatLE=function(a,b){return t(this,a,!1,b)},e.prototype.readFloatBE=function(a,b){return t(this,a,!0,b)},e.prototype.readDoubleLE=function(a,b){return u(this,a,!1,b)},e.prototype.readDoubleBE=function(a,b){return u(this,a,!0,b)},e.prototype.writeUInt8=function(a,b,c){var d=this;c||(E.ok(void 0!==a&&null!==a,"missing value"),E.ok(void 0!==b&&null!==b,"missing offset"),E.ok(b<d.length,"trying to write beyond buffer length"),v(a,255)),b<d.length&&(d[b]=a)},e.prototype.writeUInt16LE=function(a,b,c){w(this,a,b,!1,c)},e.prototype.writeUInt16BE=function(a,b,c){w(this,a,b,!0,c)},e.prototype.writeUInt32LE=function(a,b,c){x(this,a,b,!1,c)},e.prototype.writeUInt32BE=function(a,b,c){x(this,a,b,!0,c)},e.prototype.writeInt8=function(a,b,c){var d=this;c||(E.ok(void 0!==a&&null!==a,"missing value"),E.ok(void 0!==b&&null!==b,"missing offset"),E.ok(b<d.length,"Trying to write beyond buffer length"),y(a,127,-128)),a>=0?d.writeUInt8(a,b,c):d.writeUInt8(255+a+1,b,c)},e.prototype.writeInt16LE=function(a,b,c){A(this,a,b,!1,c)},e.prototype.writeInt16BE=function(a,b,c){A(this,a,b,!0,c)},e.prototype.writeInt32LE=function(a,b,c){B(this,a,b,!1,c)},e.prototype.writeInt32BE=function(a,b,c){B(this,a,b,!0,c)},e.prototype.writeFloatLE=function(a,b,c){C(this,a,b,!1,c)},e.prototype.writeFloatBE=function(a,b,c){C(this,a,b,!0,c)},e.prototype.writeDoubleLE=function(a,b,c){D(this,a,b,!1,c)},e.prototype.writeDoubleBE=function(a,b,c){D(this,a,b,!0,c)}},{"./buffer_ieee754":5,assert:2,"base64-js":7}],7:[function(a,b){!function(){"use strict";function a(a){var b,c,e,f,g,h;if(a.length%4>0)throw"Invalid string. Length must be a multiple of 4";for(g=a.indexOf("="),g=g>0?a.length-g:0,h=[],e=g>0?a.length-4:a.length,b=0,c=0;e>b;b+=4,c+=3)f=d.indexOf(a[b])<<18|d.indexOf(a[b+1])<<12|d.indexOf(a[b+2])<<6|d.indexOf(a[b+3]),h.push((16711680&f)>>16),h.push((65280&f)>>8),h.push(255&f);return 2===g?(f=d.indexOf(a[b])<<2|d.indexOf(a[b+1])>>4,h.push(255&f)):1===g&&(f=d.indexOf(a[b])<<10|d.indexOf(a[b+1])<<4|d.indexOf(a[b+2])>>2,h.push(f>>8&255),h.push(255&f)),h}function c(a){function b(a){return d[a>>18&63]+d[a>>12&63]+d[a>>6&63]+d[63&a]}var c,e,f,g=a.length%3,h="";for(c=0,f=a.length-g;f>c;c+=3)e=(a[c]<<16)+(a[c+1]<<8)+a[c+2],h+=b(e);switch(g){case 1:e=a[a.length-1],h+=d[e>>2],h+=d[e<<4&63],h+="==";break;case 2:e=(a[a.length-2]<<8)+a[a.length-1],h+=d[e>>10],h+=d[e>>4&63],h+=d[e<<2&63],h+="="}return h}var d="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";b.exports.toByteArray=a,b.exports.fromByteArray=c}()},{}],8:[function(b,c,d){var e="undefined"!=typeof self?self:"undefined"!=typeof window?window:{};!function(b){function f(a){throw RangeError(I[a])}function g(a,b){for(var c=a.length;c--;)a[c]=b(a[c]);return a}function h(a,b){return g(a.split(H),b).join(".")}function i(a){for(var b,c,d=[],e=0,f=a.length;f>e;)b=a.charCodeAt(e++),b>=55296&&56319>=b&&f>e?(c=a.charCodeAt(e++),56320==(64512&c)?d.push(((1023&b)<<10)+(1023&c)+65536):(d.push(b),e--)):d.push(b);return d}function j(a){return g(a,function(a){var b="";return a>65535&&(a-=65536,b+=L(a>>>10&1023|55296),a=56320|1023&a),b+=L(a)}).join("")}function k(a){return 10>a-48?a-22:26>a-65?a-65:26>a-97?a-97:x}function l(a,b){return a+22+75*(26>a)-((0!=b)<<5)}function m(a,b,c){var d=0;for(a=c?K(a/B):a>>1,a+=K(a/b);a>J*z>>1;d+=x)a=K(a/J);return K(d+(J+1)*a/(a+A))}function n(a){var b,c,d,e,g,h,i,l,n,o,p=[],q=a.length,r=0,s=D,t=C;for(c=a.lastIndexOf(E),0>c&&(c=0),d=0;c>d;++d)a.charCodeAt(d)>=128&&f("not-basic"),p.push(a.charCodeAt(d));for(e=c>0?c+1:0;q>e;){for(g=r,h=1,i=x;e>=q&&f("invalid-input"),l=k(a.charCodeAt(e++)),(l>=x||l>K((w-r)/h))&&f("overflow"),r+=l*h,n=t>=i?y:i>=t+z?z:i-t,!(n>l);i+=x)o=x-n,h>K(w/o)&&f("overflow"),h*=o;b=p.length+1,t=m(r-g,b,0==g),K(r/b)>w-s&&f("overflow"),s+=K(r/b),r%=b,p.splice(r++,0,s)}return j(p)}function o(a){var b,c,d,e,g,h,j,k,n,o,p,q,r,s,t,u=[];for(a=i(a),q=a.length,b=D,c=0,g=C,h=0;q>h;++h)p=a[h],128>p&&u.push(L(p));for(d=e=u.length,e&&u.push(E);q>d;){for(j=w,h=0;q>h;++h)p=a[h],p>=b&&j>p&&(j=p);for(r=d+1,j-b>K((w-c)/r)&&f("overflow"),c+=(j-b)*r,b=j,h=0;q>h;++h)if(p=a[h],b>p&&++c>w&&f("overflow"),p==b){for(k=c,n=x;o=g>=n?y:n>=g+z?z:n-g,!(o>k);n+=x)t=k-o,s=x-o,u.push(L(l(o+t%s,0))),k=K(t/s);u.push(L(l(k,0))),g=m(c,r,d==e),c=0,++d}++c,++b}return u.join("")}function p(a){return h(a,function(a){return F.test(a)?n(a.slice(4).toLowerCase()):a})}function q(a){return h(a,function(a){return G.test(a)?"xn--"+o(a):a})}var r="object"==typeof d&&d,s="object"==typeof c&&c&&c.exports==r&&c,t="object"==typeof e&&e;(t.global===t||t.window===t)&&(b=t);var u,v,w=2147483647,x=36,y=1,z=26,A=38,B=700,C=72,D=128,E="-",F=/^xn--/,G=/[^ -~]/,H=/\x2E|\u3002|\uFF0E|\uFF61/g,I={overflow:"Overflow: input needs wider integers to process","not-basic":"Illegal input >= 0x80 (not a basic code point)","invalid-input":"Invalid input"},J=x-y,K=Math.floor,L=String.fromCharCode;if(u={version:"1.2.3",ucs2:{decode:i,encode:j},decode:n,encode:o,toASCII:q,toUnicode:p},"function"==typeof a&&"object"==typeof a.amd&&a.amd)a(function(){return u});else if(r&&!r.nodeType)if(s)s.exports=u;else for(v in u)u.hasOwnProperty(v)&&(r[v]=u[v]);else b.punycode=u}(this)},{}],9:[function(a,b,c){!function(){"use strict";function b(a,b,c){if(a&&"object"==typeof a&&a.href)return a;if("string"!=typeof a)throw new TypeError("Parameter 'url' must be a string, not "+typeof a);var e={},f=a;f=f.trim();var j=i.exec(f);if(j){j=j[0];var k=j.toLowerCase();e.protocol=k,f=f.substr(j.length)}if(c||j||f.match(/^\/\/[^@\/]+@[^@\/]+/)){var l="//"===f.substr(0,2);!l||j&&t[j]||(f=f.substr(2),e.slashes=!0)}if(!t[j]&&(l||j&&!u[j])){var w=f.indexOf("@");if(-1!==w){for(var x=f.slice(0,w),y=!0,z=0,A=o.length;A>z;z++)if(-1!==x.indexOf(o[z])){y=!1;break}y&&(e.auth=decodeURIComponent(x),f=f.substr(w+1))}for(var B=-1,z=0,A=n.length;A>z;z++){var C=f.indexOf(n[z]);-1!==C&&(0>B||B>C)&&(B=C)}-1!==B?(e.host=f.substr(0,B),f=f.substr(B)):(e.host=f,f="");for(var D=g(e.host),E=Object.keys(D),z=0,A=E.length;A>z;z++){var F=E[z];e[F]=D[F]}e.hostname=e.hostname||"";var G="["===e.hostname[0]&&"]"===e.hostname[e.hostname.length-1];if(e.hostname.length>p)e.hostname="";else if(!G)for(var H=e.hostname.split(/\./),z=0,A=H.length;A>z;z++){var I=H[z];if(I&&!I.match(q)){for(var J="",K=0,L=I.length;L>K;K++)J+=I.charCodeAt(K)>127?"x":I[K];if(!J.match(q)){var M=H.slice(0,z),N=H.slice(z+1),O=I.match(r);O&&(M.push(O[1]),N.unshift(O[2])),N.length&&(f="/"+N.join(".")+f),e.hostname=M.join(".");break}}}if(e.hostname=e.hostname.toLowerCase(),!G){for(var P=e.hostname.split("."),Q=[],z=0;z<P.length;++z){var R=P[z];Q.push(R.match(/[^A-Za-z0-9_-]/)?"xn--"+h.encode(R):R)}e.hostname=Q.join(".")}e.host=(e.hostname||"")+(e.port?":"+e.port:""),e.href+=e.host,G&&(e.hostname=e.hostname.substr(1,e.hostname.length-2),"/"!==f[0]&&(f="/"+f))}if(!s[k])for(var z=0,A=m.length;A>z;z++){var S=m[z],T=encodeURIComponent(S);T===S&&(T=escape(S)),f=f.split(S).join(T)}var U=f.indexOf("#");-1!==U&&(e.hash=f.substr(U),f=f.slice(0,U));var V=f.indexOf("?");return-1!==V?(e.search=f.substr(V),e.query=f.substr(V+1),b&&(e.query=v.parse(e.query)),f=f.slice(0,V)):b&&(e.search="",e.query={}),f&&(e.pathname=f),u[j]&&e.hostname&&!e.pathname&&(e.pathname="/"),(e.pathname||e.search)&&(e.path=(e.pathname?e.pathname:"")+(e.search?e.search:"")),e.href=d(e),e}function d(a){"string"==typeof a&&(a=b(a));var c=a.auth||"";c&&(c=encodeURIComponent(c),c=c.replace(/%3A/i,":"),c+="@");var d=a.protocol||"",e=a.pathname||"",f=a.hash||"",g=!1,h="";void 0!==a.host?g=c+a.host:void 0!==a.hostname&&(g=c+(-1===a.hostname.indexOf(":")?a.hostname:"["+a.hostname+"]"),a.port&&(g+=":"+a.port)),a.query&&"object"==typeof a.query&&Object.keys(a.query).length&&(h=v.stringify(a.query));var i=a.search||h&&"?"+h||"";return d&&":"!==d.substr(-1)&&(d+=":"),a.slashes||(!d||u[d])&&g!==!1?(g="//"+(g||""),e&&"/"!==e.charAt(0)&&(e="/"+e)):g||(g=""),f&&"#"!==f.charAt(0)&&(f="#"+f),i&&"?"!==i.charAt(0)&&(i="?"+i),d+g+e+i+f}function e(a,b){return d(f(a,b))}function f(a,c){if(!a)return c;if(a=b(d(a),!1,!0),c=b(d(c),!1,!0),a.hash=c.hash,""===c.href)return a.href=d(a),a;if(c.slashes&&!c.protocol)return c.protocol=a.protocol,u[c.protocol]&&c.hostname&&!c.pathname&&(c.path=c.pathname="/"),c.href=d(c),c;if(c.protocol&&c.protocol!==a.protocol){if(!u[c.protocol])return c.href=d(c),c;if(a.protocol=c.protocol,!c.host&&!t[c.protocol]){for(var e=(c.pathname||"").split("/");e.length&&!(c.host=e.shift()););c.host||(c.host=""),c.hostname||(c.hostname=""),""!==e[0]&&e.unshift(""),e.length<2&&e.unshift(""),c.pathname=e.join("/")}return a.pathname=c.pathname,a.search=c.search,a.query=c.query,a.host=c.host||"",a.auth=c.auth,a.hostname=c.hostname||c.host,a.port=c.port,(void 0!==a.pathname||void 0!==a.search)&&(a.path=(a.pathname?a.pathname:"")+(a.search?a.search:"")),a.slashes=a.slashes||c.slashes,a.href=d(a),a}var f=a.pathname&&"/"===a.pathname.charAt(0),g=void 0!==c.host||c.pathname&&"/"===c.pathname.charAt(0),h=g||f||a.host&&c.pathname,i=h,j=a.pathname&&a.pathname.split("/")||[],e=c.pathname&&c.pathname.split("/")||[],k=a.protocol&&!u[a.protocol];if(k&&(delete a.hostname,delete a.port,a.host&&(""===j[0]?j[0]=a.host:j.unshift(a.host)),delete a.host,c.protocol&&(delete c.hostname,delete c.port,c.host&&(""===e[0]?e[0]=c.host:e.unshift(c.host)),delete c.host),h=h&&(""===e[0]||""===j[0])),g)a.host=c.host||""===c.host?c.host:a.host,a.hostname=c.hostname||""===c.hostname?c.hostname:a.hostname,a.search=c.search,a.query=c.query,j=e;else if(e.length)j||(j=[]),j.pop(),j=j.concat(e),a.search=c.search,a.query=c.query;else if("search"in c){if(k){a.hostname=a.host=j.shift();var l=a.host&&a.host.indexOf("@")>0?a.host.split("@"):!1;l&&(a.auth=l.shift(),a.host=a.hostname=l.shift())}return a.search=c.search,a.query=c.query,(void 0!==a.pathname||void 0!==a.search)&&(a.path=(a.pathname?a.pathname:"")+(a.search?a.search:"")),a.href=d(a),a}if(!j.length)return delete a.pathname,a.search?delete a.path:a.path="/"+a.search,a.href=d(a),a;for(var m=j.slice(-1)[0],n=(a.host||c.host)&&("."===m||".."===m)||""===m,o=0,p=j.length;p>=0;p--)m=j[p],"."==m?j.splice(p,1):".."===m?(j.splice(p,1),o++):o&&(j.splice(p,1),o--);if(!h&&!i)for(;o--;o)j.unshift("..");!h||""===j[0]||j[0]&&"/"===j[0].charAt(0)||j.unshift(""),n&&"/"!==j.join("/").substr(-1)&&j.push("");var q=""===j[0]||j[0]&&"/"===j[0].charAt(0);if(k){a.hostname=a.host=q?"":j.length?j.shift():"";var l=a.host&&a.host.indexOf("@")>0?a.host.split("@"):!1;l&&(a.auth=l.shift(),a.host=a.hostname=l.shift())}return h=h||a.host&&j.length,h&&!q&&j.unshift(""),a.pathname=j.join("/"),(void 0!==a.pathname||void 0!==a.search)&&(a.path=(a.pathname?a.pathname:"")+(a.search?a.search:"")),a.auth=c.auth||a.auth,a.slashes=a.slashes||c.slashes,a.href=d(a),a}function g(a){var b={},c=j.exec(a);return c&&(c=c[0],":"!==c&&(b.port=c.substr(1)),a=a.substr(0,a.length-c.length)),a&&(b.hostname=a),b}var h=a("punycode");c.parse=b,c.resolve=e,c.resolveObject=f,c.format=d;var i=/^([a-z0-9.+-]+:)/i,j=/:[0-9]*$/,k=["<",">",'"',"`"," ","\r","\n","	"],l=["{","}","|","\\","^","~","`"].concat(k),m=["'"].concat(k),n=["%","/","?",";","#"].concat(l).concat(m),o=["/","@","?","#"].concat(k),p=255,q=/^[a-zA-Z0-9][a-z0-9A-Z_-]{0,62}$/,r=/^([a-zA-Z0-9][a-z0-9A-Z_-]{0,62})(.*)$/,s={javascript:!0,"javascript:":!0},t={javascript:!0,"javascript:":!0},u={http:!0,https:!0,ftp:!0,gopher:!0,file:!0,"http:":!0,"https:":!0,"ftp:":!0,"gopher:":!0,"file:":!0},v=a("querystring")}()},{punycode:8,querystring:3}]},{},[9])(9)}),!function(a){"object"==typeof exports?module.exports=a():"function"==typeof define&&define.amd?define(a):"undefined"!=typeof window?window.xmlserializer=a():"undefined"!=typeof global?global.xmlserializer=a():"undefined"!=typeof self&&(self.xmlserializer=a())}(function(){return function a(b,c,d){function e(g,h){if(!c[g]){if(!b[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);throw new Error("Cannot find module '"+g+"'")}var j=c[g]={exports:{}};b[g][0].call(j.exports,function(a){var c=b[g][1][a];return e(c?c:a)},j,j.exports,a,b,c,d)}return c[g].exports}for(var f="function"==typeof require&&require,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){var d=function(a){return a.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,"")},e=function(a){return a.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;")},f=function(a){return a.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")},g=function(a){var b=a.value;return" "+a.name+'="'+e(b)+'"'},h=function(a){var b=Array.prototype.map.call(a.attributes||a.attrs,function(a){return a.name}).indexOf("xmlns")>=0;return"html"!==a.tagName.toLowerCase()||b?"":' xmlns="'+a.namespaceURI+'"'},i=function(a){return Array.prototype.map.call(a.childNodes,function(a){return m(a)}).join("")},j=function(a){var b="<"+a.tagName.toLowerCase();return b+=h(a),Array.prototype.forEach.call(a.attributes||a.attrs,function(a){b+=g(a)}),a.childNodes.length>0?(b+=">",b+=i(a),b+="</"+a.tagName.toLowerCase()+">"):b+="/>",b},k=function(a){var b=a.nodeValue||a.value||"";return f(b)},l=function(a){return"<!--"+a.data.replace(/-/g,"&#45;")+"-->"},m=function(a){return"#document"===a.nodeName||"#document-fragment"===a.nodeName?i(a):a.tagName?j(a):"#text"===a.nodeName?k(a):"#comment"===a.nodeName?l(a):void 0};c.serializeToString=function(a){return d(m(a))}},{}]},{},[1])(1)}),function(a,b){"function"==typeof define&&define.amd?define(b):"object"==typeof exports?module.exports=b():a.ayepromise=b()}(this,function(){"use strict";var a={},b=function(){var a=!1;return function(b){return function(){a||(a=!0,b.apply(null,arguments))}}},c=function(a){var b=a&&a.then;return null!==a&&"object"==typeof a&&"function"==typeof b?b.bind(a):void 0},d=function(a,b,c){setTimeout(function(){var d;try{d=b(c)}catch(e){return a.reject(e),void 0}d===a.promise?a.reject(new TypeError("Cannot resolve promise with itself")):a.resolve(d)},1)},e=function(a,b,c){b&&b.call?d(a,b,c):a.resolve(c)},f=function(a,b,c){b&&b.call?d(a,b,c):a.reject(c)},g=function(b,c){var d=a.defer();return{promise:d.promise,callFulfilled:function(a){e(d,b,a)},callRejected:function(a){f(d,c,a)}}},h=0,i=1,j=2;return a.defer=function(){var a,d=h,e=[],f=function(b){d=i,a=b,e.forEach(function(b){b.callFulfilled(a)})},k=function(b){d=j,a=b,e.forEach(function(b){b.callRejected(a)})},l=function(b){d===i?b.callFulfilled(a):d===j&&b.callRejected(a)},m=function(a,b){var c=g(a,b);return e.push(c),l(c),c.promise},n=function(a){var c=b();try{a(c(o),c(k))}catch(d){c(k)(d)}},o=function(a){var b;try{b=c(a)}catch(d){return k(d),void 0}b?n(b):f(a)},p=b();return{resolve:p(o),reject:p(k),promise:{then:m,fail:function(a){return m(null,a)}}}},a}),window.rasterizeHTMLInline=function(a){"use strict";var b=function(b){return a.util.joinUrl(b,".")},c=function(a){var c=a.map(function(c,d){return d===a.length-1&&(c={baseUrl:b(c.baseUrl)}),JSON.stringify(c)});return c},d=function(b,d){return d.cache!==!1&&"none"!==d.cache&&d.cacheBucket?a.util.memoize(b,c,d.cacheBucket):b},e=function(b,c){var d=b.attributes.src?b.attributes.src.nodeValue:null,e=a.util.getDocumentBaseUrl(b.ownerDocument),f=a.util.clone(c);return!f.baseUrl&&e&&(f.baseUrl=e),a.util.getDataURIForImageURL(d,f).then(function(a){return a},function(a){throw{resourceType:"image",url:a.url,msg:"Unable to load image "+a.url}})},f=function(b){return b.filter(function(b){var c=b.attributes.src?b.attributes.src.nodeValue:null;return null!==c&&!a.util.isDataUri(c)})},g=function(a){return Array.prototype.filter.call(a,function(a){return"image"===a.type})},h=function(a){return Array.prototype.slice.call(a)};a.loadAndInlineImages=function(b,c){var d=h(b.getElementsByTagName("img")),i=g(b.getElementsByTagName("input")),j=f(d.concat(i));return a.util.collectAndReportErrors(j.map(function(a){return e(a,c).then(function(b){a.attributes.src.nodeValue=b})}))};var i=function(b,c,d){var e=a.css.rulesForCssText(b);return a.css.loadCSSImportsForRules(e,c,d).then(function(c){return a.css.loadAndInlineCSSResourcesForRules(e,d).then(function(d){var f=c.errors.concat(d.errors),g=c.hasChanges||d.hasChanges;return g&&(b=a.css.cssRulesToText(e)),{hasChanges:g,content:b,errors:f}})})},j=function(b,c,e){var f=b.textContent,g=d(i,c);return g(f,e,c).then(function(c){return c.hasChanges&&(b.childNodes[0].nodeValue=c.content),a.util.cloneArray(c.errors)})},k=function(a){var b=a.getElementsByTagName("style");return Array.prototype.filter.call(b,function(a){return!a.attributes.type||"text/css"===a.attributes.type.nodeValue})};a.loadAndInlineStyles=function(b,c){var d,e=k(b),f=[],g=[];return d=a.util.clone(c),d.baseUrl=d.baseUrl||a.util.getDocumentBaseUrl(b),a.util.all(e.map(function(a){return j(a,d,g).then(function(a){f=f.concat(a)})})).then(function(){return f})};var l=function(a,b){var c,d=a.parentNode;b=b.trim(),b&&(c=a.ownerDocument.createElement("style"),c.type="text/css",c.appendChild(a.ownerDocument.createTextNode(b)),d.insertBefore(c,a)),d.removeChild(a)},m=function(b,c){return a.util.ajax(b,c).then(function(b){var c=a.css.rulesForCssText(b);return{content:b,cssRules:c}}).then(function(c){var d=a.css.adjustPathsOfCssResources(b,c.cssRules);return{content:c.content,cssRules:c.cssRules,hasChanges:d}}).then(function(b){return a.css.loadCSSImportsForRules(b.cssRules,[],c).then(function(a){return{content:b.content,cssRules:b.cssRules,hasChanges:b.hasChanges||a.hasChanges,errors:a.errors}})}).then(function(b){return a.css.loadAndInlineCSSResourcesForRules(b.cssRules,c).then(function(a){return{content:b.content,cssRules:b.cssRules,hasChanges:b.hasChanges||a.hasChanges,errors:b.errors.concat(a.errors)}})}).then(function(b){var c=b.content;return b.hasChanges&&(c=a.css.cssRulesToText(b.cssRules)),{content:c,errors:b.errors}})},n=function(b,c){var e=b.attributes.href.nodeValue,f=a.util.getDocumentBaseUrl(b.ownerDocument),g=a.util.clone(c);!g.baseUrl&&f&&(g.baseUrl=f);var h=d(m,c);return h(e,g).then(function(b){return{content:b.content,errors:a.util.cloneArray(b.errors)}})},o=function(a){var b=a.getElementsByTagName("link");return Array.prototype.filter.call(b,function(a){return a.attributes.rel&&"stylesheet"===a.attributes.rel.nodeValue&&(!a.attributes.type||"text/css"===a.attributes.type.nodeValue)})};a.loadAndInlineCssLinks=function(b,c){var d=o(b),e=[];
-return a.util.all(d.map(function(a){return n(a,c).then(function(b){l(a,b.content+"\n"),e=e.concat(b.errors)},function(a){e.push({resourceType:"stylesheet",url:a.url,msg:"Unable to load stylesheet "+a.url})})})).then(function(){return e})};var p=function(b,c){var d=b.attributes.src.nodeValue,e=a.util.getDocumentBaseUrl(b.ownerDocument),f=a.util.clone(c);return!f.baseUrl&&e&&(f.baseUrl=e),a.util.ajax(d,f).fail(function(a){throw{resourceType:"script",url:a.url,msg:"Unable to load script "+a.url}})},q=function(a){return a.replace(/<\//g,"<\\/")},r=function(a,b){a.attributes.removeNamedItem("src"),a.textContent=q(b)},s=function(a){var b=a.getElementsByTagName("script");return Array.prototype.filter.call(b,function(a){return!!a.attributes.src})};return a.loadAndInlineScript=function(b,c){var d=s(b);return a.util.collectAndReportErrors(d.map(function(a){return p(a,c).then(function(b){r(a,b)})}))},a.inlineReferences=function(b,c){var d=[],e=[a.loadAndInlineImages,a.loadAndInlineStyles,a.loadAndInlineCssLinks];return c.inlineScripts!==!1&&e.push(a.loadAndInlineScript),a.util.all(e.map(function(a){return a(b,c).then(function(a){d=d.concat(a)})})).then(function(){return d})},a}(window.rasterizeHTMLInline||{}),window.rasterizeHTMLInline=function(a,b,c,d){"use strict";a.css={};var e=function(a,b,c){a.style.setProperty(b,c,a.style.getPropertyPriority(b))},f=function(a){var b,c=document.implementation.createHTMLDocument(""),d=document.createElement("style");return d.textContent=a,c.body.appendChild(d),b=d.sheet.cssRules,Array.prototype.slice.call(b)},g=function(){var a=f("a{background:url(i)}");return!a.length||a[0].cssText.indexOf("url()")>=0}();a.css.rulesForCssText=function(a){return g&&c.parse?c.parse(a).cssRules:f(a)};var h=function(a){return a.filter(function(a){return a.type===b.CSSRule.STYLE_RULE&&(a.style.getPropertyValue("background-image")||a.style.getPropertyValue("background"))})},i=function(a){var b=[];return a.forEach(function(a){a.style.getPropertyValue("background-image")?b.push({property:"background-image",value:a.style.getPropertyValue("background-image"),rule:a}):a.style.getPropertyValue("background")&&b.push({property:"background",value:a.style.getPropertyValue("background"),rule:a})}),b},j=function(a){return a.filter(function(a){return a.type===b.CSSRule.FONT_FACE_RULE&&a.style.getPropertyValue("src")})};a.css.cssRulesToText=function(a){return a.reduce(function(a,b){return a+b.cssText},"")};var k=function(a){var b=/^"(.*)"$/,c=/^'(.*)'$/;return b.test(a)?a.replace(b,"$1"):c.test(a)?a.replace(c,"$1"):a},l=function(a){var b=/^[\t\r\f\n ]*(.+?)[\t\r\f\n ]*$/;return a.replace(b,"$1")};a.css.extractCssUrl=function(a){var b,c=/^url\(([^\)]+)\)/;if(!c.test(a))throw new Error("Invalid url");return b=c.exec(a)[1],k(l(b))};var m=function(a){var b,c=/^format\(([^\)]+)\)/;return c.test(a)?(b=c.exec(a)[1],k(b)):null},n=function(b){var c,d=null;try{return c=a.css.extractCssUrl(b[0]),b[1]&&(d=m(b[1])),{url:c,format:d}}catch(e){}},o=function(a,b,c){var d="@font-face { font-family: "+b.style.getPropertyValue("font-family")+"; ";b.style.getPropertyValue("font-style")&&(d+="font-style: "+b.style.getPropertyValue("font-style")+"; "),b.style.getPropertyValue("font-weight")&&(d+="font-weight: "+b.style.getPropertyValue("font-weight")+"; "),d+="src: "+c+"}",p(a,b,d)},p=function(a,b,c){var d=a.indexOf(b),e=b.parentStyleSheet;e.insertRule(c,d+1),e.deleteRule(d),a[d]=e.cssRules[d]};a.css.adjustPathsOfCssResources=function(b,c){var d=h(c),f=i(d),g=!1;return f.forEach(function(c){var d,f=x(c.value),h=y(f);h.length>0&&(h.forEach(function(c){var d=f[c].url,e=a.util.joinUrl(b,d);f[c].url=e}),d=z(f),e(c.rule,c.property,d),g=!0)}),j(c).forEach(function(d){var e=d.style.getPropertyValue("src"),f=D(e),h=E(f);h.length>0&&(h.forEach(function(c){var d=f[c].url,e=a.util.joinUrl(b,d);f[c].url=e}),o(c,d,F(f)),g=!0)}),q(c).forEach(function(d){var e=d.href,f=a.util.joinUrl(b,e);p(c,d,"@import url("+f+");"),g=!0}),g};var q=function(a){return a.filter(function(a){return a.type===b.CSSRule.IMPORT_RULE&&a.href})},r=function(a,b,c){var d=a.indexOf(b);a.splice(d,1),c.forEach(function(b,c){a.splice(d+c,0,b)})},s=function(a){var b=/^"(.*)"$/,c=/^'(.*)'$/;return b.test(a)||c.test(a)},t=function(a){var b=d.defer();return b.resolve(a),b.promise},u=function(b,c,d,e){var f,g=c.href;return s(g)&&(g=k(g)),f=a.util.joinUrl(e.baseUrl,g),d.indexOf(f)>=0?(r(b,c,[]),t([])):(d.push(f),a.util.ajax(g,e).then(function(f){var h=a.css.rulesForCssText(f);return a.css.loadCSSImportsForRules(h,d,e).then(function(d){return a.css.adjustPathsOfCssResources(g,h),r(b,c,h),d.errors})},function(a){throw{resourceType:"stylesheet",url:a.url,msg:"Unable to load stylesheet "+a.url}}))};a.css.loadCSSImportsForRules=function(b,c,d){var e=q(b),f=[],g=!1;return a.util.all(e.map(function(a){return u(b,a,c,d).then(function(a){f=f.concat(a),g=!0},function(a){f.push(a)})})).then(function(){return{hasChanges:g,errors:f}})};var v=function(a){var b,c="\\s*(?:\"[^\"]*\"|'[^']*'|[^\\(]+)\\s*",d="(url\\("+c+"\\)|[^,\\s]+)",e="(?:\\s*"+d+")+",f="^\\s*("+e+")(?:\\s*,\\s*("+e+"))*\\s*$",g=new RegExp(e,"g"),h=[],i=function(a){var b,c=new RegExp(d,"g"),e=[];for(b=c.exec(a);b;)e.push(b[1]),b=c.exec(a);return e};if(a.match(new RegExp(f))){for(b=g.exec(a);b;)h.push(i(b[0])),b=g.exec(a);return h}return[]},w=function(b){var c,d;for(c=0;c<b.length;c++)try{return d=a.css.extractCssUrl(b[c]),{url:d,idx:c}}catch(e){}},x=function(a){var b=v(a);return b.map(function(a){var b=w(a);return b?{preUrl:a.slice(0,b.idx),url:b.url,postUrl:a.slice(b.idx+1)}:{preUrl:a}})},y=function(b){var c=[];return b.forEach(function(b,d){b.url&&!a.util.isDataUri(b.url)&&c.push(d)}),c},z=function(a){var b=a.map(function(a){var b=[].concat(a.preUrl);return a.url&&b.push('url("'+a.url+'")'),a.postUrl&&(b=b.concat(a.postUrl)),b.join(" ")});return b.join(", ")},A=function(b,c){var d=x(b),e=y(d),f=!1;return a.util.collectAndReportErrors(e.map(function(b){var e=d[b].url;return a.util.getDataURIForImageURL(e,c).then(function(a){d[b].url=a,f=!0},function(a){throw{resourceType:"backgroundImage",url:a.url,msg:"Unable to load background-image "+a.url}})})).then(function(a){return{backgroundValue:z(d),hasChanges:f,errors:a}})},B=function(b,c){var d=h(b),f=i(d),g=[],j=!1;return a.util.all(f.map(function(a){return A(a.value,c).then(function(b){b.hasChanges&&(e(a.rule,a.property,b.backgroundValue),j=!0),g=g.concat(b.errors)})})).then(function(){return{hasChanges:j,errors:g}})},C=function(a){var b,c="\\s*(?:\"[^\"]*\"|'[^']*'|[^\\(]+)\\s*",d="(local\\("+c+"\\))|(url\\("+c+"\\))(?:\\s+(format\\("+c+"\\)))?",e="^\\s*("+d+")(?:\\s*,\\s*("+d+"))*\\s*$",f=new RegExp(d,"g"),g=[],h=function(a){var b=[];return a.slice(1).forEach(function(a){a&&b.push(a)}),b};if(a.match(new RegExp(e))){for(b=f.exec(a);b;)g.push(h(b)),b=f.exec(a);return g}return[]},D=function(a){var b=C(a);return b.map(function(a){var b=n(a);return b?b:{local:a}})},E=function(b){var c=[];return b.forEach(function(b,d){b.url&&!a.util.isDataUri(b.url)&&c.push(d)}),c},F=function(a){return a.map(function(a){var b;return a.url?(b='url("'+a.url+'")',a.format&&(b+=' format("'+a.format+'")')):b=a.local,b}).join(", ")},G=function(b,c){var d=D(b),e=E(d),f=!1;return a.util.collectAndReportErrors(e.map(function(b){var e=d[b],g=e.format||"woff";return a.util.binaryAjax(e.url,c).then(function(a){var b=btoa(a);e.url="data:font/"+g+";base64,"+b,f=!0},function(a){throw{resourceType:"fontFace",url:a.url,msg:"Unable to load font-face "+a.url}})})).then(function(a){return{srcDeclarationValue:F(d),hasChanges:f,errors:a}})},H=function(b,c){var d=j(b),e=[],f=!1;return a.util.all(d.map(function(a){var d=a.style.getPropertyValue("src");return G(d,c).then(function(c){c.hasChanges&&(o(b,a,c.srcDeclarationValue),f=!0),e=e.concat(c.errors)})})).then(function(){return{hasChanges:f,errors:e}})};return a.css.loadAndInlineCSSResourcesForRules=function(b,c){var d=!1,e=[];return a.util.all([B,H].map(function(a){return a(b,c).then(function(a){d=d||a.hasChanges,e=e.concat(a.errors)})})).then(function(){return{hasChanges:d,errors:e}})},a}(window.rasterizeHTMLInline||{},window,window.CSSOM||{},ayepromise),window.rasterizeHTMLInline=function(a,b,c,d){"use strict";a.util={},a.util.getDocumentBaseUrl=function(a){return"about:blank"!==a.baseURI?a.baseURI:null},a.util.clone=function(a){var b,c={};for(b in a)a.hasOwnProperty(b)&&(c[b]=a[b]);return c},a.util.cloneArray=function(a){return Array.prototype.slice.apply(a,[0])},a.util.joinUrl=function(a,b){return d.resolve(a,b)},a.util.isDataUri=function(a){return/^data:/.test(a)},a.util.all=function(a){var b=c.defer(),d=a.length,e=[];return 0===a.length?(b.resolve([]),b.promise):(a.forEach(function(a,c){a.then(function(a){d-=1,e[c]=a,0===d&&b.resolve(e)},function(a){b.reject(a)})}),b.promise)},a.util.collectAndReportErrors=function(b){var c=[];return a.util.all(b.map(function(a){return a.fail(function(a){c.push(a)})})).then(function(){return c})};var e=null,f=function(a,b){return b===!1||"none"===b||"repeated"===b?((null===e||"repeated"!==b)&&(e=Date.now()),a+"?_="+e):a};a.util.ajax=function(d,e){var g,h=new b.XMLHttpRequest,i=c.defer(),j=a.util.joinUrl(e.baseUrl,d),k=function(){i.reject({msg:"Unable to load url",url:j})};g=f(j,e.cache),h.addEventListener("load",function(){200===h.status||0===h.status?i.resolve(h.response):k()},!1),h.addEventListener("error",k,!1);try{h.open("GET",g,!0),h.overrideMimeType(e.mimeType),h.send(null)}catch(l){k()}return i.promise},a.util.binaryAjax=function(b,c){var d=a.util.clone(c);return d.mimeType="text/plain; charset=x-user-defined",a.util.ajax(b,d).then(function(a){for(var b="",c=0;c<a.length;c++)b+=String.fromCharCode(255&a.charCodeAt(c));return b})};var g=function(a){var b=function(a,b){return a.substring(0,b.length)===b};return b(a,"<?xml")||b(a,"<svg")?"image/svg+xml":"image/png"};a.util.getDataURIForImageURL=function(b,c){return a.util.binaryAjax(b,c).then(function(a){var b=btoa(a),c=g(a);return"data:"+c+";base64,"+b})};var h=[],i=function(a){return h.indexOf(a)<0&&h.push(a),h.indexOf(a)};return a.util.memoize=function(a,b,c){if("object"!=typeof c)throw new Error("cacheBucket is not an object");return function(){var d,e=Array.prototype.slice.call(arguments),f=b(e),g=i(a);return c[g]&&c[g][f]?c[g][f]:(d=a.apply(null,e),c[g]=c[g]||{},c[g][f]=d,d)}},a}(window.rasterizeHTMLInline||{},window,ayepromise,url),window.rasterizeHTML=function(a,b,c,d){"use strict";var e={},f=[];e.util={},e.util.getConstantUniqueIdFor=function(a){return f.indexOf(a)<0&&f.push(a),f.indexOf(a)};var g=function(a){var b,c={};for(b in a)a.hasOwnProperty(b)&&(c[b]=a[b]);return c},h=function(a){return"object"==typeof a&&null!==a},i=function(a){return h(a)&&Object.prototype.toString.apply(a).match(/\[object (Canvas|HTMLCanvasElement)\]/i)},j=function(a){return"function"==typeof a};e.util.parseOptionalParameters=function(a){var b={canvas:null,options:{},callback:null};return j(a[0])?b.callback=a[0]:null==a[0]||i(a[0])?(b.canvas=a[0]||null,j(a[1])?b.callback=a[1]:(b.options=g(a[1]),b.callback=a[2]||null)):(b.options=g(a[0]),b.callback=a[1]||null),b};var k=function(b,c){return function(){var d=new b,e=d.open;return d.open=function(){var b=Array.prototype.slice.call(arguments),d=b.shift(),f=b.shift(),g=a.util.joinUrl(c,f);return e.apply(this,[d,g].concat(b))},d}};e.util.executeJavascript=function(a,b,e){var f=t(d.document,"iframe"),g=a.documentElement.outerHTML,h=[],i=c.defer(),j=function(){var a=f.contentDocument;d.document.getElementsByTagName("body")[0].removeChild(f),i.resolve({document:a,errors:h})};return f.onload=e>0?function(){setTimeout(j,e)}:j,f.contentDocument.open(),f.contentWindow.XMLHttpRequest=k(f.contentWindow.XMLHttpRequest,b),f.contentWindow.onerror=function(a){h.push({resourceType:"scriptExecution",msg:a})},f.contentDocument.write(g),f.contentDocument.close(),i.promise};var l=function(a,b,c){var d=a.createElement("iframe");return d.style.width=b+"px",d.style.height=c+"px",d.style.visibility="hidden",d.style.position="absolute",d.style.top=-1e4-c+"px",d.style.left=-1e4-b+"px",d.sandbox="allow-same-origin",a.getElementsByTagName("body")[0].appendChild(d),d};e.util.calculateDocumentContentSize=function(a,b,e){var f=a.documentElement.outerHTML,g=l(d.document,b,e),h=c.defer();return g.onload=function(){var a=g.contentDocument,b=Math.max(a.documentElement.scrollWidth,a.body.clientWidth),c=Math.max(a.documentElement.scrollHeight,a.body.scrollHeight,a.body.clientHeight);d.document.getElementsByTagName("body")[0].removeChild(g),h.resolve({width:b,height:c})},g.contentDocument.open(),g.contentDocument.write(f),g.contentDocument.close(),h.promise};var m=function(a,b){var c,e,f,g,h=/<html((?:\s+[^>]*)?)>/im.exec(b),i=d.document.implementation.createHTMLDocument("");if(h)for(c="<div"+h[1]+"></div>",i.documentElement.innerHTML=c,f=i.querySelector("div"),e=0;e<f.attributes.length;e++)g=f.attributes[e],a.documentElement.setAttribute(g.name,g.value)};e.util.parseHTML=function(a){var b;return(new DOMParser).parseFromString("<a></a>","text/html")?b=(new DOMParser).parseFromString(a,"text/html"):(b=d.document.implementation.createHTMLDocument(""),b.documentElement.innerHTML=a,m(b,a)),b};var n=null,o=function(a,b){return b===!1||"none"===b||"repeated"===b?((null===n||"repeated"!==b)&&(n=Date.now()),a+"?_="+n):a};e.util.loadDocument=function(b,d){var e=new window.XMLHttpRequest,f=a.util.joinUrl(d.baseUrl,b),g=o(f,d.cache),h=c.defer(),i=function(){h.reject({message:"Unable to load page"})};e.addEventListener("load",function(){200===e.status||0===e.status?h.resolve(e.responseXML):i()},!1),e.addEventListener("error",function(){i()},!1);try{e.open("GET",g,!0),e.responseType="document",e.send(null)}catch(j){i()}return h.promise};var p=function(){if(d.navigator.userAgent.indexOf("WebKit")>=0&&d.navigator.userAgent.indexOf("Chrome")<0)return!1;if(d.BlobBuilder||d.MozBlobBuilder||d.WebKitBlobBuilder)return!0;if(d.Blob)try{return new d.Blob(["<b></b>"],{type:"text/xml"}),!0}catch(a){return!1}return!1},q=function(a){var b,c="image/svg+xml;charset=utf-8",e=d.BlobBuilder||d.MozBlobBuilder||d.WebKitBlobBuilder;return e?(b=new e,b.append(a),b.getBlob(c)):new d.Blob([a],{type:c})},r=function(a){var b=d.URL||d.webkitURL||window;return p()?b.createObjectURL(q(a)):"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(a)},s=function(a){var b=d.URL||d.webkitURL||window;p()&&b.revokeObjectURL(a)},t=function(a,b){var c=a.createElement(b);return c.style.visibility="hidden",c.style.width="0px",c.style.height="0px",c.style.position="absolute",c.style.top="-10000px",c.style.left="-10000px",a.getElementsByTagName("body")[0].appendChild(c),c},u=function(a,b){var c=a.getElementById(b);return c||(c=t(a,"div"),c.id=b),c},v="rasterizeHTML_js_FirefoxWorkaround",w=function(){var a=d.navigator.userAgent.match(/Firefox\/(\d+).0/);return!a||!a[1]||parseInt(a[1],10)<17},x=function(a,b){var c,f=e.util.getConstantUniqueIdFor(a),g=b?b.ownerDocument:d.document;w()&&(c=u(g,v+f),c.innerHTML=a,c.className=v)},y=function(a){window.navigator.userAgent.indexOf("WebKit")>=0&&Array.prototype.forEach.call(a.getElementsByTagName("style"),function(a){a.textContent="span {}\n"+a.textContent})},z=function(a,b){var c=e.util.getConstantUniqueIdFor(a),f=b?b.ownerDocument:d.document,g=f.getElementById(v+c);g&&g.parentNode.removeChild(g)};e.util.addClassNameRecursively=function(a,b){a.className+=" "+b,a.parentNode!==a.ownerDocument&&e.util.addClassNameRecursively(a.parentNode,b)};var A=function(a,b){var c=a.parentStyleSheet,d=Array.prototype.indexOf.call(c.cssRules,a);c.insertRule(b,d+1),c.deleteRule(d)},B=function(a,b){var c=a.cssText.replace(/^[^\{]+/,""),d=b+" "+c;A(a,d)},C=function(a){return Array.prototype.reduce.call(a,function(a,b){return a+b.cssText},"")},D=function(a){a.textContent=C(a.sheet.cssRules)};e.util.rewriteStyleRuleSelector=function(a,b,c){var d=b+"(?=\\W|$)";Array.prototype.forEach.call(a.querySelectorAll("style"),function(a){var b=Array.prototype.filter.call(a.sheet.cssRules,function(a){return a.selectorText&&new RegExp(d).test(a.selectorText)});b.length&&(b.forEach(function(a){var b=a.selectorText.replace(new RegExp(d,"g"),c);B(a,b)}),D(a))})},e.util.fakeHover=function(a,b){var c=a.querySelector(b),d="rasterizehtmlhover";c&&(e.util.addClassNameRecursively(c,d),e.util.rewriteStyleRuleSelector(a,":hover","."+d))},e.util.fakeActive=function(a,b){var c=a.querySelector(b),d="rasterizehtmlactive";c&&(e.util.addClassNameRecursively(c,d),e.util.rewriteStyleRuleSelector(a,":active","."+d))},e.util.persistInputValues=function(a){var b=Array.prototype.slice.call(a.querySelectorAll("input")),c=Array.prototype.slice.call(a.querySelectorAll("textarea")),d=function(a){return"checkbox"===a.type||"radio"===a.type};b.filter(d).forEach(function(a){a.checked?a.setAttribute("checked",""):a.removeAttribute("checked")}),b.filter(function(a){return!d(a)}).forEach(function(a){a.setAttribute("value",a.value)}),c.forEach(function(a){a.textContent=a.value})},e.getSvgForDocument=function(a,c,d){var e;return y(a),e=b.serializeToString(a),'<svg xmlns="http://www.w3.org/2000/svg" width="'+c+'" height="'+d+'"><foreignObject width="100%" height="100%">'+e+"</foreignObject></svg>"},e.renderSvg=function(a,b){var e,f,g=c.defer(),h=function(){f.onload=null,f.onerror=null},i=function(){e&&s(e),z(a,b)};return x(a,b),e=r(a),f=new d.Image,f.onload=function(){h(),i(),g.resolve(f)},f.onerror=function(){i(),g.reject()},f.src=e,g.promise},e.drawImageOnCanvas=function(a,b){try{b.getContext("2d").drawImage(a,0,0)}catch(c){return!1}return!0},e.drawDocumentImage=function(a,b,c){var d=F(b,c);return c.hover&&e.util.fakeHover(a,c.hover),c.active&&e.util.fakeActive(a,c.active),e.util.calculateDocumentContentSize(a,d.width,d.height).then(function(b){return e.getSvgForDocument(a,b.width,b.height)}).then(function(a){return e.renderSvg(a,b)})};var E=function(a,b,c){var d={message:"Error rendering page"};return e.drawDocumentImage(a,b,c).then(function(a){var c;if(b&&(c=e.drawImageOnCanvas(a,b),!c))throw d;return a},function(){throw d})},F=function(a,b){var c=300,d=200,e=a?a.width:c,f=a?a.height:d,g=void 0!==b.width?b.width:e,h=void 0!==b.height?b.height:f;return{width:g,height:h}},G=function(b,c,d){var f,g=d.executeJsTimeout||0;return f=a.util.clone(d),f.inlineScripts=d.executeJs===!0,a.inlineReferences(b,f).then(function(a){return d.executeJs?e.util.executeJavascript(b,d.baseUrl,g).then(function(b){var c=b.document;return e.util.persistInputValues(c),{document:c,errors:a.concat(b.errors)}}):{document:b,errors:a}}).then(function(a){return E(a.document,c,d).then(function(b){return{image:b,errors:a.errors}})})};e.drawDocument=function(){var a=arguments[0],b=Array.prototype.slice.call(arguments,1),c=e.util.parseOptionalParameters(b),d=G(a,c.canvas,c.options);return c.callback&&d.then(function(a){c.callback(a.image,a.errors)},function(a){c.callback(null,[{resourceType:"document",msg:a.message}])}),d};var H=function(a,b,c,d){var f=e.util.parseHTML(a);return e.drawDocument(f,b,c,d)};e.drawHTML=function(){var a=arguments[0],b=Array.prototype.slice.call(arguments,1),c=e.util.parseOptionalParameters(b);return H(a,c.canvas,c.options,c.callback)};var I=function(a,b,c,d){var f=e.util.loadDocument(a,c).then(function(a){return e.drawDocument(a,b,c)});return d&&f.then(function(a){d(a.image,a.errors)},function(b){d(null,[{resourceType:"page",url:a,msg:b.message+" "+a}])}),f};return e.drawURL=function(){var a=arguments[0],b=Array.prototype.slice.call(arguments,1),c=e.util.parseOptionalParameters(b);return I(a,c.canvas,c.options,c.callback)},e}(window.rasterizeHTMLInline,window.xmlserializer,ayepromise,window);
 // js-imagediff 1.0.3
 // (c) 2011-2012 Carl Sutherland, Humble Software
 // Distributed under the MIT License
@@ -452,6 +440,4666 @@ return a.util.all(d.map(function(a){return n(a,c).then(function(b){l(a,b.content
   return imagediff;
 });
 
+// UMD header
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.ayepromise = factory();
+    }
+}(this, function () {
+    'use strict';
+
+    var ayepromise = {};
+
+    /* Wrap an arbitrary number of functions and allow only one of them to be
+       executed and only once */
+    var once = function () {
+        var wasCalled = false;
+
+        return function wrapper(wrappedFunction) {
+            return function () {
+                if (wasCalled) {
+                    return;
+                }
+                wasCalled = true;
+                wrappedFunction.apply(null, arguments);
+            };
+        };
+    };
+
+    var getThenableIfExists = function (obj) {
+        // Make sure we only access the accessor once as required by the spec
+        var then = obj && obj.then;
+
+        if (obj !== null &&
+            typeof obj === "object" &&
+            typeof then === "function") {
+
+            return function() { return then.apply(obj, arguments); };
+        }
+    };
+
+    var aThenHandler = function (onFulfilled, onRejected) {
+        var defer = ayepromise.defer();
+
+        var doHandlerCall = function (func, value) {
+            setTimeout(function () {
+                var returnValue;
+                try {
+                    returnValue = func(value);
+                } catch (e) {
+                    defer.reject(e);
+                    return;
+                }
+
+                if (returnValue === defer.promise) {
+                    defer.reject(new TypeError('Cannot resolve promise with itself'));
+                } else {
+                    defer.resolve(returnValue);
+                }
+            }, 1);
+        };
+
+        return {
+            promise: defer.promise,
+            callFulfilled: function (value) {
+                if (onFulfilled && onFulfilled.call) {
+                    doHandlerCall(onFulfilled, value);
+                } else {
+                    defer.resolve(value);
+                }
+            },
+            callRejected: function (value) {
+                if (onRejected && onRejected.call) {
+                    doHandlerCall(onRejected, value);
+                } else {
+                    defer.reject(value);
+                }
+            }
+        };
+    };
+
+    // States
+    var PENDING = 0,
+        FULFILLED = 1,
+        REJECTED = 2;
+
+    ayepromise.defer = function () {
+        var state = PENDING,
+            outcome,
+            thenHandlers = [];
+
+        var doFulfill = function (value) {
+            state = FULFILLED;
+            outcome = value;
+
+            thenHandlers.forEach(function (then) {
+                then.callFulfilled(outcome);
+            });
+        };
+
+        var doReject = function (error) {
+            state = REJECTED;
+            outcome = error;
+
+            thenHandlers.forEach(function (then) {
+                then.callRejected(outcome);
+            });
+        };
+
+        var executeThenHandlerDirectlyIfStateNotPendingAnymore = function (then) {
+            if (state === FULFILLED) {
+                then.callFulfilled(outcome);
+            } else if (state === REJECTED) {
+                then.callRejected(outcome);
+            }
+        };
+
+        var registerThenHandler = function (onFulfilled, onRejected) {
+            var thenHandler = aThenHandler(onFulfilled, onRejected);
+
+            thenHandlers.push(thenHandler);
+
+            executeThenHandlerDirectlyIfStateNotPendingAnymore(thenHandler);
+
+            return thenHandler.promise;
+        };
+
+        var safelyResolveThenable = function (thenable) {
+            // Either fulfill, reject or reject with error
+            var onceWrapper = once();
+            try {
+                thenable(
+                    onceWrapper(transparentlyResolveThenablesAndFulfill),
+                    onceWrapper(doReject)
+                );
+            } catch (e) {
+                onceWrapper(doReject)(e);
+            }
+        };
+
+        var transparentlyResolveThenablesAndFulfill = function (value) {
+            var thenable;
+
+            try {
+                thenable = getThenableIfExists(value);
+            } catch (e) {
+                doReject(e);
+                return;
+            }
+
+            if (thenable) {
+                safelyResolveThenable(thenable);
+            } else {
+                doFulfill(value);
+            }
+        };
+
+        var onceWrapper = once();
+        return {
+            resolve: onceWrapper(transparentlyResolveThenablesAndFulfill),
+            reject: onceWrapper(doReject),
+            promise: {
+                then: registerThenHandler,
+                fail: function (onRejected) {
+                    return registerThenHandler(null, onRejected);
+                }
+            }
+        };
+    };
+
+    return ayepromise;
+}));
+
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var n;"undefined"!=typeof window?n=window:"undefined"!=typeof global?n=global:"undefined"!=typeof self&&(n=self),n.inlineresources=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function (global){
+/*! http://mths.be/punycode v1.2.4 by @mathias */
+;(function(root) {
+
+	/** Detect free variables */
+	var freeExports = typeof exports == 'object' && exports;
+	var freeModule = typeof module == 'object' && module &&
+		module.exports == freeExports && module;
+	var freeGlobal = typeof global == 'object' && global;
+	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+		root = freeGlobal;
+	}
+
+	/**
+	 * The `punycode` object.
+	 * @name punycode
+	 * @type Object
+	 */
+	var punycode,
+
+	/** Highest positive signed 32-bit float value */
+	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+	/** Bootstring parameters */
+	base = 36,
+	tMin = 1,
+	tMax = 26,
+	skew = 38,
+	damp = 700,
+	initialBias = 72,
+	initialN = 128, // 0x80
+	delimiter = '-', // '\x2D'
+
+	/** Regular expressions */
+	regexPunycode = /^xn--/,
+	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+
+	/** Error messages */
+	errors = {
+		'overflow': 'Overflow: input needs wider integers to process',
+		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+		'invalid-input': 'Invalid input'
+	},
+
+	/** Convenience shortcuts */
+	baseMinusTMin = base - tMin,
+	floor = Math.floor,
+	stringFromCharCode = String.fromCharCode,
+
+	/** Temporary variable */
+	key;
+
+	/*--------------------------------------------------------------------------*/
+
+	/**
+	 * A generic error utility function.
+	 * @private
+	 * @param {String} type The error type.
+	 * @returns {Error} Throws a `RangeError` with the applicable error message.
+	 */
+	function error(type) {
+		throw RangeError(errors[type]);
+	}
+
+	/**
+	 * A generic `Array#map` utility function.
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} callback The function that gets called for every array
+	 * item.
+	 * @returns {Array} A new array of values returned by the callback function.
+	 */
+	function map(array, fn) {
+		var length = array.length;
+		while (length--) {
+			array[length] = fn(array[length]);
+		}
+		return array;
+	}
+
+	/**
+	 * A simple `Array#map`-like wrapper to work with domain name strings.
+	 * @private
+	 * @param {String} domain The domain name.
+	 * @param {Function} callback The function that gets called for every
+	 * character.
+	 * @returns {Array} A new string of characters returned by the callback
+	 * function.
+	 */
+	function mapDomain(string, fn) {
+		return map(string.split(regexSeparators), fn).join('.');
+	}
+
+	/**
+	 * Creates an array containing the numeric code points of each Unicode
+	 * character in the string. While JavaScript uses UCS-2 internally,
+	 * this function will convert a pair of surrogate halves (each of which
+	 * UCS-2 exposes as separate characters) into a single code point,
+	 * matching UTF-16.
+	 * @see `punycode.ucs2.encode`
+	 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+	 * @memberOf punycode.ucs2
+	 * @name decode
+	 * @param {String} string The Unicode input string (UCS-2).
+	 * @returns {Array} The new array of code points.
+	 */
+	function ucs2decode(string) {
+		var output = [],
+		    counter = 0,
+		    length = string.length,
+		    value,
+		    extra;
+		while (counter < length) {
+			value = string.charCodeAt(counter++);
+			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+				// high surrogate, and there is a next character
+				extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+				} else {
+					// unmatched surrogate; only append this code unit, in case the next
+					// code unit is the high surrogate of a surrogate pair
+					output.push(value);
+					counter--;
+				}
+			} else {
+				output.push(value);
+			}
+		}
+		return output;
+	}
+
+	/**
+	 * Creates a string based on an array of numeric code points.
+	 * @see `punycode.ucs2.decode`
+	 * @memberOf punycode.ucs2
+	 * @name encode
+	 * @param {Array} codePoints The array of numeric code points.
+	 * @returns {String} The new Unicode string (UCS-2).
+	 */
+	function ucs2encode(array) {
+		return map(array, function(value) {
+			var output = '';
+			if (value > 0xFFFF) {
+				value -= 0x10000;
+				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+				value = 0xDC00 | value & 0x3FF;
+			}
+			output += stringFromCharCode(value);
+			return output;
+		}).join('');
+	}
+
+	/**
+	 * Converts a basic code point into a digit/integer.
+	 * @see `digitToBasic()`
+	 * @private
+	 * @param {Number} codePoint The basic numeric code point value.
+	 * @returns {Number} The numeric value of a basic code point (for use in
+	 * representing integers) in the range `0` to `base - 1`, or `base` if
+	 * the code point does not represent a value.
+	 */
+	function basicToDigit(codePoint) {
+		if (codePoint - 48 < 10) {
+			return codePoint - 22;
+		}
+		if (codePoint - 65 < 26) {
+			return codePoint - 65;
+		}
+		if (codePoint - 97 < 26) {
+			return codePoint - 97;
+		}
+		return base;
+	}
+
+	/**
+	 * Converts a digit/integer into a basic code point.
+	 * @see `basicToDigit()`
+	 * @private
+	 * @param {Number} digit The numeric value of a basic code point.
+	 * @returns {Number} The basic code point whose value (when used for
+	 * representing integers) is `digit`, which needs to be in the range
+	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+	 * used; else, the lowercase form is used. The behavior is undefined
+	 * if `flag` is non-zero and `digit` has no uppercase form.
+	 */
+	function digitToBasic(digit, flag) {
+		//  0..25 map to ASCII a..z or A..Z
+		// 26..35 map to ASCII 0..9
+		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+	}
+
+	/**
+	 * Bias adaptation function as per section 3.4 of RFC 3492.
+	 * http://tools.ietf.org/html/rfc3492#section-3.4
+	 * @private
+	 */
+	function adapt(delta, numPoints, firstTime) {
+		var k = 0;
+		delta = firstTime ? floor(delta / damp) : delta >> 1;
+		delta += floor(delta / numPoints);
+		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+			delta = floor(delta / baseMinusTMin);
+		}
+		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+	}
+
+	/**
+	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The Punycode string of ASCII-only symbols.
+	 * @returns {String} The resulting string of Unicode symbols.
+	 */
+	function decode(input) {
+		// Don't use UCS-2
+		var output = [],
+		    inputLength = input.length,
+		    out,
+		    i = 0,
+		    n = initialN,
+		    bias = initialBias,
+		    basic,
+		    j,
+		    index,
+		    oldi,
+		    w,
+		    k,
+		    digit,
+		    t,
+		    /** Cached calculation results */
+		    baseMinusT;
+
+		// Handle the basic code points: let `basic` be the number of input code
+		// points before the last delimiter, or `0` if there is none, then copy
+		// the first basic code points to the output.
+
+		basic = input.lastIndexOf(delimiter);
+		if (basic < 0) {
+			basic = 0;
+		}
+
+		for (j = 0; j < basic; ++j) {
+			// if it's not a basic code point
+			if (input.charCodeAt(j) >= 0x80) {
+				error('not-basic');
+			}
+			output.push(input.charCodeAt(j));
+		}
+
+		// Main decoding loop: start just after the last delimiter if any basic code
+		// points were copied; start at the beginning otherwise.
+
+		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+			// `index` is the index of the next character to be consumed.
+			// Decode a generalized variable-length integer into `delta`,
+			// which gets added to `i`. The overflow checking is easier
+			// if we increase `i` as we go, then subtract off its starting
+			// value at the end to obtain `delta`.
+			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+				if (index >= inputLength) {
+					error('invalid-input');
+				}
+
+				digit = basicToDigit(input.charCodeAt(index++));
+
+				if (digit >= base || digit > floor((maxInt - i) / w)) {
+					error('overflow');
+				}
+
+				i += digit * w;
+				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+				if (digit < t) {
+					break;
+				}
+
+				baseMinusT = base - t;
+				if (w > floor(maxInt / baseMinusT)) {
+					error('overflow');
+				}
+
+				w *= baseMinusT;
+
+			}
+
+			out = output.length + 1;
+			bias = adapt(i - oldi, out, oldi == 0);
+
+			// `i` was supposed to wrap around from `out` to `0`,
+			// incrementing `n` each time, so we'll fix that now:
+			if (floor(i / out) > maxInt - n) {
+				error('overflow');
+			}
+
+			n += floor(i / out);
+			i %= out;
+
+			// Insert `n` at position `i` of the output
+			output.splice(i++, 0, n);
+
+		}
+
+		return ucs2encode(output);
+	}
+
+	/**
+	 * Converts a string of Unicode symbols to a Punycode string of ASCII-only
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The string of Unicode symbols.
+	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+	 */
+	function encode(input) {
+		var n,
+		    delta,
+		    handledCPCount,
+		    basicLength,
+		    bias,
+		    j,
+		    m,
+		    q,
+		    k,
+		    t,
+		    currentValue,
+		    output = [],
+		    /** `inputLength` will hold the number of code points in `input`. */
+		    inputLength,
+		    /** Cached calculation results */
+		    handledCPCountPlusOne,
+		    baseMinusT,
+		    qMinusT;
+
+		// Convert the input in UCS-2 to Unicode
+		input = ucs2decode(input);
+
+		// Cache the length
+		inputLength = input.length;
+
+		// Initialize the state
+		n = initialN;
+		delta = 0;
+		bias = initialBias;
+
+		// Handle the basic code points
+		for (j = 0; j < inputLength; ++j) {
+			currentValue = input[j];
+			if (currentValue < 0x80) {
+				output.push(stringFromCharCode(currentValue));
+			}
+		}
+
+		handledCPCount = basicLength = output.length;
+
+		// `handledCPCount` is the number of code points that have been handled;
+		// `basicLength` is the number of basic code points.
+
+		// Finish the basic string - if it is not empty - with a delimiter
+		if (basicLength) {
+			output.push(delimiter);
+		}
+
+		// Main encoding loop:
+		while (handledCPCount < inputLength) {
+
+			// All non-basic code points < n have been handled already. Find the next
+			// larger one:
+			for (m = maxInt, j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue >= n && currentValue < m) {
+					m = currentValue;
+				}
+			}
+
+			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+			// but guard against overflow
+			handledCPCountPlusOne = handledCPCount + 1;
+			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+				error('overflow');
+			}
+
+			delta += (m - n) * handledCPCountPlusOne;
+			n = m;
+
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+
+				if (currentValue < n && ++delta > maxInt) {
+					error('overflow');
+				}
+
+				if (currentValue == n) {
+					// Represent delta as a generalized variable-length integer
+					for (q = delta, k = base; /* no condition */; k += base) {
+						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+						if (q < t) {
+							break;
+						}
+						qMinusT = q - t;
+						baseMinusT = base - t;
+						output.push(
+							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+						);
+						q = floor(qMinusT / baseMinusT);
+					}
+
+					output.push(stringFromCharCode(digitToBasic(q, 0)));
+					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+					delta = 0;
+					++handledCPCount;
+				}
+			}
+
+			++delta;
+			++n;
+
+		}
+		return output.join('');
+	}
+
+	/**
+	 * Converts a Punycode string representing a domain name to Unicode. Only the
+	 * Punycoded parts of the domain name will be converted, i.e. it doesn't
+	 * matter if you call it on a string that has already been converted to
+	 * Unicode.
+	 * @memberOf punycode
+	 * @param {String} domain The Punycode domain name to convert to Unicode.
+	 * @returns {String} The Unicode representation of the given Punycode
+	 * string.
+	 */
+	function toUnicode(domain) {
+		return mapDomain(domain, function(string) {
+			return regexPunycode.test(string)
+				? decode(string.slice(4).toLowerCase())
+				: string;
+		});
+	}
+
+	/**
+	 * Converts a Unicode string representing a domain name to Punycode. Only the
+	 * non-ASCII parts of the domain name will be converted, i.e. it doesn't
+	 * matter if you call it with a domain that's already in ASCII.
+	 * @memberOf punycode
+	 * @param {String} domain The domain name to convert, as a Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name.
+	 */
+	function toASCII(domain) {
+		return mapDomain(domain, function(string) {
+			return regexNonASCII.test(string)
+				? 'xn--' + encode(string)
+				: string;
+		});
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	/** Define the public API */
+	punycode = {
+		/**
+		 * A string representing the current Punycode.js version number.
+		 * @memberOf punycode
+		 * @type String
+		 */
+		'version': '1.2.4',
+		/**
+		 * An object of methods to convert from JavaScript's internal character
+		 * representation (UCS-2) to Unicode code points, and back.
+		 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode
+		 * @type Object
+		 */
+		'ucs2': {
+			'decode': ucs2decode,
+			'encode': ucs2encode
+		},
+		'decode': decode,
+		'encode': encode,
+		'toASCII': toASCII,
+		'toUnicode': toUnicode
+	};
+
+	/** Expose `punycode` */
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		typeof define == 'function' &&
+		typeof define.amd == 'object' &&
+		define.amd
+	) {
+		define('punycode', function() {
+			return punycode;
+		});
+	} else if (freeExports && !freeExports.nodeType) {
+		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+			freeModule.exports = punycode;
+		} else { // in Narwhal or RingoJS v0.7.0-
+			for (key in punycode) {
+				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+			}
+		}
+	} else { // in Rhino or a web browser
+		root.punycode = punycode;
+	}
+
+}(this));
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],2:[function(_dereq_,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+// If obj.hasOwnProperty has been overridden, then calling
+// obj.hasOwnProperty(prop) will break.
+// See: https://github.com/joyent/node/issues/1707
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+module.exports = function(qs, sep, eq, options) {
+  sep = sep || '&';
+  eq = eq || '=';
+  var obj = {};
+
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
+  }
+
+  var regexp = /\+/g;
+  qs = qs.split(sep);
+
+  var maxKeys = 1000;
+  if (options && typeof options.maxKeys === 'number') {
+    maxKeys = options.maxKeys;
+  }
+
+  var len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
+  }
+
+  for (var i = 0; i < len; ++i) {
+    var x = qs[i].replace(regexp, '%20'),
+        idx = x.indexOf(eq),
+        kstr, vstr, k, v;
+
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
+    } else {
+      kstr = x;
+      vstr = '';
+    }
+
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
+
+    if (!hasOwnProperty(obj, k)) {
+      obj[k] = v;
+    } else if (isArray(obj[k])) {
+      obj[k].push(v);
+    } else {
+      obj[k] = [obj[k], v];
+    }
+  }
+
+  return obj;
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+},{}],3:[function(_dereq_,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+var stringifyPrimitive = function(v) {
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
+};
+
+module.exports = function(obj, sep, eq, name) {
+  sep = sep || '&';
+  eq = eq || '=';
+  if (obj === null) {
+    obj = undefined;
+  }
+
+  if (typeof obj === 'object') {
+    return map(objectKeys(obj), function(k) {
+      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+      if (isArray(obj[k])) {
+        return obj[k].map(function(v) {
+          return ks + encodeURIComponent(stringifyPrimitive(v));
+        }).join(sep);
+      } else {
+        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+      }
+    }).join(sep);
+
+  }
+
+  if (!name) return '';
+  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+         encodeURIComponent(stringifyPrimitive(obj));
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+function map (xs, f) {
+  if (xs.map) return xs.map(f);
+  var res = [];
+  for (var i = 0; i < xs.length; i++) {
+    res.push(f(xs[i], i));
+  }
+  return res;
+}
+
+var objectKeys = Object.keys || function (obj) {
+  var res = [];
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
+  }
+  return res;
+};
+
+},{}],4:[function(_dereq_,module,exports){
+'use strict';
+
+exports.decode = exports.parse = _dereq_('./decode');
+exports.encode = exports.stringify = _dereq_('./encode');
+
+},{"./decode":2,"./encode":3}],5:[function(_dereq_,module,exports){
+/*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
+(function () {
+  "use strict";
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var punycode = _dereq_('punycode');
+
+exports.parse = urlParse;
+exports.resolve = urlResolve;
+exports.resolveObject = urlResolveObject;
+exports.format = urlFormat;
+
+// Reference: RFC 3986, RFC 1808, RFC 2396
+
+// define these here so at least they only have to be
+// compiled once on the first module load.
+var protocolPattern = /^([a-z0-9.+-]+:)/i,
+    portPattern = /:[0-9]*$/,
+
+    // RFC 2396: characters reserved for delimiting URLs.
+    // We actually just auto-escape these.
+    delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+
+    // RFC 2396: characters not allowed for various reasons.
+    unwise = ['{', '}', '|', '\\', '^', '~', '`'].concat(delims),
+
+    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+    autoEscape = ['\''].concat(delims),
+    // Characters that are never ever allowed in a hostname.
+    // Note that any invalid chars are also handled, but these
+    // are the ones that are *expected* to be seen, so we fast-path
+    // them.
+    nonHostChars = ['%', '/', '?', ';', '#']
+      .concat(unwise).concat(autoEscape),
+    nonAuthChars = ['/', '@', '?', '#'].concat(delims),
+    hostnameMaxLen = 255,
+    hostnamePartPattern = /^[a-zA-Z0-9][a-z0-9A-Z_-]{0,62}$/,
+    hostnamePartStart = /^([a-zA-Z0-9][a-z0-9A-Z_-]{0,62})(.*)$/,
+    // protocols that can allow "unsafe" and "unwise" chars.
+    unsafeProtocol = {
+      'javascript': true,
+      'javascript:': true
+    },
+    // protocols that never have a hostname.
+    hostlessProtocol = {
+      'javascript': true,
+      'javascript:': true
+    },
+    // protocols that always have a path component.
+    pathedProtocol = {
+      'http': true,
+      'https': true,
+      'ftp': true,
+      'gopher': true,
+      'file': true,
+      'http:': true,
+      'ftp:': true,
+      'gopher:': true,
+      'file:': true
+    },
+    // protocols that always contain a // bit.
+    slashedProtocol = {
+      'http': true,
+      'https': true,
+      'ftp': true,
+      'gopher': true,
+      'file': true,
+      'http:': true,
+      'https:': true,
+      'ftp:': true,
+      'gopher:': true,
+      'file:': true
+    },
+    querystring = _dereq_('querystring');
+
+function urlParse(url, parseQueryString, slashesDenoteHost) {
+  if (url && typeof(url) === 'object' && url.href) return url;
+
+  if (typeof url !== 'string') {
+    throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
+  }
+
+  var out = {},
+      rest = url;
+
+  // trim before proceeding.
+  // This is to support parse stuff like "  http://foo.com  \n"
+  rest = rest.trim();
+
+  var proto = protocolPattern.exec(rest);
+  if (proto) {
+    proto = proto[0];
+    var lowerProto = proto.toLowerCase();
+    out.protocol = lowerProto;
+    rest = rest.substr(proto.length);
+  }
+
+  // figure out if it's got a host
+  // user@server is *always* interpreted as a hostname, and url
+  // resolution will treat //foo/bar as host=foo,path=bar because that's
+  // how the browser resolves relative URLs.
+  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+    var slashes = rest.substr(0, 2) === '//';
+    if (slashes && !(proto && hostlessProtocol[proto])) {
+      rest = rest.substr(2);
+      out.slashes = true;
+    }
+  }
+
+  if (!hostlessProtocol[proto] &&
+      (slashes || (proto && !slashedProtocol[proto]))) {
+    // there's a hostname.
+    // the first instance of /, ?, ;, or # ends the host.
+    // don't enforce full RFC correctness, just be unstupid about it.
+
+    // If there is an @ in the hostname, then non-host chars *are* allowed
+    // to the left of the first @ sign, unless some non-auth character
+    // comes *before* the @-sign.
+    // URLs are obnoxious.
+    var atSign = rest.indexOf('@');
+    if (atSign !== -1) {
+      var auth = rest.slice(0, atSign);
+
+      // there *may be* an auth
+      var hasAuth = true;
+      for (var i = 0, l = nonAuthChars.length; i < l; i++) {
+        if (auth.indexOf(nonAuthChars[i]) !== -1) {
+          // not a valid auth.  Something like http://foo.com/bar@baz/
+          hasAuth = false;
+          break;
+        }
+      }
+
+      if (hasAuth) {
+        // pluck off the auth portion.
+        out.auth = decodeURIComponent(auth);
+        rest = rest.substr(atSign + 1);
+      }
+    }
+
+    var firstNonHost = -1;
+    for (var i = 0, l = nonHostChars.length; i < l; i++) {
+      var index = rest.indexOf(nonHostChars[i]);
+      if (index !== -1 &&
+          (firstNonHost < 0 || index < firstNonHost)) firstNonHost = index;
+    }
+
+    if (firstNonHost !== -1) {
+      out.host = rest.substr(0, firstNonHost);
+      rest = rest.substr(firstNonHost);
+    } else {
+      out.host = rest;
+      rest = '';
+    }
+
+    // pull out port.
+    var p = parseHost(out.host);
+    var keys = Object.keys(p);
+    for (var i = 0, l = keys.length; i < l; i++) {
+      var key = keys[i];
+      out[key] = p[key];
+    }
+
+    // we've indicated that there is a hostname,
+    // so even if it's empty, it has to be present.
+    out.hostname = out.hostname || '';
+
+    // if hostname begins with [ and ends with ]
+    // assume that it's an IPv6 address.
+    var ipv6Hostname = out.hostname[0] === '[' &&
+        out.hostname[out.hostname.length - 1] === ']';
+
+    // validate a little.
+    if (out.hostname.length > hostnameMaxLen) {
+      out.hostname = '';
+    } else if (!ipv6Hostname) {
+      var hostparts = out.hostname.split(/\./);
+      for (var i = 0, l = hostparts.length; i < l; i++) {
+        var part = hostparts[i];
+        if (!part) continue;
+        if (!part.match(hostnamePartPattern)) {
+          var newpart = '';
+          for (var j = 0, k = part.length; j < k; j++) {
+            if (part.charCodeAt(j) > 127) {
+              // we replace non-ASCII char with a temporary placeholder
+              // we need this to make sure size of hostname is not
+              // broken by replacing non-ASCII by nothing
+              newpart += 'x';
+            } else {
+              newpart += part[j];
+            }
+          }
+          // we test again with ASCII char only
+          if (!newpart.match(hostnamePartPattern)) {
+            var validParts = hostparts.slice(0, i);
+            var notHost = hostparts.slice(i + 1);
+            var bit = part.match(hostnamePartStart);
+            if (bit) {
+              validParts.push(bit[1]);
+              notHost.unshift(bit[2]);
+            }
+            if (notHost.length) {
+              rest = '/' + notHost.join('.') + rest;
+            }
+            out.hostname = validParts.join('.');
+            break;
+          }
+        }
+      }
+    }
+
+    // hostnames are always lower case.
+    out.hostname = out.hostname.toLowerCase();
+
+    if (!ipv6Hostname) {
+      // IDNA Support: Returns a puny coded representation of "domain".
+      // It only converts the part of the domain name that
+      // has non ASCII characters. I.e. it dosent matter if
+      // you call it with a domain that already is in ASCII.
+      var domainArray = out.hostname.split('.');
+      var newOut = [];
+      for (var i = 0; i < domainArray.length; ++i) {
+        var s = domainArray[i];
+        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
+            'xn--' + punycode.encode(s) : s);
+      }
+      out.hostname = newOut.join('.');
+    }
+
+    out.host = (out.hostname || '') +
+        ((out.port) ? ':' + out.port : '');
+    out.href += out.host;
+
+    // strip [ and ] from the hostname
+    if (ipv6Hostname) {
+      out.hostname = out.hostname.substr(1, out.hostname.length - 2);
+      if (rest[0] !== '/') {
+        rest = '/' + rest;
+      }
+    }
+  }
+
+  // now rest is set to the post-host stuff.
+  // chop off any delim chars.
+  if (!unsafeProtocol[lowerProto]) {
+
+    // First, make 100% sure that any "autoEscape" chars get
+    // escaped, even if encodeURIComponent doesn't think they
+    // need to be.
+    for (var i = 0, l = autoEscape.length; i < l; i++) {
+      var ae = autoEscape[i];
+      var esc = encodeURIComponent(ae);
+      if (esc === ae) {
+        esc = escape(ae);
+      }
+      rest = rest.split(ae).join(esc);
+    }
+  }
+
+
+  // chop off from the tail first.
+  var hash = rest.indexOf('#');
+  if (hash !== -1) {
+    // got a fragment string.
+    out.hash = rest.substr(hash);
+    rest = rest.slice(0, hash);
+  }
+  var qm = rest.indexOf('?');
+  if (qm !== -1) {
+    out.search = rest.substr(qm);
+    out.query = rest.substr(qm + 1);
+    if (parseQueryString) {
+      out.query = querystring.parse(out.query);
+    }
+    rest = rest.slice(0, qm);
+  } else if (parseQueryString) {
+    // no query string, but parseQueryString still requested
+    out.search = '';
+    out.query = {};
+  }
+  if (rest) out.pathname = rest;
+  if (slashedProtocol[proto] &&
+      out.hostname && !out.pathname) {
+    out.pathname = '/';
+  }
+
+  //to support http.request
+  if (out.pathname || out.search) {
+    out.path = (out.pathname ? out.pathname : '') +
+               (out.search ? out.search : '');
+  }
+
+  // finally, reconstruct the href based on what has been validated.
+  out.href = urlFormat(out);
+  return out;
+}
+
+// format a parsed object into a url string
+function urlFormat(obj) {
+  // ensure it's an object, and not a string url.
+  // If it's an obj, this is a no-op.
+  // this way, you can call url_format() on strings
+  // to clean up potentially wonky urls.
+  if (typeof(obj) === 'string') obj = urlParse(obj);
+
+  var auth = obj.auth || '';
+  if (auth) {
+    auth = encodeURIComponent(auth);
+    auth = auth.replace(/%3A/i, ':');
+    auth += '@';
+  }
+
+  var protocol = obj.protocol || '',
+      pathname = obj.pathname || '',
+      hash = obj.hash || '',
+      host = false,
+      query = '';
+
+  if (obj.host !== undefined) {
+    host = auth + obj.host;
+  } else if (obj.hostname !== undefined) {
+    host = auth + (obj.hostname.indexOf(':') === -1 ?
+        obj.hostname :
+        '[' + obj.hostname + ']');
+    if (obj.port) {
+      host += ':' + obj.port;
+    }
+  }
+
+  if (obj.query && typeof obj.query === 'object' &&
+      Object.keys(obj.query).length) {
+    query = querystring.stringify(obj.query);
+  }
+
+  var search = obj.search || (query && ('?' + query)) || '';
+
+  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
+
+  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
+  // unless they had them to begin with.
+  if (obj.slashes ||
+      (!protocol || slashedProtocol[protocol]) && host !== false) {
+    host = '//' + (host || '');
+    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
+  } else if (!host) {
+    host = '';
+  }
+
+  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
+  if (search && search.charAt(0) !== '?') search = '?' + search;
+
+  return protocol + host + pathname + search + hash;
+}
+
+function urlResolve(source, relative) {
+  return urlFormat(urlResolveObject(source, relative));
+}
+
+function urlResolveObject(source, relative) {
+  if (!source) return relative;
+
+  source = urlParse(urlFormat(source), false, true);
+  relative = urlParse(urlFormat(relative), false, true);
+
+  // hash is always overridden, no matter what.
+  source.hash = relative.hash;
+
+  if (relative.href === '') {
+    source.href = urlFormat(source);
+    return source;
+  }
+
+  // hrefs like //foo/bar always cut to the protocol.
+  if (relative.slashes && !relative.protocol) {
+    relative.protocol = source.protocol;
+    //urlParse appends trailing / to urls like http://www.example.com
+    if (slashedProtocol[relative.protocol] &&
+        relative.hostname && !relative.pathname) {
+      relative.path = relative.pathname = '/';
+    }
+    relative.href = urlFormat(relative);
+    return relative;
+  }
+
+  if (relative.protocol && relative.protocol !== source.protocol) {
+    // if it's a known url protocol, then changing
+    // the protocol does weird things
+    // first, if it's not file:, then we MUST have a host,
+    // and if there was a path
+    // to begin with, then we MUST have a path.
+    // if it is file:, then the host is dropped,
+    // because that's known to be hostless.
+    // anything else is assumed to be absolute.
+    if (!slashedProtocol[relative.protocol]) {
+      relative.href = urlFormat(relative);
+      return relative;
+    }
+    source.protocol = relative.protocol;
+    if (!relative.host && !hostlessProtocol[relative.protocol]) {
+      var relPath = (relative.pathname || '').split('/');
+      while (relPath.length && !(relative.host = relPath.shift()));
+      if (!relative.host) relative.host = '';
+      if (!relative.hostname) relative.hostname = '';
+      if (relPath[0] !== '') relPath.unshift('');
+      if (relPath.length < 2) relPath.unshift('');
+      relative.pathname = relPath.join('/');
+    }
+    source.pathname = relative.pathname;
+    source.search = relative.search;
+    source.query = relative.query;
+    source.host = relative.host || '';
+    source.auth = relative.auth;
+    source.hostname = relative.hostname || relative.host;
+    source.port = relative.port;
+    //to support http.request
+    if (source.pathname !== undefined || source.search !== undefined) {
+      source.path = (source.pathname ? source.pathname : '') +
+                    (source.search ? source.search : '');
+    }
+    source.slashes = source.slashes || relative.slashes;
+    source.href = urlFormat(source);
+    return source;
+  }
+
+  var isSourceAbs = (source.pathname && source.pathname.charAt(0) === '/'),
+      isRelAbs = (
+          relative.host !== undefined ||
+          relative.pathname && relative.pathname.charAt(0) === '/'
+      ),
+      mustEndAbs = (isRelAbs || isSourceAbs ||
+                    (source.host && relative.pathname)),
+      removeAllDots = mustEndAbs,
+      srcPath = source.pathname && source.pathname.split('/') || [],
+      relPath = relative.pathname && relative.pathname.split('/') || [],
+      psychotic = source.protocol &&
+          !slashedProtocol[source.protocol];
+
+  // if the url is a non-slashed url, then relative
+  // links like ../.. should be able
+  // to crawl up to the hostname, as well.  This is strange.
+  // source.protocol has already been set by now.
+  // Later on, put the first path part into the host field.
+  if (psychotic) {
+
+    delete source.hostname;
+    delete source.port;
+    if (source.host) {
+      if (srcPath[0] === '') srcPath[0] = source.host;
+      else srcPath.unshift(source.host);
+    }
+    delete source.host;
+    if (relative.protocol) {
+      delete relative.hostname;
+      delete relative.port;
+      if (relative.host) {
+        if (relPath[0] === '') relPath[0] = relative.host;
+        else relPath.unshift(relative.host);
+      }
+      delete relative.host;
+    }
+    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
+  }
+
+  if (isRelAbs) {
+    // it's absolute.
+    source.host = (relative.host || relative.host === '') ?
+                      relative.host : source.host;
+    source.hostname = (relative.hostname || relative.hostname === '') ?
+                      relative.hostname : source.hostname;
+    source.search = relative.search;
+    source.query = relative.query;
+    srcPath = relPath;
+    // fall through to the dot-handling below.
+  } else if (relPath.length) {
+    // it's relative
+    // throw away the existing file, and take the new path instead.
+    if (!srcPath) srcPath = [];
+    srcPath.pop();
+    srcPath = srcPath.concat(relPath);
+    source.search = relative.search;
+    source.query = relative.query;
+  } else if ('search' in relative) {
+    // just pull out the search.
+    // like href='?foo'.
+    // Put this after the other two cases because it simplifies the booleans
+    if (psychotic) {
+      source.hostname = source.host = srcPath.shift();
+      //occationaly the auth can get stuck only in host
+      //this especialy happens in cases like
+      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+      var authInHost = source.host && source.host.indexOf('@') > 0 ?
+                       source.host.split('@') : false;
+      if (authInHost) {
+        source.auth = authInHost.shift();
+        source.host = source.hostname = authInHost.shift();
+      }
+    }
+    source.search = relative.search;
+    source.query = relative.query;
+    //to support http.request
+    if (source.pathname !== undefined || source.search !== undefined) {
+      source.path = (source.pathname ? source.pathname : '') +
+                    (source.search ? source.search : '');
+    }
+    source.href = urlFormat(source);
+    return source;
+  }
+  if (!srcPath.length) {
+    // no path at all.  easy.
+    // we've already handled the other stuff above.
+    delete source.pathname;
+    //to support http.request
+    if (!source.search) {
+      source.path = '/' + source.search;
+    } else {
+      delete source.path;
+    }
+    source.href = urlFormat(source);
+    return source;
+  }
+  // if a url ENDs in . or .., then it must get a trailing slash.
+  // however, if it ends in anything else non-slashy,
+  // then it must NOT get a trailing slash.
+  var last = srcPath.slice(-1)[0];
+  var hasTrailingSlash = (
+      (source.host || relative.host) && (last === '.' || last === '..') ||
+      last === '');
+
+  // strip single dots, resolve double dots to parent dir
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = srcPath.length; i >= 0; i--) {
+    last = srcPath[i];
+    if (last == '.') {
+      srcPath.splice(i, 1);
+    } else if (last === '..') {
+      srcPath.splice(i, 1);
+      up++;
+    } else if (up) {
+      srcPath.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (!mustEndAbs && !removeAllDots) {
+    for (; up--; up) {
+      srcPath.unshift('..');
+    }
+  }
+
+  if (mustEndAbs && srcPath[0] !== '' &&
+      (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
+    srcPath.unshift('');
+  }
+
+  if (hasTrailingSlash && (srcPath.join('/').substr(-1) !== '/')) {
+    srcPath.push('');
+  }
+
+  var isAbsolute = srcPath[0] === '' ||
+      (srcPath[0] && srcPath[0].charAt(0) === '/');
+
+  // put the host back
+  if (psychotic) {
+    source.hostname = source.host = isAbsolute ? '' :
+                                    srcPath.length ? srcPath.shift() : '';
+    //occationaly the auth can get stuck only in host
+    //this especialy happens in cases like
+    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+    var authInHost = source.host && source.host.indexOf('@') > 0 ?
+                     source.host.split('@') : false;
+    if (authInHost) {
+      source.auth = authInHost.shift();
+      source.host = source.hostname = authInHost.shift();
+    }
+  }
+
+  mustEndAbs = mustEndAbs || (source.host && srcPath.length);
+
+  if (mustEndAbs && !isAbsolute) {
+    srcPath.unshift('');
+  }
+
+  source.pathname = srcPath.join('/');
+  //to support request.http
+  if (source.pathname !== undefined || source.search !== undefined) {
+    source.path = (source.pathname ? source.pathname : '') +
+                  (source.search ? source.search : '');
+  }
+  source.auth = relative.auth || source.auth;
+  source.slashes = source.slashes || relative.slashes;
+  source.href = urlFormat(source);
+  return source;
+}
+
+function parseHost(host) {
+  var out = {};
+  var port = portPattern.exec(host);
+  if (port) {
+    port = port[0];
+    if (port !== ':') {
+      out.port = port.substr(1);
+    }
+    host = host.substr(0, host.length - port.length);
+  }
+  if (host) out.hostname = host;
+  return out;
+}
+
+}());
+
+},{"punycode":1,"querystring":4}],6:[function(_dereq_,module,exports){
+// UMD header
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.ayepromise = factory();
+    }
+}(this, function () {
+    'use strict';
+
+    var ayepromise = {};
+
+    /* Wrap an arbitrary number of functions and allow only one of them to be
+       executed and only once */
+    var once = function () {
+        var wasCalled = false;
+
+        return function wrapper(wrappedFunction) {
+            return function () {
+                if (wasCalled) {
+                    return;
+                }
+                wasCalled = true;
+                wrappedFunction.apply(null, arguments);
+            };
+        };
+    };
+
+    var getThenableIfExists = function (obj) {
+        // Make sure we only access the accessor once
+        var then = obj && obj.then;
+
+        if (obj !== null &&
+            typeof obj === "object" &&
+            typeof then === "function") {
+
+            return then.bind(obj);
+        }
+    };
+
+    var doChainCall = function (defer, func, value) {
+        setTimeout(function () {
+            var returnValue;
+            try {
+                returnValue = func(value);
+            } catch (e) {
+                defer.reject(e);
+                return;
+            }
+
+            if (returnValue === defer.promise) {
+                defer.reject(new TypeError('Cannot resolve promise with itself'));
+            } else {
+                defer.resolve(returnValue);
+            }
+        }, 1);
+    };
+
+    var doFulfillCall = function (defer, onFulfilled, value) {
+        if (onFulfilled && onFulfilled.call) {
+            doChainCall(defer, onFulfilled, value);
+        } else {
+            defer.resolve(value);
+        }
+    };
+
+    var doRejectCall = function (defer, onRejected, value) {
+        if (onRejected && onRejected.call) {
+            doChainCall(defer, onRejected, value);
+        } else {
+            defer.reject(value);
+        }
+    };
+
+    var aCallChainLink = function (onFulfilled, onRejected) {
+        var defer = ayepromise.defer();
+        return {
+            promise: defer.promise,
+            callFulfilled: function (value) {
+                doFulfillCall(defer, onFulfilled, value);
+            },
+            callRejected: function (value) {
+                doRejectCall(defer, onRejected, value);
+            }
+        };
+    };
+
+    // States
+    var PENDING = 0,
+        FULFILLED = 1,
+        REJECTED = 2;
+
+    ayepromise.defer = function () {
+        var state = PENDING,
+            outcome,
+            callbacks = [];
+
+        var doFulfill = function (value) {
+            state = FULFILLED;
+            outcome = value;
+
+            callbacks.forEach(function (link) {
+                link.callFulfilled(outcome);
+            });
+        };
+
+        var doReject = function (error) {
+            state = REJECTED;
+            outcome = error;
+
+            callbacks.forEach(function (link) {
+                link.callRejected(outcome);
+            });
+        };
+
+        var executeResultHandlerDirectlyIfStateNotPendingAnymore = function (link) {
+            if (state === FULFILLED) {
+                link.callFulfilled(outcome);
+            } else if (state === REJECTED) {
+                link.callRejected(outcome);
+            }
+        };
+
+        var registerResultHandler = function (onFulfilled, onRejected) {
+            var link = aCallChainLink(onFulfilled, onRejected);
+
+            callbacks.push(link);
+
+            executeResultHandlerDirectlyIfStateNotPendingAnymore(link);
+
+            return link.promise;
+        };
+
+        var safelyResolveThenable = function (thenable) {
+            // Either fulfill, reject or reject with error
+            var onceWrapper = once();
+            try {
+                thenable(
+                    onceWrapper(transparentlyResolveThenablesAndFulfill),
+                    onceWrapper(doReject)
+                );
+            } catch (e) {
+                onceWrapper(doReject)(e);
+            }
+        };
+
+        var transparentlyResolveThenablesAndFulfill = function (value) {
+            var thenable;
+
+            try {
+                thenable = getThenableIfExists(value);
+            } catch (e) {
+                doReject(e);
+                return;
+            }
+
+            if (thenable) {
+                safelyResolveThenable(thenable);
+            } else {
+                doFulfill(value);
+            }
+        };
+
+        var onceWrapper = once();
+        return {
+            resolve: onceWrapper(transparentlyResolveThenablesAndFulfill),
+            reject: onceWrapper(doReject),
+            promise: {
+                then: registerResultHandler,
+                fail: function (onRejected) {
+                    return registerResultHandler(null, onRejected);
+                }
+            }
+        };
+    };
+
+    return ayepromise;
+}));
+
+},{}],7:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+    CSSRule: _dereq_("./CSSRule").CSSRule,
+    MatcherList: _dereq_("./MatcherList").MatcherList
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see https://developer.mozilla.org/en/CSS/@-moz-document
+ */
+CSSOM.CSSDocumentRule = function CSSDocumentRule() {
+    CSSOM.CSSRule.call(this);
+    this.matcher = new CSSOM.MatcherList;
+    this.cssRules = [];
+};
+
+CSSOM.CSSDocumentRule.prototype = new CSSOM.CSSRule;
+CSSOM.CSSDocumentRule.prototype.constructor = CSSOM.CSSDocumentRule;
+CSSOM.CSSDocumentRule.prototype.type = 10;
+//FIXME
+//CSSOM.CSSDocumentRule.prototype.insertRule = CSSStyleSheet.prototype.insertRule;
+//CSSOM.CSSDocumentRule.prototype.deleteRule = CSSStyleSheet.prototype.deleteRule;
+
+Object.defineProperty(CSSOM.CSSDocumentRule.prototype, "cssText", {
+  get: function() {
+    var cssTexts = [];
+    for (var i=0, length=this.cssRules.length; i < length; i++) {
+        cssTexts.push(this.cssRules[i].cssText);
+    }
+    return "@-moz-document " + this.matcher.matcherText + " {" + cssTexts.join("") + "}";
+  }
+});
+
+
+//.CommonJS
+exports.CSSDocumentRule = CSSOM.CSSDocumentRule;
+///CommonJS
+
+},{"./CSSRule":13,"./MatcherList":19}],8:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSStyleDeclaration: _dereq_("./CSSStyleDeclaration").CSSStyleDeclaration,
+	CSSRule: _dereq_("./CSSRule").CSSRule
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://dev.w3.org/csswg/cssom/#css-font-face-rule
+ */
+CSSOM.CSSFontFaceRule = function CSSFontFaceRule() {
+	CSSOM.CSSRule.call(this);
+	this.style = new CSSOM.CSSStyleDeclaration;
+	this.style.parentRule = this;
+};
+
+CSSOM.CSSFontFaceRule.prototype = new CSSOM.CSSRule;
+CSSOM.CSSFontFaceRule.prototype.constructor = CSSOM.CSSFontFaceRule;
+CSSOM.CSSFontFaceRule.prototype.type = 5;
+//FIXME
+//CSSOM.CSSFontFaceRule.prototype.insertRule = CSSStyleSheet.prototype.insertRule;
+//CSSOM.CSSFontFaceRule.prototype.deleteRule = CSSStyleSheet.prototype.deleteRule;
+
+// http://www.opensource.apple.com/source/WebCore/WebCore-955.66.1/css/WebKitCSSFontFaceRule.cpp
+Object.defineProperty(CSSOM.CSSFontFaceRule.prototype, "cssText", {
+  get: function() {
+    return "@font-face {" + this.style.cssText + "}";
+  }
+});
+
+
+//.CommonJS
+exports.CSSFontFaceRule = CSSOM.CSSFontFaceRule;
+///CommonJS
+
+},{"./CSSRule":13,"./CSSStyleDeclaration":14}],9:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSRule: _dereq_("./CSSRule").CSSRule,
+	CSSStyleSheet: _dereq_("./CSSStyleSheet").CSSStyleSheet,
+	MediaList: _dereq_("./MediaList").MediaList
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://dev.w3.org/csswg/cssom/#cssimportrule
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSImportRule
+ */
+CSSOM.CSSImportRule = function CSSImportRule() {
+	CSSOM.CSSRule.call(this);
+	this.href = "";
+	this.media = new CSSOM.MediaList;
+	this.styleSheet = new CSSOM.CSSStyleSheet;
+};
+
+CSSOM.CSSImportRule.prototype = new CSSOM.CSSRule;
+CSSOM.CSSImportRule.prototype.constructor = CSSOM.CSSImportRule;
+CSSOM.CSSImportRule.prototype.type = 3;
+
+Object.defineProperty(CSSOM.CSSImportRule.prototype, "cssText", {
+  get: function() {
+    var mediaText = this.media.mediaText;
+    return "@import url(" + this.href + ")" + (mediaText ? " " + mediaText : "") + ";";
+  },
+  set: function(cssText) {
+    var i = 0;
+
+    /**
+     * @import url(partial.css) screen, handheld;
+     *        ||               |
+     *        after-import     media
+     *         |
+     *         url
+     */
+    var state = '';
+
+    var buffer = '';
+    var index;
+    var mediaText = '';
+    for (var character; character = cssText.charAt(i); i++) {
+
+      switch (character) {
+        case ' ':
+        case '\t':
+        case '\r':
+        case '\n':
+        case '\f':
+          if (state === 'after-import') {
+            state = 'url';
+          } else {
+            buffer += character;
+          }
+          break;
+
+        case '@':
+          if (!state && cssText.indexOf('@import', i) === i) {
+            state = 'after-import';
+            i += 'import'.length;
+            buffer = '';
+          }
+          break;
+
+        case 'u':
+          if (state === 'url' && cssText.indexOf('url(', i) === i) {
+            index = cssText.indexOf(')', i + 1);
+            if (index === -1) {
+              throw i + ': ")" not found';
+            }
+            i += 'url('.length;
+            var url = cssText.slice(i, index);
+            if (url[0] === url[url.length - 1]) {
+              if (url[0] === '"' || url[0] === "'") {
+                url = url.slice(1, -1);
+              }
+            }
+            this.href = url;
+            i = index;
+            state = 'media';
+          }
+          break;
+
+        case '"':
+          if (state === 'url') {
+            index = cssText.indexOf('"', i + 1);
+            if (!index) {
+              throw i + ": '\"' not found";
+            }
+            this.href = cssText.slice(i + 1, index);
+            i = index;
+            state = 'media';
+          }
+          break;
+
+        case "'":
+          if (state === 'url') {
+            index = cssText.indexOf("'", i + 1);
+            if (!index) {
+              throw i + ': "\'" not found';
+            }
+            this.href = cssText.slice(i + 1, index);
+            i = index;
+            state = 'media';
+          }
+          break;
+
+        case ';':
+          if (state === 'media') {
+            if (buffer) {
+              this.media.mediaText = buffer.trim();
+            }
+          }
+          break;
+
+        default:
+          if (state === 'media') {
+            buffer += character;
+          }
+          break;
+      }
+    }
+  }
+});
+
+
+//.CommonJS
+exports.CSSImportRule = CSSOM.CSSImportRule;
+///CommonJS
+
+},{"./CSSRule":13,"./CSSStyleSheet":16,"./MediaList":20}],10:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSRule: _dereq_("./CSSRule").CSSRule,
+	CSSStyleDeclaration: _dereq_('./CSSStyleDeclaration').CSSStyleDeclaration
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://www.w3.org/TR/css3-animations/#DOM-CSSKeyframeRule
+ */
+CSSOM.CSSKeyframeRule = function CSSKeyframeRule() {
+	CSSOM.CSSRule.call(this);
+	this.keyText = '';
+	this.style = new CSSOM.CSSStyleDeclaration;
+	this.style.parentRule = this;
+};
+
+CSSOM.CSSKeyframeRule.prototype = new CSSOM.CSSRule;
+CSSOM.CSSKeyframeRule.prototype.constructor = CSSOM.CSSKeyframeRule;
+CSSOM.CSSKeyframeRule.prototype.type = 9;
+//FIXME
+//CSSOM.CSSKeyframeRule.prototype.insertRule = CSSStyleSheet.prototype.insertRule;
+//CSSOM.CSSKeyframeRule.prototype.deleteRule = CSSStyleSheet.prototype.deleteRule;
+
+// http://www.opensource.apple.com/source/WebCore/WebCore-955.66.1/css/WebKitCSSKeyframeRule.cpp
+Object.defineProperty(CSSOM.CSSKeyframeRule.prototype, "cssText", {
+  get: function() {
+    return this.keyText + " {" + this.style.cssText + "} ";
+  }
+});
+
+
+//.CommonJS
+exports.CSSKeyframeRule = CSSOM.CSSKeyframeRule;
+///CommonJS
+
+},{"./CSSRule":13,"./CSSStyleDeclaration":14}],11:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSRule: _dereq_("./CSSRule").CSSRule
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://www.w3.org/TR/css3-animations/#DOM-CSSKeyframesRule
+ */
+CSSOM.CSSKeyframesRule = function CSSKeyframesRule() {
+	CSSOM.CSSRule.call(this);
+	this.name = '';
+	this.cssRules = [];
+};
+
+CSSOM.CSSKeyframesRule.prototype = new CSSOM.CSSRule;
+CSSOM.CSSKeyframesRule.prototype.constructor = CSSOM.CSSKeyframesRule;
+CSSOM.CSSKeyframesRule.prototype.type = 8;
+//FIXME
+//CSSOM.CSSKeyframesRule.prototype.insertRule = CSSStyleSheet.prototype.insertRule;
+//CSSOM.CSSKeyframesRule.prototype.deleteRule = CSSStyleSheet.prototype.deleteRule;
+
+// http://www.opensource.apple.com/source/WebCore/WebCore-955.66.1/css/WebKitCSSKeyframesRule.cpp
+Object.defineProperty(CSSOM.CSSKeyframesRule.prototype, "cssText", {
+  get: function() {
+    var cssTexts = [];
+    for (var i=0, length=this.cssRules.length; i < length; i++) {
+      cssTexts.push("  " + this.cssRules[i].cssText);
+    }
+    return "@" + (this._vendorPrefix || '') + "keyframes " + this.name + " { \n" + cssTexts.join("\n") + "\n}";
+  }
+});
+
+
+//.CommonJS
+exports.CSSKeyframesRule = CSSOM.CSSKeyframesRule;
+///CommonJS
+
+},{"./CSSRule":13}],12:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSRule: _dereq_("./CSSRule").CSSRule,
+	MediaList: _dereq_("./MediaList").MediaList
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://dev.w3.org/csswg/cssom/#cssmediarule
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSMediaRule
+ */
+CSSOM.CSSMediaRule = function CSSMediaRule() {
+	CSSOM.CSSRule.call(this);
+	this.media = new CSSOM.MediaList;
+	this.cssRules = [];
+};
+
+CSSOM.CSSMediaRule.prototype = new CSSOM.CSSRule;
+CSSOM.CSSMediaRule.prototype.constructor = CSSOM.CSSMediaRule;
+CSSOM.CSSMediaRule.prototype.type = 4;
+//FIXME
+//CSSOM.CSSMediaRule.prototype.insertRule = CSSStyleSheet.prototype.insertRule;
+//CSSOM.CSSMediaRule.prototype.deleteRule = CSSStyleSheet.prototype.deleteRule;
+
+// http://opensource.apple.com/source/WebCore/WebCore-658.28/css/CSSMediaRule.cpp
+Object.defineProperty(CSSOM.CSSMediaRule.prototype, "cssText", {
+  get: function() {
+    var cssTexts = [];
+    for (var i=0, length=this.cssRules.length; i < length; i++) {
+      cssTexts.push(this.cssRules[i].cssText);
+    }
+    return "@media " + this.media.mediaText + " {" + cssTexts.join("") + "}";
+  }
+});
+
+
+//.CommonJS
+exports.CSSMediaRule = CSSOM.CSSMediaRule;
+///CommonJS
+
+},{"./CSSRule":13,"./MediaList":20}],13:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://dev.w3.org/csswg/cssom/#the-cssrule-interface
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSRule
+ */
+CSSOM.CSSRule = function CSSRule() {
+	this.parentRule = null;
+	this.parentStyleSheet = null;
+};
+
+CSSOM.CSSRule.STYLE_RULE = 1;
+CSSOM.CSSRule.IMPORT_RULE = 3;
+CSSOM.CSSRule.MEDIA_RULE = 4;
+CSSOM.CSSRule.FONT_FACE_RULE = 5;
+CSSOM.CSSRule.PAGE_RULE = 6;
+CSSOM.CSSRule.WEBKIT_KEYFRAMES_RULE = 8;
+CSSOM.CSSRule.WEBKIT_KEYFRAME_RULE = 9;
+
+// Obsolete in CSSOM http://dev.w3.org/csswg/cssom/
+//CSSOM.CSSRule.UNKNOWN_RULE = 0;
+//CSSOM.CSSRule.CHARSET_RULE = 2;
+
+// Never implemented
+//CSSOM.CSSRule.VARIABLES_RULE = 7;
+
+CSSOM.CSSRule.prototype = {
+	constructor: CSSOM.CSSRule
+	//FIXME
+};
+
+
+//.CommonJS
+exports.CSSRule = CSSOM.CSSRule;
+///CommonJS
+
+},{}],14:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleDeclaration
+ */
+CSSOM.CSSStyleDeclaration = function CSSStyleDeclaration(){
+	this.length = 0;
+	this.parentRule = null;
+
+	// NON-STANDARD
+	this._importants = {};
+};
+
+
+CSSOM.CSSStyleDeclaration.prototype = {
+
+	constructor: CSSOM.CSSStyleDeclaration,
+
+	/**
+	 *
+	 * @param {string} name
+	 * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleDeclaration-getPropertyValue
+	 * @return {string} the value of the property if it has been explicitly set for this declaration block.
+	 * Returns the empty string if the property has not been set.
+	 */
+	getPropertyValue: function(name) {
+		return this[name] || "";
+	},
+
+	/**
+	 *
+	 * @param {string} name
+	 * @param {string} value
+	 * @param {string} [priority=null] "important" or null
+	 * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleDeclaration-setProperty
+	 */
+	setProperty: function(name, value, priority) {
+		if (this[name]) {
+			// Property already exist. Overwrite it.
+			var index = Array.prototype.indexOf.call(this, name);
+			if (index < 0) {
+				this[this.length] = name;
+				this.length++;
+			}
+		} else {
+			// New property.
+			this[this.length] = name;
+			this.length++;
+		}
+		this[name] = value;
+		this._importants[name] = priority;
+	},
+
+	/**
+	 *
+	 * @param {string} name
+	 * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleDeclaration-removeProperty
+	 * @return {string} the value of the property if it has been explicitly set for this declaration block.
+	 * Returns the empty string if the property has not been set or the property name does not correspond to a known CSS property.
+	 */
+	removeProperty: function(name) {
+		if (!(name in this)) {
+			return "";
+		}
+		var index = Array.prototype.indexOf.call(this, name);
+		if (index < 0) {
+			return "";
+		}
+		var prevValue = this[name];
+		this[name] = "";
+
+		// That's what WebKit and Opera do
+		Array.prototype.splice.call(this, index, 1);
+
+		// That's what Firefox does
+		//this[index] = ""
+
+		return prevValue;
+	},
+
+	getPropertyCSSValue: function() {
+		//FIXME
+	},
+
+	/**
+	 *
+	 * @param {String} name
+	 */
+	getPropertyPriority: function(name) {
+		return this._importants[name] || "";
+	},
+
+
+	/**
+	 *   element.style.overflow = "auto"
+	 *   element.style.getPropertyShorthand("overflow-x")
+	 *   -> "overflow"
+	 */
+	getPropertyShorthand: function() {
+		//FIXME
+	},
+
+	isPropertyImplicit: function() {
+		//FIXME
+	},
+
+	// Doesn't work in IE < 9
+	get cssText(){
+		var properties = [];
+		for (var i=0, length=this.length; i < length; ++i) {
+			var name = this[i];
+			var value = this.getPropertyValue(name);
+			var priority = this.getPropertyPriority(name);
+			if (priority) {
+				priority = " !" + priority;
+			}
+			properties[i] = name + ": " + value + priority + ";";
+		}
+		return properties.join(" ");
+	},
+
+	set cssText(cssText){
+		var i, name;
+		for (i = this.length; i--;) {
+			name = this[i];
+			this[name] = "";
+		}
+		Array.prototype.splice.call(this, 0, this.length);
+		this._importants = {};
+
+		var dummyRule = CSSOM.parse('#bogus{' + cssText + '}').cssRules[0].style;
+		var length = dummyRule.length;
+		for (i = 0; i < length; ++i) {
+			name = dummyRule[i];
+			this.setProperty(dummyRule[i], dummyRule.getPropertyValue(name), dummyRule.getPropertyPriority(name));
+		}
+	}
+};
+
+
+//.CommonJS
+exports.CSSStyleDeclaration = CSSOM.CSSStyleDeclaration;
+CSSOM.parse = _dereq_('./parse').parse; // Cannot be included sooner due to the mutual dependency between parse.js and CSSStyleDeclaration.js
+///CommonJS
+
+},{"./parse":24}],15:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSStyleDeclaration: _dereq_("./CSSStyleDeclaration").CSSStyleDeclaration,
+	CSSRule: _dereq_("./CSSRule").CSSRule
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://dev.w3.org/csswg/cssom/#cssstylerule
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleRule
+ */
+CSSOM.CSSStyleRule = function CSSStyleRule() {
+	CSSOM.CSSRule.call(this);
+	this.selectorText = "";
+	this.style = new CSSOM.CSSStyleDeclaration;
+	this.style.parentRule = this;
+};
+
+CSSOM.CSSStyleRule.prototype = new CSSOM.CSSRule;
+CSSOM.CSSStyleRule.prototype.constructor = CSSOM.CSSStyleRule;
+CSSOM.CSSStyleRule.prototype.type = 1;
+
+Object.defineProperty(CSSOM.CSSStyleRule.prototype, "cssText", {
+	get: function() {
+		var text;
+		if (this.selectorText) {
+			text = this.selectorText + " {" + this.style.cssText + "}";
+		} else {
+			text = "";
+		}
+		return text;
+	},
+	set: function(cssText) {
+		var rule = CSSOM.CSSStyleRule.parse(cssText);
+		this.style = rule.style;
+		this.selectorText = rule.selectorText;
+	}
+});
+
+
+/**
+ * NON-STANDARD
+ * lightweight version of parse.js.
+ * @param {string} ruleText
+ * @return CSSStyleRule
+ */
+CSSOM.CSSStyleRule.parse = function(ruleText) {
+	var i = 0;
+	var state = "selector";
+	var index;
+	var j = i;
+	var buffer = "";
+
+	var SIGNIFICANT_WHITESPACE = {
+		"selector": true,
+		"value": true
+	};
+
+	var styleRule = new CSSOM.CSSStyleRule;
+	var selector, name, value, priority="";
+
+	for (var character; character = ruleText.charAt(i); i++) {
+
+		switch (character) {
+
+		case " ":
+		case "\t":
+		case "\r":
+		case "\n":
+		case "\f":
+			if (SIGNIFICANT_WHITESPACE[state]) {
+				// Squash 2 or more white-spaces in the row into 1
+				switch (ruleText.charAt(i - 1)) {
+					case " ":
+					case "\t":
+					case "\r":
+					case "\n":
+					case "\f":
+						break;
+					default:
+						buffer += " ";
+						break;
+				}
+			}
+			break;
+
+		// String
+		case '"':
+			j = i + 1;
+			index = ruleText.indexOf('"', j) + 1;
+			if (!index) {
+				throw '" is missing';
+			}
+			buffer += ruleText.slice(i, index);
+			i = index - 1;
+			break;
+
+		case "'":
+			j = i + 1;
+			index = ruleText.indexOf("'", j) + 1;
+			if (!index) {
+				throw "' is missing";
+			}
+			buffer += ruleText.slice(i, index);
+			i = index - 1;
+			break;
+
+		// Comment
+		case "/":
+			if (ruleText.charAt(i + 1) === "*") {
+				i += 2;
+				index = ruleText.indexOf("*/", i);
+				if (index === -1) {
+					throw new SyntaxError("Missing */");
+				} else {
+					i = index + 1;
+				}
+			} else {
+				buffer += character;
+			}
+			break;
+
+		case "{":
+			if (state === "selector") {
+				styleRule.selectorText = buffer.trim();
+				buffer = "";
+				state = "name";
+			}
+			break;
+
+		case ":":
+			if (state === "name") {
+				name = buffer.trim();
+				buffer = "";
+				state = "value";
+			} else {
+				buffer += character;
+			}
+			break;
+
+		case "!":
+			if (state === "value" && ruleText.indexOf("!important", i) === i) {
+				priority = "important";
+				i += "important".length;
+			} else {
+				buffer += character;
+			}
+			break;
+
+		case ";":
+			if (state === "value") {
+				styleRule.style.setProperty(name, buffer.trim(), priority);
+				priority = "";
+				buffer = "";
+				state = "name";
+			} else {
+				buffer += character;
+			}
+			break;
+
+		case "}":
+			if (state === "value") {
+				styleRule.style.setProperty(name, buffer.trim(), priority);
+				priority = "";
+				buffer = "";
+			} else if (state === "name") {
+				break;
+			} else {
+				buffer += character;
+			}
+			state = "selector";
+			break;
+
+		default:
+			buffer += character;
+			break;
+
+		}
+	}
+
+	return styleRule;
+
+};
+
+
+//.CommonJS
+exports.CSSStyleRule = CSSOM.CSSStyleRule;
+///CommonJS
+
+},{"./CSSRule":13,"./CSSStyleDeclaration":14}],16:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	StyleSheet: _dereq_("./StyleSheet").StyleSheet,
+	CSSStyleRule: _dereq_("./CSSStyleRule").CSSStyleRule
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleSheet
+ */
+CSSOM.CSSStyleSheet = function CSSStyleSheet() {
+	CSSOM.StyleSheet.call(this);
+	this.cssRules = [];
+};
+
+
+CSSOM.CSSStyleSheet.prototype = new CSSOM.StyleSheet;
+CSSOM.CSSStyleSheet.prototype.constructor = CSSOM.CSSStyleSheet;
+
+
+/**
+ * Used to insert a new rule into the style sheet. The new rule now becomes part of the cascade.
+ *
+ *   sheet = new Sheet("body {margin: 0}")
+ *   sheet.toString()
+ *   -> "body{margin:0;}"
+ *   sheet.insertRule("img {border: none}", 0)
+ *   -> 0
+ *   sheet.toString()
+ *   -> "img{border:none;}body{margin:0;}"
+ *
+ * @param {string} rule
+ * @param {number} index
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleSheet-insertRule
+ * @return {number} The index within the style sheet's rule collection of the newly inserted rule.
+ */
+CSSOM.CSSStyleSheet.prototype.insertRule = function(rule, index) {
+	if (index < 0 || index > this.cssRules.length) {
+		throw new RangeError("INDEX_SIZE_ERR");
+	}
+	var cssRule = CSSOM.parse(rule).cssRules[0];
+	cssRule.parentStyleSheet = this;
+	this.cssRules.splice(index, 0, cssRule);
+	return index;
+};
+
+
+/**
+ * Used to delete a rule from the style sheet.
+ *
+ *   sheet = new Sheet("img{border:none} body{margin:0}")
+ *   sheet.toString()
+ *   -> "img{border:none;}body{margin:0;}"
+ *   sheet.deleteRule(0)
+ *   sheet.toString()
+ *   -> "body{margin:0;}"
+ *
+ * @param {number} index within the style sheet's rule list of the rule to remove.
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleSheet-deleteRule
+ */
+CSSOM.CSSStyleSheet.prototype.deleteRule = function(index) {
+	if (index < 0 || index >= this.cssRules.length) {
+		throw new RangeError("INDEX_SIZE_ERR");
+	}
+	this.cssRules.splice(index, 1);
+};
+
+
+/**
+ * NON-STANDARD
+ * @return {string} serialize stylesheet
+ */
+CSSOM.CSSStyleSheet.prototype.toString = function() {
+	var result = "";
+	var rules = this.cssRules;
+	for (var i=0; i<rules.length; i++) {
+		result += rules[i].cssText + "\n";
+	}
+	return result;
+};
+
+
+//.CommonJS
+exports.CSSStyleSheet = CSSOM.CSSStyleSheet;
+CSSOM.parse = _dereq_('./parse').parse; // Cannot be included sooner due to the mutual dependency between parse.js and CSSStyleSheet.js
+///CommonJS
+
+},{"./CSSStyleRule":15,"./StyleSheet":21,"./parse":24}],17:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSValue
+ *
+ * TODO: add if needed
+ */
+CSSOM.CSSValue = function CSSValue() {
+};
+
+CSSOM.CSSValue.prototype = {
+	constructor: CSSOM.CSSValue,
+
+	// @see: http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSValue
+	set cssText(text) {
+		var name = this._getConstructorName();
+
+		throw new Exception('DOMException: property "cssText" of "' + name + '" is readonly!');
+	},
+
+	get cssText() {
+		var name = this._getConstructorName();
+
+		throw new Exception('getter "cssText" of "' + name + '" is not implemented!');
+	},
+
+	_getConstructorName: function() {
+		var s = this.constructor.toString(),
+				c = s.match(/function\s([^\(]+)/),
+				name = c[1];
+
+		return name;
+	}
+};
+
+
+//.CommonJS
+exports.CSSValue = CSSOM.CSSValue;
+///CommonJS
+
+},{}],18:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSValue: _dereq_('./CSSValue').CSSValue
+};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://msdn.microsoft.com/en-us/library/ms537634(v=vs.85).aspx
+ *
+ */
+CSSOM.CSSValueExpression = function CSSValueExpression(token, idx) {
+	this._token = token;
+	this._idx = idx;
+};
+
+CSSOM.CSSValueExpression.prototype = new CSSOM.CSSValue;
+CSSOM.CSSValueExpression.prototype.constructor = CSSOM.CSSValueExpression;
+
+/**
+ * parse css expression() value
+ *
+ * @return {Object}
+ *				 - error:
+ *				 or
+ *				 - idx:
+ *				 - expression:
+ *
+ * Example:
+ *
+ * .selector {
+ *		zoom: expression(documentElement.clientWidth > 1000 ? '1000px' : 'auto');
+ * }
+ */
+CSSOM.CSSValueExpression.prototype.parse = function() {
+	var token = this._token,
+			idx = this._idx;
+
+	var character = '',
+			expression = '',
+			error = '',
+			info,
+			paren = [];
+
+
+	for (; ; ++idx) {
+		character = token.charAt(idx);
+
+		// end of token
+		if (character == '') {
+			error = 'css expression error: unfinished expression!';
+			break;
+		}
+
+		switch(character) {
+			case '(':
+				paren.push(character);
+				expression += character;
+				break;
+
+			case ')':
+				paren.pop(character);
+				expression += character;
+				break;
+
+			case '/':
+				if (info = this._parseJSComment(token, idx)) { // comment?
+					if (info.error) {
+						error = 'css expression error: unfinished comment in expression!';
+					} else {
+						idx = info.idx;
+						// ignore the comment
+					}
+				} else if (info = this._parseJSRexExp(token, idx)) { // regexp
+					idx = info.idx;
+					expression += info.text;
+				} else { // other
+					expression += character;
+				}
+				break;
+
+			case "'":
+			case '"':
+				info = this._parseJSString(token, idx, character);
+				if (info) { // string
+					idx = info.idx;
+					expression += info.text;
+				} else {
+					expression += character;
+				}
+				break;
+
+			default:
+				expression += character;
+				break;
+		}
+
+		if (error) {
+			break;
+		}
+
+		// end of expression
+		if (paren.length == 0) {
+			break;
+		}
+	}
+
+	var ret;
+	if (error) {
+		ret = {
+			error: error
+		}
+	} else {
+		ret = {
+			idx: idx,
+			expression: expression
+		}
+	}
+
+	return ret;
+};
+
+
+/**
+ *
+ * @return {Object|false}
+ *          - idx:
+ *          - text:
+ *          or
+ *          - error:
+ *          or
+ *          false
+ *
+ */
+CSSOM.CSSValueExpression.prototype._parseJSComment = function(token, idx) {
+	var nextChar = token.charAt(idx + 1),
+			text;
+
+	if (nextChar == '/' || nextChar == '*') {
+		var startIdx = idx,
+				endIdx,
+				commentEndChar;
+
+		if (nextChar == '/') { // line comment
+			commentEndChar = '\n';
+		} else if (nextChar == '*') { // block comment
+			commentEndChar = '*/';
+		}
+
+		endIdx = token.indexOf(commentEndChar, startIdx + 1 + 1);
+		if (endIdx !== -1) {
+			endIdx = endIdx + commentEndChar.length - 1;
+			text = token.substring(idx, endIdx + 1);
+			return {
+				idx: endIdx,
+				text: text
+			}
+		} else {
+			error = 'css expression error: unfinished comment in expression!';
+			return {
+				error: error
+			}
+		}
+	} else {
+		return false;
+	}
+};
+
+
+/**
+ *
+ * @return {Object|false}
+ *					- idx:
+ *					- text:
+ *					or 
+ *					false
+ *
+ */
+CSSOM.CSSValueExpression.prototype._parseJSString = function(token, idx, sep) {
+	var endIdx = this._findMatchedIdx(token, idx, sep),
+			text;
+
+	if (endIdx === -1) {
+		return false;
+	} else {
+		text = token.substring(idx, endIdx + sep.length);
+
+		return {
+			idx: endIdx,
+			text: text
+		}
+	}
+};
+
+
+/**
+ * parse regexp in css expression
+ *
+ * @return {Object|false}
+ *				 - idx:
+ *				 - regExp:
+ *				 or 
+ *				 false
+ */
+
+/*
+
+all legal RegExp
+ 
+/a/
+(/a/)
+[/a/]
+[12, /a/]
+
+!/a/
+
++/a/
+-/a/
+* /a/
+/ /a/
+%/a/
+
+===/a/
+!==/a/
+==/a/
+!=/a/
+>/a/
+>=/a/
+</a/
+<=/a/
+
+&/a/
+|/a/
+^/a/
+~/a/
+<</a/
+>>/a/
+>>>/a/
+
+&&/a/
+||/a/
+?/a/
+=/a/
+,/a/
+
+		delete /a/
+				in /a/
+instanceof /a/
+			 new /a/
+		typeof /a/
+			void /a/
+
+*/
+CSSOM.CSSValueExpression.prototype._parseJSRexExp = function(token, idx) {
+	var before = token.substring(0, idx).replace(/\s+$/, ""),
+			legalRegx = [
+				/^$/,
+				/\($/,
+				/\[$/,
+				/\!$/,
+				/\+$/,
+				/\-$/,
+				/\*$/,
+				/\/\s+/,
+				/\%$/,
+				/\=$/,
+				/\>$/,
+				/\<$/,
+				/\&$/,
+				/\|$/,
+				/\^$/,
+				/\~$/,
+				/\?$/,
+				/\,$/,
+				/delete$/,
+				/in$/,
+				/instanceof$/,
+				/new$/,
+				/typeof$/,
+				/void$/,
+			];
+
+	var isLegal = legalRegx.some(function(reg) {
+		return reg.test(before);
+	});
+
+	if (!isLegal) {
+		return false;
+	} else {
+		var sep = '/';
+
+		// same logic as string
+		return this._parseJSString(token, idx, sep);
+	}
+};
+
+
+/**
+ *
+ * find next sep(same line) index in `token`
+ *
+ * @return {Number}
+ *
+ */
+CSSOM.CSSValueExpression.prototype._findMatchedIdx = function(token, idx, sep) {
+	var startIdx = idx,
+			endIdx;
+
+	var NOT_FOUND = -1;
+
+	while(true) {
+		endIdx = token.indexOf(sep, startIdx + 1);
+
+		if (endIdx === -1) { // not found
+			endIdx = NOT_FOUND;
+			break;
+		} else {
+			var text = token.substring(idx + 1, endIdx),
+					matched = text.match(/\\+$/);
+			if (!matched || matched[0] % 2 == 0) { // not escaped
+				break;
+			} else {
+				startIdx = endIdx;
+			}
+		}
+	}
+
+	// boundary must be in the same line(js sting or regexp)
+	var nextNewLineIdx = token.indexOf('\n', idx + 1);
+	if (nextNewLineIdx < endIdx) {
+		endIdx = NOT_FOUND;
+	}
+
+
+	return endIdx;
+}
+
+
+
+
+//.CommonJS
+exports.CSSValueExpression = CSSOM.CSSValueExpression;
+///CommonJS
+
+},{"./CSSValue":17}],19:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see https://developer.mozilla.org/en/CSS/@-moz-document
+ */
+CSSOM.MatcherList = function MatcherList(){
+    this.length = 0;
+};
+
+CSSOM.MatcherList.prototype = {
+
+    constructor: CSSOM.MatcherList,
+
+    /**
+     * @return {string}
+     */
+    get matcherText() {
+        return Array.prototype.join.call(this, ", ");
+    },
+
+    /**
+     * @param {string} value
+     */
+    set matcherText(value) {
+        // just a temporary solution, actually it may be wrong by just split the value with ',', because a url can include ','.
+        var values = value.split(",");
+        var length = this.length = values.length;
+        for (var i=0; i<length; i++) {
+            this[i] = values[i].trim();
+        }
+    },
+
+    /**
+     * @param {string} matcher
+     */
+    appendMatcher: function(matcher) {
+        if (Array.prototype.indexOf.call(this, matcher) === -1) {
+            this[this.length] = matcher;
+            this.length++;
+        }
+    },
+
+    /**
+     * @param {string} matcher
+     */
+    deleteMatcher: function(matcher) {
+        var index = Array.prototype.indexOf.call(this, matcher);
+        if (index !== -1) {
+            Array.prototype.splice.call(this, index, 1);
+        }
+    }
+
+};
+
+
+//.CommonJS
+exports.MatcherList = CSSOM.MatcherList;
+///CommonJS
+
+},{}],20:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://dev.w3.org/csswg/cssom/#the-medialist-interface
+ */
+CSSOM.MediaList = function MediaList(){
+	this.length = 0;
+};
+
+CSSOM.MediaList.prototype = {
+
+	constructor: CSSOM.MediaList,
+
+	/**
+	 * @return {string}
+	 */
+	get mediaText() {
+		return Array.prototype.join.call(this, ", ");
+	},
+
+	/**
+	 * @param {string} value
+	 */
+	set mediaText(value) {
+		var values = value.split(",");
+		var length = this.length = values.length;
+		for (var i=0; i<length; i++) {
+			this[i] = values[i].trim();
+		}
+	},
+
+	/**
+	 * @param {string} medium
+	 */
+	appendMedium: function(medium) {
+		if (Array.prototype.indexOf.call(this, medium) === -1) {
+			this[this.length] = medium;
+			this.length++;
+		}
+	},
+
+	/**
+	 * @param {string} medium
+	 */
+	deleteMedium: function(medium) {
+		var index = Array.prototype.indexOf.call(this, medium);
+		if (index !== -1) {
+			Array.prototype.splice.call(this, index, 1);
+		}
+	}
+
+};
+
+
+//.CommonJS
+exports.MediaList = CSSOM.MediaList;
+///CommonJS
+
+},{}],21:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {};
+///CommonJS
+
+
+/**
+ * @constructor
+ * @see http://dev.w3.org/csswg/cssom/#the-stylesheet-interface
+ */
+CSSOM.StyleSheet = function StyleSheet() {
+	this.parentStyleSheet = null;
+};
+
+
+//.CommonJS
+exports.StyleSheet = CSSOM.StyleSheet;
+///CommonJS
+
+},{}],22:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {
+	CSSStyleSheet: _dereq_("./CSSStyleSheet").CSSStyleSheet,
+	CSSStyleRule: _dereq_("./CSSStyleRule").CSSStyleRule,
+	CSSMediaRule: _dereq_("./CSSMediaRule").CSSMediaRule,
+	CSSStyleDeclaration: _dereq_("./CSSStyleDeclaration").CSSStyleDeclaration,
+	CSSKeyframeRule: _dereq_('./CSSKeyframeRule').CSSKeyframeRule,
+	CSSKeyframesRule: _dereq_('./CSSKeyframesRule').CSSKeyframesRule
+};
+///CommonJS
+
+
+/**
+ * Produces a deep copy of stylesheet — the instance variables of stylesheet are copied recursively.
+ * @param {CSSStyleSheet|CSSOM.CSSStyleSheet} stylesheet
+ * @nosideeffects
+ * @return {CSSOM.CSSStyleSheet}
+ */
+CSSOM.clone = function clone(stylesheet) {
+
+	var cloned = new CSSOM.CSSStyleSheet;
+
+	var rules = stylesheet.cssRules;
+	if (!rules) {
+		return cloned;
+	}
+
+	var RULE_TYPES = {
+		1: CSSOM.CSSStyleRule,
+		4: CSSOM.CSSMediaRule,
+		//3: CSSOM.CSSImportRule,
+		//5: CSSOM.CSSFontFaceRule,
+		//6: CSSOM.CSSPageRule,
+		8: CSSOM.CSSKeyframesRule,
+		9: CSSOM.CSSKeyframeRule
+	};
+
+	for (var i=0, rulesLength=rules.length; i < rulesLength; i++) {
+		var rule = rules[i];
+		var ruleClone = cloned.cssRules[i] = new RULE_TYPES[rule.type];
+
+		var style = rule.style;
+		if (style) {
+			var styleClone = ruleClone.style = new CSSOM.CSSStyleDeclaration;
+			for (var j=0, styleLength=style.length; j < styleLength; j++) {
+				var name = styleClone[j] = style[j];
+				styleClone[name] = style[name];
+				styleClone._importants[name] = style.getPropertyPriority(name);
+			}
+			styleClone.length = style.length;
+		}
+
+		if (rule.hasOwnProperty('keyText')) {
+			ruleClone.keyText = rule.keyText;
+		}
+
+		if (rule.hasOwnProperty('selectorText')) {
+			ruleClone.selectorText = rule.selectorText;
+		}
+
+		if (rule.hasOwnProperty('mediaText')) {
+			ruleClone.mediaText = rule.mediaText;
+		}
+
+		if (rule.hasOwnProperty('cssRules')) {
+			ruleClone.cssRules = clone(rule).cssRules;
+		}
+	}
+
+	return cloned;
+
+};
+
+//.CommonJS
+exports.clone = CSSOM.clone;
+///CommonJS
+
+},{"./CSSKeyframeRule":10,"./CSSKeyframesRule":11,"./CSSMediaRule":12,"./CSSStyleDeclaration":14,"./CSSStyleRule":15,"./CSSStyleSheet":16}],23:[function(_dereq_,module,exports){
+'use strict';
+
+exports.CSSStyleDeclaration = _dereq_('./CSSStyleDeclaration').CSSStyleDeclaration;
+exports.CSSRule = _dereq_('./CSSRule').CSSRule;
+exports.CSSStyleRule = _dereq_('./CSSStyleRule').CSSStyleRule;
+exports.MediaList = _dereq_('./MediaList').MediaList;
+exports.CSSMediaRule = _dereq_('./CSSMediaRule').CSSMediaRule;
+exports.CSSImportRule = _dereq_('./CSSImportRule').CSSImportRule;
+exports.CSSFontFaceRule = _dereq_('./CSSFontFaceRule').CSSFontFaceRule;
+exports.StyleSheet = _dereq_('./StyleSheet').StyleSheet;
+exports.CSSStyleSheet = _dereq_('./CSSStyleSheet').CSSStyleSheet;
+exports.CSSKeyframesRule = _dereq_('./CSSKeyframesRule').CSSKeyframesRule;
+exports.CSSKeyframeRule = _dereq_('./CSSKeyframeRule').CSSKeyframeRule;
+exports.MatcherList = _dereq_('./MatcherList').MatcherList;
+exports.CSSDocumentRule = _dereq_('./CSSDocumentRule').CSSDocumentRule;
+exports.CSSValue = _dereq_('./CSSValue').CSSValue;
+exports.CSSValueExpression = _dereq_('./CSSValueExpression').CSSValueExpression;
+exports.parse = _dereq_('./parse').parse;
+exports.clone = _dereq_('./clone').clone;
+
+},{"./CSSDocumentRule":7,"./CSSFontFaceRule":8,"./CSSImportRule":9,"./CSSKeyframeRule":10,"./CSSKeyframesRule":11,"./CSSMediaRule":12,"./CSSRule":13,"./CSSStyleDeclaration":14,"./CSSStyleRule":15,"./CSSStyleSheet":16,"./CSSValue":17,"./CSSValueExpression":18,"./MatcherList":19,"./MediaList":20,"./StyleSheet":21,"./clone":22,"./parse":24}],24:[function(_dereq_,module,exports){
+//.CommonJS
+var CSSOM = {};
+///CommonJS
+
+
+/**
+ * @param {string} token
+ */
+CSSOM.parse = function parse(token) {
+
+	var i = 0;
+
+	/**
+		"before-selector" or
+		"selector" or
+		"atRule" or
+		"atBlock" or
+		"before-name" or
+		"name" or
+		"before-value" or
+		"value"
+	*/
+	var state = "before-selector";
+
+	var index;
+	var buffer = "";
+
+	var SIGNIFICANT_WHITESPACE = {
+		"selector": true,
+		"value": true,
+		"atRule": true,
+		"importRule-begin": true,
+		"importRule": true,
+		"atBlock": true,
+		'documentRule-begin': true
+	};
+
+	var styleSheet = new CSSOM.CSSStyleSheet;
+
+	// @type CSSStyleSheet|CSSMediaRule|CSSFontFaceRule|CSSKeyframesRule|CSSDocumentRule
+	var currentScope = styleSheet;
+
+	// @type CSSMediaRule|CSSKeyframesRule|CSSDocumentRule
+	var parentRule;
+
+	var selector, name, value, priority="", styleRule, mediaRule, importRule, fontFaceRule, keyframesRule, keyframeRule, documentRule;
+
+	var atKeyframesRegExp = /@(-(?:\w+-)+)?keyframes/g;
+
+	var parseError = function(message) {
+		var lines = token.substring(0, i).split('\n');
+		var lineCount = lines.length;
+		var charCount = lines.pop().length + 1;
+		var error = new Error(message + ' (line ' + lineCount + ', char ' + charCount + ')');
+		error.line = lineCount;
+		error.char = charCount;
+		error.styleSheet = styleSheet;
+		throw error;
+	};
+
+	for (var character; character = token.charAt(i); i++) {
+
+		switch (character) {
+
+		case " ":
+		case "\t":
+		case "\r":
+		case "\n":
+		case "\f":
+			if (SIGNIFICANT_WHITESPACE[state]) {
+				buffer += character;
+			}
+			break;
+
+		// String
+		case '"':
+			index = i + 1;
+			do {
+				index = token.indexOf('"', index) + 1;
+				if (!index) {
+					parseError('Unmatched "');
+				}
+			} while (token[index - 2] === '\\')
+			buffer += token.slice(i, index);
+			i = index - 1;
+			switch (state) {
+				case 'before-value':
+					state = 'value';
+					break;
+				case 'importRule-begin':
+					state = 'importRule';
+					break;
+			}
+			break;
+
+		case "'":
+			index = i + 1;
+			do {
+				index = token.indexOf("'", index) + 1;
+				if (!index) {
+					parseError("Unmatched '");
+				}
+			} while (token[index - 2] === '\\')
+			buffer += token.slice(i, index);
+			i = index - 1;
+			switch (state) {
+				case 'before-value':
+					state = 'value';
+					break;
+				case 'importRule-begin':
+					state = 'importRule';
+					break;
+			}
+			break;
+
+		// Comment
+		case "/":
+			if (token.charAt(i + 1) === "*") {
+				i += 2;
+				index = token.indexOf("*/", i);
+				if (index === -1) {
+					parseError("Missing */");
+				} else {
+					i = index + 1;
+				}
+			} else {
+				buffer += character;
+			}
+			if (state === "importRule-begin") {
+				buffer += " ";
+				state = "importRule";
+			}
+			break;
+
+		// At-rule
+		case "@":
+			if (token.indexOf("@-moz-document", i) === i) {
+				state = "documentRule-begin";
+				documentRule = new CSSOM.CSSDocumentRule;
+				documentRule.__starts = i;
+				i += "-moz-document".length;
+				buffer = "";
+				break;
+			} else if (token.indexOf("@media", i) === i) {
+				state = "atBlock";
+				mediaRule = new CSSOM.CSSMediaRule;
+				mediaRule.__starts = i;
+				i += "media".length;
+				buffer = "";
+				break;
+			} else if (token.indexOf("@import", i) === i) {
+				state = "importRule-begin";
+				i += "import".length;
+				buffer += "@import";
+				break;
+			} else if (token.indexOf("@font-face", i) === i) {
+				state = "fontFaceRule-begin";
+				i += "font-face".length;
+				fontFaceRule = new CSSOM.CSSFontFaceRule;
+				fontFaceRule.__starts = i;
+				buffer = "";
+				break;
+			} else {
+				atKeyframesRegExp.lastIndex = i;
+				var matchKeyframes = atKeyframesRegExp.exec(token);
+				if (matchKeyframes && matchKeyframes.index === i) {
+					state = "keyframesRule-begin";
+					keyframesRule = new CSSOM.CSSKeyframesRule;
+					keyframesRule.__starts = i;
+					keyframesRule._vendorPrefix = matchKeyframes[1]; // Will come out as undefined if no prefix was found
+					i += matchKeyframes[0].length - 1;
+					buffer = "";
+					break;
+				} else if (state == "selector") {
+					state = "atRule";
+				}
+			}
+			buffer += character;
+			break;
+
+		case "{":
+			if (state === "selector" || state === "atRule") {
+				styleRule.selectorText = buffer.trim();
+				styleRule.style.__starts = i;
+				buffer = "";
+				state = "before-name";
+			} else if (state === "atBlock") {
+				mediaRule.media.mediaText = buffer.trim();
+				currentScope = parentRule = mediaRule;
+				mediaRule.parentStyleSheet = styleSheet;
+				buffer = "";
+				state = "before-selector";
+			} else if (state === "fontFaceRule-begin") {
+				if (parentRule) {
+					fontFaceRule.parentRule = parentRule;
+				}
+				fontFaceRule.parentStyleSheet = styleSheet;
+				styleRule = fontFaceRule;
+				buffer = "";
+				state = "before-name";
+			} else if (state === "keyframesRule-begin") {
+				keyframesRule.name = buffer.trim();
+				if (parentRule) {
+					keyframesRule.parentRule = parentRule;
+				}
+				keyframesRule.parentStyleSheet = styleSheet;
+				currentScope = parentRule = keyframesRule;
+				buffer = "";
+				state = "keyframeRule-begin";
+			} else if (state === "keyframeRule-begin") {
+				styleRule = new CSSOM.CSSKeyframeRule;
+				styleRule.keyText = buffer.trim();
+				styleRule.__starts = i;
+				buffer = "";
+				state = "before-name";
+			} else if (state === "documentRule-begin") {
+				// FIXME: what if this '{' is in the url text of the match function?
+				documentRule.matcher.matcherText = buffer.trim();
+				if (parentRule) {
+					documentRule.parentRule = parentRule;
+				}
+				currentScope = parentRule = documentRule;
+				documentRule.parentStyleSheet = styleSheet;
+				buffer = "";
+				state = "before-selector";
+			}
+			break;
+
+		case ":":
+			if (state === "name") {
+				name = buffer.trim();
+				buffer = "";
+				state = "before-value";
+			} else {
+				buffer += character;
+			}
+			break;
+
+		case '(':
+			if (state === 'value') {
+				// ie css expression mode
+				if (buffer.trim() == 'expression') {
+					var info = (new CSSOM.CSSValueExpression(token, i)).parse();
+
+					if (info.error) {
+						parseError(info.error);
+					} else {
+						buffer += info.expression;
+						i = info.idx;
+					}
+				} else {
+					index = token.indexOf(')', i + 1);
+					if (index === -1) {
+						parseError('Unmatched "("');
+					}
+					buffer += token.slice(i, index + 1);
+					i = index;
+				}
+			} else {
+				buffer += character;
+			}
+
+			break;
+
+		case "!":
+			if (state === "value" && token.indexOf("!important", i) === i) {
+				priority = "important";
+				i += "important".length;
+			} else {
+				buffer += character;
+			}
+			break;
+
+		case ";":
+			switch (state) {
+				case "value":
+					styleRule.style.setProperty(name, buffer.trim(), priority);
+					priority = "";
+					buffer = "";
+					state = "before-name";
+					break;
+				case "atRule":
+					buffer = "";
+					state = "before-selector";
+					break;
+				case "importRule":
+					importRule = new CSSOM.CSSImportRule;
+					importRule.parentStyleSheet = importRule.styleSheet.parentStyleSheet = styleSheet;
+					importRule.cssText = buffer + character;
+					styleSheet.cssRules.push(importRule);
+					buffer = "";
+					state = "before-selector";
+					break;
+				default:
+					buffer += character;
+					break;
+			}
+			break;
+
+		case "}":
+			switch (state) {
+				case "value":
+					styleRule.style.setProperty(name, buffer.trim(), priority);
+					priority = "";
+				case "before-name":
+				case "name":
+					styleRule.__ends = i + 1;
+					if (parentRule) {
+						styleRule.parentRule = parentRule;
+					}
+					styleRule.parentStyleSheet = styleSheet;
+					currentScope.cssRules.push(styleRule);
+					buffer = "";
+					if (currentScope.constructor === CSSOM.CSSKeyframesRule) {
+						state = "keyframeRule-begin";
+					} else {
+						state = "before-selector";
+					}
+					break;
+				case "keyframeRule-begin":
+				case "before-selector":
+				case "selector":
+					// End of media/document rule.
+					if (!parentRule) {
+						parseError("Unexpected }");
+					}
+					currentScope.__ends = i + 1;
+					// Nesting rules aren't supported yet
+					styleSheet.cssRules.push(currentScope);
+					currentScope = styleSheet;
+					parentRule = null;
+					buffer = "";
+					state = "before-selector";
+					break;
+			}
+			break;
+
+		default:
+			switch (state) {
+				case "before-selector":
+					state = "selector";
+					styleRule = new CSSOM.CSSStyleRule;
+					styleRule.__starts = i;
+					break;
+				case "before-name":
+					state = "name";
+					break;
+				case "before-value":
+					state = "value";
+					break;
+				case "importRule-begin":
+					state = "importRule";
+					break;
+			}
+			buffer += character;
+			break;
+		}
+	}
+
+	return styleSheet;
+};
+
+
+//.CommonJS
+exports.parse = CSSOM.parse;
+// The following modules cannot be included sooner due to the mutual dependency with parse.js
+CSSOM.CSSStyleSheet = _dereq_("./CSSStyleSheet").CSSStyleSheet;
+CSSOM.CSSStyleRule = _dereq_("./CSSStyleRule").CSSStyleRule;
+CSSOM.CSSImportRule = _dereq_("./CSSImportRule").CSSImportRule;
+CSSOM.CSSMediaRule = _dereq_("./CSSMediaRule").CSSMediaRule;
+CSSOM.CSSFontFaceRule = _dereq_("./CSSFontFaceRule").CSSFontFaceRule;
+CSSOM.CSSStyleDeclaration = _dereq_('./CSSStyleDeclaration').CSSStyleDeclaration;
+CSSOM.CSSKeyframeRule = _dereq_('./CSSKeyframeRule').CSSKeyframeRule;
+CSSOM.CSSKeyframesRule = _dereq_('./CSSKeyframesRule').CSSKeyframesRule;
+CSSOM.CSSValueExpression = _dereq_('./CSSValueExpression').CSSValueExpression;
+CSSOM.CSSDocumentRule = _dereq_('./CSSDocumentRule').CSSDocumentRule;
+///CommonJS
+
+},{"./CSSDocumentRule":7,"./CSSFontFaceRule":8,"./CSSImportRule":9,"./CSSKeyframeRule":10,"./CSSKeyframesRule":11,"./CSSMediaRule":12,"./CSSStyleDeclaration":14,"./CSSStyleRule":15,"./CSSStyleSheet":16,"./CSSValueExpression":18}],25:[function(_dereq_,module,exports){
+"use strict";
+
+var inlineUtil = _dereq_('./inlineUtil'),
+    inlineCss = _dereq_('./inlineCss');
+
+
+var getUrlBasePath = function (url) {
+    return inlineUtil.joinUrl(url, '.');
+};
+
+var parameterHashFunction = function (params) {
+    // HACK JSON.stringify is poor man's hashing;
+    // same objects might not receive same result as key order is not guaranteed
+    var a = params.map(function (param, idx) {
+        // Only include options relevant for method
+        if (idx === (params.length - 1)) {
+            param = {
+                // Two different HTML pages on the same path level have the same base path, but a different URL
+                baseUrl: getUrlBasePath(param.baseUrl)
+            };
+        }
+        return JSON.stringify(param);
+    });
+    return a;
+};
+
+var memoizeFunctionOnCaching = function (func, options) {
+    if ((options.cache !== false && options.cache !== 'none') && options.cacheBucket) {
+        return inlineUtil.memoize(func, parameterHashFunction, options.cacheBucket);
+    } else {
+        return func;
+    }
+};
+
+/* Img Inlining */
+
+var encodeImageAsDataURI = function (image, options) {
+    var url = image.attributes.src ? image.attributes.src.nodeValue : null,
+        documentBase = inlineUtil.getDocumentBaseUrl(image.ownerDocument),
+        ajaxOptions = inlineUtil.clone(options);
+
+    if (!ajaxOptions.baseUrl && documentBase) {
+        ajaxOptions.baseUrl = documentBase;
+    }
+
+    return inlineUtil.getDataURIForImageURL(url, ajaxOptions)
+        .then(function (dataURI) {
+            return dataURI;
+        }, function (e) {
+            throw {
+                resourceType: "image",
+                url: e.url,
+                msg: "Unable to load image " + e.url
+            };
+        });
+};
+
+var filterExternalImages = function (images) {
+    return images.filter(function (image) {
+        var url = image.attributes.src ? image.attributes.src.nodeValue : null;
+
+        return url !== null && !inlineUtil.isDataUri(url);
+    });
+};
+
+var filterInputsForImageType = function (inputs) {
+    return Array.prototype.filter.call(inputs, function (input) {
+        return input.type === "image";
+    });
+};
+
+var toArray = function (arrayLike) {
+    return Array.prototype.slice.call(arrayLike);
+};
+
+exports.loadAndInlineImages = function (doc, options) {
+    var images = toArray(doc.getElementsByTagName("img")),
+        imageInputs = filterInputsForImageType(doc.getElementsByTagName("input")),
+        externalImages = filterExternalImages(images.concat(imageInputs));
+
+    return inlineUtil.collectAndReportErrors(externalImages.map(function (image) {
+        return encodeImageAsDataURI(image, options).then(function (dataURI) {
+            image.attributes.src.nodeValue = dataURI;
+        });
+    }));
+};
+
+/* Style inlining */
+
+var requestExternalsForStylesheet = function (styleContent, alreadyLoadedCssUrls, options) {
+    var cssRules = inlineCss.rulesForCssText(styleContent);
+
+    return inlineCss.loadCSSImportsForRules(cssRules, alreadyLoadedCssUrls, options).then(function (cssImportResult) {
+        return inlineCss.loadAndInlineCSSResourcesForRules(cssRules, options).then(function (cssResourcesResult) {
+            var errors = cssImportResult.errors.concat(cssResourcesResult.errors),
+                hasChanges = cssImportResult.hasChanges || cssResourcesResult.hasChanges;
+
+            if (hasChanges) {
+                styleContent = inlineCss.cssRulesToText(cssRules);
+            }
+
+            return {
+                hasChanges: hasChanges,
+                content: styleContent,
+                errors: errors
+            };
+        });
+    });
+};
+
+var loadAndInlineCssForStyle = function (style, options, alreadyLoadedCssUrls) {
+    var styleContent = style.textContent,
+        processExternals = memoizeFunctionOnCaching(requestExternalsForStylesheet, options);
+
+    return processExternals(styleContent, alreadyLoadedCssUrls, options).then(function (result) {
+        if (result.hasChanges) {
+            style.childNodes[0].nodeValue = result.content;
+        }
+
+        return inlineUtil.cloneArray(result.errors);
+    });
+};
+
+var getCssStyleElements = function (doc) {
+    var styles = doc.getElementsByTagName("style");
+
+    return Array.prototype.filter.call(styles, function (style) {
+        return !style.attributes.type || style.attributes.type.nodeValue === "text/css";
+    });
+};
+
+exports.loadAndInlineStyles = function (doc, options) {
+    var styles = getCssStyleElements(doc),
+        allErrors = [],
+        alreadyLoadedCssUrls = [],
+        inlineOptions;
+
+    inlineOptions = inlineUtil.clone(options);
+    inlineOptions.baseUrl = inlineOptions.baseUrl || inlineUtil.getDocumentBaseUrl(doc);
+
+    return inlineUtil.all(styles.map(function (style) {
+        return loadAndInlineCssForStyle(style, inlineOptions, alreadyLoadedCssUrls).then(function (errors) {
+            allErrors = allErrors.concat(errors);
+        });
+    })).then(function () {
+        return allErrors;
+    });
+};
+
+/* CSS link inlining */
+
+var substituteLinkWithInlineStyle = function (oldLinkNode, styleContent) {
+    var parent = oldLinkNode.parentNode,
+        styleNode;
+
+    styleContent = styleContent.trim();
+    if (styleContent) {
+        styleNode = oldLinkNode.ownerDocument.createElement("style");
+        styleNode.type = "text/css";
+        styleNode.appendChild(oldLinkNode.ownerDocument.createTextNode(styleContent));
+
+        parent.insertBefore(styleNode, oldLinkNode);
+    }
+
+    parent.removeChild(oldLinkNode);
+};
+
+var requestStylesheetAndInlineResources = function (url, options) {
+    return inlineUtil.ajax(url, options)
+        .then(function (content) {
+            var cssRules = inlineCss.rulesForCssText(content);
+
+            return {
+                content: content,
+                cssRules: cssRules
+            };
+        })
+        .then(function (result) {
+            var hasChangesFromPathAdjustment = inlineCss.adjustPathsOfCssResources(url, result.cssRules);
+
+            return {
+                content: result.content,
+                cssRules: result.cssRules,
+                hasChanges: hasChangesFromPathAdjustment
+            };
+        })
+        .then(function (result) {
+            return inlineCss.loadCSSImportsForRules(result.cssRules, [], options)
+                .then(function (cssImportResult) {
+                    return {
+                        content: result.content,
+                        cssRules: result.cssRules,
+                        hasChanges: result.hasChanges || cssImportResult.hasChanges,
+                        errors: cssImportResult.errors
+                    };
+                });
+        })
+        .then(function (result) {
+            return inlineCss.loadAndInlineCSSResourcesForRules(result.cssRules, options)
+                .then(function (cssResourcesResult) {
+                    return {
+                        content: result.content,
+                        cssRules: result.cssRules,
+                        hasChanges: result.hasChanges || cssResourcesResult.hasChanges,
+                        errors: result.errors.concat(cssResourcesResult.errors)
+                    };
+                });
+        })
+        .then(function (result) {
+            var content = result.content;
+            if (result.hasChanges) {
+                content = inlineCss.cssRulesToText(result.cssRules);
+            }
+            return {
+                content: content,
+                errors: result.errors
+            };
+        });
+};
+
+var loadLinkedCSS = function (link, options) {
+    var cssHref = link.attributes.href.nodeValue,
+        documentBaseUrl = inlineUtil.getDocumentBaseUrl(link.ownerDocument),
+        ajaxOptions = inlineUtil.clone(options);
+
+    if (!ajaxOptions.baseUrl && documentBaseUrl) {
+        ajaxOptions.baseUrl = documentBaseUrl;
+    }
+
+    var processStylesheet = memoizeFunctionOnCaching(requestStylesheetAndInlineResources, options);
+
+    return processStylesheet(cssHref, ajaxOptions).then(function (result) {
+        return {
+            content: result.content,
+            errors: inlineUtil.cloneArray(result.errors)
+        };
+    });
+};
+
+var getCssStylesheetLinks = function (doc) {
+    var links = doc.getElementsByTagName("link");
+
+    return Array.prototype.filter.call(links, function (link) {
+        return link.attributes.rel && link.attributes.rel.nodeValue === "stylesheet" &&
+            (!link.attributes.type || link.attributes.type.nodeValue === "text/css");
+    });
+};
+
+exports.loadAndInlineCssLinks = function (doc, options) {
+    var links = getCssStylesheetLinks(doc),
+        errors = [];
+
+    return inlineUtil.all(links.map(function (link) {
+        return loadLinkedCSS(link, options).then(function(result) {
+            substituteLinkWithInlineStyle(link, result.content + "\n");
+
+            errors = errors.concat(result.errors);
+        }, function (e) {
+            errors.push({
+                resourceType: "stylesheet",
+                url: e.url,
+                msg: "Unable to load stylesheet " + e.url
+            });
+        });
+    })).then(function () {
+        return errors;
+    });
+};
+
+/* Script inlining */
+
+var loadLinkedScript = function (script, options) {
+    var src = script.attributes.src.nodeValue,
+        documentBase = inlineUtil.getDocumentBaseUrl(script.ownerDocument),
+        ajaxOptions = inlineUtil.clone(options);
+
+    if (!ajaxOptions.baseUrl && documentBase) {
+        ajaxOptions.baseUrl = documentBase;
+    }
+
+    return inlineUtil.ajax(src, ajaxOptions)
+        .fail(function (e) {
+            throw {
+                resourceType: "script",
+                url: e.url,
+                msg: "Unable to load script " + e.url
+            };
+        });
+};
+
+var escapeClosingTags = function (text) {
+    // http://stackoverflow.com/questions/9246382/escaping-script-tag-inside-javascript
+    return text.replace(/<\//g, '<\\/');
+};
+
+var substituteExternalScriptWithInline = function (scriptNode, jsCode) {
+    scriptNode.attributes.removeNamedItem('src');
+    scriptNode.textContent = escapeClosingTags(jsCode);
+};
+
+var getScripts = function (doc) {
+    var scripts = doc.getElementsByTagName("script");
+
+    return Array.prototype.filter.call(scripts, function (script) {
+        return !!script.attributes.src;
+    });
+};
+
+exports.loadAndInlineScript = function (doc, options) {
+    var scripts = getScripts(doc);
+
+    return inlineUtil.collectAndReportErrors(scripts.map(function (script) {
+        return loadLinkedScript(script, options).then(function (jsCode) {
+            substituteExternalScriptWithInline(script, jsCode);
+        });
+    }));
+};
+
+/* Main */
+
+exports.inlineReferences = function (doc, options) {
+    var allErrors = [],
+        inlineFuncs = [
+            exports.loadAndInlineImages,
+            exports.loadAndInlineStyles,
+            exports.loadAndInlineCssLinks];
+
+    if (options.inlineScripts !== false) {
+        inlineFuncs.push(exports.loadAndInlineScript);
+    }
+
+    return inlineUtil.all(inlineFuncs.map(function (func) {
+        return func(doc, options)
+            .then(function (errors) {
+                allErrors = allErrors.concat(errors);
+            });
+    })).then(function () {
+        return allErrors;
+    });
+};
+
+},{"./inlineCss":26,"./inlineUtil":27}],26:[function(_dereq_,module,exports){
+"use strict";
+
+var cssom = _dereq_('cssom'),
+    ayepromise = _dereq_('ayepromise'),
+    inlineUtil = _dereq_('./inlineUtil');
+
+
+var updateCssPropertyValue = function (rule, property, value) {
+    rule.style.setProperty(property, value, rule.style.getPropertyPriority(property));
+};
+
+var rulesForCssTextFromBrowser = function (styleContent) {
+    var doc = document.implementation.createHTMLDocument(""),
+        styleElement = document.createElement("style"),
+        rules;
+
+    styleElement.textContent = styleContent;
+    // the style will only be parsed once it is added to a document
+    doc.body.appendChild(styleElement);
+    rules = styleElement.sheet.cssRules;
+
+    return Array.prototype.slice.call(rules);
+};
+
+var browserHasBackgroundImageUrlIssue = (function () {
+    // Checks for http://code.google.com/p/chromium/issues/detail?id=161644
+    var rules = rulesForCssTextFromBrowser('a{background:url(i)}');
+    return !rules.length || rules[0].cssText.indexOf('url()') >= 0;
+}());
+
+exports.rulesForCssText = function (styleContent) {
+    if (browserHasBackgroundImageUrlIssue && cssom.parse) {
+        return cssom.parse(styleContent).cssRules;
+    } else {
+        return rulesForCssTextFromBrowser(styleContent);
+    }
+};
+
+var findBackgroundImageRules = function (cssRules) {
+    return cssRules.filter(function (rule) {
+        return rule.type === window.CSSRule.STYLE_RULE && (rule.style.getPropertyValue('background-image') || rule.style.getPropertyValue('background'));
+    });
+};
+
+var findBackgroundDeclarations = function (rules) {
+    var backgroundDeclarations = [];
+
+    rules.forEach(function (rule) {
+        if (rule.style.getPropertyValue('background-image')) {
+            backgroundDeclarations.push({
+                property: 'background-image',
+                value: rule.style.getPropertyValue('background-image'),
+                rule: rule
+            });
+        } else if (rule.style.getPropertyValue('background')) {
+            backgroundDeclarations.push({
+                property: 'background',
+                value: rule.style.getPropertyValue('background'),
+                rule: rule
+            });
+        }
+    });
+
+    return backgroundDeclarations;
+};
+
+var findFontFaceRules = function (cssRules) {
+    return cssRules.filter(function (rule) {
+        return rule.type === window.CSSRule.FONT_FACE_RULE && rule.style.getPropertyValue("src");
+    });
+};
+
+exports.cssRulesToText = function (cssRules) {
+    return cssRules.reduce(function (cssText, rule) {
+        return cssText + rule.cssText;
+    }, '');
+};
+
+var unquoteString = function (quotedUrl) {
+    var doubleQuoteRegex = /^"(.*)"$/,
+        singleQuoteRegex = /^'(.*)'$/;
+
+    if (doubleQuoteRegex.test(quotedUrl)) {
+        return quotedUrl.replace(doubleQuoteRegex, "$1");
+    } else {
+        if (singleQuoteRegex.test(quotedUrl)) {
+            return quotedUrl.replace(singleQuoteRegex, "$1");
+        } else {
+            return quotedUrl;
+        }
+    }
+};
+
+var trimCSSWhitespace = function (url) {
+    var whitespaceRegex = /^[\t\r\f\n ]*(.+?)[\t\r\f\n ]*$/;
+
+    return url.replace(whitespaceRegex, "$1");
+};
+
+exports.extractCssUrl = function (cssUrl) {
+    var urlRegex = /^url\(([^\)]+)\)/,
+        quotedUrl;
+
+    if (!urlRegex.test(cssUrl)) {
+        throw new Error("Invalid url");
+    }
+
+    quotedUrl = urlRegex.exec(cssUrl)[1];
+    return unquoteString(trimCSSWhitespace(quotedUrl));
+};
+
+var findFontFaceFormat = function (value) {
+    var fontFaceFormatRegex = /^format\(([^\)]+)\)/,
+        quotedFormat;
+
+    if (!fontFaceFormatRegex.test(value)) {
+        return null;
+    }
+
+    quotedFormat = fontFaceFormatRegex.exec(value)[1];
+    return unquoteString(quotedFormat);
+};
+
+var extractFontFaceSrcUrl = function (reference) {
+    var url, format = null;
+
+    try {
+        url = exports.extractCssUrl(reference[0]);
+        if (reference[1]) {
+            format = findFontFaceFormat(reference[1]);
+        }
+        return {
+            url: url,
+            format: format
+        };
+    } catch (e) {}
+};
+
+var exchangeRule = function (cssRules, rule, newRuleText) {
+    var ruleIdx = cssRules.indexOf(rule),
+        styleSheet = rule.parentStyleSheet;
+
+    // Generate a new rule
+    styleSheet.insertRule(newRuleText, ruleIdx+1);
+    styleSheet.deleteRule(ruleIdx);
+    // Exchange with the new
+    cssRules[ruleIdx] = styleSheet.cssRules[ruleIdx];
+};
+
+var findCSSImportRules = function (cssRules) {
+    return cssRules.filter(function (rule) {
+        return rule.type === window.CSSRule.IMPORT_RULE && rule.href;
+    });
+};
+
+// Workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=443978
+var changeFontFaceRuleSrc = function (cssRules, rule, newSrc) {
+    var newRuleText = '@font-face { font-family: ' + rule.style.getPropertyValue("font-family") + '; ';
+
+    if (rule.style.getPropertyValue("font-style")) {
+        newRuleText += 'font-style: ' + rule.style.getPropertyValue("font-style") + '; ';
+    }
+
+    if (rule.style.getPropertyValue("font-weight")) {
+        newRuleText += 'font-weight: ' + rule.style.getPropertyValue("font-weight") + '; ';
+    }
+
+    newRuleText += 'src: ' + newSrc + '}';
+    exchangeRule(cssRules, rule, newRuleText);
+};
+
+var sliceBackgroundDeclaration = function (backgroundDeclarationText) {
+    var functionParamRegexS = "\\s*(?:\"[^\"]*\"|'[^']*'|[^\\(]+)\\s*",
+        valueRegexS = "(" + "url\\(" + functionParamRegexS + "\\)" + "|" + "[^,\\s]+" + ")",
+        simpleSingularBackgroundRegexS = "(?:\\s*" + valueRegexS + ")+",
+        simpleBackgroundRegexS = "^\\s*(" + simpleSingularBackgroundRegexS + ")" +
+                                  "(?:\\s*,\\s*(" + simpleSingularBackgroundRegexS + "))*" +
+                                  "\\s*$",
+        simpleSingularBackgroundRegex = new RegExp(simpleSingularBackgroundRegexS, "g"),
+        outerRepeatedMatch,
+        backgroundLayers = [],
+        getValues = function (singularBackgroundDeclaration) {
+            var valueRegex = new RegExp(valueRegexS, "g"),
+                backgroundValues = [],
+                repeatedMatch;
+
+            repeatedMatch = valueRegex.exec(singularBackgroundDeclaration);
+            while (repeatedMatch) {
+                backgroundValues.push(repeatedMatch[1]);
+                repeatedMatch = valueRegex.exec(singularBackgroundDeclaration);
+            }
+            return backgroundValues;
+        };
+
+    if (backgroundDeclarationText.match(new RegExp(simpleBackgroundRegexS))) {
+        outerRepeatedMatch = simpleSingularBackgroundRegex.exec(backgroundDeclarationText);
+        while (outerRepeatedMatch) {
+            backgroundLayers.push(getValues(outerRepeatedMatch[0]));
+            outerRepeatedMatch = simpleSingularBackgroundRegex.exec(backgroundDeclarationText);
+        }
+
+        return backgroundLayers;
+    }
+    return [];
+};
+
+var findBackgroundImageUrlInValues = function (values) {
+    var i, url;
+
+    for(i = 0; i < values.length; i++) {
+        try {
+            url = exports.extractCssUrl(values[i]);
+            return {
+                url: url,
+                idx: i
+            };
+        } catch (e) {}
+    }
+};
+
+var parseBackgroundDeclaration = function (backgroundValue) {
+    var backgroundLayers = sliceBackgroundDeclaration(backgroundValue);
+
+    return backgroundLayers.map(function (backgroundLayerValues) {
+        var urlMatch = findBackgroundImageUrlInValues(backgroundLayerValues);
+
+        if (urlMatch) {
+            return {
+                preUrl: backgroundLayerValues.slice(0, urlMatch.idx),
+                url: urlMatch.url,
+                postUrl: backgroundLayerValues.slice(urlMatch.idx+1),
+            };
+        } else {
+            return {
+                preUrl: backgroundLayerValues
+            };
+        }
+    });
+};
+
+var findExternalBackgroundUrls = function (parsedBackground) {
+    var matchIndices = [];
+
+    parsedBackground.forEach(function (backgroundLayer, i) {
+        if (backgroundLayer.url && !inlineUtil.isDataUri(backgroundLayer.url)) {
+            matchIndices.push(i);
+        }
+    });
+
+    return matchIndices;
+};
+
+var findExternalFontFaceUrls = function (parsedFontFaceSources) {
+    var sourceIndices = [];
+    parsedFontFaceSources.forEach(function (sourceItem, i) {
+        if (sourceItem.url && !inlineUtil.isDataUri(sourceItem.url)) {
+            sourceIndices.push(i);
+        }
+    });
+    return sourceIndices;
+};
+
+var parsedBackgroundDeclarationToText = function (parsedBackground) {
+    var backgroundLayers = parsedBackground.map(function (backgroundLayer) {
+        var values = [].concat(backgroundLayer.preUrl);
+
+        if (backgroundLayer.url) {
+            values.push('url("' + backgroundLayer.url + '")');
+        }
+        if (backgroundLayer.postUrl) {
+            values = values.concat(backgroundLayer.postUrl);
+        }
+
+        return values.join(' ');
+    });
+
+    return backgroundLayers.join(', ');
+};
+
+var sliceFontFaceSrcReferences = function (fontFaceSrc) {
+    var functionParamRegexS = "\\s*(?:\"[^\"]*\"|'[^']*'|[^\\(]+)\\s*",
+        referenceRegexS = "(local\\(" + functionParamRegexS + "\\))" + "|" +
+                          "(url\\(" + functionParamRegexS + "\\))" + "(?:\\s+(format\\(" + functionParamRegexS + "\\)))?",
+        simpleFontFaceSrcRegexS = "^\\s*(" + referenceRegexS + ")" +
+                                  "(?:\\s*,\\s*(" + referenceRegexS + "))*" +
+                                  "\\s*$",
+        referenceRegex = new RegExp(referenceRegexS, "g"),
+        repeatedMatch,
+        fontFaceSrcReferences = [],
+        getReferences = function (match) {
+            var references = [];
+            match.slice(1).forEach(function (elem) {
+                if (elem) {
+                    references.push(elem);
+                }
+            });
+            return references;
+        };
+
+    if (fontFaceSrc.match(new RegExp(simpleFontFaceSrcRegexS))) {
+        repeatedMatch = referenceRegex.exec(fontFaceSrc);
+        while (repeatedMatch) {
+            fontFaceSrcReferences.push(getReferences(repeatedMatch));
+            repeatedMatch = referenceRegex.exec(fontFaceSrc);
+        }
+        return fontFaceSrcReferences;
+    }
+    // we should probably throw an exception here
+    return [];
+};
+
+var parseFontFaceSrcDeclaration = function (fontFaceSourceValue) {
+    var fontReferences = sliceFontFaceSrcReferences(fontFaceSourceValue);
+
+    return fontReferences.map(function (reference) {
+        var fontSrc = extractFontFaceSrcUrl(reference);
+
+        if (fontSrc) {
+            return fontSrc;
+        } else {
+            return {
+                local: reference
+            };
+        }
+    });
+};
+
+var parsedFontFaceSrcDeclarationToText = function (parsedFontFaceSources) {
+    return parsedFontFaceSources.map(function (sourceItem) {
+        var itemValue;
+
+        if (sourceItem.url) {
+            itemValue = 'url("' + sourceItem.url + '")';
+            if (sourceItem.format) {
+                itemValue += ' format("' + sourceItem.format + '")';
+            }
+        } else {
+            itemValue = sourceItem.local;
+        }
+        return itemValue;
+    }).join(', ');
+};
+
+exports.adjustPathsOfCssResources = function (baseUrl, cssRules) {
+    var backgroundRules = findBackgroundImageRules(cssRules),
+        backgroundDeclarations = findBackgroundDeclarations(backgroundRules),
+        change = false;
+
+    backgroundDeclarations.forEach(function (declaration) {
+        var parsedBackground = parseBackgroundDeclaration(declaration.value),
+            externalBackgroundIndices = findExternalBackgroundUrls(parsedBackground),
+            backgroundValue;
+
+        if (externalBackgroundIndices.length > 0) {
+            externalBackgroundIndices.forEach(function (backgroundLayerIndex) {
+                var relativeUrl = parsedBackground[backgroundLayerIndex].url,
+                    url = inlineUtil.joinUrl(baseUrl, relativeUrl);
+                parsedBackground[backgroundLayerIndex].url = url;
+            });
+
+            backgroundValue = parsedBackgroundDeclarationToText(parsedBackground);
+
+            updateCssPropertyValue(declaration.rule, declaration.property, backgroundValue);
+
+            change = true;
+        }
+    });
+    findFontFaceRules(cssRules).forEach(function (rule) {
+        var fontFaceSrcDeclaration = rule.style.getPropertyValue("src"),
+            parsedFontFaceSources = parseFontFaceSrcDeclaration(fontFaceSrcDeclaration),
+            externalFontFaceUrlIndices = findExternalFontFaceUrls(parsedFontFaceSources);
+
+        if (externalFontFaceUrlIndices.length > 0) {
+            externalFontFaceUrlIndices.forEach(function (fontFaceUrlIndex) {
+                var relativeUrl = parsedFontFaceSources[fontFaceUrlIndex].url,
+                    url = inlineUtil.joinUrl(baseUrl, relativeUrl);
+
+                parsedFontFaceSources[fontFaceUrlIndex].url = url;
+            });
+
+            changeFontFaceRuleSrc(cssRules, rule, parsedFontFaceSrcDeclarationToText(parsedFontFaceSources));
+
+            change = true;
+        }
+    });
+    findCSSImportRules(cssRules).forEach(function (rule) {
+        var cssUrl = rule.href,
+            url = inlineUtil.joinUrl(baseUrl, cssUrl);
+
+        exchangeRule(cssRules, rule, "@import url(" + url + ");");
+
+        change = true;
+    });
+
+    return change;
+};
+
+/* CSS import inlining */
+
+var substituteRule = function (cssRules, rule, newCssRules) {
+    var position = cssRules.indexOf(rule);
+
+    cssRules.splice(position, 1);
+
+    newCssRules.forEach(function (newRule, i) {
+        cssRules.splice(position + i, 0, newRule);
+    });
+};
+
+var isQuotedString = function (string) {
+    var doubleQuoteRegex = /^"(.*)"$/,
+        singleQuoteRegex = /^'(.*)'$/;
+
+    return doubleQuoteRegex.test(string) || singleQuoteRegex.test(string);
+};
+
+var fulfilledPromise = function (value) {
+    var defer = ayepromise.defer();
+    defer.resolve(value);
+    return defer.promise;
+};
+
+var loadAndInlineCSSImport = function (cssRules, rule, alreadyLoadedCssUrls, options) {
+    var url = rule.href,
+        cssHrefRelativeToDoc;
+
+    if (isQuotedString(url)) {
+        url = unquoteString(url);
+    }
+
+    cssHrefRelativeToDoc = inlineUtil.joinUrl(options.baseUrl, url);
+
+    if (alreadyLoadedCssUrls.indexOf(cssHrefRelativeToDoc) >= 0) {
+        // Remove URL by adding empty string
+        substituteRule(cssRules, rule, []);
+        return fulfilledPromise([]);
+    } else {
+        alreadyLoadedCssUrls.push(cssHrefRelativeToDoc);
+    }
+
+    return inlineUtil.ajax(url, options)
+        .then(function (cssText) {
+            var externalCssRules = exports.rulesForCssText(cssText);
+
+            // Recursively follow @import statements
+            return exports.loadCSSImportsForRules(externalCssRules, alreadyLoadedCssUrls, options)
+                .then(function (result) {
+                    exports.adjustPathsOfCssResources(url, externalCssRules);
+
+                    substituteRule(cssRules, rule, externalCssRules);
+
+                    return result.errors;
+                });
+        }, function (e) {
+            throw {
+                resourceType: "stylesheet",
+                url: e.url,
+                msg: "Unable to load stylesheet " + e.url
+            };
+        });
+};
+
+exports.loadCSSImportsForRules = function (cssRules, alreadyLoadedCssUrls, options) {
+    var rulesToInline = findCSSImportRules(cssRules),
+        errors = [],
+        hasChanges = false;
+
+    return inlineUtil.all(rulesToInline.map(function (rule) {
+        return loadAndInlineCSSImport(cssRules, rule, alreadyLoadedCssUrls, options).then(function (moreErrors) {
+            errors = errors.concat(moreErrors);
+
+            hasChanges = true;
+        }, function (e) {
+            errors.push(e);
+        });
+    })).then(function () {
+        return {
+            hasChanges: hasChanges,
+            errors: errors
+        };
+    });
+};
+
+/* CSS linked resource inlining */
+
+var loadAndInlineBackgroundImages = function (backgroundValue, options) {
+    var parsedBackground = parseBackgroundDeclaration(backgroundValue),
+        externalBackgroundLayerIndices = findExternalBackgroundUrls(parsedBackground),
+        hasChanges = false;
+
+    return inlineUtil.collectAndReportErrors(externalBackgroundLayerIndices.map(function (backgroundLayerIndex) {
+        var url = parsedBackground[backgroundLayerIndex].url;
+
+        return inlineUtil.getDataURIForImageURL(url, options)
+            .then(function (dataURI) {
+                parsedBackground[backgroundLayerIndex].url = dataURI;
+
+                hasChanges = true;
+            }, function (e) {
+                throw {
+                    resourceType: "backgroundImage",
+                    url: e.url,
+                    msg: "Unable to load background-image " + e.url
+                };
+            });
+    })).then(function (errors) {
+        return {
+            backgroundValue: parsedBackgroundDeclarationToText(parsedBackground),
+            hasChanges: hasChanges,
+            errors: errors
+        };
+    });
+};
+
+var iterateOverRulesAndInlineBackgroundImages = function (cssRules, options) {
+    var rulesToInline = findBackgroundImageRules(cssRules),
+        backgroundDeclarations = findBackgroundDeclarations(rulesToInline),
+        errors = [],
+        cssHasChanges = false;
+
+    return inlineUtil.all(backgroundDeclarations.map(function (declaration) {
+        return loadAndInlineBackgroundImages(declaration.value, options)
+            .then(function (result) {
+                if (result.hasChanges) {
+                    updateCssPropertyValue(declaration.rule, declaration.property, result.backgroundValue);
+
+                    cssHasChanges = true;
+                }
+
+                errors = errors.concat(result.errors);
+            });
+    })).then(function () {
+        return {
+            hasChanges: cssHasChanges,
+            errors: errors
+        };
+    });
+};
+
+var loadAndInlineFontFace = function (srcDeclarationValue, options) {
+    var parsedFontFaceSources = parseFontFaceSrcDeclaration(srcDeclarationValue),
+        externalFontFaceUrlIndices = findExternalFontFaceUrls(parsedFontFaceSources),
+        hasChanges = false;
+
+    return inlineUtil.collectAndReportErrors(externalFontFaceUrlIndices.map(function (urlIndex) {
+        var fontSrc = parsedFontFaceSources[urlIndex],
+            format = fontSrc.format || "woff";
+
+        return inlineUtil.binaryAjax(fontSrc.url, options)
+            .then(function (content) {
+                var base64Content = btoa(content);
+                fontSrc.url = 'data:font/' + format + ';base64,' + base64Content;
+
+                hasChanges = true;
+            }, function (e) {
+                throw {
+                    resourceType: "fontFace",
+                    url: e.url,
+                    msg: "Unable to load font-face " + e.url
+                };
+            });
+    })).then(function (errors) {
+        return {
+            srcDeclarationValue: parsedFontFaceSrcDeclarationToText(parsedFontFaceSources),
+            hasChanges: hasChanges,
+            errors: errors
+        };
+    });
+};
+
+var iterateOverRulesAndInlineFontFace = function (cssRules, options) {
+    var rulesToInline = findFontFaceRules(cssRules),
+        errors = [],
+        hasChanges = false;
+
+    return inlineUtil.all(rulesToInline.map(function (rule) {
+        var srcDeclarationValue = rule.style.getPropertyValue("src");
+
+        return loadAndInlineFontFace(srcDeclarationValue, options).then(function (result) {
+            if (result.hasChanges) {
+                changeFontFaceRuleSrc(cssRules, rule, result.srcDeclarationValue);
+
+                hasChanges = true;
+            }
+
+            errors = errors.concat(result.errors);
+        });
+    })).then(function () {
+        return {
+            hasChanges: hasChanges,
+            errors: errors
+        };
+    });
+};
+
+exports.loadAndInlineCSSResourcesForRules = function (cssRules, options) {
+    var hasChanges = false,
+        errors = [];
+
+    return inlineUtil.all([iterateOverRulesAndInlineBackgroundImages, iterateOverRulesAndInlineFontFace].map(function (func) {
+        return func(cssRules, options)
+            .then(function (result) {
+                hasChanges = hasChanges || result.hasChanges;
+                errors = errors.concat(result.errors);
+            });
+    })).then(function () {
+        return {
+            hasChanges: hasChanges,
+            errors: errors
+        };
+    });
+};
+
+},{"./inlineUtil":27,"ayepromise":6,"cssom":23}],27:[function(_dereq_,module,exports){
+"use strict";
+
+var url = _dereq_('url'),
+    ayepromise = _dereq_('ayepromise');
+
+
+exports.getDocumentBaseUrl = function (doc) {
+    if (doc.baseURI !== 'about:blank') {
+        return doc.baseURI;
+    }
+
+    return null;
+};
+
+exports.clone = function (object) {
+    var theClone = {},
+        i;
+    for (i in object) {
+        if (object.hasOwnProperty(i)) {
+           theClone[i] = object[i];
+        }
+    }
+    return theClone;
+};
+
+exports.cloneArray = function (nodeList) {
+    return Array.prototype.slice.apply(nodeList, [0]);
+};
+
+exports.joinUrl = function (baseUrl, relUrl) {
+    return url.resolve(baseUrl, relUrl);
+};
+
+exports.isDataUri = function (url) {
+    return (/^data:/).test(url);
+};
+
+exports.all = function (promises) {
+    var defer = ayepromise.defer(),
+        pendingPromiseCount = promises.length,
+        resolvedValues = [];
+
+    if (promises.length === 0) {
+        defer.resolve([]);
+        return defer.promise;
+    }
+
+    promises.forEach(function (promise, idx) {
+        promise.then(function (value) {
+            pendingPromiseCount -= 1;
+            resolvedValues[idx] = value;
+
+            if (pendingPromiseCount === 0) {
+                defer.resolve(resolvedValues);
+            }
+        }, function (e) {
+            defer.reject(e);
+        });
+    });
+    return defer.promise;
+};
+
+exports.collectAndReportErrors = function (promises) {
+    var errors = [];
+
+    return exports.all(promises.map(function (promise) {
+        return promise.fail(function (e) {
+            errors.push(e);
+        });
+    })).then(function () {
+        return errors;
+    });
+};
+
+var lastCacheDate = null;
+
+var getUncachableURL = function (url, cache) {
+    if (cache === false || cache === 'none' || cache === 'repeated') {
+        if (lastCacheDate === null || cache !== 'repeated') {
+            lastCacheDate = Date.now();
+        }
+        return url + "?_=" + lastCacheDate;
+    } else {
+        return url;
+    }
+};
+
+exports.ajax = function (url, options) {
+    var ajaxRequest = new window.XMLHttpRequest(),
+        defer = ayepromise.defer(),
+        joinedUrl = exports.joinUrl(options.baseUrl, url),
+        augmentedUrl;
+
+    var doReject = function () {
+        defer.reject({
+            msg: 'Unable to load url',
+            url: joinedUrl
+        });
+    };
+
+    augmentedUrl = getUncachableURL(joinedUrl, options.cache);
+
+    ajaxRequest.addEventListener("load", function () {
+        if (ajaxRequest.status === 200 || ajaxRequest.status === 0) {
+            defer.resolve(ajaxRequest.response);
+        } else {
+            doReject();
+        }
+    }, false);
+
+    ajaxRequest.addEventListener("error", doReject, false);
+
+    try {
+        ajaxRequest.open('GET', augmentedUrl, true);
+        ajaxRequest.overrideMimeType(options.mimeType);
+        ajaxRequest.send(null);
+    } catch (e) {
+        doReject();
+    }
+
+    return defer.promise;
+};
+
+exports.binaryAjax = function (url, options) {
+    var ajaxOptions = exports.clone(options);
+
+    ajaxOptions.mimeType = 'text/plain; charset=x-user-defined';
+
+    return exports.ajax(url, ajaxOptions)
+        .then(function (content) {
+            var binaryContent = "";
+
+            for (var i = 0; i < content.length; i++) {
+                binaryContent += String.fromCharCode(content.charCodeAt(i) & 0xFF);
+            }
+
+            return binaryContent;
+        });
+};
+
+var detectMimeType = function (content) {
+    var startsWith = function (string, substring) {
+        return string.substring(0, substring.length) === substring;
+    };
+
+    if (startsWith(content, '<?xml') || startsWith(content, '<svg')) {
+        return 'image/svg+xml';
+    }
+    return 'image/png';
+};
+
+exports.getDataURIForImageURL = function (url, options) {
+    return exports.binaryAjax(url, options)
+        .then(function (content) {
+            var base64Content = btoa(content),
+                mimeType = detectMimeType(content);
+
+            return 'data:' + mimeType + ';base64,' + base64Content;
+        });
+};
+
+var uniqueIdList = [];
+
+var constantUniqueIdFor = function (element) {
+    // HACK, using a list results in O(n), but how do we hash a function?
+    if (uniqueIdList.indexOf(element) < 0) {
+        uniqueIdList.push(element);
+    }
+    return uniqueIdList.indexOf(element);
+};
+
+exports.memoize = function (func, hasher, memo) {
+    if (typeof memo !== "object") {
+        throw new Error("cacheBucket is not an object");
+    }
+
+    return function () {
+        var args = Array.prototype.slice.call(arguments);
+
+        var argumentHash = hasher(args),
+            funcHash = constantUniqueIdFor(func),
+            retValue;
+
+        if (memo[funcHash] && memo[funcHash][argumentHash]) {
+            return memo[funcHash][argumentHash];
+        } else {
+            retValue = func.apply(null, args);
+
+            memo[funcHash] = memo[funcHash] || {};
+            memo[funcHash][argumentHash] = retValue;
+
+            return retValue;
+        }
+    };
+};
+
+},{"ayepromise":6,"url":5}]},{},[25])
+(25)
+});;
 var csscriticLib = {};
 
 csscriticLib.filestorage = function (util) {
@@ -934,7 +5582,7 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
     return module;
 };
 
-csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
+csscriticLib.signOffReporterUtil = function (util, inlineresources, JsSHA) {
     "use strict";
 
     var module = {};
@@ -958,7 +5606,7 @@ csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
         util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
-            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
+            inlineresources.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
                 callback('<html>' +
                     doc.documentElement.innerHTML +
                     '</html>');
@@ -1387,7 +6035,7 @@ csscriticLib.util = function () {
         imagediff);
 
     // Export convenience constructors
-    var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, rasterizeHTMLInline, jsSHA),
+    var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA),
         signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil),
         htmlFileReporter = csscriticLib.htmlFileReporter(),
         terminalReporter = csscriticLib.terminalReporter(window.console);

@@ -12,7 +12,7 @@
         imagediff);
 
     // Export convenience constructors
-    var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, rasterizeHTMLInline, jsSHA),
+    var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA),
         signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil),
         htmlFileReporter = csscriticLib.htmlFileReporter(),
         terminalReporter = csscriticLib.terminalReporter(window.console);

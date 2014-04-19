@@ -5,7 +5,7 @@ describe("SignOffReporterUtil", function () {
         signOffReporterUtil;
 
     beforeEach(function () {
-        signOffReporterUtil = csscriticLib.signOffReporterUtil(util, rasterizeHTMLInline, jsSHA);
+        signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA);
     });
 
     describe("loadFullDocument", function () {

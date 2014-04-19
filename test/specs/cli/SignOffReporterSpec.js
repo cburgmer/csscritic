@@ -2,7 +2,7 @@ describe("SignOffReporter", function () {
     "use strict";
 
     var util = csscriticLib.util(),
-        signOffReporterUtil = csscriticLib.signOffReporterUtil(util, rasterizeHTMLInline, jsSHA),
+        signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA),
         signOffReporter;
 
     var htmlImage = "html image",

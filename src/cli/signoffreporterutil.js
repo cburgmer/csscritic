@@ -1,4 +1,4 @@
-csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
+csscriticLib.signOffReporterUtil = function (util, inlineresources, JsSHA) {
     "use strict";
 
     var module = {};
@@ -22,7 +22,7 @@ csscriticLib.signOffReporterUtil = function (util, rasterizeHTMLInline, JsSHA) {
         util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
-            rasterizeHTMLInline.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
+            inlineresources.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
                 callback('<html>' +
                     doc.documentElement.innerHTML +
                     '</html>');

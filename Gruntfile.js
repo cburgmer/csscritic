@@ -5,6 +5,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         clean: {
+            dist: ['build/dependencies/*.js'],
             all: ['build', 'test/ui/*.html.json', 'example/*.html.json']
         },
         jasmine: {
@@ -39,23 +40,34 @@ module.exports = function (grunt) {
                         ' Licensed <%= pkg.license %> */' +
                         '\n/* Integrated dependencies:\n' +
                         ' * jsSHA.js (BSD License),\n' +
-                        ' * url (MIT License),\n' +
-                        ' * CSSOM (MIT License),\n' +
-                        ' * xmlserializer (MIT License),\n' +
                         ' * ayepromise (BSD License & WTFPL),\n' +
                         ' * imagediff.js (MIT License),\n' +
-                        ' * rasterizeHTML.js (MIT License) */\n\n'
+                        ' * url (MIT License),\n' +
+                        ' * CSSOM (MIT License),\n' +
+                        ' * inlineresources (MIT License) */\n\n'
                 },
                 src: [
                     'node_modules/jssha/src/sha.js',
-                    'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
                     'node_modules/imagediff/imagediff.js',
+                    'node_modules/ayepromise/ayepromise.js',
+                    'build/dependencies/inlineresources.js',
                     'src/boot/scope.js',
                     'src/cli/*.js',
                     'src/*.js',
                     'src/boot/cli.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
+            }
+        },
+        browserify: {
+            inlineresources: {
+                src: 'node_modules/inlineresources/src/inline.js',
+                dest: 'build/dependencies/inlineresources.js',
+                options: {
+                    bundleOptions: {
+                        'standalone': 'inlineresources'
+                    }
+                }
             }
         },
         uglify: {
@@ -136,7 +148,7 @@ module.exports = function (grunt) {
                 options: {
                     globals: {
                         rasterizeHTML: true,
-                        rasterizeHTMLInline: true,
+                        inlineresources: true,
                         jsSHA: true,
                         imagediff: true,
                         ayepromise: true,
@@ -205,7 +217,7 @@ module.exports = function (grunt) {
                         runs: true,
                         expect: true,
                         spyOn: true,
-                        rasterizeHTMLInline: true,
+                        inlineresources: true,
                         jsSHA: true,
                         imagediff: true,
                         imagediffForJasmine2: true,
@@ -235,6 +247,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-csslint');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-shell');
+    grunt.loadNpmTasks('grunt-browserify');
+
+    grunt.registerTask('dependencies', [
+        'clean:dist',
+        'browserify:inlineresources',
+    ]);
 
     grunt.registerTask('test', [
         'jshint',
@@ -250,6 +268,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
+        'dependencies',
         'test',
         'build'
     ]);
