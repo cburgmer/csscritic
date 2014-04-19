@@ -38,6 +38,7 @@
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-contrib-watch": "~0.5.2",
     "grunt-shell": "~0.7.0",
+    "grunt-umd": "~1.7.3",
     "jasmine-core": "~2.0.0",
     "jasmine-jquery": "git://github.com/velesin/jasmine-jquery",
     "jquery": "~2.1.0"
