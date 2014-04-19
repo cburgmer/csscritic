@@ -5,7 +5,8 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         clean: {
-            dist: ['build/dependencies/*.js'],
+            deps: ['build/dependencies/*.js'],
+            dist: ['build/*.js'],
             all: ['build', 'test/ui/*.html.json', 'example/*.html.json']
         },
         jasmine: {
@@ -53,6 +54,29 @@ module.exports = function (grunt) {
                     'src/boot/cli.js'
                 ],
                 dest: 'dist/<%= pkg.name %>-phantom.js'
+            },
+            one: {
+                src: [
+                    'src/boot/scope.js',
+                    'src/*.js',
+                    'src/browser/*.js',
+                    'src/boot/browser.js',
+                ],
+                dest: 'build/<%= pkg.name %>.concat.js'
+            }
+        },
+        umd: {
+            all: {
+                src: 'build/<%= pkg.name %>.concat.js',
+                dest: 'build/<%= pkg.name %>.umd.js',
+                objectToExport: 'csscritic',
+                indent: '    ',
+                deps: {
+                    default: ['ayepromise', 'imagediff', 'rasterizeHTML'],
+                    cjs: ['ayepromise', 'imagediff', 'rasterizehtml'],
+                    amd: ['ayepromise', 'imagediff', 'rasterizehtml']
+
+                }
             }
         },
         browserify: {
@@ -63,6 +87,17 @@ module.exports = function (grunt) {
                     bundleOptions: {
                         'standalone': 'inlineresources'
                     }
+                }
+            },
+            allinone: {
+                src: 'build/<%= pkg.name %>.umd.js',
+                dest: 'build/<%= pkg.name %>.allinone.js',
+                options: {
+                    standalone: 'csscritic',
+                    // Work around for https://github.com/HumbleSoftware/js-imagediff/issues/29
+                    /* Does not work due to https://github.com/HumbleSoftware/js-imagediff/pull/28 */
+                    exclude: ['node_modules/imagediff/node_modules/canvas/lib/canvas.js']
+                    // We'd prefer "exclude: ['canvas']" but https://github.com/jmreidy/grunt-browserify/issues/187
                 }
             }
         },
@@ -85,15 +120,7 @@ module.exports = function (grunt) {
                         ' * rasterizeHTML.js (MIT License) */\n'
                 },
                 files: {
-                    'dist/<%= pkg.name %>.allinone.js': [
-                        'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
-                        'node_modules/imagediff/imagediff.js',
-                        'node_modules/ayepromise/ayepromise.js',
-                        'src/boot/scope.js',
-                        'src/*.js',
-                        'src/browser/*.js',
-                        'src/boot/browser.js',
-                    ]
+                    'dist/<%= pkg.name %>.allinone.js': ['build/<%= pkg.name %>.allinone.js']
                 }
             }
         },
@@ -246,9 +273,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-umd');
 
     grunt.registerTask('dependencies', [
-        'clean:dist',
+        'clean:deps',
         'browserify:inlineresources',
     ]);
 
@@ -260,7 +288,10 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('build', [
+        'clean:dist',
         'concat',
+        'umd',
+        'browserify:allinone',
         'uglify',
         'cssmin'
     ]);
