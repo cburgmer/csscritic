@@ -1,7 +1,12 @@
-describe("Reporter utilities", function () {
+describe("Basic HTML reporter utilities", function () {
     "use strict";
 
     var basicHTMLReporterUtil;
+
+    var someImageData = function () {
+        var canvas = document.createElement("canvas");
+        return canvas.getContext("2d").createImageData(100, 100);
+    };
 
     beforeEach(function () {
         basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil();
@@ -73,6 +78,22 @@ describe("Reporter utilities", function () {
                     });
                 });
             });
+        });
+
+        it("should top align images of different height", function () {
+            spyOn(imagediff, 'diff').and.returnValue(someImageData());
+            basicHTMLReporterUtil.getDifferenceCanvas('imageA', 'imageB');
+
+            expect(imagediff.diff).toHaveBeenCalledWith('imageA', 'imageB', {align: 'top'});
+        });
+    });
+
+    describe("getHighlightedDifferenceCanvas", function () {
+        it("should top align images of different height", function () {
+            spyOn(imagediff, 'diff').and.returnValue(someImageData());
+            basicHTMLReporterUtil.getHighlightedDifferenceCanvas('imageA', 'imageB');
+
+            expect(imagediff.diff).toHaveBeenCalledWith('imageA', 'imageB', {align: 'top'});
         });
     });
 

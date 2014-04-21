@@ -37,8 +37,12 @@ csscriticLib.basicHTMLReporterUtil = function () {
         return canvas;
     };
 
+    var diffPageImages = function (imageA, imageB) {
+        return imagediff.diff(imageA, imageB, {align: 'top'});
+    };
+
     module.getDifferenceCanvas = function (imageA, imageB) {
-        var differenceImageData = imagediff.diff(imageA, imageB);
+        var differenceImageData = diffPageImages(imageA, imageB);
 
         return canvasForImageCanvas(differenceImageData);
     };
@@ -50,7 +54,7 @@ csscriticLib.basicHTMLReporterUtil = function () {
     };
 
     module.getHighlightedDifferenceCanvas = function (imageA, imageB) {
-        var differenceImageData = imagediff.diff(imageA, imageB);
+        var differenceImageData = diffPageImages(imageA, imageB);
 
         for (var i = 0; i < differenceImageData.data.length; i++) {
             if (i % 4 < 3) {
