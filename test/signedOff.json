@@ -1,34 +1,34 @@
 [{
     "pageUrl": "test/ui/failingTest.html",
-    "fingerprint": "0561979433e0ead1c12c4e70cdd23eaea18151285bf76f05cdb71ebb"
+    "fingerprint": "20be77bd552d653445265d3657354034993264f763c1701dd854ce58"
 }, {
     "pageUrl": "test/ui/failingTestMissingResources.html",
-    "fingerprint": "28184d73056693bdb1a2b171b9559c52d5b14486779fdada3a04fabf"
+    "fingerprint": "f02c3f664ee2a30729be850771c7227c4ab40ca1dfc17879169e6b9c"
 }, {
     "pageUrl": "test/ui/missingBrowserSupport.html",
-    "fingerprint": "ab14bf094095bc86118ba42ff1e64d395159d7c20328cfe75a5b1602"
+    "fingerprint": "4901f7fb2264a2f796bf03d410c9c3c723edad7299da505d9d85ab96"
 }, {
     "pageUrl": "test/ui/missingPage.html",
-    "fingerprint": "11872cca06d0639d05b6bee4663705d85382dd274824e56ba650eb6c"
+    "fingerprint": "956dc834abea00ebf379b5b788ee48462d3485e3d582345f2777cec5"
 }, {
     "pageUrl": "test/ui/missingReference.html",
-    "fingerprint": "79c92905988d550d167c47a5ee7524ae54833b2246d2f2f977110157"
+    "fingerprint": "e84a621ebafea45cc6a903b4e495b2fa8d6c33a3078032e40fc24d86"
 }, {
     "pageUrl": "test/ui/missingReferenceMissingResources.html",
-    "fingerprint": "75ebfd2100d1b151051f728b8ad90958a8fe7bfec65c5ae77e193cf7"
+    "fingerprint": "e56538daeba88896c01ec2407705d30ac0ab3494bc9cc0797f107d29"
 }, {
     "pageUrl": "test/ui/passedTest.html",
-    "fingerprint": "9e5bf1adee1feddfea352c79de5cfa2e29dccc56212be235e57e7dd4"
+    "fingerprint": "26ea6f0c6cd8375cdb973182b38ab399f76987cbafa0e61423a7cad6"
 }, {
     "pageUrl": "test/ui/passedTestMissingResources.html",
-    "fingerprint": "5b893ba9ca3fd7f6d382b90f2528dd116c609b85c996ada89ba9dc84"
+    "fingerprint": "45303d991906e40956c7e0c350b32939447836603da430802678ef87"
 }, {
     "pageUrl": "test/ui/previewTooltip.html",
-    "fingerprint": "46409a3a48ae71c9034d1f33ca3f1317b64cd9b6804cb4fd17728915"
+    "fingerprint": "d07890d6a4d899f8db101eb1e987db35392e061361ef0479bf021ddd"
 }, {
     "pageUrl": "test/ui/startingTest.html",
-    "fingerprint": "222bbd18e25b95c7c62320293cec6bb46d2f3369718785570d97774c"
+    "fingerprint": "19ae66c8ee71e3bf02c06678e481fcc9fe0d08e7ecebc63e341b6287"
 }, {
     "pageUrl": "test/ui/durationCount.html",
-    "fingerprint": "9b2446ff13e5754c83a555c03d516c871f7b5b0a6a7d11d0b04321d4"
+    "fingerprint": "9dd7e255d91313b0df64e0ec442a7e1637aaae3adae67bfe5cbf5701"
 }]

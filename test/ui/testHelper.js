@@ -20,16 +20,13 @@ window.testHelper = (function () {
 
         var mockImageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AsECh0kn2LdqQAAAKlJREFUeNrt3bERADAIAzGT/XeGLQiFfgR0rql0OjrTcwIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABAaJvlXcuFiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAA0U4DUeIDxDHtCI8AAAAASUVORK5CYII=";
 
-        mocks.htmlImage = function () {
-            var htmlImage = window.document.createElement("img");
-            htmlImage.src = mockImageUrl;
-            return htmlImage;
-        };
-
-        mocks.referenceImage = function () {
-            var referenceImage = window.document.createElement("img");
-            referenceImage.src = mockImageUrl;
-            return referenceImage;
+        mocks.image = function () {
+            var image = window.document.createElement("img");
+            image.src = mockImageUrl;
+            // Work around image being loaded asynchronously and the reporter needing the size immediatelly
+            image.height = 100;
+            image.width = 100;
+            return image;
         };
 
         mocks.differenceImageCanvas = function () {
@@ -55,11 +52,11 @@ window.testHelper = (function () {
         if (status === 'error') {
             comparison.pageImage = null;
         } else {
-            comparison.pageImage = mocks.htmlImage();
+            comparison.pageImage = mocks.image();
         }
 
         if (status === 'failed' || status === 'passed') {
-            comparison.referenceImage = mocks.referenceImage();
+            comparison.referenceImage = mocks.image();
         }
 
         if (status === 'failed') {
