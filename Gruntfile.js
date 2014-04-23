@@ -93,11 +93,12 @@ module.exports = function (grunt) {
                 src: 'build/<%= pkg.name %>.umd.js',
                 dest: 'build/<%= pkg.name %>.allinone.js',
                 options: {
-                    standalone: 'csscritic',
+                    bundleOptions: {
+                        standalone: 'csscritic'
+                    },
                     // Work around for https://github.com/HumbleSoftware/js-imagediff/issues/29
                     /* Does not work due to https://github.com/HumbleSoftware/js-imagediff/pull/28 */
-                    exclude: ['node_modules/imagediff/node_modules/canvas/lib/canvas.js']
-                    // We'd prefer "exclude: ['canvas']" but https://github.com/jmreidy/grunt-browserify/issues/187
+                    exclude: ['canvas']
                 }
             }
         },
