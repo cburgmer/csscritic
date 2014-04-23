@@ -79,11 +79,13 @@ module.exports = function (grunt) {
                         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
                         ' Licensed <%= pkg.license %> */' +
                         '\n/* Integrated dependencies:\n' +
+                        ' * imagediff.js (MIT License),\n' +
+                        ' * ayepromise (BSD License & WTFPL),\n' +
                         ' * url (MIT License),\n' +
                         ' * CSSOM (MIT License),\n' +
                         ' * xmlserializer (MIT License),\n' +
-                        ' * ayepromise (BSD License & WTFPL),\n' +
-                        ' * imagediff.js (MIT License),\n' +
+                        // not yet ' * css-font-face-src (BSD License),\n' +
+                        ' * inlineresources (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n'
                 },
                 files: {
