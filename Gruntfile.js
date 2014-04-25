@@ -23,10 +23,6 @@ module.exports = function (grunt) {
         },
         shell: {
             runPhantomTests: {
-                options: {
-                    stdout: true,
-                    failOnError: true
-                },
                 command: 'phantomjs test/run-phantomjs-tests.js'
             }
         },
