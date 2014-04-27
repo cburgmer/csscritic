@@ -88,7 +88,7 @@ module.exports = function (grunt) {
                     'dist/<%= pkg.name %>.allinone.js': [
                         'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
                         'node_modules/imagediff/imagediff.js',
-                        // TODO ayepromise is needed, but currently included in the rasterizeHTML.allinone.js bundle
+                        'node_modules/ayepromise/ayepromise.js',
                         'src/boot/scope.js',
                         'src/*.js',
                         'src/browser/*.js',
