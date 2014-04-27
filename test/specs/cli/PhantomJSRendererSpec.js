@@ -132,4 +132,20 @@ describe("PhantomJS renderer", function () {
         });
     });
 
+    it("should report errors from script execution", function (done) {
+        var pageUrl = fixtureUrl + "erroneousJs.html";
+
+        phantomjsRenderer.render({
+            url: pageUrl,
+            width: 42,
+            height: 7
+        }).then(function (result) {
+            console.log(result.errors);
+            expect(result.errors).not.toBeNull();
+            expect(result.errors).toEqual(["ReferenceError: Can't find variable: undefinedVar"]);
+
+            done();
+        });
+    });
+
 });

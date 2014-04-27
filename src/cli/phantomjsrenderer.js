@@ -44,7 +44,7 @@ csscriticLib.phantomjsRenderer = function () {
     var openPage = function (url, width, height) {
         var defer = ayepromise.defer(),
             page = require("webpage").create(),
-            errorneousResources = [];
+            errors = [];
 
         page.onResourceReceived = function (response) {
             var protocol = response.url.substr(0, 7);
@@ -52,8 +52,12 @@ csscriticLib.phantomjsRenderer = function () {
             if (response.stage === "end" &&
                 ((protocol !== "file://" && response.status >= 400) ||
                     (protocol === "file://" && !response.headers.length))) {
-                errorneousResources.push(response.url);
+                errors.push(response.url);
             }
+        };
+
+        page.onError = function (msg) {
+            errors.push(msg);
         };
 
         page.viewportSize = {
@@ -65,7 +69,7 @@ csscriticLib.phantomjsRenderer = function () {
             if (status === "success") {
                 defer.resolve({
                     page: page,
-                    errorneousResources: errorneousResources
+                    errors: errors
                 });
             } else {
                 defer.reject();
@@ -85,7 +89,7 @@ csscriticLib.phantomjsRenderer = function () {
                     .then(function (image) {
                         return {
                             image: image,
-                            errors: result.errorneousResources
+                            errors: result.errors
                         };
                     });
             });
