@@ -95,10 +95,7 @@ module.exports = function (grunt) {
                 options: {
                     bundleOptions: {
                         standalone: 'csscritic'
-                    },
-                    // Work around for https://github.com/HumbleSoftware/js-imagediff/issues/29
-                    /* Does not work due to https://github.com/HumbleSoftware/js-imagediff/pull/28 */
-                    exclude: ['canvas']
+                    }
                 }
             }
         },
