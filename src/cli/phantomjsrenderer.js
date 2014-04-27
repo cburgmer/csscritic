@@ -52,7 +52,7 @@ csscriticLib.phantomjsRenderer = function () {
             if (response.stage === "end" &&
                 ((protocol !== "file://" && response.status >= 400) ||
                     (protocol === "file://" && !response.headers.length))) {
-                errors.push(response.url);
+                errors.push("Unable to load resource " + response.url);
             }
         };
 

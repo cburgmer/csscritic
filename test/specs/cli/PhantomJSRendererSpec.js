@@ -101,9 +101,9 @@ describe("PhantomJS renderer", function () {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
-                getFileUrl(fixtureUrl + "background_image_does_not_exist.jpg"),
-                getFileUrl(fixtureUrl + "css_does_not_exist.css"),
-                getFileUrl(fixtureUrl + "image_does_not_exist.png")
+                "Unable to load resource " + getFileUrl(fixtureUrl + "background_image_does_not_exist.jpg"),
+                "Unable to load resource " + getFileUrl(fixtureUrl + "css_does_not_exist.css"),
+                "Unable to load resource " + getFileUrl(fixtureUrl + "image_does_not_exist.png")
             ]);
 
             done();
@@ -123,9 +123,9 @@ describe("PhantomJS renderer", function () {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
-                servedFixtureUrl + "background_image_does_not_exist.jpg",
-                servedFixtureUrl + "css_does_not_exist.css",
-                servedFixtureUrl + "image_does_not_exist.png"
+                "Unable to load resource " + servedFixtureUrl + "background_image_does_not_exist.jpg",
+                "Unable to load resource " + servedFixtureUrl + "css_does_not_exist.css",
+                "Unable to load resource " + servedFixtureUrl + "image_does_not_exist.png"
             ]);
 
             done();
