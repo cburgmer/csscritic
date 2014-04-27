@@ -26,8 +26,11 @@ module.exports = function (grunt) {
             runPhantomTests: {
                 command: 'phantomjs test/run-phantomjs-tests.js'
             },
-            smokeTest: {
-                command: 'phantomjs test/smokeTest.js'
+            smokeTestLoader: {
+                command: 'phantomjs test/smokeTest.js test/smokeTestLoader.html'
+            },
+            smokeTestBundle: {
+                command: 'phantomjs test/smokeTest.js test/smokeTestBundled.html'
             }
         },
         concat: {
@@ -303,7 +306,8 @@ module.exports = function (grunt) {
         'dependencies',
         'test',
         'build',
-        'shell:smokeTest'
+        'shell:smokeTestLoader',
+        'shell:smokeTestBundle'
     ]);
 
 };
