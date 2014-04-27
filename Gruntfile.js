@@ -25,6 +25,9 @@ module.exports = function (grunt) {
         shell: {
             runPhantomTests: {
                 command: 'phantomjs test/run-phantomjs-tests.js'
+            },
+            smokeTest: {
+                command: 'phantomjs test/smokeTest.js'
             }
         },
         concat: {
@@ -250,7 +253,9 @@ module.exports = function (grunt) {
                         csscriticTestHelper: true,
                         loadStoragePluginSpecs: true,
                         jasmineRequire: true,
-                        executeJasmine: true
+                        executeJasmine: true,
+                        csscritic: true,
+                        console: true
                     }
                 },
                 src: [
@@ -297,7 +302,8 @@ module.exports = function (grunt) {
     grunt.registerTask('default', [
         'dependencies',
         'test',
-        'build'
+        'build',
+        'shell:smokeTest'
     ]);
 
 };
