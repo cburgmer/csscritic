@@ -135,8 +135,27 @@ describe("Regression testing", function () {
 
             csscritic.add({url: "samplepage.html"});
             csscritic.execute(function () {
+                expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
+                    url: "samplepage.html",
+                    width: 98,
+                    height: 76
+                }));
+
+                done();
+            });
+        });
+
+        it("should pass test case parameters to the renderer", function (done) {
+            setUpImageEqualityToBe(true);
+
+            csscritic.add({
+                url: 'samplepage.html',
+                hover: '.a.selector'
+            });
+            csscritic.execute(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith({
                     url: "samplepage.html",
+                    hover: '.a.selector',
                     width: 98,
                     height: 76
                 });
@@ -144,7 +163,6 @@ describe("Regression testing", function () {
                 done();
             });
         });
-
     });
 
     describe("First generation of a reference image", function () {
@@ -156,11 +174,11 @@ describe("Regression testing", function () {
         it("should provide a appropriately sized page rendering", function (done) {
             csscritic.add({url: "differentpage.html"});
             csscritic.execute(function () {
-                expect(rendererBackend.render).toHaveBeenCalledWith({
+                expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
                     url: "differentpage.html",
                     width: 800,
                     height: 100
-                });
+                }));
 
                 done();
             });

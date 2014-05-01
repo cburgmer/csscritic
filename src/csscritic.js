@@ -94,9 +94,9 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     };
 
     var loadPageAndReportResult = function (testCase, viewport, referenceImage, callback) {
-
         renderer.render({
             url: testCase.url,
+            hover: testCase.hover,
             width: viewport.width,
             height: viewport.height
         }).then(function (renderResult) {
