@@ -256,12 +256,31 @@ describe("Reporting", function () {
             });
 
             expect(finished).toBeTruthy();
-            expect(rendererBackend.render).toHaveBeenCalledWith({
+            expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
                 url: "differentpage.html",
                 width: 16,
                 height: 34
-            });
+            }));
             expect(result.pageImage).toBe(newHtmlImage);
+        });
+
+        it("should pass the test case's additional parameters on resize", function () {
+            setUpRenderedImage(htmlImage);
+            setUpReferenceImageToBeMissing();
+
+            csscritic.add({
+                url: "differentpage.html",
+                hover: '.selector'
+            });
+            csscritic.execute();
+
+            rendererBackend.render.calls.reset();
+
+            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(16, 34, function () {});
+
+            expect(rendererBackend.render).toHaveBeenCalledWith(
+                jasmine.objectContaining({hover: '.selector'})
+            );
         });
 
         it("should provide a method to accept the rendered page and store as new reference", function () {
@@ -302,6 +321,25 @@ describe("Reporting", function () {
                 width: 800,
                 height: 100
             });
+        });
+
+        it("should pass the test case's additional parameters on accept", function () {
+            setUpRenderedImage(htmlImage);
+            setUpReferenceImageToBeMissing();
+
+            csscritic.add({
+                url: "differentpage.html",
+                hover: '.selector'
+            });
+            csscritic.execute();
+
+            reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
+
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(
+                jasmine.objectContaining({hover: '.selector'}),
+                htmlImage,
+                jasmine.any(Object)
+            );
         });
 
         it("should store the viewport's updated size on accept", function () {

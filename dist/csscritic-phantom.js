@@ -5813,6 +5813,8 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
                 renderer.render({
                     url: comparison.testCase.url,
+                    hover: comparison.testCase.hover,
+                    active: comparison.testCase.active,
                     width: width,
                     height: height
                 }).then(function (renderResult) {
