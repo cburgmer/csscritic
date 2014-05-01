@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-04-27
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-05-01
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -5870,9 +5870,10 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     };
 
     var loadPageAndReportResult = function (testCase, viewport, referenceImage, callback) {
-
         renderer.render({
             url: testCase.url,
+            hover: testCase.hover,
+            active: testCase.active,
             width: viewport.width,
             height: viewport.height
         }).then(function (renderResult) {

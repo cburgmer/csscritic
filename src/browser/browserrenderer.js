@@ -33,6 +33,9 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
         if (parameters.hover) {
             drawOptions.hover = parameters.hover;
         }
+        if (parameters.active) {
+            drawOptions.active = parameters.active;
+        }
 
         return rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
             var renderErrors = extractErrorMessages(result.errors);
@@ -66,7 +69,8 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
                     baseUrl: parameters.url,
                     width: parameters.width,
                     height: parameters.height,
-                    hover: parameters.hover
+                    hover: parameters.hover,
+                    active: parameters.active
                 });
             });
     };

@@ -97,6 +97,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         renderer.render({
             url: testCase.url,
             hover: testCase.hover,
+            active: testCase.active,
             width: viewport.width,
             height: viewport.height
         }).then(function (renderResult) {

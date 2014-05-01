@@ -150,12 +150,14 @@ describe("Regression testing", function () {
 
             csscritic.add({
                 url: 'samplepage.html',
-                hover: '.a.selector'
+                hover: '.a.selector',
+                active: '.another.selector'
             });
             csscritic.execute(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith({
                     url: "samplepage.html",
                     hover: '.a.selector',
+                    active: '.another.selector',
                     width: 98,
                     height: 76
                 });

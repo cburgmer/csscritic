@@ -168,6 +168,26 @@ describe("Browser renderer", function () {
                 done();
             });
         });
+
+        it("should render with active effect", function (done) {
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(successfulPromise({
+                image: "the image",
+                errors: []
+            }));
+
+            browserRenderer.render({
+                url: theUrl,
+                width: 42,
+                height: 7,
+                active: ".someSelector"
+            }).then(function () {
+                expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
+                    jasmine.any(String),
+                    jasmine.objectContaining({active: ".someSelector"})
+                );
+                done();
+            });
+        });
     });
 
 });
