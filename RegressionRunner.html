@@ -10,11 +10,11 @@
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
             csscritic.add('test/ui/failingTest.html');
-            csscritic.add({url: 'test/ui/failingTest.html?1', hover: '.failed.comparison'});
-            csscritic.add({url: 'test/ui/failingTest.html?2', hover: '.updateHint button'});
+            csscritic.add({url: 'test/ui/failingTest.html', hover: '.failed.comparison'});
+            csscritic.add({url: 'test/ui/failingTest.html', hover: '.updateHint button'});
             csscritic.add('test/ui/missingReference.html');
-            csscritic.add({url: 'test/ui/missingReference.html?1', hover: '.saveHint button'});
-            csscritic.add({url: 'test/ui/missingReference.html?2', active: '.saveHint button'});
+            csscritic.add({url: 'test/ui/missingReference.html', hover: '.saveHint button'});
+            csscritic.add({url: 'test/ui/missingReference.html', active: '.saveHint button'});
             csscritic.add('test/ui/passedTest.html');
             csscritic.add('test/ui/missingPage.html');
             csscritic.add('test/ui/failingTestMissingResources.html');

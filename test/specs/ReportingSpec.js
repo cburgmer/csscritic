@@ -96,7 +96,10 @@ describe("Reporting", function () {
             csscritic.execute();
 
             expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({
-                pageUrl: "samplepage.html"
+                pageUrl: "samplepage.html",
+                testCase: {
+                    url: "samplepage.html"
+                }
             }, jasmine.any(Function));
         });
 
@@ -150,6 +153,9 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
                 pageUrl: "differentpage.html",
+                testCase: {
+                    url: "differentpage.html"
+                },
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
@@ -168,6 +174,9 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "failed",
                 pageUrl: "differentpage.html",
+                testCase: {
+                    url: "differentpage.html"
+                },
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
@@ -185,6 +194,9 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
                 pageUrl: "differentpage.html",
+                testCase: {
+                    url: "differentpage.html"
+                },
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function)
@@ -201,6 +213,9 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "error",
                 pageUrl: "samplepage.html",
+                testCase: {
+                    url: "samplepage.html"
+                },
                 pageImage: undefined
             }, jasmine.any(Function));
         });
@@ -232,6 +247,9 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
                 pageUrl: "differentpage.html",
+                testCase: {
+                    url: "differentpage.html"
+                },
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
@@ -264,6 +282,9 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
                 pageUrl: "differentpage.html",
+                testCase: {
+                    url: "differentpage.html"
+                },
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
@@ -319,15 +340,9 @@ describe("Reporting", function () {
             csscritic.add({url: "differentpage.html"});
             csscritic.execute();
 
-            expect(reporter.reportComparison).toHaveBeenCalledWith({
-                status: "passed",
-                pageUrl: "differentpage.html",
-                pageImage: htmlImage,
+            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
                 renderErrors: ["oneUrl", "anotherUrl"],
-                resizePageImage: jasmine.any(Function),
-                acceptPage: jasmine.any(Function),
-                referenceImage: referenceImage
-            }, jasmine.any(Function));
+            }), jasmine.any(Function));
         });
 
         it("should provide a list of errors during rendering independently of whether the reference image exists", function () {
@@ -337,14 +352,9 @@ describe("Reporting", function () {
             csscritic.add({url: "differentpage.html"});
             csscritic.execute();
 
-            expect(reporter.reportComparison).toHaveBeenCalledWith({
-                status: "referenceMissing",
-                pageUrl: "differentpage.html",
+            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
                 renderErrors: ["oneUrl", "anotherUrl"],
-                pageImage: htmlImage,
-                resizePageImage: jasmine.any(Function),
-                acceptPage: jasmine.any(Function)
-            }, jasmine.any(Function));
+            }), jasmine.any(Function));
         });
 
         it("should not pass along a list if no errors exist", function () {
@@ -358,6 +368,9 @@ describe("Reporting", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
                 pageUrl: "differentpage.html",
+                testCase: {
+                    url: "differentpage.html"
+                },
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),

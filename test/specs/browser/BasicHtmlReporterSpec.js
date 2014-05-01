@@ -1,10 +1,12 @@
 describe("Basic HTML reporter", function () {
     "use strict";
 
-    var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
+    var util = csscriticLib.util(),
+        basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
         reporter;
 
-    var htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas;
+    var htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas,
+        paramsOnPassingTest;
 
     beforeEach(function () {
         spyOn(basicHTMLReporterUtil, 'supportsReadingHtmlFromCanvas');
@@ -27,7 +29,17 @@ describe("Basic HTML reporter", function () {
             }
         });
 
-        reporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document).BasicHTMLReporter();
+        reporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document).BasicHTMLReporter();
+
+        paramsOnPassingTest = {
+            status: "passed",
+            pageUrl: "page_url",
+            testCase: {
+                url: "page_url"
+            },
+            pageImage: htmlImage,
+            referenceImage: referenceImage
+        };
     });
 
     afterEach(function () {
@@ -35,12 +47,7 @@ describe("Basic HTML reporter", function () {
     });
 
     it("should show an entry for the reported test", function () {
-        reporter.reportComparison({
-            status: "passed",
-            pageUrl: "page_url",
-            pageImage: htmlImage,
-            referenceImage: referenceImage
-        });
+        reporter.reportComparison(paramsOnPassingTest);
 
         expect($("#csscritic_basichtmlreporter")).toExist();
         expect($("#csscritic_basichtmlreporter .comparison")).toExist();
@@ -49,7 +56,7 @@ describe("Basic HTML reporter", function () {
     it("should call the callback when finished reporting comparison", function () {
         var callback = jasmine.createSpy("callback");
 
-        reporter.reportComparison({}, callback);
+        reporter.reportComparison(paramsOnPassingTest, callback);
 
         expect(callback).toHaveBeenCalled();
     });
@@ -67,6 +74,9 @@ describe("Basic HTML reporter", function () {
         reporter.reportComparison({
             status: "passed",
             pageUrl: "page_url<img>",
+            testCase: {
+                url: "page_url<img>"
+            },
             pageImage: htmlImage,
             referenceImage: referenceImage
         });
@@ -78,6 +88,9 @@ describe("Basic HTML reporter", function () {
         reporter.reportComparison({
             status: "passed",
             pageUrl: "dir/page_url",
+            testCase: {
+                url: "dir/page_url"
+            },
             pageImage: htmlImage,
             referenceImage: referenceImage
         });
@@ -86,13 +99,10 @@ describe("Basic HTML reporter", function () {
     });
 
     it("should show page render errors", function () {
-        reporter.reportComparison({
-            status: "passed",
-            pageUrl: "page_url<img>",
-            renderErrors: ["theFirstBadUrl", "yetAnotherBadUrl"],
-            pageImage: htmlImage,
-            referenceImage: referenceImage
-        });
+        var comparison = paramsOnPassingTest;
+        comparison.renderErrors = ["theFirstBadUrl", "yetAnotherBadUrl"];
+
+        reporter.reportComparison(comparison);
 
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toExist();
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toHaveClass("warning");
@@ -105,7 +115,10 @@ describe("Basic HTML reporter", function () {
 
         it("should render all currently running", function () {
             reporter.reportComparisonStarting({
-                pageUrl: "page_url"
+                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                }
             });
 
             expect($("#csscritic_basichtmlreporter .comparison")).toExist();
@@ -116,18 +129,24 @@ describe("Basic HTML reporter", function () {
         it("should call the callback when finished reporting", function () {
             var callback = jasmine.createSpy("callback");
 
-            reporter.reportComparisonStarting({}, callback);
+            reporter.reportComparisonStarting(paramsOnPassingTest, callback);
 
             expect(callback).toHaveBeenCalled();
         });
 
         it("should report the final result 'on top' of the running entry", function () {
             reporter.reportComparisonStarting({
-                pageUrl: "page_url"
+                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                }
             });
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             });
@@ -135,6 +154,45 @@ describe("Basic HTML reporter", function () {
             expect($("#csscritic_basichtmlreporter .comparison").length).toEqual(1);
             expect($("#csscritic_basichtmlreporter .comparison.running")).not.toExist();
         });
+
+        it("should show two different entries for different test cases with the same url", function () {
+            reporter.reportComparisonStarting({
+                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                }
+            });
+            reporter.reportComparisonStarting({
+                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url",
+                    active: '.selector'
+                }
+            });
+
+            reporter.reportComparison({
+                status: "passed",
+                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
+                pageImage: htmlImage,
+                referenceImage: referenceImage
+            });
+            reporter.reportComparison({
+                status: "passed",
+                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url",
+                    active: '.selector'
+                },
+                pageImage: htmlImage,
+                referenceImage: referenceImage
+            });
+
+            expect($("#csscritic_basichtmlreporter .comparison.passed").length).toBe(2);
+        });
+
     });
 
     describe("on completion", function () {
@@ -145,7 +203,10 @@ describe("Basic HTML reporter", function () {
             });
 
             reporter.reportComparisonStarting({
-                pageUrl: "some_page.html"
+                pageUrl: "some_page.html",
+                testCase: {
+                    url: "page_url"
+                }
             });
             reporter.report({success: true}, function () {});
             expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
@@ -165,6 +226,9 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             });
@@ -176,6 +240,9 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             });
@@ -197,6 +264,9 @@ describe("Basic HTML reporter", function () {
             paramsOnFailingTest = {
                 status: "failed",
                 pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: htmlImage,
                 resizePageImage: resizePageImageSpy,
                 acceptPage: acceptPageSpy,
@@ -305,6 +375,9 @@ describe("Basic HTML reporter", function () {
             paramsOnMissingReference = {
                 status: "referenceMissing",
                 pageUrl: "page_url<img>",
+                testCase: {
+                    url: "page_url<img>"
+                },
                 pageImage: htmlImage,
                 resizePageImage: resizePageImageSpy,
                 acceptPage: acceptPageSpy
@@ -389,6 +462,9 @@ describe("Basic HTML reporter", function () {
             paramsOnErroneousTest = {
                 status: "error",
                 pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: null
             };
         });
@@ -421,6 +497,9 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison({
                 status: "passed",
                 pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             });
@@ -462,7 +541,7 @@ describe("Basic HTML reporter", function () {
                 callback(false);
             });
 
-            reporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document).BasicHTMLReporter();
+            reporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document).BasicHTMLReporter();
 
             expect($(".browserWarning")).toExist();
         });
@@ -472,7 +551,7 @@ describe("Basic HTML reporter", function () {
                 callback(true);
             });
 
-            reporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document).BasicHTMLReporter();
+            reporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document).BasicHTMLReporter();
 
             expect($(".browserWarning")).not.toExist();
         });

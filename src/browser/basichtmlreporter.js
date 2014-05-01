@@ -1,4 +1,4 @@
-csscriticLib.basicHTMLReporter = function (reporterUtil, document) {
+csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     "use strict";
 
     var module = {};
@@ -346,30 +346,35 @@ csscriticLib.basicHTMLReporter = function (reporterUtil, document) {
 
         showBrowserWarningIfNeeded();
 
+        var getOrCreateComparisonEntry = function (comparison) {
+            var key = util.serializeMap(comparison.testCase),
+                node;
+
+            if (! runningComparisonEntries[key]) {
+                node = createRunningEntry(comparison);
+                getOrCreateBody().appendChild(node);
+
+                runningComparisonEntries[key] = node;
+            }
+
+            return runningComparisonEntries[key];
+        };
+
         return {
             reportComparisonStarting: function (comparison, callback) {
-                var node = createRunningEntry(comparison),
-                    reportBody = getOrCreateBody();
-
                 if (timer === null) {
                     timer = createTimer();
                 }
 
-                reportBody.appendChild(node);
-
-                runningComparisonEntries[comparison.pageUrl] = node;
+                getOrCreateComparisonEntry(comparison);
 
                 if (callback) {
                     callback();
                 }
             },
             reportComparison: function (comparison, callback) {
-                var node = runningComparisonEntries[comparison.pageUrl];
-                if (!node) {
-                    // Work with old api `compare()` where no start node is created
-                    node = createRunningEntry(comparison);
-                    getOrCreateBody().appendChild(node);
-                }
+                // Work with old api `compare()` where no start node is created
+                var node = getOrCreateComparisonEntry(comparison);
 
                 addFinalEntry(comparison, node);
 

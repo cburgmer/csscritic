@@ -12,6 +12,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         var result = {
                 status: comparison.status,
                 pageUrl: comparison.pageUrl,
+                testCase: comparison.testCase,
                 pageImage: comparison.htmlImage
             };
 
@@ -52,7 +53,10 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         util.map(testCases, function (testCase, finishTestCase) {
             util.map(reporters, function (reporter, finishReporter) {
                 if (reporter.reportComparisonStarting) {
-                    reporter.reportComparisonStarting({pageUrl: testCase.url}, finishReporter);
+                    reporter.reportComparisonStarting({
+                        pageUrl: testCase.url,
+                        testCase: testCase,
+                    }, finishReporter);
                 } else {
                     finishReporter();
                 }

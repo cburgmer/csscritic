@@ -46,6 +46,9 @@ window.testHelper = (function () {
             comparison = {
                 status: status,
                 pageUrl: "aPage.html",
+                testCase: {
+                    url: "aPage.html"
+                },
                 renderErrors: renderErrors
             };
 
@@ -73,7 +76,10 @@ window.testHelper = (function () {
 
     testHelper.startingComparison = function () {
         return {
-            pageUrl: "aPage.html"
+            pageUrl: "aPage.html",
+            testCase: {
+                url: "aPage.html"
+            }
         };
     };
 
@@ -126,8 +132,9 @@ window.testHelper = (function () {
     };
 
     testHelper.constructBasicHTMLReporter = function () {
-        var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
-            basicHTMLReporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document);
+        var util = csscriticLib.util(),
+            basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
+            basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
 
         return basicHTMLReporter.BasicHTMLReporter();
     };

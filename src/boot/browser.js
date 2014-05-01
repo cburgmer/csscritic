@@ -15,7 +15,7 @@ var csscritic;
 
     // Export convenience constructors
     var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
-        basicHTMLReporter = csscriticLib.basicHTMLReporter(basicHTMLReporterUtil, window.document);
+        basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
 
     csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
 }());
