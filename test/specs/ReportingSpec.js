@@ -96,7 +96,6 @@ describe("Reporting", function () {
             csscritic.execute();
 
             expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({
-                pageUrl: "samplepage.html",
                 testCase: {
                     url: "samplepage.html"
                 }
@@ -152,7 +151,6 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
-                pageUrl: "differentpage.html",
                 testCase: {
                     url: "differentpage.html"
                 },
@@ -173,7 +171,6 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "failed",
-                pageUrl: "differentpage.html",
                 testCase: {
                     url: "differentpage.html"
                 },
@@ -193,7 +190,6 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
-                pageUrl: "differentpage.html",
                 testCase: {
                     url: "differentpage.html"
                 },
@@ -212,7 +208,6 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "error",
-                pageUrl: "samplepage.html",
                 testCase: {
                     url: "samplepage.html"
                 },
@@ -246,7 +241,6 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
-                pageUrl: "differentpage.html",
                 testCase: {
                     url: "differentpage.html"
                 },
@@ -281,7 +275,6 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
-                pageUrl: "differentpage.html",
                 testCase: {
                     url: "differentpage.html"
                 },
@@ -367,7 +360,6 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
-                pageUrl: "differentpage.html",
                 testCase: {
                     url: "differentpage.html"
                 },

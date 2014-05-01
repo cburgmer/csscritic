@@ -5273,29 +5273,29 @@ csscriticLib.htmlFileReporter = function () {
 
     var module = {};
 
-    var reportComparison = function (result, basePath, callback) {
+    var reportComparison = function (comparison, basePath, callback) {
         var imagesToWrite = [];
 
-        if (result.status !== "error") {
+        if (comparison.status !== "error") {
             imagesToWrite.push({
-                imageUrl: result.pageImage.src,
-                width: result.pageImage.width,
-                height: result.pageImage.height,
-                target: basePath + getTargetBaseName(result.pageUrl) + ".png"
+                imageUrl: comparison.pageImage.src,
+                width: comparison.pageImage.width,
+                height: comparison.pageImage.height,
+                target: basePath + getTargetBaseName(comparison.testCase.url) + ".png"
             });
         }
-        if (result.status === "failed") {
+        if (comparison.status === "failed") {
             imagesToWrite.push({
-                imageUrl: result.referenceImage.src,
-                width: result.referenceImage.width,
-                height: result.referenceImage.height,
-                target: basePath + getTargetBaseName(result.pageUrl) + ".reference.png"
+                imageUrl: comparison.referenceImage.src,
+                width: comparison.referenceImage.width,
+                height: comparison.referenceImage.height,
+                target: basePath + getTargetBaseName(comparison.testCase.url) + ".reference.png"
             });
             imagesToWrite.push({
-                imageUrl: getDifferenceCanvas(result.pageImage, result.referenceImage).toDataURL('image/png'),
-                width: result.referenceImage.width,
-                height: result.referenceImage.height,
-                target: basePath + getTargetBaseName(result.pageUrl) + ".diff.png"
+                imageUrl: getDifferenceCanvas(comparison.pageImage, comparison.referenceImage).toDataURL('image/png'),
+                width: comparison.referenceImage.width,
+                height: comparison.referenceImage.height,
+                target: basePath + getTargetBaseName(comparison.testCase.url) + ".diff.png"
             });
         }
 
@@ -5631,22 +5631,22 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
         return signedOffPage;
     };
 
-    var acceptSignedOffPage = function (result, signedOffPages, callback) {
+    var acceptSignedOffPage = function (comparison, signedOffPages, callback) {
         var signedOffPageEntry;
 
-        if (result.status === "failed" || result.status === "referenceMissing") {
-            signedOffPageEntry = findPage(result.pageUrl, signedOffPages);
+        if (comparison.status === "failed" || comparison.status === "referenceMissing") {
+            signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
 
-            calculateFingerprintForPage(result.pageUrl, function (actualFingerprint) {
+            calculateFingerprintForPage(comparison.testCase.url, function (actualFingerprint) {
                 if (signedOffPageEntry) {
                     if (actualFingerprint === signedOffPageEntry.fingerprint) {
-                        console.log("Generating reference image for " + result.pageUrl);
-                        result.acceptPage();
+                        console.log("Generating reference image for " + comparison.testCase.url);
+                        comparison.acceptPage();
                     } else {
-                        console.log("Fingerprint does not match for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
+                        console.log("Fingerprint does not match for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
                     }
                 } else {
-                    console.log("No sign-off for " + result.pageUrl + ", current fingerprint " + actualFingerprint);
+                    console.log("No sign-off for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
                 }
 
                 if (callback) {
@@ -5662,13 +5662,13 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
 
     module.SignOffReporter = function (signedOffPages) {
         return {
-            reportComparison: function (result, callback) {
+            reportComparison: function (comparison, callback) {
                 if (! Array.isArray(signedOffPages)) {
                     signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
-                        acceptSignedOffPage(result, json, callback);
+                        acceptSignedOffPage(comparison, json, callback);
                     });
                 } else {
-                    acceptSignedOffPage(result, signedOffPages, callback);
+                    acceptSignedOffPage(comparison, signedOffPages, callback);
                 }
             }
         };
@@ -5763,17 +5763,17 @@ csscriticLib.terminalReporter = function (console) {
             referenceMissing: "red+bold"
         };
 
-    var reportComparison = function (result, callback) {
-        var color = statusColor[result.status] || "",
-            statusStr = inColor(result.status, color);
-        if (result.renderErrors) {
-            console.log(inColor("Error(s) loading " + result.pageUrl + ":", "red"));
-            result.renderErrors.forEach(function (msg) {
+    var reportComparison = function (comparison, callback) {
+        var color = statusColor[comparison.status] || "",
+            statusStr = inColor(comparison.status, color);
+        if (comparison.renderErrors) {
+            console.log(inColor("Error(s) loading " + comparison.testCase.url + ":", "red"));
+            comparison.renderErrors.forEach(function (msg) {
                 console.log(inColor("  " + msg, "red+bold"));
             });
         }
 
-        console.log("Testing " + result.pageUrl + "... " + statusStr);
+        console.log("Testing " + comparison.testCase.url + "... " + statusStr);
 
         if (callback) {
             callback();
@@ -5802,7 +5802,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
             viewportHeight = comparison.viewportHeight;
         var result = {
                 status: comparison.status,
-                pageUrl: comparison.pageUrl,
                 testCase: comparison.testCase,
                 pageImage: comparison.htmlImage
             };
@@ -5813,7 +5812,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                 viewportHeight = height;
 
                 renderer.render({
-                    url: comparison.pageUrl,
+                    url: comparison.testCase.url,
                     width: width,
                     height: height
                 }).then(function (renderResult) {
@@ -5845,7 +5844,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
             util.map(reporters, function (reporter, finishReporter) {
                 if (reporter.reportComparisonStarting) {
                     reporter.reportComparisonStarting({
-                        pageUrl: testCase.url,
                         testCase: testCase,
                     }, finishReporter);
                 } else {
@@ -5910,7 +5908,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
                 reportComparison({
                         status: textualStatus,
-                        pageUrl: testCase.url,
                         testCase: testCase,
                         htmlImage: renderResult.image,
                         referenceImage: referenceImage,
@@ -5928,7 +5925,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
             reportComparison({
                     status: textualStatus,
-                    pageUrl: testCase.url,
                     testCase: testCase
                 },
                 function () {

@@ -3,29 +3,29 @@ csscriticLib.htmlFileReporter = function () {
 
     var module = {};
 
-    var reportComparison = function (result, basePath, callback) {
+    var reportComparison = function (comparison, basePath, callback) {
         var imagesToWrite = [];
 
-        if (result.status !== "error") {
+        if (comparison.status !== "error") {
             imagesToWrite.push({
-                imageUrl: result.pageImage.src,
-                width: result.pageImage.width,
-                height: result.pageImage.height,
-                target: basePath + getTargetBaseName(result.pageUrl) + ".png"
+                imageUrl: comparison.pageImage.src,
+                width: comparison.pageImage.width,
+                height: comparison.pageImage.height,
+                target: basePath + getTargetBaseName(comparison.testCase.url) + ".png"
             });
         }
-        if (result.status === "failed") {
+        if (comparison.status === "failed") {
             imagesToWrite.push({
-                imageUrl: result.referenceImage.src,
-                width: result.referenceImage.width,
-                height: result.referenceImage.height,
-                target: basePath + getTargetBaseName(result.pageUrl) + ".reference.png"
+                imageUrl: comparison.referenceImage.src,
+                width: comparison.referenceImage.width,
+                height: comparison.referenceImage.height,
+                target: basePath + getTargetBaseName(comparison.testCase.url) + ".reference.png"
             });
             imagesToWrite.push({
-                imageUrl: getDifferenceCanvas(result.pageImage, result.referenceImage).toDataURL('image/png'),
-                width: result.referenceImage.width,
-                height: result.referenceImage.height,
-                target: basePath + getTargetBaseName(result.pageUrl) + ".diff.png"
+                imageUrl: getDifferenceCanvas(comparison.pageImage, comparison.referenceImage).toDataURL('image/png'),
+                width: comparison.referenceImage.width,
+                height: comparison.referenceImage.height,
+                target: basePath + getTargetBaseName(comparison.testCase.url) + ".diff.png"
             });
         }
 

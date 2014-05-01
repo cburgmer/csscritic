@@ -11,7 +11,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
             viewportHeight = comparison.viewportHeight;
         var result = {
                 status: comparison.status,
-                pageUrl: comparison.pageUrl,
                 testCase: comparison.testCase,
                 pageImage: comparison.htmlImage
             };
@@ -22,7 +21,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                 viewportHeight = height;
 
                 renderer.render({
-                    url: comparison.pageUrl,
+                    url: comparison.testCase.url,
                     width: width,
                     height: height
                 }).then(function (renderResult) {
@@ -54,7 +53,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
             util.map(reporters, function (reporter, finishReporter) {
                 if (reporter.reportComparisonStarting) {
                     reporter.reportComparisonStarting({
-                        pageUrl: testCase.url,
                         testCase: testCase,
                     }, finishReporter);
                 } else {
@@ -119,7 +117,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
                 reportComparison({
                         status: textualStatus,
-                        pageUrl: testCase.url,
                         testCase: testCase,
                         htmlImage: renderResult.image,
                         referenceImage: referenceImage,
@@ -137,7 +134,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
             reportComparison({
                     status: textualStatus,
-                    pageUrl: testCase.url,
                     testCase: testCase
                 },
                 function () {

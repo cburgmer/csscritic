@@ -43,7 +43,9 @@ describe("SignOffReporter", function () {
 
         reporter.reportComparison({
             status: "failed",
-            pageUrl: pageUrl,
+            testCase: {
+                url: pageUrl
+            },
             pageImage: htmlImage,
             resizePageImage: function () {},
             acceptPage: acceptPageSpy,
@@ -67,7 +69,9 @@ describe("SignOffReporter", function () {
 
         reporter.reportComparison({
             status: "referenceMissing",
-            pageUrl: pageUrl,
+            testCase: {
+                url: pageUrl
+            },
             pageImage: htmlImage,
             resizePageImage: function () {},
             acceptPage: acceptPageSpy
@@ -94,7 +98,9 @@ describe("SignOffReporter", function () {
 
         reporter.reportComparison({
             status: "failed",
-            pageUrl: pageUrl,
+            testCase: {
+                url: pageUrl
+            },
             pageImage: htmlImage,
             resizePageImage: function () {},
             acceptPage: acceptPageSpy,

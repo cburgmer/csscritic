@@ -33,17 +33,17 @@ csscriticLib.terminalReporter = function (console) {
             referenceMissing: "red+bold"
         };
 
-    var reportComparison = function (result, callback) {
-        var color = statusColor[result.status] || "",
-            statusStr = inColor(result.status, color);
-        if (result.renderErrors) {
-            console.log(inColor("Error(s) loading " + result.pageUrl + ":", "red"));
-            result.renderErrors.forEach(function (msg) {
+    var reportComparison = function (comparison, callback) {
+        var color = statusColor[comparison.status] || "",
+            statusStr = inColor(comparison.status, color);
+        if (comparison.renderErrors) {
+            console.log(inColor("Error(s) loading " + comparison.testCase.url + ":", "red"));
+            comparison.renderErrors.forEach(function (msg) {
                 console.log(inColor("  " + msg, "red+bold"));
             });
         }
 
-        console.log("Testing " + result.pageUrl + "... " + statusStr);
+        console.log("Testing " + comparison.testCase.url + "... " + statusStr);
 
         if (callback) {
             callback();

@@ -33,7 +33,6 @@ describe("Basic HTML reporter", function () {
 
         paramsOnPassingTest = {
             status: "passed",
-            pageUrl: "page_url",
             testCase: {
                 url: "page_url"
             },
@@ -73,7 +72,6 @@ describe("Basic HTML reporter", function () {
     it("should show the page url", function () {
         reporter.reportComparison({
             status: "passed",
-            pageUrl: "page_url<img>",
             testCase: {
                 url: "page_url<img>"
             },
@@ -87,7 +85,6 @@ describe("Basic HTML reporter", function () {
     it("should show a link to the page", function () {
         reporter.reportComparison({
             status: "passed",
-            pageUrl: "dir/page_url",
             testCase: {
                 url: "dir/page_url"
             },
@@ -115,7 +112,6 @@ describe("Basic HTML reporter", function () {
 
         it("should render all currently running", function () {
             reporter.reportComparisonStarting({
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 }
@@ -136,14 +132,12 @@ describe("Basic HTML reporter", function () {
 
         it("should report the final result 'on top' of the running entry", function () {
             reporter.reportComparisonStarting({
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 }
             });
             reporter.reportComparison({
                 status: "passed",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 },
@@ -157,13 +151,11 @@ describe("Basic HTML reporter", function () {
 
         it("should show two different entries for different test cases with the same url", function () {
             reporter.reportComparisonStarting({
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 }
             });
             reporter.reportComparisonStarting({
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url",
                     active: '.selector'
@@ -172,7 +164,6 @@ describe("Basic HTML reporter", function () {
 
             reporter.reportComparison({
                 status: "passed",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 },
@@ -181,7 +172,6 @@ describe("Basic HTML reporter", function () {
             });
             reporter.reportComparison({
                 status: "passed",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url",
                     active: '.selector'
@@ -203,7 +193,6 @@ describe("Basic HTML reporter", function () {
             });
 
             reporter.reportComparisonStarting({
-                pageUrl: "some_page.html",
                 testCase: {
                     url: "page_url"
                 }
@@ -225,7 +214,6 @@ describe("Basic HTML reporter", function () {
         it("should show an entry as passed", function () {
             reporter.reportComparison({
                 status: "passed",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 },
@@ -239,7 +227,6 @@ describe("Basic HTML reporter", function () {
         it("should show the status as passed", function () {
             reporter.reportComparison({
                 status: "passed",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 },
@@ -263,7 +250,6 @@ describe("Basic HTML reporter", function () {
 
             paramsOnFailingTest = {
                 status: "failed",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 },
@@ -374,7 +360,6 @@ describe("Basic HTML reporter", function () {
 
             paramsOnMissingReference = {
                 status: "referenceMissing",
-                pageUrl: "page_url<img>",
                 testCase: {
                     url: "page_url<img>"
                 },
@@ -461,7 +446,6 @@ describe("Basic HTML reporter", function () {
         beforeEach(function () {
             paramsOnErroneousTest = {
                 status: "error",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 },
@@ -496,7 +480,6 @@ describe("Basic HTML reporter", function () {
         beforeEach(function () {
             reporter.reportComparison({
                 status: "passed",
-                pageUrl: "page_url",
                 testCase: {
                     url: "page_url"
                 },

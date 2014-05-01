@@ -3,7 +3,8 @@ describe("TerminalReporter", function () {
 
     var reporter,
         htmlImage, referenceImage, differenceImageCanvas,
-        consoleLogSpy;
+        consoleLogSpy,
+        paramsOnPassingTest;
 
     beforeEach(function () {
         var terminalReporter = csscriticLib.terminalReporter(window.console);
@@ -14,15 +15,19 @@ describe("TerminalReporter", function () {
         differenceImageCanvas = window.document.createElement("canvas");
 
         consoleLogSpy = spyOn(window.console, "log");
+
+        paramsOnPassingTest = {
+            status: "passed",
+            testCase: {
+                url: "page_url"
+            },
+            pageImage: htmlImage,
+            referenceImage: referenceImage
+        };
     });
 
     it("should log successful status to output", function () {
-        reporter.reportComparison({
-            status: "passed",
-            pageUrl: "page_url",
-            pageImage: htmlImage,
-            referenceImage: referenceImage
-        });
+        reporter.reportComparison(paramsOnPassingTest);
 
         expect(consoleLogSpy).toHaveBeenCalledWith("Testing page_url... \u001b[32m\u001b[1mpassed\u001b[0m");
     });
@@ -30,7 +35,7 @@ describe("TerminalReporter", function () {
     it("should call the callback when finished reporting", function () {
         var callback = jasmine.createSpy("callback");
 
-        reporter.reportComparison({}, callback);
+        reporter.reportComparison(paramsOnPassingTest, callback);
 
         expect(callback).toHaveBeenCalled();
     });
@@ -38,7 +43,9 @@ describe("TerminalReporter", function () {
     it("should log failing status to output", function () {
         reporter.reportComparison({
             status: "failed",
-            pageUrl: "the_page_url",
+            testCase: {
+                url: "the_page_url"
+            },
             pageImage: htmlImage,
             resizePageImage: function () {},
             acceptPage: function () {},
@@ -51,7 +58,9 @@ describe("TerminalReporter", function () {
     it("should log referenceMissing status to output", function () {
         reporter.reportComparison({
             status: "referenceMissing",
-            pageUrl: "the_page_url",
+            testCase: {
+                url: "the_page_url"
+            },
             pageImage: htmlImage,
             resizePageImage: function () {},
             acceptPage: function () {}
@@ -63,7 +72,9 @@ describe("TerminalReporter", function () {
     it("should log error status to output", function () {
         reporter.reportComparison({
             status: "error",
-            pageUrl: "page_url",
+            testCase: {
+                url: "page_url"
+            },
             pageImage: null
         });
 
@@ -73,7 +84,9 @@ describe("TerminalReporter", function () {
     it("should log render errors to output", function () {
         reporter.reportComparison({
             status: "passed",
-            pageUrl: "page_url",
+            testCase: {
+                url: "page_url"
+            },
             pageImage: htmlImage,
             referenceImage: referenceImage,
             renderErrors: ["aBrokenURL"]

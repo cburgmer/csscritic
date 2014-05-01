@@ -156,10 +156,10 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
         return loadErrors;
     };
 
-    var createErrorMsg = function (result) {
+    var createErrorMsg = function (comparison) {
         var errorMsg = document.createElement("div");
         errorMsg.className = "errorMsg warning";
-        errorMsg.textContent = "The page '" + result.pageUrl + "' could not be rendered. Make sure the path lies within the same origin as this document.";
+        errorMsg.textContent = "The page '" + comparison.testCase.url + "' could not be rendered. Make sure the path lies within the same origin as this document.";
         return errorMsg;
     };
 
@@ -200,8 +200,8 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     var createPageUrl = function (comparison) {
         var pageUrl = document.createElement("a");
         pageUrl.className = "pageUrl";
-        pageUrl.textContent = comparison.pageUrl;
-        pageUrl.href = comparison.pageUrl;
+        pageUrl.textContent = comparison.testCase.url;
+        pageUrl.href = comparison.testCase.url;
         return pageUrl;
     };
 
@@ -252,27 +252,27 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
         };
     };
 
-    var fillEntry = function (entry, result) {
-        entry.className += " " + result.status;
+    var fillEntry = function (entry, comparison) {
+        entry.className += " " + comparison.status;
 
-        entry.appendChild(createStatus(result));
+        entry.appendChild(createStatus(comparison));
 
-        if (result.renderErrors) {
-            entry.appendChild(createErroneousResourceWarning(result));
+        if (comparison.renderErrors) {
+            entry.appendChild(createErroneousResourceWarning(comparison));
         }
 
-        if (result.status === "failed") {
-            entry.appendChild(createDifferenceCanvasContainer(result));
-            entry.appendChild(createPageCanvasContainer(result, true));
-            entry.appendChild(createReferenceImageContainer(result));
-            entry.appendChild(createUpdateHint(result));
-        } else if (result.status === "referenceMissing") {
-            entry.appendChild(createSaveHint(result));
-            entry.appendChild(createPageCanvasContainer(result));
-        } else if (result.status === "error") {
-            entry.appendChild(createErrorMsg(result));
-        } else if (result.status === "passed") {
-            addMouseOverHandlerForPreview(entry, result);
+        if (comparison.status === "failed") {
+            entry.appendChild(createDifferenceCanvasContainer(comparison));
+            entry.appendChild(createPageCanvasContainer(comparison, true));
+            entry.appendChild(createReferenceImageContainer(comparison));
+            entry.appendChild(createUpdateHint(comparison));
+        } else if (comparison.status === "referenceMissing") {
+            entry.appendChild(createSaveHint(comparison));
+            entry.appendChild(createPageCanvasContainer(comparison));
+        } else if (comparison.status === "error") {
+            entry.appendChild(createErrorMsg(comparison));
+        } else if (comparison.status === "passed") {
+            addMouseOverHandlerForPreview(entry, comparison);
         }
     };
 

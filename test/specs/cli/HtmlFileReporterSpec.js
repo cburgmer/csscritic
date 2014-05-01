@@ -36,7 +36,9 @@ describe("HtmlFileReporter", function () {
         beforeEach(function () {
             testResult = {
                 status: "passed",
-                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             };
@@ -65,7 +67,9 @@ describe("HtmlFileReporter", function () {
         beforeEach(function (done) {
             testResult = {
                 status: "failed",
-                pageUrl: "page_url",
+                testCase: {
+                    url: "page_url"
+                },
                 pageImage: htmlImage,
                 referenceImage: referenceImage
             };
@@ -104,7 +108,9 @@ describe("HtmlFileReporter", function () {
         beforeEach(function () {
             testResult = {
                 status: "error",
-                pageUrl: "erroneous_page_url",
+                testCase: {
+                    url: "erroneous_page_url"
+                },
                 pageImage: null
             };
         });
