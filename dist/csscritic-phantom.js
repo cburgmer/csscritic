@@ -5189,12 +5189,24 @@ csscriticLib.filestorage = function (util) {
         basePath: "./"
     };
 
+    var buildKey = function (testCase) {
+        var testCaseParameters = util.excludeKey(testCase, 'url'),
+            serializedParameters = util.serializeMap(testCaseParameters),
+            key = testCase.url;
+
+        if (serializedParameters) {
+            key += ',' + serializedParameters;
+        }
+
+        return key;
+    };
+
     var filePathForKey = function (key) {
         return module.options.basePath + key + ".json";
     };
 
-    module.storeReferenceImage = function (key, pageImage, viewport) {
-        var uri, dataObj;
+    module.storeReferenceImage = function (testCase, pageImage, viewport) {
+        var key, uri, dataObj;
 
         uri = util.getDataURIForImage(pageImage);
         dataObj = {
@@ -5204,6 +5216,8 @@ csscriticLib.filestorage = function (util) {
                 height: viewport.height
             }
         };
+
+        key = buildKey(testCase);
 
         fs.write(filePathForKey(key), JSON.stringify(dataObj), "w");
     };
@@ -5224,8 +5238,9 @@ csscriticLib.filestorage = function (util) {
         return dataObj;
     };
 
-    module.readReferenceImage = function (key, successCallback, errorCallback) {
-        var filePath = filePathForKey(key),
+    module.readReferenceImage = function (testCase, successCallback, errorCallback) {
+        var key = buildKey(testCase),
+            filePath = filePathForKey(key),
             dataObj;
 
         if (! fs.exists(filePath)) {
@@ -5806,7 +5821,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                 });
             };
             result.acceptPage = function () {
-                storage.storeReferenceImage(comparison.pageUrl, result.pageImage, {
+                storage.storeReferenceImage(comparison.testCase, result.pageImage, {
                     width: viewportWidth,
                     height: viewportHeight
                 });
@@ -5892,6 +5907,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                 reportComparison({
                         status: textualStatus,
                         pageUrl: testCase.url,
+                        testCase: testCase,
                         htmlImage: renderResult.image,
                         referenceImage: referenceImage,
                         renderErrors: renderResult.errors,
@@ -5908,7 +5924,8 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
             reportComparison({
                     status: textualStatus,
-                    pageUrl: testCase.url
+                    pageUrl: testCase.url,
+                    testCase: testCase
                 },
                 function () {
                     callback(false);
@@ -5920,7 +5937,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     var compare = function (testCase, callback) {
         var defaultViewport = {width: 800, height: 100};
 
-        storage.readReferenceImage(testCase.url, function (referenceImage, viewport) {
+        storage.readReferenceImage(testCase, function (referenceImage, viewport) {
             loadPageAndReportResult(testCase, viewport, referenceImage, callback);
         }, function () {
             loadPageAndReportResult(testCase, defaultViewport, null, callback);
@@ -6047,6 +6064,29 @@ csscriticLib.util = function () {
         }
 
         return defer.promise;
+    };
+
+    module.excludeKey = function (theMap, excludedKey) {
+        var newMap = {};
+
+        Object.keys(theMap).forEach(function (key) {
+            if (key !== excludedKey) {
+                newMap[key] = theMap[key];
+            }
+        });
+
+        return newMap;
+    };
+
+    module.serializeMap = function (theMap) {
+        var serializationEntries = [],
+            keys = Object.keys(theMap);
+
+        keys.sort();
+        keys.forEach(function (key) {
+            serializationEntries.push(key + '=' + theMap[key]);
+        });
+        return serializationEntries.join(',');
     };
 
     var successfulPromise = function (value) {

@@ -33,7 +33,7 @@ describe("Web storage support for reference images", function () {
         spyOn(util, 'getDataURIForImage').and.throwError("can't read canvas");
 
         try {
-            storage.storeReferenceImage("somePage.html", theImage, 47, 11);
+            storage.storeReferenceImage({url: "somePage.html"}, theImage, 47, 11);
             expect(true).toBe(false);
         } catch (e) {}
 

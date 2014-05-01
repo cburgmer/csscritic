@@ -28,13 +28,13 @@ describe("Regression testing", function () {
     };
 
     var setUpReferenceImage = function (image, viewport) {
-        storageBackend.readReferenceImage.and.callFake(function (pageUrl, successCallback) {
+        storageBackend.readReferenceImage.and.callFake(function (testCase, successCallback) {
             successCallback(image, viewport);
         });
     };
 
     var setUpReferenceImageToBeMissing = function () {
-        storageBackend.readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
+        storageBackend.readReferenceImage.and.callFake(function (testCase, successCallback, errorCallback) {
             errorCallback();
         });
     };
@@ -123,7 +123,7 @@ describe("Regression testing", function () {
 
             csscritic.add({url: "differentpage.html"});
             csscritic.execute(function () {
-                expect(storageBackend.readReferenceImage).toHaveBeenCalledWith("differentpage.html", jasmine.any(Function), jasmine.any(Function));
+                expect(storageBackend.readReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, jasmine.any(Function), jasmine.any(Function));
                 expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
 
                 done();

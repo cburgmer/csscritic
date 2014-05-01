@@ -87,6 +87,29 @@ csscriticLib.util = function () {
         return defer.promise;
     };
 
+    module.excludeKey = function (theMap, excludedKey) {
+        var newMap = {};
+
+        Object.keys(theMap).forEach(function (key) {
+            if (key !== excludedKey) {
+                newMap[key] = theMap[key];
+            }
+        });
+
+        return newMap;
+    };
+
+    module.serializeMap = function (theMap) {
+        var serializationEntries = [],
+            keys = Object.keys(theMap);
+
+        keys.sort();
+        keys.forEach(function (key) {
+            serializationEntries.push(key + '=' + theMap[key]);
+        });
+        return serializationEntries.join(',');
+    };
+
     var successfulPromise = function (value) {
         var defer = ayepromise.defer();
         defer.resolve(value);

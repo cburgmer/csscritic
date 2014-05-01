@@ -9,12 +9,24 @@ csscriticLib.filestorage = function (util) {
         basePath: "./"
     };
 
+    var buildKey = function (testCase) {
+        var testCaseParameters = util.excludeKey(testCase, 'url'),
+            serializedParameters = util.serializeMap(testCaseParameters),
+            key = testCase.url;
+
+        if (serializedParameters) {
+            key += ',' + serializedParameters;
+        }
+
+        return key;
+    };
+
     var filePathForKey = function (key) {
         return module.options.basePath + key + ".json";
     };
 
-    module.storeReferenceImage = function (key, pageImage, viewport) {
-        var uri, dataObj;
+    module.storeReferenceImage = function (testCase, pageImage, viewport) {
+        var key, uri, dataObj;
 
         uri = util.getDataURIForImage(pageImage);
         dataObj = {
@@ -24,6 +36,8 @@ csscriticLib.filestorage = function (util) {
                 height: viewport.height
             }
         };
+
+        key = buildKey(testCase);
 
         fs.write(filePathForKey(key), JSON.stringify(dataObj), "w");
     };
@@ -44,8 +58,9 @@ csscriticLib.filestorage = function (util) {
         return dataObj;
     };
 
-    module.readReferenceImage = function (key, successCallback, errorCallback) {
-        var filePath = filePathForKey(key),
+    module.readReferenceImage = function (testCase, successCallback, errorCallback) {
+        var key = buildKey(testCase),
+            filePath = filePathForKey(key),
             dataObj;
 
         if (! fs.exists(filePath)) {

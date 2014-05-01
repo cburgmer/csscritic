@@ -3,8 +3,20 @@ csscriticLib.domstorage = function (util, localStorage) {
 
     var module = {};
 
-    module.storeReferenceImage = function (key, pageImage, viewport) {
-        var uri, dataObj;
+    var buildKey = function (testCase) {
+        var testCaseParameters = util.excludeKey(testCase, 'url'),
+            serializedParameters = util.serializeMap(testCaseParameters),
+            key = testCase.url;
+
+        if (serializedParameters) {
+            key += ',' + serializedParameters;
+        }
+
+        return key;
+    };
+
+    module.storeReferenceImage = function (testCase, pageImage, viewport) {
+        var uri, dataObj, key;
 
         try {
             uri = util.getDataURIForImage(pageImage);
@@ -19,6 +31,8 @@ csscriticLib.domstorage = function (util, localStorage) {
                 height: viewport.height
             }
         };
+
+        key = buildKey(testCase);
 
         localStorage.setItem(key, JSON.stringify(dataObj));
     };
@@ -39,8 +53,9 @@ csscriticLib.domstorage = function (util, localStorage) {
         return dataObj;
     };
 
-    module.readReferenceImage = function (key, successCallback, errorCallback) {
-        var dataObj;
+    module.readReferenceImage = function (testCase, successCallback, errorCallback) {
+        var key = buildKey(testCase),
+            dataObj;
 
         try {
             dataObj = parseStoredItem(localStorage.getItem(key));

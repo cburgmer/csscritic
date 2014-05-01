@@ -32,13 +32,13 @@ describe("Reporting", function () {
     };
 
     var setUpReferenceImage = function (image, viewport) {
-        storageBackend.readReferenceImage.and.callFake(function (pageUrl, successCallback) {
+        storageBackend.readReferenceImage.and.callFake(function (testCase, successCallback) {
             successCallback(image, viewport);
         });
     };
 
     var setUpReferenceImageToBeMissing = function () {
-        storageBackend.readReferenceImage.and.callFake(function (pageUrl, successCallback, errorCallback) {
+        storageBackend.readReferenceImage.and.callFake(function (testCase, successCallback, errorCallback) {
             errorCallback();
         });
     };
@@ -272,7 +272,7 @@ describe("Reporting", function () {
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith("differentpage.html", htmlImage, jasmine.any(Object));
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, htmlImage, jasmine.any(Object));
         });
 
         it("should store the viewport's size on accept", function () {
@@ -284,7 +284,7 @@ describe("Reporting", function () {
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(String), htmlImage, {
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), htmlImage, {
                 width: 800,
                 height: 100
             });
@@ -305,7 +305,7 @@ describe("Reporting", function () {
 
             result.acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(String), htmlImage, {
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), htmlImage, {
                 width: 16,
                 height: 34
             });

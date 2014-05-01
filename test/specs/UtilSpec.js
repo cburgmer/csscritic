@@ -95,6 +95,52 @@ describe("Utility", function () {
 
     });
 
+    describe("excludeKey", function () {
+        it("should exclude a given key", function () {
+            var result = util.excludeKey({
+                theKey: 'theValue',
+                anotherKey: 'anotherValue'
+            }, 'theKey');
+
+            expect(result).toEqual({
+                anotherKey: 'anotherValue'
+            });
+        });
+
+        it("should return an empty map if no key left", function () {
+            var result = util.excludeKey({
+                theKey: 'theValue'
+            }, 'theKey');
+
+            expect(result).toEqual({});
+        });
+
+        it("should return unchanged copy if key is not found", function () {
+            var result = util.excludeKey({
+                theKey: 'theValue'
+            }, 'anotherKey');
+
+            expect(result).toEqual({
+                theKey: 'theValue'
+            });
+        });
+    });
+
+    describe("serializeMap", function () {
+        it("should serialize a map with a single value", function () {
+            var serialization = util.serializeMap({theKey: 'theValue'});
+            expect(serialization).toEqual('theKey=theValue');
+        });
+
+        it("should serialize a map with a two values in alphabetic order", function () {
+            var serialization = util.serializeMap({
+                theKey: 'theValue',
+                anotherKey: 'anotherValue'
+            });
+            expect(serialization).toEqual('anotherKey=anotherValue,theKey=theValue');
+        });
+    });
+
     describe("map", function () {
         it("should map each value to one function call and then call complete function", function () {
             var completedValues = [],

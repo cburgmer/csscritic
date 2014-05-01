@@ -48,7 +48,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     it("should store a the rendered page", function (done) {
         var stringValue, value;
 
-        storage.storeReferenceImage("somePage.html", img, {
+        storage.storeReferenceImage({url: "somePage.html"}, img, {
             width: 47,
             height: 11
         });
@@ -70,7 +70,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
 
         spyOn(util, 'getDataURIForImage');
 
-        storage.storeReferenceImage("somePage.html", image, {
+        storage.storeReferenceImage({url: "somePage.html"}, image, {
             width: 47,
             height: 11
         });
@@ -79,6 +79,22 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
 
         expect(storedValue.viewport.width).toEqual(47);
         expect(storedValue.viewport.height).toEqual(11);
+    });
+
+    it("should honour test case parameters when storing", function () {
+        var stringValue;
+
+        storage.storeReferenceImage({
+                url: 'somePage.html',
+                hover: 'aValue',
+                active: 'anotherValue'
+            },
+            img,
+            {}
+        );
+
+        stringValue = readStoredReferenceImage("somePage.html,active=anotherValue,hover=aValue");
+        expect(stringValue).not.toBeNull();
     });
 
     it("should read in a reference image", function () {
@@ -90,7 +106,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
             referenceImageUri: imgUri
         }));
 
-        storage.readReferenceImage("somePage.html", function (img) {
+        storage.readReferenceImage({url: "somePage.html"}, function (img) {
             readImage = img;
         }, function () {});
 
@@ -111,7 +127,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
             }
         }));
 
-        storage.readReferenceImage("somePage.html", function (img, theViewportSize) {
+        storage.readReferenceImage({url: "somePage.html"}, function (img, theViewportSize) {
             viewportSize = theViewportSize;
         });
 
@@ -131,7 +147,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
             referenceImageUri: imgUri
         }));
 
-        storage.readReferenceImage("somePage.html", function (img, theViewportSize) {
+        storage.readReferenceImage({url: "somePage.html"}, function (img, theViewportSize) {
             viewportSize = theViewportSize;
         });
 
@@ -142,7 +158,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     it("should call error handler if no reference image has been stored", function () {
         var errorCallback = jasmine.createSpy('errorCallback');
 
-        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
     });
@@ -151,7 +167,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
         var errorCallback = jasmine.createSpy('errorCallback');
 
         storeMockReferenceImage("somePage.html", JSON.stringify({}));
-        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
     });
@@ -164,7 +180,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
         storeMockReferenceImage( "somePage.html", JSON.stringify({
             referenceImageUri: "broken uri"
         }));
-        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
     });
@@ -173,8 +189,31 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
         var errorCallback = jasmine.createSpy('errorCallback');
 
         storeMockReferenceImage("somePage.html", ';');
-        storage.readReferenceImage("somePage.html", function () {}, errorCallback);
+        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
 
         expect(errorCallback).toHaveBeenCalled();
+    });
+
+    it("should honour test case parameters when reading", function () {
+        var readImage;
+
+        setUpImageReturnedForUrl("read image fake");
+
+        storeMockReferenceImage("somePage.html,active=anotherValue,hover=aValue", JSON.stringify({
+            referenceImageUri: imgUri
+        }));
+
+        storage.readReferenceImage(
+            {
+                url: 'somePage.html',
+                hover: 'aValue',
+                active: 'anotherValue'
+            },
+            function (img) {
+                readImage = img;
+            }
+        );
+
+        expect(readImage).not.toBeNull();
     });
 };

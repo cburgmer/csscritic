@@ -30,7 +30,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                 });
             };
             result.acceptPage = function () {
-                storage.storeReferenceImage(comparison.pageUrl, result.pageImage, {
+                storage.storeReferenceImage(comparison.testCase, result.pageImage, {
                     width: viewportWidth,
                     height: viewportHeight
                 });
@@ -116,6 +116,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                 reportComparison({
                         status: textualStatus,
                         pageUrl: testCase.url,
+                        testCase: testCase,
                         htmlImage: renderResult.image,
                         referenceImage: referenceImage,
                         renderErrors: renderResult.errors,
@@ -132,7 +133,8 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
             reportComparison({
                     status: textualStatus,
-                    pageUrl: testCase.url
+                    pageUrl: testCase.url,
+                    testCase: testCase
                 },
                 function () {
                     callback(false);
@@ -144,7 +146,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     var compare = function (testCase, callback) {
         var defaultViewport = {width: 800, height: 100};
 
-        storage.readReferenceImage(testCase.url, function (referenceImage, viewport) {
+        storage.readReferenceImage(testCase, function (referenceImage, viewport) {
             loadPageAndReportResult(testCase, viewport, referenceImage, callback);
         }, function () {
             loadPageAndReportResult(testCase, defaultViewport, null, callback);
