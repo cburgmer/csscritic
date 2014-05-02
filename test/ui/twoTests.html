@@ -16,7 +16,10 @@
         testHelper.setUp();
 
         reporter.reportComparison(
-            testHelper.comparison('passed', {hover: '.a.selector', active: '.another.selector'})
+            testHelper.comparison('passed', {url: 'firstTest.html'})
+        );
+        reporter.reportComparison(
+            testHelper.comparison('passed', {url: 'secondTest.html'})
         );
     </script>
 </body>

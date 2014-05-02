@@ -40,7 +40,7 @@ window.testHelper = (function () {
         return mocks;
     };
 
-    testHelper.comparison = function (status, renderErrors, testCase) {
+    testHelper.comparison = function (status, testCase, renderErrors) {
         var dummyFunc = function () {},
             mocks = setUpMocks(),
             comparison;

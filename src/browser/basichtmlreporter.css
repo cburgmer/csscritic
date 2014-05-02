@@ -11,9 +11,17 @@
 #csscritic_basichtmlreporter .comparison {
     padding: 8px;
     margin: 5px 0;
+    /* don't reach into previous timeTaken */
     clear: both;
 
     transition: background-color 1s;
+}
+
+#csscritic_basichtmlreporter .comparison:after {
+    /* contain floating status when it wraps around */
+    content: "";
+    display: block;
+    clear: both;
 }
 
 #csscritic_basichtmlreporter .passed.comparison {
