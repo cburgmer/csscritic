@@ -25,7 +25,8 @@
             });
             csscritic.add({
                 url: 'test/ui/missingReference.html',
-                active: '.saveHint button'
+                active: '.saveHint button',
+                hover: '.saveHint button'
             });
             csscritic.add('test/ui/passedTest.html');
             csscritic.add('test/ui/missingPage.html');
@@ -36,6 +37,8 @@
             csscritic.add('test/ui/durationCount.html');
             csscritic.add('test/ui/startingTest.html');
             csscritic.add('test/ui/previewTooltip.html');
+            csscritic.add('test/ui/testWithASingleParameter.html');
+            csscritic.add('test/ui/testWithMultipleParameters.html');
             csscritic.execute();
         };
     </script>

@@ -1,34 +1,40 @@
 [{
     "pageUrl": "test/ui/failingTest.html",
-    "fingerprint": "4711283949aa97f1b6d8bb5f4a33d6b74d6b7d6d50f3a0db17e6283d"
+    "fingerprint": "f1d69b3e71a08b2afc76a5712982aa818830f9136d3051e23f7f0dfa"
 }, {
     "pageUrl": "test/ui/failingTestMissingResources.html",
-    "fingerprint": "3fba799ed89f144d1a1f44a58728714c0da08a0a0589852bdcad8390"
+    "fingerprint": "46de227c8c4be44dbbc2af96c89e3a9813697ba8abac2642899ec579"
 }, {
     "pageUrl": "test/ui/missingBrowserSupport.html",
-    "fingerprint": "082a629ac9ff11ec04598b653f727c88263844303238f9121626d86b"
+    "fingerprint": "1b8cdbad3e8f69b5cf88be27c5009cd9a5fdb1b18688d7cec58feae7"
 }, {
     "pageUrl": "test/ui/missingPage.html",
-    "fingerprint": "8231dfbb5d18ced1a0e279a93234e5262df34402abf7b136be2e0da6"
+    "fingerprint": "8edf0fd29fbada165ba03e76cbc5e5e3bb720b28c67fb0305b286f70"
 }, {
     "pageUrl": "test/ui/missingReference.html",
-    "fingerprint": "04d4e38fbf3921b19b971b5cb22dea7253892d7a72b09eb4ab96c2d8"
+    "fingerprint": "6efed4a5a357ff3df37b97f73f5045a21f234d2b01db70bbd8419da3"
 }, {
     "pageUrl": "test/ui/missingReferenceMissingResources.html",
-    "fingerprint": "eeb6df44e2ef75c9c27e3da1b63c5bec0e304a96f7316fc498d9e3ce"
+    "fingerprint": "f0bd307d565bf606ca0a381661d170a406df5f24b317ba2e80794085"
 }, {
     "pageUrl": "test/ui/passedTest.html",
-    "fingerprint": "86bc2fc599710c87f6e25c25ad3c6a0c8282d0dcf30af2bb70b93c0d"
+    "fingerprint": "afad07974751ec6028add6ef9e3fde5598421a1cdb6a9d85e7ad45dc"
 }, {
     "pageUrl": "test/ui/passedTestMissingResources.html",
-    "fingerprint": "dd91b367a09283d67150464830c935805219a5c10c9e5fc59c124ff4"
+    "fingerprint": "696515b30c9c35a90f9448c8f5cffee457640c12ee34f24d33cad1b1"
 }, {
     "pageUrl": "test/ui/previewTooltip.html",
-    "fingerprint": "148dc9f2a88c0951c7c2020c5fcff153ab64962fa49d697279f477a4"
+    "fingerprint": "0cae33e844967ae143fac7c1acff315aa713bc29728efaeefe835bf4"
 }, {
     "pageUrl": "test/ui/startingTest.html",
-    "fingerprint": "7d28ec6c7ef503403ed1980f0412289dfcd18e228c4d8eb7786e36cb"
+    "fingerprint": "103eda36809958e2280ad5428c7fed08afe1eea207216280a9f2e2bb"
 }, {
     "pageUrl": "test/ui/durationCount.html",
-    "fingerprint": "68b999452978c7f95ba0cdb8aaceb651e7aa43ebbe122c0283449ae8"
+    "fingerprint": "21199bafddf08d6a4a2f186cceb518011251d969e3f581b596a2d407"
+}, {
+    "pageUrl": "test/ui/testWithMultipleParameters.html",
+    "fingerprint": "98c3a5c62e7688433bfd1672c6af9d9e1ffc02e595c8e86b520cc77e"
+}, {
+    "pageUrl": "test/ui/testWithASingleParameter.html",
+    "fingerprint": "7b2199ca0ba2f7ab786a396fa939a44e654658ffbcdb580e37c47475"
 }]

@@ -284,10 +284,30 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
         }
     };
 
+    var testCaseParameters = function (comparison) {
+        var parameters = util.excludeKey(comparison.testCase, 'url'),
+            keys = Object.keys(parameters);
+
+        if (!keys.length) {
+            return '';
+        }
+        keys.sort();
+
+        return '<dl class="parameters">' +
+            keys.map(function (key) {
+                return template('<dt>{{key}}</dt><dd>{{value}}</dd>', {
+                    key: key,
+                    value: parameters[key]
+                });
+            }).join('\n') +
+            '</dl>';
+    };
+
     var createRunningEntry = function (comparison) {
         return elementFor(template(
             '<div class="comparison running">' +
             '<a href="{{url}}" class="pageUrl">{{url}}</a>' +
+            testCaseParameters(comparison) +
             '</div>', {
             url: comparison.testCase.url
         }));

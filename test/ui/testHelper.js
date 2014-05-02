@@ -40,17 +40,18 @@ window.testHelper = (function () {
         return mocks;
     };
 
-    testHelper.comparison = function (status, renderErrors) {
+    testHelper.comparison = function (status, renderErrors, testCase) {
         var dummyFunc = function () {},
             mocks = setUpMocks(),
-            comparison = {
-                status: status,
-                pageUrl: "aPage.html",
-                testCase: {
-                    url: "aPage.html"
-                },
-                renderErrors: renderErrors
-            };
+            comparison;
+
+        testCase = testCase || {};
+        testCase.url = testCase.url || "aPage.html";
+        comparison = {
+            status: status,
+            testCase: testCase,
+            renderErrors: renderErrors
+        };
 
         if (status === 'error') {
             comparison.pageImage = null;

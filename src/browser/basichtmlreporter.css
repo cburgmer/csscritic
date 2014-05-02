@@ -36,6 +36,44 @@
     color: black;
 }
 
+#csscritic_basichtmlreporter .comparison .parameters,
+#csscritic_basichtmlreporter .comparison .parameters dt,
+#csscritic_basichtmlreporter .comparison .parameters dd {
+    /* Reset */
+    display: inline-block;
+    margin: 0;
+}
+
+#csscritic_basichtmlreporter .comparison .parameters {
+    margin-left: 1.5em;
+    color: #444;
+}
+
+#csscritic_basichtmlreporter .comparison .parameters dt {
+    font-style: italic;
+}
+
+#csscritic_basichtmlreporter .comparison .parameters dt::after {
+    content: ":"
+}
+
+#csscritic_basichtmlreporter .comparison .parameters dd {
+    margin-left: 0.5em;
+    margin-right: 0.7em;
+}
+
+#csscritic_basichtmlreporter .comparison .parameters dd::before {
+    content: "'"
+}
+
+#csscritic_basichtmlreporter .comparison .parameters dd::after {
+    content: "',"
+}
+
+#csscritic_basichtmlreporter .comparison .parameters dd:last-child::after {
+    content: "'"
+}
+
 #csscritic_basichtmlreporter .comparison .status {
     float: right;
 }
