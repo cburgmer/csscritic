@@ -74,7 +74,7 @@
 #csscritic_basichtmlreporter_tooltip,
 #csscritic_basichtmlreporter .comparison .innerPageImageContainer,
 #csscritic_basichtmlreporter .referenceImageContainer img {
-    /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in gimp */
+    /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
 }
 
@@ -148,18 +148,24 @@
     top: 1px;
 }
 
-#csscritic_basichtmlreporter .warning:before {
+#csscritic_basichtmlreporter .saveHint:before,
+#csscritic_basichtmlreporter .updateHint:before,
+#csscritic_basichtmlreporter .errorMsg:before,
+#csscritic_basichtmlreporter .loadErrors:before {
     content: "⚠";
     font-size: 25px;
     padding-right: 5px;
 }
 
-#csscritic_basichtmlreporter .warning {
+#csscritic_basichtmlreporter .saveHint,
+#csscritic_basichtmlreporter .updateHint,
+#csscritic_basichtmlreporter .errorMsg,
+#csscritic_basichtmlreporter .loadErrors {
     margin: 8px 0;
     font-weight: bold;
 }
 
-#csscritic_basichtmlreporter .finished:before {
+#csscritic_basichtmlreporter .finished:after {
     content: "✓";
     font-size: 20px;
     color: #00CC66;

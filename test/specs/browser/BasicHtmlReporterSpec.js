@@ -102,7 +102,6 @@ describe("Basic HTML reporter", function () {
         reporter.reportComparison(comparison);
 
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toExist();
-        expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toHaveClass("warning");
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").length).toEqual(2);
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").get(0).textContent).toContain("theFirstBadUrl");
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").get(1).textContent).toContain("yetAnotherBadUrl");
@@ -323,16 +322,11 @@ describe("Basic HTML reporter", function () {
         it("should allow the user to accept the rendered page and update the reference image", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .updateHint")).toHaveClass("warning");
-            expect($("#csscritic_basichtmlreporter .comparison .updateHint").text()).toContain("accept");
             expect($("#csscritic_basichtmlreporter .comparison .updateHint button")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .updateHint .finished").css("display")).toEqual("none");
 
             $("#csscritic_basichtmlreporter .comparison .updateHint button").click();
 
             expect(acceptPageSpy).toHaveBeenCalled();
-            expect($("#csscritic_basichtmlreporter .comparison .updateHint .finished").css("display")).toEqual("inline");
         });
 
         it("should resize the page canvas when user resizes the container", function () {
@@ -391,16 +385,11 @@ describe("Basic HTML reporter", function () {
         it("should allow the user to accept the rendered page", function () {
             reporter.reportComparison(paramsOnMissingReference);
 
-            expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .saveHint")).toHaveClass("warning");
-            expect($("#csscritic_basichtmlreporter .comparison .saveHint").text()).toContain("Accept");
             expect($("#csscritic_basichtmlreporter .comparison .saveHint button")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .saveHint .finished").css("display")).toEqual("none");
 
             $("#csscritic_basichtmlreporter .comparison .saveHint button").click();
 
             expect(acceptPageSpy).toHaveBeenCalled();
-            expect($("#csscritic_basichtmlreporter .comparison .saveHint .finished").css("display")).toEqual("inline");
         });
 
         it("should provide an inner div between container and canvas for styling purposes", function () {
@@ -469,7 +458,6 @@ describe("Basic HTML reporter", function () {
             reporter.reportComparison(paramsOnErroneousTest);
 
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toHaveClass("warning");
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("could not be rendered");
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("page_url");
         });

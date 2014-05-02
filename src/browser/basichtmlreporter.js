@@ -29,14 +29,20 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
     // other stuff
 
+    var cssPixelValue = function (pxValue) {
+        return parseInt(pxValue, 10);
+    };
+
     var registerResizeHandler = function (element, handler) {
-        var width = element.style.width,
-            height = element.style.height;
+        var width = cssPixelValue(element.style.width),
+            height = cssPixelValue(element.style.height);
 
         element.onmouseup = function () {
-            if (width !== element.style.width || height !== element.style.height) {
-                width = element.style.width;
-                height = element.style.height;
+            var newWidth = cssPixelValue(element.style.width),
+                newHeight = cssPixelValue(element.style.height);
+            if (width !== newWidth || height !== newHeight) {
+                width = newWidth;
+                height = newHeight;
                 handler(width, height);
             }
         };
@@ -44,8 +50,7 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
     var getOrCreateBody = function () {
         var reporterId = "csscritic_basichtmlreporter",
-            reportBody = document.getElementById(reporterId),
-            timeTaken;
+            reportBody = document.getElementById(reporterId);
 
         if (reportBody === null) {
             reportBody = elementFor(template('<div id="{{reporterId}}"><div class="timeTaken"></div></div>', {
@@ -84,10 +89,8 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
         innerPageImageContainer.appendChild(result.pageImage);
 
-        registerResizeHandler(pageImageContainer, function () {
-            var width = parseInt(pageImageContainer.style.width, 10),
-                height = parseInt(pageImageContainer.style.height, 10),
-                oldImage = result.pageImage;
+        registerResizeHandler(pageImageContainer, function (width, height) {
+            var oldImage = result.pageImage;
 
             result.resizePageImage(width, height, function (updatedImage) {
                 pageImageContainer.style.width = updatedImage.width + "px";
@@ -118,21 +121,19 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
     var createAcceptHint = function (result, parameters) {
         var acceptHint = elementFor(template(
-                '<div class="{{className}} warning">' +
+                '<div class="{{className}}">' +
                 '{{prefix}}' +
                 '<button>{{buttonCaption}}</button>' +
                 '{{postfix}}' +
-                '<span class="finished" style="display: none;"></span>' +
                 '</div>',
                 parameters
             ));
 
-        var acceptButton = acceptHint.querySelector('button'),
-            finishedIndicator = acceptHint.querySelector('.finished');
+        var acceptButton = acceptHint.querySelector('button');
 
         acceptButton.onclick = function () {
             result.acceptPage();
-            finishedIndicator.style.display = '';
+            acceptHint.classList.add('finished');
         };
         return acceptHint;
     };
@@ -166,7 +167,7 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     };
 
     var createErroneousResourceWarning = function (result) {
-        return elementFor('<div class="loadErrors warning">' +
+        return elementFor('<div class="loadErrors">' +
             'Had the following errors rendering the page:' +
             makeUnsortedList(result.renderErrors) +
             'Make sure that resource paths lie within the same origin as this document.' +
@@ -176,7 +177,7 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
     var createErrorMsg = function (comparison) {
         return elementFor(template(
-            '<div class="errorMsg warning">' +
+            '<div class="errorMsg">' +
             "The page '{{url}}' could not be rendered. Make sure the path lies within the same origin as this document." +
             '</div>', {
             url: comparison.testCase.url
@@ -331,8 +332,6 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     };
 
     var showBrowserWarningIfNeeded = function () {
-        var warning;
-
         reporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
             if (supported) {
                 return;
