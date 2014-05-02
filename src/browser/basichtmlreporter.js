@@ -3,6 +3,32 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
     var module = {};
 
+    // our very own templating implementation
+
+    var escapeValue = function (value) {
+        return value.toString()
+            .replace(/&/g, '&amp;')
+            .replace(new RegExp('<'), '&lt;', 'g') // work around https://github.com/cburgmer/inlineresources/issues/2
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;');
+    };
+
+    var template = function (templateStr, values) {
+        return templateStr.replace(/\{\{(\w+)\}\}/g, function (_, param) {
+            var value = values[param] || '';
+            return escapeValue(value);
+        });
+    };
+
+    var elementFor = function (htmlString) {
+        var tmp = document.createElement('body');
+        tmp.insertAdjacentHTML('beforeend', htmlString);
+        return tmp.firstChild;
+    };
+
+    // other stuff
+
     var registerResizeHandler = function (element, handler) {
         var width = element.style.width,
             height = element.style.height;
@@ -22,12 +48,9 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
             timeTaken;
 
         if (reportBody === null) {
-            reportBody = document.createElement("div");
-            reportBody.id = reporterId;
-
-            timeTaken = document.createElement("div");
-            timeTaken.className = "timeTaken";
-            reportBody.appendChild(timeTaken);
+            reportBody = elementFor(template('<div id="{{reporterId}}"><div class="timeTaken"></div></div>', {
+                reporterId: reporterId
+            }));
 
             document.getElementsByTagName("body")[0].appendChild(reportBody);
         }
@@ -35,26 +58,31 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
         return reportBody;
     };
 
-    var createPageCanvasContainer = function (result, withCaption) {
-        var outerPageImageContainer = document.createElement("div"),
-            pageImageContainer = document.createElement("div"),
-            pageCanvasInnerContainer = document.createElement("div"),
-            caption;
+    // content building
 
-        pageImageContainer.className = "pageImageContainer";
-        pageImageContainer.style.width = result.pageImage.width + "px";
-        pageImageContainer.style.height = result.pageImage.height + "px";
+    var createPageCanvasContainer = function (result, withCaption) {
+        var caption = '',
+            outerPageImageContainer, pageImageContainer, innerPageImageContainer;
 
         if (withCaption) {
-            caption = document.createElement("span");
-            caption.className = "caption";
-            caption.textContent = "Page";
-            outerPageImageContainer.appendChild(caption);
+            caption = '<span class="caption">Page</span>';
         }
 
-        pageCanvasInnerContainer.className = "innerPageImageContainer";
-        pageCanvasInnerContainer.appendChild(result.pageImage);
-        pageImageContainer.appendChild(pageCanvasInnerContainer);
+        outerPageImageContainer = elementFor(template(
+            '<div class="outerPageImageContainer">' +
+            caption +
+            '<div class="pageImageContainer" style="width: {{width}}px; height: {{height}}px;">' +
+            '<div class="innerPageImageContainer"></div>' +
+            '</div>' +
+            '</div>', {
+            width: result.pageImage.width,
+            height: result.pageImage.height
+        }));
+
+        pageImageContainer = outerPageImageContainer.querySelector('.pageImageContainer');
+        innerPageImageContainer = outerPageImageContainer.querySelector('.innerPageImageContainer');
+
+        innerPageImageContainer.appendChild(result.pageImage);
 
         registerResizeHandler(pageImageContainer, function () {
             var width = parseInt(pageImageContainer.style.width, 10),
@@ -65,114 +93,103 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
                 pageImageContainer.style.width = updatedImage.width + "px";
                 pageImageContainer.style.height = updatedImage.height + "px";
 
-                pageCanvasInnerContainer.removeChild(oldImage);
-                pageCanvasInnerContainer.appendChild(updatedImage);
+                innerPageImageContainer.removeChild(oldImage);
+                innerPageImageContainer.appendChild(updatedImage);
             });
         });
-
-        outerPageImageContainer.className = "outerPageImageContainer";
-        outerPageImageContainer.appendChild(pageImageContainer);
 
         return outerPageImageContainer;
     };
 
     var createReferenceImageContainer = function (result) {
-        var outerReferenceImageContainer = document.createElement("div"),
-            referenceImageContainer = document.createElement("div"),
-            caption = document.createElement("span");
+        var outerReferenceImageContainer = elementFor(
+                '<div class="outerReferenceImageContainer">' +
+                '<span class="caption">Reference</span>' +
+                '<div class="referenceImageContainer">' +
+                '</div>' +
+                '</div>'
+            );
 
-        referenceImageContainer.className = "referenceImageContainer";
+        var referenceImageContainer = outerReferenceImageContainer.querySelector('.referenceImageContainer');
         referenceImageContainer.appendChild(result.referenceImage);
 
-        caption.className = "caption";
-        caption.textContent = "Reference";
-
-        outerReferenceImageContainer.className = "outerReferenceImageContainer";
-        outerReferenceImageContainer.appendChild(caption);
-        outerReferenceImageContainer.appendChild(referenceImageContainer);
         return outerReferenceImageContainer;
     };
 
-    var createFinishedIndicator = function () {
-        var span = document.createElement("span");
-        span.className = "finished";
-        span.style.display = "none";
-        return span;
+    var createAcceptHint = function (result, parameters) {
+        var acceptHint = elementFor(template(
+                '<div class="{{className}} warning">' +
+                '{{prefix}}' +
+                '<button>{{buttonCaption}}</button>' +
+                '{{postfix}}' +
+                '<span class="finished" style="display: none;"></span>' +
+                '</div>',
+                parameters
+            ));
+
+        var acceptButton = acceptHint.querySelector('button'),
+            finishedIndicator = acceptHint.querySelector('.finished');
+
+        acceptButton.onclick = function () {
+            result.acceptPage();
+            finishedIndicator.style.display = '';
+        };
+        return acceptHint;
     };
 
     var createSaveHint = function (result) {
-        var saveHint = document.createElement("div"),
-            acceptButton = document.createElement("button"),
-            finishedIndicator = createFinishedIndicator();
-
-        acceptButton.onclick = function () {
-            result.acceptPage();
-            finishedIndicator.style.display = '';
-        };
-        acceptButton.textContent = "Accept the rendered page";
-
-        saveHint.className = "saveHint warning";
-        saveHint.appendChild(acceptButton);
-        saveHint.appendChild(document.createTextNode("and save this as later reference."));
-        saveHint.appendChild(finishedIndicator);
-        return saveHint;
+        return createAcceptHint(result, {
+            className: 'saveHint',
+            prefix: '',
+            buttonCaption: 'Accept the rendered page',
+            postfix: 'and save this as later reference.'
+        });
     };
 
     var createUpdateHint = function (result) {
-        var updateHint = document.createElement("div"),
-            acceptButton = document.createElement("button"),
-            finishedIndicator = createFinishedIndicator();
+        return createAcceptHint(result, {
+            className: 'updateHint',
+            prefix: 'You can',
+            buttonCaption: 'accept the rendered page',
+            postfix: 'thus making it the new reference.'
+        });
+    };
 
-        acceptButton.onclick = function () {
-            result.acceptPage();
-            finishedIndicator.style.display = '';
-        };
-        acceptButton.textContent = "accept the rendered page";
+    var makeUnsortedList = function (items) {
+        var lis = items.map(function (value) {
+            return template('<li>{{value}}</li>', {
+                value: value
+            });
+        });
 
-        updateHint.className = "updateHint warning";
-        updateHint.appendChild(document.createTextNode("You can"));
-        updateHint.appendChild(acceptButton);
-        updateHint.appendChild(document.createTextNode("thus making it the new reference."));
-        updateHint.appendChild(finishedIndicator);
-        return updateHint;
+        return '<ul>' + lis.join('\n') + '</ul>';
     };
 
     var createErroneousResourceWarning = function (result) {
-        var loadErrors = document.createElement("div"),
-            ul = document.createElement("ul");
-
-        loadErrors.className = "loadErrors warning";
-        loadErrors.appendChild(document.createTextNode("Had the following errors rendering the page:"));
-        loadErrors.appendChild(ul);
-
-        result.renderErrors.forEach(function (url) {
-            var urlWarningEntry = document.createElement("li");
-
-            urlWarningEntry.textContent = url;
-            ul.appendChild(urlWarningEntry);
-        });
-
-        loadErrors.appendChild(document.createTextNode("Make sure that resource paths lie within the same origin as this document."));
-        return loadErrors;
+        return elementFor('<div class="loadErrors warning">' +
+            'Had the following errors rendering the page:' +
+            makeUnsortedList(result.renderErrors) +
+            'Make sure that resource paths lie within the same origin as this document.' +
+            '</div>'
+        );
     };
 
     var createErrorMsg = function (comparison) {
-        var errorMsg = document.createElement("div");
-        errorMsg.className = "errorMsg warning";
-        errorMsg.textContent = "The page '" + comparison.testCase.url + "' could not be rendered. Make sure the path lies within the same origin as this document.";
-        return errorMsg;
+        return elementFor(template(
+            '<div class="errorMsg warning">' +
+            "The page '{{url}}' could not be rendered. Make sure the path lies within the same origin as this document." +
+            '</div>', {
+            url: comparison.testCase.url
+        }));
     };
 
     var createDifferenceCanvasContainer = function (result) {
-        var differenceCanvasContainer = document.createElement("div"),
-            innerDifferenceCanvasContainer = document.createElement("div"),
+        var differenceCanvasContainer = elementFor(
+                '<div class="differenceCanvasContainer"><div class="innerDifferenceCanvasContainer"></div></div>'
+            ),
+            innerDifferenceCanvasContainer = differenceCanvasContainer.querySelector('.innerDifferenceCanvasContainer'),
             differenceCanvas = reporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage),
             highlightedDifferenceCanvas = reporterUtil.getHighlightedDifferenceCanvas(result.pageImage, result.referenceImage);
-
-        differenceCanvasContainer.className = "differenceCanvasContainer";
-
-        innerDifferenceCanvasContainer.className = "innerDifferenceCanvasContainer";
-        differenceCanvasContainer.appendChild(innerDifferenceCanvasContainer);
 
         differenceCanvas.className = "differenceCanvas";
         innerDifferenceCanvasContainer.appendChild(differenceCanvas);
@@ -191,28 +208,18 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     };
 
     var createStatus = function (result) {
-        var status = document.createElement("span");
-        status.className = "status";
-        status.textContent = textualStatus[result.status];
-        return status;
-    };
-
-    var createPageUrl = function (comparison) {
-        var pageUrl = document.createElement("a");
-        pageUrl.className = "pageUrl";
-        pageUrl.textContent = comparison.testCase.url;
-        pageUrl.href = comparison.testCase.url;
-        return pageUrl;
+        return elementFor(template('<span class="status">{{status}}</span>', {
+            status: textualStatus[result.status]
+        }));
     };
 
     var getOrCreateDivWithId = function (id) {
         var tooltip = document.getElementById(id);
 
         if (!tooltip) {
-            tooltip = document.createElement("div");
-            tooltip.id = id;
-            tooltip.style.display = "none";
-            tooltip.style.position = "absolute";
+            tooltip = elementFor(template('<div id="{{id}}" style="display: none; position: absolute;"></div>', {
+                id: id
+            }));
             document.getElementsByTagName("body")[0].appendChild(tooltip);
         }
 
@@ -277,13 +284,12 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     };
 
     var createRunningEntry = function (comparison) {
-        var entry = document.createElement("div");
-
-        entry.className = "comparison running";
-
-        entry.appendChild(createPageUrl(comparison));
-
-        return entry;
+        return elementFor(template(
+            '<div class="comparison running">' +
+            '<a href="{{url}}" class="pageUrl">{{url}}</a>' +
+            '</div>', {
+            url: comparison.testCase.url
+        }));
     };
 
     var addFinalEntry = function (comparison, runningNode) {
@@ -328,15 +334,18 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
         var warning;
 
         reporterUtil.supportsReadingHtmlFromCanvas(function (supported) {
-            if (!supported) {
-                warning = document.createElement('div');
-                warning.className = "browserWarning";
-                warning.innerHTML = 'Your browser is currently not supported, ' +
-                    'as it does not support reading rendered HTML from the canvas ' +
-                    '(<a href="https://code.google.com/p/chromium/issues/detail?id=294129">Chrome #294129</a>, ' +
-                    '<a href="https://bugs.webkit.org/show_bug.cgi?id=17352">Safari #17352</a>). How about trying Firefox?';
-                getOrCreateBody().appendChild(warning);
+            if (supported) {
+                return;
             }
+
+            getOrCreateBody().appendChild(elementFor(
+                '<div class="browserWarning">' +
+                'Your browser is currently not supported, ' +
+                'as it does not support reading rendered HTML from the canvas ' +
+                '(<a href="https://code.google.com/p/chromium/issues/detail?id=294129">Chrome #294129</a>, ' +
+                '<a href="https://bugs.webkit.org/show_bug.cgi?id=17352">Safari #17352</a>). How about trying Firefox?' +
+                '</div>'
+            ));
         });
     };
 
