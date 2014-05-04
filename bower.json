@@ -1,6 +1,6 @@
 {
   "name": "csscritic",
-  "version": "0.2.0",
+  "version": "0.3.0-alpha",
   "main": [
     "dist/csscritic.allinone.js",
     "dist/csscritic.min.css"

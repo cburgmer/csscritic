@@ -1,7 +1,7 @@
 {
   "name": "csscritic",
   "title": "CSS Critic",
-  "version": "0.2.0",
+  "version": "0.3.0-alpha",
   "description": "A lightweight framework for regression testing of Cascading Style Sheets.",
   "keywords": [
     "CSS",
