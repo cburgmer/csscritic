@@ -411,7 +411,7 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should correctly set the current image size after a resize", function (done) {
-            csscriticTestHelper.createImageOfSize(123, 234, function (img) {
+            testHelper.createImageOfSize(123, 234, function (img) {
                 updatedReferenceImage = img;
 
                 reporter.reportComparison(paramsOnMissingReference);

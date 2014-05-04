@@ -14,8 +14,6 @@ function loadJasmine() {
 }
 
 function loadCode() {
-    phantom.injectJs("./test/helpers.js");
-
     phantom.injectJs("./src/cli/phantomjsbind.js");
     phantom.injectJs("./node_modules/jssha/src/sha.js");
     phantom.injectJs("./node_modules/imagediff/imagediff.js");
@@ -33,6 +31,9 @@ function loadCode() {
 }
 
 function loadTests() {
+    phantom.injectJs("./test/helpers.js");
+    phantom.injectJs("./test/testHelper.js");
+
     phantom.injectJs("./test/specs/shared/storagePluginSpecs.js");
 
     phantom.injectJs("./test/specs/cli/FileStorageSpec.js");

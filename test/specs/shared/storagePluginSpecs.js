@@ -38,7 +38,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
 
         jasmine.addMatchers(imagediffForJasmine2);
 
-        csscriticTestHelper.loadImageFromUrl(imgUri, function (image) {
+        testHelper.loadImageFromUrl(imgUri, function (image) {
             img = image;
 
             done();
@@ -57,7 +57,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
         expect(stringValue).not.toBeNull();
 
         value = JSON.parse(stringValue);
-        csscriticTestHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
+        testHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
             expect(image).toImageDiffEqual(img);
 
             done();

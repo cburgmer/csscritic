@@ -14,17 +14,17 @@ describe("HtmlFileReporter", function () {
 
         jasmine.addMatchers(imagediffForJasmine2);
 
-        csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "green.png"), function (image) {
+        testHelper.loadImageFromUrl(testHelper.getFileUrl(fixtureUrl + "green.png"), function (image) {
             htmlImage = image;
 
-            csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "greenWithTransparency.png"), function (image) {
+            testHelper.loadImageFromUrl(testHelper.getFileUrl(fixtureUrl + "greenWithTransparency.png"), function (image) {
                 referenceImage = image;
 
                 done();
             });
         });
 
-        reporterOutputPath = csscriticTestHelper.createTempPath();
+        reporterOutputPath = testHelper.createTempPath();
 
         var htmlFileReporter = csscriticLib.htmlFileReporter();
         reporter = htmlFileReporter.HtmlFileReporter(reporterOutputPath);
@@ -50,7 +50,7 @@ describe("HtmlFileReporter", function () {
 
         it("should save the rendered page", function (done) {
             reporter.reportComparison(testResult, function () {
-                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.png"), function (image) {
+                testHelper.loadImageFromUrl(testHelper.getFileUrl(reporterOutputPath + "page_url.png"), function (image) {
                     expect(image).toImageDiffEqual(htmlImage);
 
                     done();
@@ -74,7 +74,7 @@ describe("HtmlFileReporter", function () {
                 referenceImage: referenceImage
             };
 
-            csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(fixtureUrl + "greenWithTransparencyDiff.png"), function (image) {
+            testHelper.loadImageFromUrl(testHelper.getFileUrl(fixtureUrl + "greenWithTransparencyDiff.png"), function (image) {
                 diffImage = image;
 
                 done();
@@ -83,7 +83,7 @@ describe("HtmlFileReporter", function () {
 
         it("should save the reference image", function (done) {
             reporter.reportComparison(testResult, function () {
-                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.reference.png"), function (image) {
+                testHelper.loadImageFromUrl(testHelper.getFileUrl(reporterOutputPath + "page_url.reference.png"), function (image) {
                     expect(image).toImageDiffEqual(referenceImage);
 
                     done();
@@ -93,7 +93,7 @@ describe("HtmlFileReporter", function () {
 
         it("should save a difference image", function (done) {
             reporter.reportComparison(testResult, function () {
-                csscriticTestHelper.loadImageFromUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "page_url.diff.png"), function (image) {
+                testHelper.loadImageFromUrl(testHelper.getFileUrl(reporterOutputPath + "page_url.diff.png"), function (image) {
                     expect(image).toImageDiffEqual(diffImage);
 
                     done();
@@ -117,7 +117,7 @@ describe("HtmlFileReporter", function () {
 
         it("should not save a page image", function (done) {
             reporter.reportComparison(testResult, function () {
-                csscriticTestHelper.testImageUrl(csscriticTestHelper.getFileUrl(reporterOutputPath + "erroneous_page_url.reference.png"), function (result) {
+                testHelper.testImageUrl(testHelper.getFileUrl(reporterOutputPath + "erroneous_page_url.reference.png"), function (result) {
                     expect(result).toBeFalsy();
 
                     done();

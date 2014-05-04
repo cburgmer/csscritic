@@ -11,7 +11,7 @@ describe("Phantom storage support for reference images", function () {
     };
 
     beforeEach(function () {
-        tempPath = csscriticTestHelper.createTempPath();
+        tempPath = testHelper.createTempPath();
     });
 
     var readStoredReferenceImage = function (key) {

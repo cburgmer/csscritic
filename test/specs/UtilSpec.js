@@ -26,7 +26,7 @@ describe("Utility", function () {
         it("should return the data URI for the given image", function (done) {
             var imageDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=";
 
-            csscriticTestHelper.loadImageFromUrl(imageDataUri, function (image) {
+            testHelper.loadImageFromUrl(imageDataUri, function (image) {
                 var dataUri = util.getDataURIForImage(image);
                 expect(dataUri).toContain(imageDataUri.substr(0, 10));
 

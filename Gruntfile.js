@@ -17,6 +17,7 @@ module.exports = function (grunt) {
                     'test/helpers.js',
                     'node_modules/jquery/dist/jquery.js',
                     'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
+                    'test/testHelper.js',
                     'test/gruntpath.js'
                 ],
                 fixturesPath: './fixtures/',
@@ -215,7 +216,7 @@ module.exports = function (grunt) {
                         ifNotInWebkitIt: true,
                         safeLog: true,
                         csscriticTestPath: true,
-                        csscriticTestHelper: true,
+                        testHelper: true,
                         loadStoragePluginSpecs: true,
                         CanvasRenderingContext2D: true,
                         ayepromise: true
@@ -254,7 +255,7 @@ module.exports = function (grunt) {
                         csscriticLib: true,
                         safeLog: true,
                         csscriticTestPath: true,
-                        csscriticTestHelper: true,
+                        testHelper: true,
                         loadStoragePluginSpecs: true,
                         jasmineRequire: true,
                         executeJasmine: true,

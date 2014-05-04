@@ -59,7 +59,7 @@ describe("PhantomJS renderer", function () {
             width: 330,
             height: 151
         }).then(function (result) {
-            csscriticTestHelper.loadImageFromUrl(theReferenceImageUri, function (referenceImage) {
+            testHelper.loadImageFromUrl(theReferenceImageUri, function (referenceImage) {
                 expect(result.image).toImageDiffEqual(referenceImage);
                 done();
             });
