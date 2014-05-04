@@ -17,8 +17,7 @@ module.exports = function (grunt) {
                     'test/helpers.js',
                     'node_modules/jquery/dist/jquery.js',
                     'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-                    'test/testHelper.js',
-                    'test/gruntpath.js'
+                    'test/testHelper.js'
                 ],
                 fixturesPath: './fixtures/',
                 display: 'short'

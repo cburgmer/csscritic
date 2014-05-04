@@ -4,7 +4,6 @@ describe("PhantomJS renderer", function () {
     var phantomjsRenderer;
 
     var oldRequire = window.require,
-        fixtureUrl = csscriticTestPath + "fixtures/",
         webpageModuleMock, pageMock, testPageUrl, theReferenceImageUri;
 
     var setupPageMock = function () {
@@ -31,7 +30,7 @@ describe("PhantomJS renderer", function () {
     beforeEach(function () {
         phantomjsRenderer = csscriticLib.phantomjsRenderer();
 
-        testPageUrl = fixtureUrl + "pageUnderTest.html";
+        testPageUrl = testHelper.fixture("pageUnderTest.html");
 
         theReferenceImageUri = "data:image/png;base64," +
             "iVBORw0KGgoAAAANSUhEUgAAAUoAAACXCAYAAABz/hJAAAADB0lEQVR4nO3UsQ3EMAADMY+ezf39I70iiARuhTv3nKvvdP495+pDs" +
@@ -90,7 +89,7 @@ describe("PhantomJS renderer", function () {
     });
 
     it("should report errors from rendering", function (done) {
-        var pageUrl = fixtureUrl + "brokenPage.html";
+        var pageUrl = testHelper.fixture("brokenPage.html");
 
         phantomjsRenderer.render({
             url: pageUrl,
@@ -101,9 +100,9 @@ describe("PhantomJS renderer", function () {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
-                "Unable to load resource " + getFileUrl(fixtureUrl + "background_image_does_not_exist.jpg"),
-                "Unable to load resource " + getFileUrl(fixtureUrl + "css_does_not_exist.css"),
-                "Unable to load resource " + getFileUrl(fixtureUrl + "image_does_not_exist.png")
+                "Unable to load resource " + getFileUrl(testHelper.fixture("background_image_does_not_exist.jpg")),
+                "Unable to load resource " + getFileUrl(testHelper.fixture("css_does_not_exist.css")),
+                "Unable to load resource " + getFileUrl(testHelper.fixture("image_does_not_exist.png"))
             ]);
 
             done();
@@ -111,8 +110,10 @@ describe("PhantomJS renderer", function () {
     });
 
     it("should report errors from rendering with http urls", function (done) {
-        var servedFixtureUrl = localserver + "/" + fixtureUrl,
-            pageUrl = servedFixtureUrl + "brokenPage.html";
+        var servedUrl = function (path) {
+                return localserver + "/" + path;
+            },
+            pageUrl = servedUrl(testHelper.fixture("brokenPage.html"));
 
         phantomjsRenderer.render({
             url: pageUrl,
@@ -123,9 +124,9 @@ describe("PhantomJS renderer", function () {
             expect(errors).not.toBeNull();
             errors.sort();
             expect(errors).toEqual([
-                "Unable to load resource " + servedFixtureUrl + "background_image_does_not_exist.jpg",
-                "Unable to load resource " + servedFixtureUrl + "css_does_not_exist.css",
-                "Unable to load resource " + servedFixtureUrl + "image_does_not_exist.png"
+                "Unable to load resource " + servedUrl(testHelper.fixture("background_image_does_not_exist.jpg")),
+                "Unable to load resource " + servedUrl(testHelper.fixture("css_does_not_exist.css")),
+                "Unable to load resource " + servedUrl(testHelper.fixture("image_does_not_exist.png"))
             ]);
 
             done();
@@ -133,7 +134,7 @@ describe("PhantomJS renderer", function () {
     });
 
     it("should report errors from script execution", function (done) {
-        var pageUrl = fixtureUrl + "erroneousJs.html";
+        var pageUrl = testHelper.fixture("erroneousJs.html");
 
         phantomjsRenderer.render({
             url: pageUrl,

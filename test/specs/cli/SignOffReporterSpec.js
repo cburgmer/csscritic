@@ -33,8 +33,7 @@ describe("SignOffReporter", function () {
     });
 
     it("should auto-accept a signed off version on a failing test", function () {
-        var fixtureUrl = csscriticTestPath + "fixtures/",
-            pageUrl = fixtureUrl + 'pageUnderTest.html';
+        var pageUrl = testHelper.fixture('pageUnderTest.html');
 
         var reporter = signOffReporter.SignOffReporter([{
             pageUrl: pageUrl,
@@ -59,8 +58,7 @@ describe("SignOffReporter", function () {
     });
 
     it("should auto-accept a signed off version on a test with a missing reference", function () {
-        var fixtureUrl = csscriticTestPath + "fixtures/",
-            pageUrl = fixtureUrl + 'pageUnderTest.html';
+        var pageUrl = testHelper.fixture('pageUnderTest.html');
 
         var reporter = signOffReporter.SignOffReporter([{
             pageUrl: pageUrl,
@@ -84,8 +82,7 @@ describe("SignOffReporter", function () {
     });
 
     it("should take fingerprints from a file", function () {
-        var fixtureUrl = csscriticTestPath + "fixtures/",
-            pageUrl = fixtureUrl + 'pageUnderTest.html';
+        var pageUrl = testHelper.fixture('pageUnderTest.html');
 
         var reporter = signOffReporter.SignOffReporter('fingerprints.json');
 

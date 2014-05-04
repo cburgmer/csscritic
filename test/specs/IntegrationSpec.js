@@ -49,7 +49,7 @@ describe("Integration", function () {
     });
 
     it("should complete in any browser", function (done) {
-        var testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
+        var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
         csscritic.addReporter(csscritic.BasicHTMLReporter());
         csscritic.add(testPageUrl);
@@ -62,7 +62,7 @@ describe("Integration", function () {
     });
 
     it("should compare an image with its reference and return true if similar", function (done) {
-        var testImageUrl = csscriticTestPath + "fixtures/redWithLetter.png";
+        var testImageUrl = testHelper.fixture("redWithLetter.png");
 
         util.getImageForUrl(testImageUrl).then(function (image) {
             var theReferenceImageUri = util.getDataURIForImage(image);
@@ -81,7 +81,7 @@ describe("Integration", function () {
     });
 
     ifNotInWebkitIt("should compare a page with its reference image and return true if similar", function (done) {
-        var testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html";
+        var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
         localStorage.setItem(testPageUrl, JSON.stringify({
             referenceImageUri: theReferenceImageUri
@@ -97,7 +97,7 @@ describe("Integration", function () {
     });
 
     ifNotInWebkitIt("should store a reference when a result is accepted", function (done) {
-        var testPageUrl = csscriticTestPath + "fixtures/pageUnderTest.html",
+        var testPageUrl = testHelper.fixture("pageUnderTest.html"),
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
 
         reporter.reportComparison.and.callFake(function (result, callback) {
@@ -125,7 +125,7 @@ describe("Integration", function () {
     });
 
     ifNotInWebkitIt("should properly report a failing comparison", function (done) {
-        var testPageUrl = csscriticTestPath + "fixtures/brokenPage.html";
+        var testPageUrl = testHelper.fixture("brokenPage.html");
 
         localStorage.setItem(testPageUrl, JSON.stringify({
             referenceImageUri: theReferenceImageUri
@@ -147,7 +147,7 @@ describe("Integration", function () {
     });
 
     ifNotInWebkitIt("should correctly re-render a page overflowing the given viewport", function (done) {
-        var testPageUrl = csscriticTestPath + "fixtures/overflowingPage.html",
+        var testPageUrl = testHelper.fixture("overflowingPage.html"),
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]),
             result;
 

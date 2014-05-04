@@ -1,8 +1,7 @@
 describe("HtmlFileReporter", function () {
     "use strict";
 
-    var fixtureUrl = csscriticTestPath + "fixtures/",
-        reporter,
+    var reporter,
         htmlImage, referenceImage, differenceImageCanvas,
         reporterOutputPath;
 
@@ -14,10 +13,10 @@ describe("HtmlFileReporter", function () {
 
         jasmine.addMatchers(imagediffForJasmine2);
 
-        testHelper.loadImageFromUrl(testHelper.getFileUrl(fixtureUrl + "green.png"), function (image) {
+        testHelper.loadImageFromUrl(testHelper.getFileUrl(testHelper.fixture("green.png")), function (image) {
             htmlImage = image;
 
-            testHelper.loadImageFromUrl(testHelper.getFileUrl(fixtureUrl + "greenWithTransparency.png"), function (image) {
+            testHelper.loadImageFromUrl(testHelper.getFileUrl(testHelper.fixture("greenWithTransparency.png")), function (image) {
                 referenceImage = image;
 
                 done();
@@ -74,7 +73,7 @@ describe("HtmlFileReporter", function () {
                 referenceImage: referenceImage
             };
 
-            testHelper.loadImageFromUrl(testHelper.getFileUrl(fixtureUrl + "greenWithTransparencyDiff.png"), function (image) {
+            testHelper.loadImageFromUrl(testHelper.getFileUrl(testHelper.fixture("greenWithTransparencyDiff.png")), function (image) {
                 diffImage = image;
 
                 done();

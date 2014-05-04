@@ -10,8 +10,7 @@ describe("SignOffReporterUtil", function () {
 
     describe("loadFullDocument", function () {
         it("should return a fully inlined document", function (done) {
-            var fixtureUrl = csscriticTestPath + "fixtures/",
-                pageUrl = fixtureUrl + 'pageToInline.html';
+            var pageUrl = testHelper.fixture('pageToInline.html');
 
             signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
                 expect(content).toMatch(/<style type="text\/css">\s*p\s*\{\s*font-size: 12px;\s*\}/);
@@ -24,8 +23,7 @@ describe("SignOffReporterUtil", function () {
 
     describe("loadFingerprintJson", function () {
         it("should load a json file and return the content", function (done) {
-            var fixtureUrl = csscriticTestPath + "fixtures/",
-                jsonUrl = fixtureUrl + 'fingerprints.json';
+            var jsonUrl = testHelper.fixture('fingerprints.json');
 
             signOffReporterUtil.loadFingerprintJson(jsonUrl, function (result) {
                 expect(result).toEqual([{

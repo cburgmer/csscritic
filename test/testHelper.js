@@ -5,6 +5,15 @@ window.testHelper = (function () {
         tempPath = null,
         tempPathCounter = 0;
 
+    var isPhantomJs = navigator.userAgent.indexOf("PhantomJS") >= 0,
+        isRunFromTheProjectRoot = isPhantomJs;
+
+    var fixturePath = (isRunFromTheProjectRoot ? 'test/' : '' ) + 'fixtures/';
+
+    module.fixture = function (path) {
+        return fixturePath + path;
+    };
+
     var loadImage = function (url, successCallback, errorCallback) {
         var image = new window.Image();
 

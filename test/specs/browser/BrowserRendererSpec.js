@@ -134,8 +134,7 @@ describe("Browser renderer", function () {
         });
 
         it("should report errors from rendering", function (done) {
-            var fixtureUrl = csscriticTestPath + "fixtures/",
-                pageUrl = fixtureUrl + "brokenPage.html";
+            var pageUrl = testHelper.fixture("brokenPage.html");
 
             browserRenderer.render({
                 url: pageUrl,
@@ -146,9 +145,9 @@ describe("Browser renderer", function () {
                 expect(result.errors.length).toBe(3);
                 result.errors.sort();
                 expect(result.errors).toEqual([
-                    "Unable to load background-image " + fixtureUrl + "background_image_does_not_exist.jpg",
-                    "Unable to load image " + fixtureUrl + "image_does_not_exist.png",
-                    "Unable to load stylesheet " + fixtureUrl + "css_does_not_exist.css"
+                    "Unable to load background-image " + testHelper.fixture("background_image_does_not_exist.jpg"),
+                    "Unable to load image " + testHelper.fixture("image_does_not_exist.png"),
+                    "Unable to load stylesheet " + testHelper.fixture("css_does_not_exist.css")
                 ]);
 
                 done();

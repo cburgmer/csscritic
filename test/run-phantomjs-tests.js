@@ -75,8 +75,6 @@ function startWebserver() {
 loadJasmine();
 loadCode();
 
-window.csscriticTestPath = 'test/';
-
 loadTests();
 
 startWebserver();

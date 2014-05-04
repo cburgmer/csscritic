@@ -67,8 +67,8 @@ describe("Basic HTML reporter utilities", function () {
         });
 
         it("should return the canvas with the correct filling", function (done) {
-            testHelper.loadImageFromUrl(csscriticTestPath + "fixtures/green.png", function (imageA) {
-                testHelper.loadImageFromUrl(csscriticTestPath + "fixtures/redWithLetter.png", function (imageB) {
+            testHelper.loadImageFromUrl(testHelper.fixture("green.png"), function (imageA) {
+                testHelper.loadImageFromUrl(testHelper.fixture("redWithLetter.png"), function (imageB) {
                     testHelper.loadImageFromUrl(diffReferenceUrl, function (referenceImage) {
                         var resultingCanvas = basicHTMLReporterUtil.getDifferenceCanvas(imageA, imageB);
 
