@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-05-03
+/*! PhantomJS regression runner for CSS Critic - v0.2.0 - 2014-05-04
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -474,10 +474,8 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
         // Make sure we only access the accessor once as required by the spec
         var then = obj && obj.then;
 
-        if (obj !== null &&
-            typeof obj === "object" &&
-            typeof then === "function") {
-
+        if (typeof obj === "object" && typeof then === "function") {
+            // Bind function back to it's object (so fan's of 'this' don't get sad)
             return function() { return then.apply(obj, arguments); };
         }
     };
@@ -503,20 +501,29 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
             }, 1);
         };
 
+        var callFulfilled = function (value) {
+            if (onFulfilled && onFulfilled.call) {
+                doHandlerCall(onFulfilled, value);
+            } else {
+                defer.resolve(value);
+            }
+        };
+
+        var callRejected = function (value) {
+            if (onRejected && onRejected.call) {
+                doHandlerCall(onRejected, value);
+            } else {
+                defer.reject(value);
+            }
+        };
+
         return {
             promise: defer.promise,
-            callFulfilled: function (value) {
-                if (onFulfilled && onFulfilled.call) {
-                    doHandlerCall(onFulfilled, value);
+            handle: function (state, value) {
+                if (state === FULFILLED) {
+                    callFulfilled(value);
                 } else {
-                    defer.resolve(value);
-                }
-            },
-            callRejected: function (value) {
-                if (onRejected && onRejected.call) {
-                    doHandlerCall(onRejected, value);
-                } else {
-                    defer.reject(value);
+                    callRejected(value);
                 }
             }
         };
@@ -532,38 +539,35 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
             outcome,
             thenHandlers = [];
 
-        var doFulfill = function (value) {
-            state = FULFILLED;
+        var doSettle = function (settledState, value) {
+            state = settledState;
+            // persist for handlers registered after settling
             outcome = value;
 
             thenHandlers.forEach(function (then) {
-                then.callFulfilled(outcome);
+                then.handle(state, outcome);
             });
+
+            // Discard all references to handlers to be garbage collected
+            thenHandlers = null;
+        };
+
+        var doFulfill = function (value) {
+            doSettle(FULFILLED, value);
         };
 
         var doReject = function (error) {
-            state = REJECTED;
-            outcome = error;
-
-            thenHandlers.forEach(function (then) {
-                then.callRejected(outcome);
-            });
-        };
-
-        var executeThenHandlerDirectlyIfStateNotPendingAnymore = function (then) {
-            if (state === FULFILLED) {
-                then.callFulfilled(outcome);
-            } else if (state === REJECTED) {
-                then.callRejected(outcome);
-            }
+            doSettle(REJECTED, error);
         };
 
         var registerThenHandler = function (onFulfilled, onRejected) {
             var thenHandler = aThenHandler(onFulfilled, onRejected);
 
-            thenHandlers.push(thenHandler);
-
-            executeThenHandlerDirectlyIfStateNotPendingAnymore(thenHandler);
+            if (state === PENDING) {
+                thenHandlers.push(thenHandler);
+            } else {
+                thenHandler.handle(state, outcome);
+            }
 
             return thenHandler.promise;
         };
@@ -573,7 +577,7 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
             var onceWrapper = once();
             try {
                 thenable(
-                    onceWrapper(transparentlyResolveThenablesAndFulfill),
+                    onceWrapper(transparentlyResolveThenablesAndSettle),
                     onceWrapper(doReject)
                 );
             } catch (e) {
@@ -581,7 +585,7 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
             }
         };
 
-        var transparentlyResolveThenablesAndFulfill = function (value) {
+        var transparentlyResolveThenablesAndSettle = function (value) {
             var thenable;
 
             try {
@@ -600,7 +604,7 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
 
         var onceWrapper = once();
         return {
-            resolve: onceWrapper(transparentlyResolveThenablesAndFulfill),
+            resolve: onceWrapper(transparentlyResolveThenablesAndSettle),
             reject: onceWrapper(doReject),
             promise: {
                 then: registerThenHandler,
