@@ -73,14 +73,20 @@ describe("Browser renderer", function () {
         var theUrl = "the url",
             theHtml = "some html";
 
+        var readHtml = function (url) {
+            var xhr = new window.XMLHttpRequest();
+
+            xhr.open('GET', url, false);
+            xhr.send(null);
+            return xhr.response;
+        };
+
         beforeEach(function () {
             ajaxSpy.and.callFake(function (url) {
-                var relativeFixtureUrl;
                 if (url === theUrl) {
                     return successfulPromise(theHtml);
                 } else {
-                    relativeFixtureUrl = url.replace(jasmine.getFixtures().fixturesPath, "");
-                    return successfulPromise([readFixtures(relativeFixtureUrl)]);
+                    return successfulPromise([readHtml(url)]);
                 }
             });
             spyOn(util, 'getImageForBinaryContent').and.returnValue(failedPromise());

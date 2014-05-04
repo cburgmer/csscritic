@@ -57,7 +57,7 @@ describe("Utility", function () {
     describe("ajax", function () {
 
         it("should load content from a URL", function (done) {
-            util.ajax(jasmine.getFixtures().fixturesPath + "simple.js").then(function (content) {
+            util.ajax(csscriticTestPath + "fixtures/" + "simple.js").then(function (content) {
                 expect(content).toEqual('var s = "hello";\n');
 
                 done();
@@ -65,7 +65,7 @@ describe("Utility", function () {
         });
 
         it("should load binary data", function (done) {
-            util.ajax(jasmine.getFixtures().fixturesPath + "green.png").then(function (content) {
+            util.ajax(csscriticTestPath + "fixtures/" + "green.png").then(function (content) {
                 expect(btoa(content)).toEqual("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABFElEQVR4nO3OMQ0AAAjAMPybhnsKxrHUQGc2r+iBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YHAAV821mT1w27RAAAAAElFTkSuQmCC");
 
                 done();
@@ -73,7 +73,7 @@ describe("Utility", function () {
         });
 
         it("should call error callback on fail", function (done) {
-            util.ajax(jasmine.getFixtures().fixturesPath + "non_existing_url.html").then(null, function () {
+            util.ajax(csscriticTestPath + "fixtures/" + "non_existing_url.html").then(null, function () {
                 done();
             });
         });
