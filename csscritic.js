@@ -6,8 +6,7 @@
  * and you are good to go.
  */
 (function () {
-    var thisFileName = 'csscritic.js',
-        cssDependencies = [
+    var cssDependencies = [
             'src/browser/basichtmlreporter.css'
         ],
         jsDependencies = [
@@ -25,11 +24,18 @@
             'src/boot/browser.js'
         ];
 
+    var getCurrentScript = function () {
+        return document.currentScript || (function() {
+          var scripts = document.getElementsByTagName('script');
+          return scripts[scripts.length - 1];
+        })();
+    };
+
     var getBasePath = function () {
-        var script = document.querySelector('script[src*="' + thisFileName + '"]'),
+        var script = getCurrentScript(),
             src = script.attributes.src.value;
 
-        return src.substring(0, src.indexOf(thisFileName));
+        return src.substring(0, src.lastIndexOf('/') + 1);
     };
 
     var loadCssDependency = function (path) {
