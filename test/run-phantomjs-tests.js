@@ -42,6 +42,8 @@ function loadTests() {
     phantom.injectJs("./test/specs/cli/SignOffReporterUtilSpec.js");
     phantom.injectJs("./test/specs/cli/SignOffReporterSpec.js");
 
+    phantom.injectJs("./test/specs/RegressionSpec.js");
+    phantom.injectJs("./test/specs/ReportingSpec.js");
 }
 
 function startWebserver() {
