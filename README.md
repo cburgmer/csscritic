@@ -5,14 +5,14 @@ A lightweight framework for regression testing of Cascading Style Sheets.
 
 If you wonder what this is about [watch the screencast](http://youtu.be/AqQ2bNPtF60). [CSS Critic Examples](https://github.com/cburgmer/csscritic-examples) collects example applications with a UI test suite built on top of CSS Critic. Fast forward to [see it in action testing the TodoMVC application](http://cburgmer.github.io/csscritic-examples/angularjs/).
 
-[![Build Status](https://travis-ci.org/cburgmer/csscritic.svg?branch=master)](https://travis-ci.org/cburgmer/csscritic)
-
 Install
 -------
 
-    $ bower install csscritic
+    $ npm install csscritic
 
-See `bower_components/csscritic/example/RegressionRunner.html` for an example.
+See `node_modules/csscritic/example/RegressionRunner.html` for an example.
+
+<img src="http://cburgmer.github.io/csscritic-examples/testsuite_in_action.png" alt="CSS Critic testing the TodoMVC app">
 
 How it works
 ------------
@@ -55,6 +55,8 @@ Developing CSS Critic
 For linting, tests and minification install Node.js and run
 
     $ ./go
+
+[![Build Status](https://travis-ci.org/cburgmer/csscritic.svg?branch=master)](https://travis-ci.org/cburgmer/csscritic)
 
 Limitations
 -----------
