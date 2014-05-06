@@ -3,16 +3,20 @@ CSS Critic
 
 A lightweight framework for regression testing of Cascading Style Sheets.
 
-If you wonder what this is about [watch the screencast](http://youtu.be/AqQ2bNPtF60). [CSS Critic Examples](https://github.com/cburgmer/csscritic-examples) collects example applications with a UI test suite built on top of CSS Critic. Fast forward to [see it in action testing the TodoMVC application](http://cburgmer.github.io/csscritic-examples/angularjs/).
+What?
+-----
+One picture says more than 1000 words:
+
+<img src="http://cburgmer.github.io/csscritic-examples/testsuite_in_action.png" alt="CSS Critic testing the TodoMVC app">
+
+Need more than 1000 words? [Watch the screencast](http://youtu.be/AqQ2bNPtF60) or checkout [CSS Critic Examples](https://github.com/cburgmer/csscritic-examples) for a hands-on experience with example applications that have their UI tested. Fast forward to [see it in action testing the TodoMVC application](http://cburgmer.github.io/csscritic-examples/angularjs/).
 
 Install
 -------
 
     $ npm install csscritic
 
-See `node_modules/csscritic/example/RegressionRunner.html` for an example.
-
-<img src="http://cburgmer.github.io/csscritic-examples/testsuite_in_action.png" alt="CSS Critic testing the TodoMVC app">
+See `node_modules/csscritic/example/RegressionRunner.html` for an example on how to take it from there.
 
 How it works
 ------------
