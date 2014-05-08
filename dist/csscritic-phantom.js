@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.3.0-alpha - 2014-05-04
+/*! PhantomJS regression runner for CSS Critic - v0.3.0-alpha - 2014-05-08
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -5272,12 +5272,12 @@ csscriticLib.filestorage = function (util) {
     return module;
 };
 
-csscriticLib.htmlFileReporter = function () {
+csscriticLib.htmlFileReporter = function (util) {
     "use strict";
 
     var module = {};
 
-    var reportComparison = function (comparison, basePath, callback) {
+    var reportComparison = function (comparison, basePath) {
         var imagesToWrite = [];
 
         if (comparison.status !== "error") {
@@ -5303,20 +5303,15 @@ csscriticLib.htmlFileReporter = function () {
             });
         }
 
-        renderUrlsToFile(imagesToWrite, function () {
-            if (callback) {
-                callback();
-            }
-        });
+        return renderUrlsToFile(imagesToWrite);
     };
 
-    var compileReport = function (results, basePath, callback) {
+    var compileReport = function (results, basePath) {
         var fs = require("fs"),
             content = results.success ? "Passed" : "Failed",
             document = "<html><body>" + content + "</body></html>";
 
         fs.write(basePath + "index.html", document, "w");
-        callback();
     };
 
     var getTargetBaseName = function (filePath) {
@@ -5329,28 +5324,16 @@ csscriticLib.htmlFileReporter = function () {
         return fileName;
     };
 
-    var renderUrlsToFile = function (entrys, callback) {
-        var urlsWritten = 0;
-
-        if (entrys.length === 0) {
-            callback();
-            return;
-        }
-
-        entrys.forEach(function (entry) {
-            renderUrlToFile(entry.imageUrl, entry.target, entry.width, entry.height, function () {
-                urlsWritten += 1;
-
-                if (entrys.length === urlsWritten) {
-                    callback();
-                }
-            });
-        });
+    var renderUrlsToFile = function (entrys) {
+        return util.all(entrys.map(function (entry) {
+            return renderUrlToFile(entry.imageUrl, entry.target, entry.width, entry.height);
+        }));
     };
 
-    var renderUrlToFile = function (url, filePath, width, height, callback) {
+    var renderUrlToFile = function (url, filePath, width, height) {
         var webpage = require("webpage"),
-            page = webpage.create();
+            page = webpage.create(),
+            defer = ayepromise.defer();
 
         page.viewportSize = {
             width: width,
@@ -5360,8 +5343,10 @@ csscriticLib.htmlFileReporter = function () {
         page.open(url, function () {
             page.render(filePath);
 
-            callback();
+            defer.resolve();
         });
+
+        return defer.promise;
     };
 
     var getDifferenceCanvas = function (imageA, imageB) {
@@ -5387,10 +5372,11 @@ csscriticLib.htmlFileReporter = function () {
 
         return {
             reportComparison: function (result, callback) {
-                return reportComparison(result, basePath, callback);
+                reportComparison(result, basePath).then(callback);
             },
             report: function (results, callback) {
-                return compileReport(results, basePath, callback);
+                compileReport(results, basePath);
+                callback();
             }
         };
     };
@@ -5615,11 +5601,13 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
 
     var module = {};
 
-    var calculateFingerprintForPage = function (pageUrl, callback) {
-        signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+    var calculateFingerprintForPage = function (pageUrl) {
+        return signOffReporterUtil.loadFullDocument(pageUrl).then(function (content) {
             var actualFingerprint = signOffReporterUtil.calculateFingerprint(content);
 
-            callback(actualFingerprint);
+            return actualFingerprint;
+        }, function () {
+            throw new Error("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
         });
     };
 
@@ -5635,32 +5623,26 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
         return signedOffPage;
     };
 
-    var acceptSignedOffPage = function (comparison, signedOffPages, callback) {
-        var signedOffPageEntry;
+    var acceptPageIfSignedOff = function (comparison, signedOffPages) {
+        var signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
 
-        if (comparison.status === "failed" || comparison.status === "referenceMissing") {
-            signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
-
-            calculateFingerprintForPage(comparison.testCase.url, function (actualFingerprint) {
-                if (signedOffPageEntry) {
-                    if (actualFingerprint === signedOffPageEntry.fingerprint) {
-                        console.log("Generating reference image for " + comparison.testCase.url);
-                        comparison.acceptPage();
-                    } else {
-                        console.log("Fingerprint does not match for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
-                    }
+        return calculateFingerprintForPage(comparison.testCase.url).then(function (actualFingerprint) {
+            if (signedOffPageEntry) {
+                if (actualFingerprint === signedOffPageEntry.fingerprint) {
+                    console.log("Generating reference image for " + comparison.testCase.url);
+                    comparison.acceptPage();
                 } else {
-                    console.log("No sign-off for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
+                    console.log("Fingerprint does not match for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
                 }
-
-                if (callback) {
-                    callback();
-                }
-            });
-        } else {
-            if (callback) {
-                callback();
+            } else {
+                console.log("No sign-off for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
             }
+        });
+    };
+
+    var acceptOpenTest = function (comparison, signedOffPages) {
+        if (comparison.status === "failed" || comparison.status === "referenceMissing") {
+            return acceptPageIfSignedOff(comparison, signedOffPages);
         }
     };
 
@@ -5668,11 +5650,16 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
         return {
             reportComparison: function (comparison, callback) {
                 if (! Array.isArray(signedOffPages)) {
-                    signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
-                        acceptSignedOffPage(comparison, json, callback);
-                    });
+                    signOffReporterUtil.loadFingerprintJson(signedOffPages).then(function (json) {
+                        return acceptOpenTest(comparison, json, callback);
+                    }).then(callback);
                 } else {
-                    acceptSignedOffPage(comparison, signedOffPages, callback);
+                    var p = acceptOpenTest(comparison, signedOffPages, callback);
+                    if (p) {
+                        p.then(callback);
+                    } else {
+                        callback();
+                    }
                 }
             }
         };
@@ -5698,28 +5685,26 @@ csscriticLib.signOffReporterUtil = function (util, inlineresources, JsSHA) {
         }
     };
 
-    module.loadFullDocument = function (pageUrl, callback) {
+    module.loadFullDocument = function (pageUrl) {
         var absolutePageUrl = getFileUrl(pageUrl),
             doc = window.document.implementation.createHTMLDocument("");
 
-        util.ajax(absolutePageUrl).then(function (content) {
+        return util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
-            inlineresources.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
-                callback('<html>' +
+            return inlineresources.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
+                return '<html>' +
                     doc.documentElement.innerHTML +
-                    '</html>');
+                    '</html>';
             });
-        }, function () {
-            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
         });
     };
 
-    module.loadFingerprintJson = function (url, callback) {
+    module.loadFingerprintJson = function (url) {
         var absoluteUrl = getFileUrl(url);
 
-        util.ajax(absoluteUrl).then(function (content) {
-            callback(JSON.parse(content));
+        return util.ajax(absoluteUrl).then(function (content) {
+            return JSON.parse(content);
         });
     };
 
@@ -6145,6 +6130,29 @@ csscriticLib.util = function () {
         }
     };
 
+    module.all = function (promises) {
+        var defer = ayepromise.defer(),
+            pendingPromiseCount = promises.length;
+
+        if (promises.length === 0) {
+            defer.resolve([]);
+            return defer.promise;
+        }
+
+        promises.forEach(function (promise) {
+            promise.then(function () {
+                pendingPromiseCount -= 1;
+
+                if (pendingPromiseCount === 0) {
+                    defer.resolve();
+                }
+            }, function (e) {
+                defer.reject(e);
+            });
+        });
+        return defer.promise;
+    };
+
     return module;
 };
 
@@ -6164,7 +6172,7 @@ csscriticLib.util = function () {
     // Export convenience constructors
     var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA),
         signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil),
-        htmlFileReporter = csscriticLib.htmlFileReporter(),
+        htmlFileReporter = csscriticLib.htmlFileReporter(util),
         terminalReporter = csscriticLib.terminalReporter(window.console);
 
     csscritic.HtmlFileReporter = htmlFileReporter.HtmlFileReporter;

@@ -160,5 +160,28 @@ csscriticLib.util = function () {
         }
     };
 
+    module.all = function (promises) {
+        var defer = ayepromise.defer(),
+            pendingPromiseCount = promises.length;
+
+        if (promises.length === 0) {
+            defer.resolve([]);
+            return defer.promise;
+        }
+
+        promises.forEach(function (promise) {
+            promise.then(function () {
+                pendingPromiseCount -= 1;
+
+                if (pendingPromiseCount === 0) {
+                    defer.resolve();
+                }
+            }, function (e) {
+                defer.reject(e);
+            });
+        });
+        return defer.promise;
+    };
+
     return module;
 };

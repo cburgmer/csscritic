@@ -5,6 +5,8 @@ describe("HtmlFileReporter", function () {
         htmlImage, referenceImage, differenceImageCanvas,
         reporterOutputPath;
 
+    var util = csscriticLib.util();
+
     beforeEach(function (done) {
 
         htmlImage = null;
@@ -25,7 +27,7 @@ describe("HtmlFileReporter", function () {
 
         reporterOutputPath = testHelper.createTempPath();
 
-        var htmlFileReporter = csscriticLib.htmlFileReporter();
+        var htmlFileReporter = csscriticLib.htmlFileReporter(util);
         reporter = htmlFileReporter.HtmlFileReporter(reporterOutputPath);
     });
 

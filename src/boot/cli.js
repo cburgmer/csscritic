@@ -14,7 +14,7 @@
     // Export convenience constructors
     var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA),
         signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil),
-        htmlFileReporter = csscriticLib.htmlFileReporter(),
+        htmlFileReporter = csscriticLib.htmlFileReporter(util),
         terminalReporter = csscriticLib.terminalReporter(window.console);
 
     csscritic.HtmlFileReporter = htmlFileReporter.HtmlFileReporter;

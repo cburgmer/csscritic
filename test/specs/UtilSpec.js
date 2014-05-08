@@ -206,6 +206,69 @@ describe("Utility", function () {
 
             expect(completed).toBeTruthy();
         });
+    });
 
+    describe("all", function () {
+        it("should fulfill once a passed promise is fulfilled", function (done) {
+            var defer = ayepromise.defer(),
+                resolved = false;
+
+            util.all([defer.promise])
+                .then(function () {
+                    expect(resolved).toBe(true);
+                    done();
+                });
+
+            defer.resolve();
+
+            resolved = true;
+        });
+
+        it("should fulfill once multiple passed promises are fulfilled", function (done) {
+            var deferOne = ayepromise.defer(),
+                deferTwo = ayepromise.defer(),
+                resolvedCount = 0;
+
+            var incResolveCount = function () {
+                resolvedCount += 1;
+            };
+
+            deferOne.promise.then(incResolveCount);
+            deferTwo.promise.then(function () {
+                setTimeout(incResolveCount, 1);
+            });
+
+            util.all([deferOne.promise, deferTwo.promise])
+                .then(function () {
+                    expect(resolvedCount).toBe(2);
+                    done();
+                });
+
+            deferOne.resolve();
+            deferTwo.resolve();
+        });
+
+        it("should resolve with an empty input list", function (done) {
+            util.all([])
+                .then(function (values) {
+                    expect(values).toEqual([]);
+                    done();
+                });
+        });
+
+        it("should fail if one of the promises fails", function (done) {
+            var deferOne = ayepromise.defer(),
+                deferTwo = ayepromise.defer(),
+                error = new Error("fail");
+
+            util.all([deferOne.promise, deferTwo.promise])
+                .fail(function (e) {
+                    expect(e).toBe(error);
+                    done();
+                });
+
+            deferOne.resolve('1');
+            deferTwo.reject(error);
+        });
     });
 });

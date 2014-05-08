@@ -1,9 +1,9 @@
-csscriticLib.htmlFileReporter = function () {
+csscriticLib.htmlFileReporter = function (util) {
     "use strict";
 
     var module = {};
 
-    var reportComparison = function (comparison, basePath, callback) {
+    var reportComparison = function (comparison, basePath) {
         var imagesToWrite = [];
 
         if (comparison.status !== "error") {
@@ -29,20 +29,15 @@ csscriticLib.htmlFileReporter = function () {
             });
         }
 
-        renderUrlsToFile(imagesToWrite, function () {
-            if (callback) {
-                callback();
-            }
-        });
+        return renderUrlsToFile(imagesToWrite);
     };
 
-    var compileReport = function (results, basePath, callback) {
+    var compileReport = function (results, basePath) {
         var fs = require("fs"),
             content = results.success ? "Passed" : "Failed",
             document = "<html><body>" + content + "</body></html>";
 
         fs.write(basePath + "index.html", document, "w");
-        callback();
     };
 
     var getTargetBaseName = function (filePath) {
@@ -55,28 +50,16 @@ csscriticLib.htmlFileReporter = function () {
         return fileName;
     };
 
-    var renderUrlsToFile = function (entrys, callback) {
-        var urlsWritten = 0;
-
-        if (entrys.length === 0) {
-            callback();
-            return;
-        }
-
-        entrys.forEach(function (entry) {
-            renderUrlToFile(entry.imageUrl, entry.target, entry.width, entry.height, function () {
-                urlsWritten += 1;
-
-                if (entrys.length === urlsWritten) {
-                    callback();
-                }
-            });
-        });
+    var renderUrlsToFile = function (entrys) {
+        return util.all(entrys.map(function (entry) {
+            return renderUrlToFile(entry.imageUrl, entry.target, entry.width, entry.height);
+        }));
     };
 
-    var renderUrlToFile = function (url, filePath, width, height, callback) {
+    var renderUrlToFile = function (url, filePath, width, height) {
         var webpage = require("webpage"),
-            page = webpage.create();
+            page = webpage.create(),
+            defer = ayepromise.defer();
 
         page.viewportSize = {
             width: width,
@@ -86,8 +69,10 @@ csscriticLib.htmlFileReporter = function () {
         page.open(url, function () {
             page.render(filePath);
 
-            callback();
+            defer.resolve();
         });
+
+        return defer.promise;
     };
 
     var getDifferenceCanvas = function (imageA, imageB) {
@@ -113,10 +98,11 @@ csscriticLib.htmlFileReporter = function () {
 
         return {
             reportComparison: function (result, callback) {
-                return reportComparison(result, basePath, callback);
+                reportComparison(result, basePath).then(callback);
             },
             report: function (results, callback) {
-                return compileReport(results, basePath, callback);
+                compileReport(results, basePath);
+                callback();
             }
         };
     };
