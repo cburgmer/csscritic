@@ -23,6 +23,20 @@ describe("Reporting", function () {
         };
     };
 
+    var deferFake = function (value) {
+        var successHandler;
+        return {
+            resolve: function () {
+                successHandler(value);
+            },
+            promise: {
+                then: function (theSuccessHandler) {
+                    successHandler = theSuccessHandler;
+                }
+            }
+        };
+    };
+
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
         rendererBackend.render.and.returnValue(successfulPromiseFake({
@@ -71,7 +85,7 @@ describe("Reporting", function () {
             imagediff);
     });
 
-    describe("genereal", function () {
+    describe("general", function () {
         it("should make all reporter methods optional", function () {
             setUpRenderedImage(htmlImage);
             setUpReferenceImage(referenceImage, viewport);
@@ -99,19 +113,23 @@ describe("Reporting", function () {
                 testCase: {
                     url: "samplepage.html"
                 }
-            }, jasmine.any(Function));
+            });
         });
 
         it("should only procede once the reporter returned", function () {
+            var defer = deferFake();
+
             setUpRenderedImage(htmlImage);
             setUpReferenceImage(referenceImage, viewport);
             setUpImageEqualityToBe(true);
+
+            reporter.reportComparisonStarting.and.returnValue(defer.promise);
 
             csscritic.add("samplepage.html");
             csscritic.execute();
 
             expect(storageBackend.readReferenceImage).not.toHaveBeenCalled();
-            reporter.reportComparisonStarting.calls.mostRecent().args[1]();
+            defer.resolve();
             expect(storageBackend.readReferenceImage).toHaveBeenCalled();
         });
 
@@ -126,18 +144,20 @@ describe("Reporting", function () {
         });
 
         it("should call the callback only after the reporter finished", function () {
-            var callback = jasmine.createSpy("callback");
+            var defer = deferFake(),
+                callback = jasmine.createSpy("callback");
 
             setUpRenderedImage(htmlImage);
             setUpReferenceImage(referenceImage, viewport);
             setUpImageEqualityToBe(true);
 
+            reporter.reportComparison.and.returnValue(defer.promise);
+
             csscritic.add({url: "samplepage.html"});
             csscritic.execute(callback);
 
             expect(callback).not.toHaveBeenCalled();
-            reporter.reportComparison.calls.mostRecent().args[1]();
-
+            defer.resolve();
             expect(callback).toHaveBeenCalled();
         });
 
@@ -158,7 +178,7 @@ describe("Reporting", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            }, jasmine.any(Function));
+            });
         });
 
         it("should report a canvas showing the difference on a failing comparison", function () {
@@ -178,7 +198,7 @@ describe("Reporting", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            }, jasmine.any(Function));
+            });
         });
 
         it("should report a missing reference image", function () {
@@ -196,7 +216,7 @@ describe("Reporting", function () {
                 pageImage: htmlImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function)
-            }, jasmine.any(Function));
+            });
         });
 
         it("should report an error if the page does not exist", function () {
@@ -212,7 +232,7 @@ describe("Reporting", function () {
                     url: "samplepage.html"
                 },
                 pageImage: undefined
-            }, jasmine.any(Function));
+            });
         });
 
         it("should provide a method to repaint the HTML given width and height", function () {
@@ -248,7 +268,7 @@ describe("Reporting", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            }, jasmine.any(Function));
+            });
             result = reporter.reportComparison.calls.mostRecent().args[0];
 
             result.resizePageImage(16, 34, function () {
@@ -301,7 +321,7 @@ describe("Reporting", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            }, jasmine.any(Function));
+            });
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
@@ -373,7 +393,7 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
                 renderErrors: ["oneUrl", "anotherUrl"],
-            }), jasmine.any(Function));
+            }));
         });
 
         it("should provide a list of errors during rendering independently of whether the reference image exists", function () {
@@ -385,7 +405,7 @@ describe("Reporting", function () {
 
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
                 renderErrors: ["oneUrl", "anotherUrl"],
-            }), jasmine.any(Function));
+            }));
         });
 
         it("should not pass along a list if no errors exist", function () {
@@ -405,7 +425,7 @@ describe("Reporting", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
-            }, jasmine.any(Function));
+            });
         });
 
         it("should get called before the success handler returns so that user actions don't interfere with reporting", function () {
@@ -441,7 +461,7 @@ describe("Reporting", function () {
 
             expect(reporter.report).toHaveBeenCalledWith({
                 success: true
-            }, jasmine.any(Function));
+            });
         });
 
         it("should indicate fail in final report", function () {
@@ -456,7 +476,21 @@ describe("Reporting", function () {
 
             expect(reporter.report).toHaveBeenCalledWith({
                 success: false
-            }, jasmine.any(Function));
+            });
         });
+
+        it("should call the callback only after the reporter finished", function () {
+            var defer = deferFake(),
+                callback = jasmine.createSpy("callback");
+
+            reporter.report.and.returnValue(defer.promise);
+
+            csscritic.execute(callback);
+
+            expect(callback).not.toHaveBeenCalled();
+            defer.resolve();
+            expect(callback).toHaveBeenCalled();
+        });
+
     });
 });

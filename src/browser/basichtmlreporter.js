@@ -389,31 +389,21 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
         };
 
         return {
-            reportComparisonStarting: function (comparison, callback) {
+            reportComparisonStarting: function (comparison) {
                 if (timer === null) {
                     timer = createTimer();
                 }
 
                 getOrCreateComparisonEntry(comparison);
-
-                if (callback) {
-                    callback();
-                }
             },
-            reportComparison: function (comparison, callback) {
+            reportComparison: function (comparison) {
                 // Work with old api `compare()` where no start node is created
                 var node = getOrCreateComparisonEntry(comparison);
 
                 addFinalEntry(comparison, node);
-
-                if (callback) {
-                    callback();
-                }
             },
-            report: function (report, callback) {
+            report: function () {
                 showTimeTaken(timer);
-
-                callback();
             }
         };
     };

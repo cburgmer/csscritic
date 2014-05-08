@@ -97,12 +97,11 @@ csscriticLib.htmlFileReporter = function (util) {
         }
 
         return {
-            reportComparison: function (result, callback) {
-                reportComparison(result, basePath).then(callback);
+            reportComparison: function (result) {
+                return reportComparison(result, basePath);
             },
-            report: function (results, callback) {
+            report: function (results) {
                 compileReport(results, basePath);
-                callback();
             }
         };
     };

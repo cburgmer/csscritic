@@ -50,18 +50,13 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
 
     module.SignOffReporter = function (signedOffPages) {
         return {
-            reportComparison: function (comparison, callback) {
+            reportComparison: function (comparison) {
                 if (! Array.isArray(signedOffPages)) {
-                    signOffReporterUtil.loadFingerprintJson(signedOffPages).then(function (json) {
-                        return acceptOpenTest(comparison, json, callback);
-                    }).then(callback);
+                    return signOffReporterUtil.loadFingerprintJson(signedOffPages).then(function (json) {
+                        return acceptOpenTest(comparison, json);
+                    });
                 } else {
-                    var p = acceptOpenTest(comparison, signedOffPages, callback);
-                    if (p) {
-                        p.then(callback);
-                    } else {
-                        callback();
-                    }
+                    return acceptOpenTest(comparison, signedOffPages);
                 }
             }
         };

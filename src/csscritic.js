@@ -53,10 +53,14 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     var reportComparisonStarting = function (testCases, callback) {
         util.map(testCases, function (testCase, finishTestCase) {
             util.map(reporters, function (reporter, finishReporter) {
+                var promise;
                 if (reporter.reportComparisonStarting) {
-                    reporter.reportComparisonStarting({
-                        testCase: testCase,
-                    }, finishReporter);
+                    promise = reporter.reportComparisonStarting({
+                        testCase: testCase
+                    });
+                }
+                if (promise) {
+                    promise.then(finishReporter);
                 } else {
                     finishReporter();
                 }
@@ -68,8 +72,12 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         var result = buildReportResult(comparison);
 
         util.map(reporters, function (reporter, finishUp) {
+            var promise;
             if (reporter.reportComparison) {
-                reporter.reportComparison(result, finishUp);
+                promise = reporter.reportComparison(result);
+            }
+            if (promise) {
+                promise.then(finishUp);
             } else {
                 finishUp();
             }
@@ -78,8 +86,12 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
 
     var reportTestSuite = function (passed, callback) {
         util.map(reporters, function (reporter, finish) {
+            var promise;
             if (reporter.report) {
-                reporter.report({success: passed}, finish);
+                promise = reporter.report({success: passed});
+            }
+            if (promise) {
+                promise.then(finish);
             } else {
                 finish();
             }

@@ -52,23 +52,6 @@ describe("Basic HTML reporter", function () {
         expect($("#csscritic_basichtmlreporter .comparison")).toExist();
     });
 
-    it("should call the callback when finished reporting comparison", function () {
-        var callback = jasmine.createSpy("callback");
-
-        reporter.reportComparison(paramsOnPassingTest, callback);
-
-        expect(callback).toHaveBeenCalled();
-    });
-
-    it("should call the callback when finished reporting test suite", function () {
-        var callback = jasmine.createSpy('callback'),
-            report = {success: 'passed'};
-
-        reporter.report(report, callback);
-
-        expect(callback).toHaveBeenCalled();
-    });
-
     it("should show the page url", function () {
         reporter.reportComparison({
             status: "passed",
@@ -119,14 +102,6 @@ describe("Basic HTML reporter", function () {
             expect($("#csscritic_basichtmlreporter .comparison")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison.running")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url");
-        });
-
-        it("should call the callback when finished reporting", function () {
-            var callback = jasmine.createSpy("callback");
-
-            reporter.reportComparisonStarting(paramsOnPassingTest, callback);
-
-            expect(callback).toHaveBeenCalled();
         });
 
         it("should report the final result 'on top' of the running entry", function () {

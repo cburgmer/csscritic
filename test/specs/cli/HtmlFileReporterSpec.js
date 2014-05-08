@@ -45,12 +45,8 @@ describe("HtmlFileReporter", function () {
             };
         });
 
-        it("should call the callback when finished reporting", function (done) {
-            reporter.reportComparison(testResult, done);
-        });
-
         it("should save the rendered page", function (done) {
-            reporter.reportComparison(testResult, function () {
+            reporter.reportComparison(testResult).then(function () {
                 testHelper.loadImageFromUrl(testHelper.getFileUrl(reporterOutputPath + "page_url.png"), function (image) {
                     expect(image).toImageDiffEqual(htmlImage);
 
@@ -83,7 +79,7 @@ describe("HtmlFileReporter", function () {
         });
 
         it("should save the reference image", function (done) {
-            reporter.reportComparison(testResult, function () {
+            reporter.reportComparison(testResult).then(function () {
                 testHelper.loadImageFromUrl(testHelper.getFileUrl(reporterOutputPath + "page_url.reference.png"), function (image) {
                     expect(image).toImageDiffEqual(referenceImage);
 
@@ -93,7 +89,7 @@ describe("HtmlFileReporter", function () {
         });
 
         it("should save a difference image", function (done) {
-            reporter.reportComparison(testResult, function () {
+            reporter.reportComparison(testResult).then(function () {
                 testHelper.loadImageFromUrl(testHelper.getFileUrl(reporterOutputPath + "page_url.diff.png"), function (image) {
                     expect(image).toImageDiffEqual(diffImage);
 
@@ -117,7 +113,7 @@ describe("HtmlFileReporter", function () {
         });
 
         it("should not save a page image", function (done) {
-            reporter.reportComparison(testResult, function () {
+            reporter.reportComparison(testResult).then(function () {
                 testHelper.testImageUrl(testHelper.getFileUrl(reporterOutputPath + "erroneous_page_url.reference.png"), function (result) {
                     expect(result).toBeFalsy();
 
@@ -128,28 +124,24 @@ describe("HtmlFileReporter", function () {
     });
 
     describe("'s page output", function () {
-        it("should save a HTML result page", function (done) {
+        it("should save a HTML result page", function () {
             reporter.report({
                 success: true
-            }, function () {
-                var content = require("fs").read(reporterOutputPath + "index.html");
-
-                expect(content).toMatch(/Passed/);
-
-                done();
             });
+
+            var content = require("fs").read(reporterOutputPath + "index.html");
+
+            expect(content).toMatch(/Passed/);
         });
 
-        it("should mark a failed run", function (done) {
+        it("should mark a failed run", function () {
             reporter.report({
                 success: false
-            }, function () {
-                var content = require("fs").read(reporterOutputPath + "index.html");
-
-                expect(content).toMatch(/Failed/);
-
-                done();
             });
+
+            var content = require("fs").read(reporterOutputPath + "index.html");
+
+            expect(content).toMatch(/Failed/);
         });
     });
 

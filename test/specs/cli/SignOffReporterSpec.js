@@ -23,15 +23,6 @@ describe("SignOffReporter", function () {
         calculateFingerprintSpy = spyOn(signOffReporterUtil, 'calculateFingerprint').and.returnValue("fIngRPrinT");
     });
 
-    it("should call the callback when finished reporting", function (done) {
-        var reporter = signOffReporter.SignOffReporter([{
-            pageUrl: "something",
-            fingerprint: "fIngRPrinT"
-        }]);
-
-        reporter.reportComparison({}, done);
-    });
-
     it("should auto-accept a signed off version on a failing test", function (done) {
         var pageUrl = testHelper.fixture('pageUnderTest.html');
 
@@ -49,7 +40,7 @@ describe("SignOffReporter", function () {
             resizePageImage: function () {},
             acceptPage: acceptPageSpy,
             referenceImage: referenceImage
-        }, function () {
+        }).then(function () {
             expect(acceptPageSpy).toHaveBeenCalled();
 
             expect(loadFullDocumentSpy).toHaveBeenCalledWith(pageUrl);
@@ -75,7 +66,7 @@ describe("SignOffReporter", function () {
             pageImage: htmlImage,
             resizePageImage: function () {},
             acceptPage: acceptPageSpy
-        }, function () {
+        }).then(function () {
             expect(acceptPageSpy).toHaveBeenCalled();
 
             expect(loadFullDocumentSpy).toHaveBeenCalledWith(pageUrl);
@@ -104,7 +95,7 @@ describe("SignOffReporter", function () {
             resizePageImage: function () {},
             acceptPage: acceptPageSpy,
             referenceImage: referenceImage
-        }, function () {
+        }).then(function () {
             expect(acceptPageSpy).toHaveBeenCalled();
 
             done();

@@ -6,12 +6,11 @@ describe("Workarounds", function () {
     var aOnceAutoAcceptingReporter = function () {
             var onceAutoAcceptingReporterCalled = false;
             return {
-                reportComparison: function (result, callback) {
+                reportComparison: function (result) {
                     if (!onceAutoAcceptingReporterCalled) {
                         onceAutoAcceptingReporterCalled = true;
                         result.acceptPage();
                     }
-                    callback();
                 }
             };
         };

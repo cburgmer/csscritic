@@ -100,15 +100,11 @@ describe("Integration", function () {
         var testPageUrl = testHelper.fixture("pageUnderTest.html"),
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
 
-        reporter.reportComparison.and.callFake(function (result, callback) {
-            callback();
-        });
-
         csscritic.addReporter(reporter);
         csscritic.add(testPageUrl);
         csscritic.execute(function (passed) {
             expect(passed).toBe(false);
-            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function));
+            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object));
 
             reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(330, 151, function () {
                 var referenceObjString, referenceObj;
@@ -154,10 +150,10 @@ describe("Integration", function () {
         csscritic.addReporter(reporter);
 
         // Accept first rendering
-        reporter.reportComparison.and.callFake(function (theResult, callback) {
+        reporter.reportComparison.and.callFake(function (theResult) {
             result = theResult;
-            callback();
         });
+
         csscritic.add(testPageUrl);
         csscritic.execute(function () {
             var anothercsscritic = aCssCriticInstance();
