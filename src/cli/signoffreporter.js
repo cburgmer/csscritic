@@ -3,13 +3,13 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
 
     var module = {};
 
-    var calculateFingerprintForPage = function (pageUrl, callback) {
-        signOffReporterUtil.loadFullDocument(pageUrl).then(function (content) {
+    var calculateFingerprintForPage = function (pageUrl) {
+        return signOffReporterUtil.loadFullDocument(pageUrl).then(function (content) {
             var actualFingerprint = signOffReporterUtil.calculateFingerprint(content);
 
-            callback(actualFingerprint);
+            return actualFingerprint;
         }, function () {
-            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
+            throw new Error("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
         });
     };
 
@@ -25,32 +25,26 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
         return signedOffPage;
     };
 
-    var acceptSignedOffPage = function (comparison, signedOffPages, callback) {
-        var signedOffPageEntry;
+    var acceptPageIfSignedOff = function (comparison, signedOffPages) {
+        var signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
 
-        if (comparison.status === "failed" || comparison.status === "referenceMissing") {
-            signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
-
-            calculateFingerprintForPage(comparison.testCase.url, function (actualFingerprint) {
-                if (signedOffPageEntry) {
-                    if (actualFingerprint === signedOffPageEntry.fingerprint) {
-                        console.log("Generating reference image for " + comparison.testCase.url);
-                        comparison.acceptPage();
-                    } else {
-                        console.log("Fingerprint does not match for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
-                    }
+        return calculateFingerprintForPage(comparison.testCase.url).then(function (actualFingerprint) {
+            if (signedOffPageEntry) {
+                if (actualFingerprint === signedOffPageEntry.fingerprint) {
+                    console.log("Generating reference image for " + comparison.testCase.url);
+                    comparison.acceptPage();
                 } else {
-                    console.log("No sign-off for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
+                    console.log("Fingerprint does not match for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
                 }
-
-                if (callback) {
-                    callback();
-                }
-            });
-        } else {
-            if (callback) {
-                callback();
+            } else {
+                console.log("No sign-off for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
             }
+        });
+    };
+
+    var acceptOpenTest = function (comparison, signedOffPages) {
+        if (comparison.status === "failed" || comparison.status === "referenceMissing") {
+            return acceptPageIfSignedOff(comparison, signedOffPages);
         }
     };
 
@@ -58,11 +52,16 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
         return {
             reportComparison: function (comparison, callback) {
                 if (! Array.isArray(signedOffPages)) {
-                    signOffReporterUtil.loadFingerprintJson(signedOffPages, function (json) {
-                        acceptSignedOffPage(comparison, json, callback);
-                    });
+                    signOffReporterUtil.loadFingerprintJson(signedOffPages).then(function (json) {
+                        return acceptOpenTest(comparison, json, callback);
+                    }).then(callback);
                 } else {
-                    acceptSignedOffPage(comparison, signedOffPages, callback);
+                    var p = acceptOpenTest(comparison, signedOffPages, callback);
+                    if (p) {
+                        p.then(callback);
+                    } else {
+                        callback();
+                    }
                 }
             }
         };

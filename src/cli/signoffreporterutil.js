@@ -30,11 +30,11 @@ csscriticLib.signOffReporterUtil = function (util, inlineresources, JsSHA) {
         });
     };
 
-    module.loadFingerprintJson = function (url, callback) {
+    module.loadFingerprintJson = function (url) {
         var absoluteUrl = getFileUrl(url);
 
-        util.ajax(absoluteUrl).then(function (content) {
-            callback(JSON.parse(content));
+        return util.ajax(absoluteUrl).then(function (content) {
+            return JSON.parse(content);
         });
     };
 

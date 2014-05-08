@@ -25,7 +25,7 @@ describe("SignOffReporterUtil", function () {
         it("should load a json file and return the content", function (done) {
             var jsonUrl = testHelper.fixture('fingerprints.json');
 
-            signOffReporterUtil.loadFingerprintJson(jsonUrl, function (result) {
+            signOffReporterUtil.loadFingerprintJson(jsonUrl).then(function (result) {
                 expect(result).toEqual([{
                     pageUrl: 'pageUnderTest.html',
                     fingerprint: "fIngRPrinT"

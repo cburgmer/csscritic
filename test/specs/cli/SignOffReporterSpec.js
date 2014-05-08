@@ -90,12 +90,10 @@ describe("SignOffReporter", function () {
 
         var reporter = signOffReporter.SignOffReporter('fingerprints.json');
 
-        spyOn(signOffReporterUtil, 'loadFingerprintJson').and.callFake(function (url, callback) {
-            callback([{
-                pageUrl: pageUrl,
-                fingerprint: "fIngRPrinT"
-            }]);
-        });
+        spyOn(signOffReporterUtil, 'loadFingerprintJson').and.returnValue(successfulPromise([{
+            pageUrl: pageUrl,
+            fingerprint: "fIngRPrinT"
+        }]));
 
         reporter.reportComparison({
             status: "failed",
