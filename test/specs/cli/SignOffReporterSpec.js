@@ -9,30 +9,30 @@ describe("SignOffReporter", function () {
         referenceImage = "reference image",
         acceptPageSpy, loadFullDocumentSpy, calculateFingerprintSpy;
 
+    var successfulPromise = function (value) {
+        var defer = ayepromise.defer();
+        defer.resolve(value);
+        return defer.promise;
+    };
+
     beforeEach(function () {
         signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil);
 
         acceptPageSpy = jasmine.createSpy("acceptPage");
-        loadFullDocumentSpy = spyOn(signOffReporterUtil, 'loadFullDocument').and.callFake(function (url, callback) {
-            callback("some content");
-        });
+        loadFullDocumentSpy = spyOn(signOffReporterUtil, 'loadFullDocument').and.returnValue(successfulPromise("some content"));
         calculateFingerprintSpy = spyOn(signOffReporterUtil, 'calculateFingerprint').and.returnValue("fIngRPrinT");
     });
 
-    it("should call the callback when finished reporting", function () {
-        var callback = jasmine.createSpy("callback");
-
+    it("should call the callback when finished reporting", function (done) {
         var reporter = signOffReporter.SignOffReporter([{
             pageUrl: "something",
             fingerprint: "fIngRPrinT"
         }]);
 
-        reporter.reportComparison({}, callback);
-
-        expect(callback).toHaveBeenCalled();
+        reporter.reportComparison({}, done);
     });
 
-    it("should auto-accept a signed off version on a failing test", function () {
+    it("should auto-accept a signed off version on a failing test", function (done) {
         var pageUrl = testHelper.fixture('pageUnderTest.html');
 
         var reporter = signOffReporter.SignOffReporter([{
@@ -49,15 +49,17 @@ describe("SignOffReporter", function () {
             resizePageImage: function () {},
             acceptPage: acceptPageSpy,
             referenceImage: referenceImage
+        }, function () {
+            expect(acceptPageSpy).toHaveBeenCalled();
+
+            expect(loadFullDocumentSpy).toHaveBeenCalledWith(pageUrl);
+            expect(calculateFingerprintSpy).toHaveBeenCalledWith("some content");
+
+            done();
         });
-
-        expect(acceptPageSpy).toHaveBeenCalled();
-
-        expect(loadFullDocumentSpy).toHaveBeenCalledWith(pageUrl, jasmine.any(Function));
-        expect(calculateFingerprintSpy).toHaveBeenCalledWith("some content");
     });
 
-    it("should auto-accept a signed off version on a test with a missing reference", function () {
+    it("should auto-accept a signed off version on a test with a missing reference", function (done) {
         var pageUrl = testHelper.fixture('pageUnderTest.html');
 
         var reporter = signOffReporter.SignOffReporter([{
@@ -73,15 +75,17 @@ describe("SignOffReporter", function () {
             pageImage: htmlImage,
             resizePageImage: function () {},
             acceptPage: acceptPageSpy
+        }, function () {
+            expect(acceptPageSpy).toHaveBeenCalled();
+
+            expect(loadFullDocumentSpy).toHaveBeenCalledWith(pageUrl);
+            expect(calculateFingerprintSpy).toHaveBeenCalledWith("some content");
+
+            done();
         });
-
-        expect(acceptPageSpy).toHaveBeenCalled();
-
-        expect(loadFullDocumentSpy).toHaveBeenCalledWith(pageUrl, jasmine.any(Function));
-        expect(calculateFingerprintSpy).toHaveBeenCalledWith("some content");
     });
 
-    it("should take fingerprints from a file", function () {
+    it("should take fingerprints from a file", function (done) {
         var pageUrl = testHelper.fixture('pageUnderTest.html');
 
         var reporter = signOffReporter.SignOffReporter('fingerprints.json');
@@ -102,8 +106,10 @@ describe("SignOffReporter", function () {
             resizePageImage: function () {},
             acceptPage: acceptPageSpy,
             referenceImage: referenceImage
-        });
+        }, function () {
+            expect(acceptPageSpy).toHaveBeenCalled();
 
-        expect(acceptPageSpy).toHaveBeenCalled();
+            done();
+        });
     });
 });

@@ -15,20 +15,18 @@ csscriticLib.signOffReporterUtil = function (util, inlineresources, JsSHA) {
         }
     };
 
-    module.loadFullDocument = function (pageUrl, callback) {
+    module.loadFullDocument = function (pageUrl) {
         var absolutePageUrl = getFileUrl(pageUrl),
             doc = window.document.implementation.createHTMLDocument("");
 
-        util.ajax(absolutePageUrl).then(function (content) {
+        return util.ajax(absolutePageUrl).then(function (content) {
             doc.documentElement.innerHTML = content;
 
-            inlineresources.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
-                callback('<html>' +
+            return inlineresources.inlineReferences(doc, {baseUrl: absolutePageUrl, cache: false}).then(function () {
+                return '<html>' +
                     doc.documentElement.innerHTML +
-                    '</html>');
+                    '</html>';
             });
-        }, function () {
-            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
         });
     };
 

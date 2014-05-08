@@ -4,10 +4,12 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
     var module = {};
 
     var calculateFingerprintForPage = function (pageUrl, callback) {
-        signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+        signOffReporterUtil.loadFullDocument(pageUrl).then(function (content) {
             var actualFingerprint = signOffReporterUtil.calculateFingerprint(content);
 
             callback(actualFingerprint);
+        }, function () {
+            console.log("Error loading document for sign-off: " + pageUrl + ". For accessing URLs over HTTP you need CORS enabled on that server.");
         });
     };
 

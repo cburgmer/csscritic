@@ -12,7 +12,7 @@ describe("SignOffReporterUtil", function () {
         it("should return a fully inlined document", function (done) {
             var pageUrl = testHelper.fixture('pageToInline.html');
 
-            signOffReporterUtil.loadFullDocument(pageUrl, function (content) {
+            signOffReporterUtil.loadFullDocument(pageUrl).then(function (content) {
                 expect(content).toMatch(/<style type="text\/css">\s*p\s*\{\s*font-size: 12px;\s*\}/);
                 expect(content).toMatch(/<script>\s*var s = "hello";/);
 

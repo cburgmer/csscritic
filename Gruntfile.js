@@ -249,6 +249,7 @@ module.exports = function (grunt) {
                         spyOn: true,
                         inlineresources: true,
                         jsSHA: true,
+                        ayepromise: true,
                         imagediff: true,
                         imagediffForJasmine2: true,
                         csscriticLib: true,
