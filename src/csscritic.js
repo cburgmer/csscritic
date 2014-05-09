@@ -1,4 +1,4 @@
-csscriticLib.main = function (renderer, storage, util, imagediff) {
+csscriticLib.main = function (renderer, storage, reporting, util, imagediff) {
     "use strict";
 
     var module = {};
@@ -6,79 +6,6 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     var reporters = [],
         testCases = [];
 
-    var buildReportResult = function (comparison) {
-        var viewportWidth = comparison.viewportWidth,
-            viewportHeight = comparison.viewportHeight;
-        var result = {
-                status: comparison.status,
-                testCase: comparison.testCase,
-                pageImage: comparison.htmlImage
-            };
-
-        if (comparison.htmlImage) {
-            result.resizePageImage = function (width, height, callback) {
-                viewportWidth = width;
-                viewportHeight = height;
-
-                renderer.render({
-                    url: comparison.testCase.url,
-                    hover: comparison.testCase.hover,
-                    active: comparison.testCase.active,
-                    width: width,
-                    height: height
-                }).then(function (renderResult) {
-                    result.pageImage = renderResult.image;
-                    callback(renderResult.image);
-                });
-            };
-            result.acceptPage = function () {
-                storage.storeReferenceImage(comparison.testCase, result.pageImage, {
-                    width: viewportWidth,
-                    height: viewportHeight
-                });
-            };
-        }
-
-        if (comparison.referenceImage) {
-            result.referenceImage = comparison.referenceImage;
-        }
-
-        if (comparison.renderErrors && comparison.renderErrors.length) {
-            result.renderErrors = comparison.renderErrors;
-        }
-
-        return result;
-    };
-
-    var reportComparisonStarting = function (testCases) {
-        return util.all(testCases.map(function (testCase) {
-            return util.all(reporters.map(function (reporter) {
-                if (reporter.reportComparisonStarting) {
-                    return reporter.reportComparisonStarting({
-                        testCase: testCase
-                    });
-                }
-            }));
-        }));
-    };
-
-    var reportComparison = function (comparison) {
-        var result = buildReportResult(comparison);
-
-        return util.all(reporters.map(function (reporter) {
-            if (reporter.reportComparison) {
-                return reporter.reportComparison(result);
-            }
-        }));
-    };
-
-    var reportTestSuite = function (passed) {
-        return util.all(reporters.map(function (reporter) {
-            if (reporter.report) {
-                return reporter.report({success: passed});
-            }
-        }));
-    };
 
     module.addReporter = function (reporter) {
         reporters.push(reporter);
@@ -111,7 +38,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                     textualStatus = "referenceMissing";
                 }
 
-                reportComparison({
+                reporting.doReportComparison(reporters, {
                     status: textualStatus,
                     testCase: testCase,
                     htmlImage: renderResult.image,
@@ -126,7 +53,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         }, function () {
             var textualStatus = "error";
 
-            reportComparison({
+            reporting.doReportComparison(reporters, {
                 status: textualStatus,
                 testCase: testCase
             }).then(function () {
@@ -159,7 +86,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     };
 
     module.execute = function (callback) {
-        reportComparisonStarting(testCases).then(function () {
+        reporting.doReportComparisonStarting(reporters, testCases).then(function () {
 
             util.all(testCases.map(function (testCase) {
                 var defer = ayepromise.defer();
@@ -172,7 +99,7 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
             })).then(function (results) {
                 var allPassed = results.indexOf(false) === -1;
 
-                reportTestSuite(allPassed).then(function () {
+                reporting.doReportTestSuite(reporters, allPassed).then(function () {
                     if (callback) {
                         callback(allPassed);
                     }

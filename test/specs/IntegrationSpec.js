@@ -8,11 +8,13 @@ describe("Integration", function () {
 
     var aCssCriticInstance = function () {
         var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-            domstorage = csscriticLib.domstorage(util, localStorage);
+            domstorage = csscriticLib.domstorage(util, localStorage),
+            reporting = csscriticLib.reporting(browserRenderer, domstorage, util);
 
         var csscritic = csscriticLib.main(
             browserRenderer,
             domstorage,
+            reporting,
             util,
             imagediff);
 

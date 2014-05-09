@@ -20,6 +20,7 @@
             'src/browser/domstorage.js',
             'src/browser/jobqueue.js',
             'src/util.js',
+            'src/reporting.js',
             'src/csscritic.js',
             'src/boot/browser.js'
         ];

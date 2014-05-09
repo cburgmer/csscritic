@@ -5,11 +5,13 @@ var csscritic;
 
     var util = csscriticLib.util(),
         browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-        domstorage = csscriticLib.domstorage(util, localStorage);
+        domstorage = csscriticLib.domstorage(util, localStorage),
+        reporting = csscriticLib.reporting(browserRenderer, domstorage, util);
 
     csscritic = csscriticLib.main(
         browserRenderer,
         domstorage,
+        reporting,
         util,
         imagediff);
 

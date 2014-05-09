@@ -1,7 +1,7 @@
 describe("Reporting", function () {
     "use strict";
 
-    var csscritic, rendererBackend, storageBackend, imagediff;
+    var csscritic, rendererBackend, storageBackend, reporting, imagediff;
 
     var util = csscriticLib.util();
 
@@ -86,9 +86,12 @@ describe("Reporting", function () {
         storageBackend = jasmine.createSpyObj('storageBackend', ['readReferenceImage', 'storeReferenceImage']);
         imagediff = jasmine.createSpyObj('imagediff', ['diff', 'equal']);
 
+        reporting = csscriticLib.reporting(rendererBackend, storageBackend, util);
+
         csscritic = csscriticLib.main(
             rendererBackend,
             storageBackend,
+            reporting,
             util,
             imagediff);
     });

@@ -3,11 +3,13 @@
 
     var util = csscriticLib.util(),
         phantomRenderer = csscriticLib.phantomjsRenderer(),
-        filestorage = csscriticLib.filestorage(util);
+        filestorage = csscriticLib.filestorage(util),
+        reporting = csscriticLib.reporting(phantomRenderer, filestorage, util);
 
     var csscritic = csscriticLib.main(
         phantomRenderer,
         filestorage,
+        reporting,
         util,
         imagediff);
 

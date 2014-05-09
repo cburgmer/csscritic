@@ -1,7 +1,7 @@
 describe("Regression testing", function () {
     "use strict";
 
-    var csscritic, rendererBackend, storageBackend, imagediff;
+    var csscritic, rendererBackend, storageBackend, reporting, imagediff;
 
     var util = csscriticLib.util();
 
@@ -63,9 +63,15 @@ describe("Regression testing", function () {
         rendererBackend = jasmine.createSpyObj('renderer', ['render']);
         imagediff = jasmine.createSpyObj('imagediff', ['diff', 'equal']);
 
+        reporting = jasmine.createSpyObj('reporting', ['doReportComparisonStarting', 'doReportComparison', 'doReportTestSuite']);
+        reporting.doReportComparisonStarting.and.returnValue(successfulPromise());
+        reporting.doReportComparison.and.returnValue(successfulPromise());
+        reporting.doReportTestSuite.and.returnValue(successfulPromise());
+
         csscritic = csscriticLib.main(
             rendererBackend,
             storageBackend,
+            reporting,
             util,
             imagediff);
     });
