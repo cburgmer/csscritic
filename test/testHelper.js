@@ -79,5 +79,35 @@ window.testHelper = (function () {
         return tempSubPath;
     };
 
+    module.successfulPromiseFake = function (value) {
+        return {
+            then: function (successHandler) {
+                successHandler(value);
+            }
+        };
+    };
+
+    module.deferFake = function (value) {
+        var successHandler,
+            resolved = false;
+        return {
+            resolve: function () {
+                if (successHandler) {
+                    successHandler(value);
+                }
+                resolved = true;
+            },
+            promise: {
+                then: function (theSuccessHandler) {
+                    if (resolved) {
+                        theSuccessHandler(value);
+                    } else {
+                        successHandler = theSuccessHandler;
+                    }
+                }
+            }
+        };
+    };
+
     return module;
 }());

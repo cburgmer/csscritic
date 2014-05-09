@@ -7,14 +7,6 @@ describe("Reporting", function () {
 
     var htmlImage, referenceImage, viewport;
 
-    var successfulPromiseFake = function (value) {
-        return {
-            then: function (successHandler) {
-                successHandler(value);
-            }
-        };
-    };
-
     var failedPromise = function () {
         return {
             then: function (_, failHandler) {
@@ -23,31 +15,9 @@ describe("Reporting", function () {
         };
     };
 
-    var deferFake = function (value) {
-        var successHandler,
-            resolved = false;
-        return {
-            resolve: function () {
-                if (successHandler) {
-                    successHandler(value);
-                }
-                resolved = true;
-            },
-            promise: {
-                then: function (theSuccessHandler) {
-                    if (resolved) {
-                        theSuccessHandler(value);
-                    } else {
-                        successHandler = theSuccessHandler;
-                    }
-                }
-            }
-        };
-    };
-
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
-        rendererBackend.render.and.returnValue(successfulPromiseFake({
+        rendererBackend.render.and.returnValue(testHelper.successfulPromiseFake({
             image: image,
             errors: errors
         }));
@@ -79,7 +49,7 @@ describe("Reporting", function () {
 
 
         spyOn(util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image) {
-            return successfulPromiseFake(image);
+            return testHelper.successfulPromiseFake(image);
         });
 
         rendererBackend = jasmine.createSpyObj('renderer', ['render']);
@@ -96,29 +66,28 @@ describe("Reporting", function () {
             imagediff);
     });
 
-    describe("general", function () {
-        it("should make all reporter methods optional", function () {
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImage(referenceImage, viewport);
-
-            csscritic.addReporter({});
-
-            csscritic.add("samplepage.html");
-            csscritic.execute();
-        });
-    });
-
     describe("reportComparisonStarting", function () {
         var reporter;
+
+        var triggerDelayedPromise = function () {
+            jasmine.clock().tick(100);
+        };
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting"]);
             csscritic.addReporter(reporter);
+
+            jasmine.clock().install();
+        });
+
+        afterEach(function() {
+            jasmine.clock().uninstall();
         });
 
         it("should report a starting comparison", function () {
-            csscritic.add("samplepage.html");
-            csscritic.execute();
+            reporting.doReportComparisonStarting([reporter], [{
+                url: "samplepage.html"
+            }]);
 
             expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({
                 testCase: {
@@ -127,27 +96,29 @@ describe("Reporting", function () {
             });
         });
 
-        it("should only procede once the reporter returned", function (done) {
-            var defer = deferFake(),
-                resolved = false;
+        it("should make method optional", function () {
+            var startingComparison = "blah",
+                emptyReporter = {};
 
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImage(referenceImage, viewport);
-            setUpImageEqualityToBe(true);
+            reporting.doReportComparisonStarting([emptyReporter], [startingComparison]);
+        });
+
+        it("should only fulfill once the reporter returned", function () {
+            var startingComparison = "blah",
+                defer = testHelper.deferFake(),
+                callback = jasmine.createSpy('callback');
 
             reporter.reportComparisonStarting.and.returnValue(defer.promise);
 
-            csscritic.add("samplepage.html");
-            csscritic.execute(function () {
-                expect(resolved).toBe(true);
-                expect(storageBackend.readReferenceImage).toHaveBeenCalled();
+            reporting.doReportComparisonStarting([reporter], [startingComparison]).then(callback);
 
-                done();
-            });
+            triggerDelayedPromise();
 
-            expect(storageBackend.readReferenceImage).not.toHaveBeenCalled();
+            expect(callback).not.toHaveBeenCalled();
             defer.resolve();
-            resolved = true;
+
+            triggerDelayedPromise();
+            expect(callback).toHaveBeenCalled();
         });
 
     });
@@ -156,12 +127,12 @@ describe("Reporting", function () {
         var reporter;
 
         var poorMansSynchronousAllImplementation = function (functionReturnValues) {
-            var defer = deferFake([]);
+            var defer = testHelper.deferFake([]);
             if (functionReturnValues.length && functionReturnValues[0]) {
                 functionReturnValues[0].then(defer.resolve);
                 return defer.promise;
             } else {
-                return successfulPromiseFake([]);
+                return testHelper.successfulPromiseFake([]);
             }
         };
 
@@ -172,8 +143,15 @@ describe("Reporting", function () {
             spyOn(util, 'all').and.callFake(poorMansSynchronousAllImplementation);
         });
 
+        it("should make method optional", function () {
+            var comparison = "blah",
+                emptyReporter = {};
+
+            reporting.doReportComparison([emptyReporter], [comparison]);
+        });
+
         it("should finish execution only after the reporter finished", function (done) {
-            var defer = deferFake(),
+            var defer = testHelper.deferFake(),
                 resolved = false;
 
             setUpRenderedImage(htmlImage);
@@ -275,12 +253,12 @@ describe("Reporting", function () {
 
             rendererBackend.render.and.callFake(function (parameters) {
                 if (parameters.width === 16) {
-                    return successfulPromiseFake({
+                    return testHelper.successfulPromiseFake({
                         image: newHtmlImage,
                         errors: []
                     });
                 } else {
-                    return successfulPromiseFake({
+                    return testHelper.successfulPromiseFake({
                         image: htmlImage,
                         errors: []
                     });
@@ -498,6 +476,11 @@ describe("Reporting", function () {
             });
         });
 
+        it("should make method optional", function () {
+            var emptyReporter = {};
+            reporting.doReportTestSuite([emptyReporter], true);
+        });
+
         it("should indicate fail in final report", function (done) {
             setUpImageEqualityToBe(false);
 
@@ -516,7 +499,7 @@ describe("Reporting", function () {
         });
 
         it("should call the callback only after the reporter finished", function (done) {
-            var defer = deferFake(),
+            var defer = testHelper.deferFake(),
                 resolved = false;
 
             reporter.report.and.returnValue(defer.promise);

@@ -235,4 +235,38 @@ describe("Regression testing", function () {
         });
     });
 
+    describe("Reporting", function () {
+        var reporter;
+
+        beforeEach(function () {
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting"]);
+            csscritic.addReporter(reporter);
+
+            // make syncronous
+            spyOn(util, 'all').and.returnValue(testHelper.successfulPromiseFake([]));
+        });
+
+        it("should report a starting comparison", function () {
+            csscritic.add("samplepage.html");
+            csscritic.execute();
+
+            expect(reporting.doReportComparisonStarting).toHaveBeenCalledWith([reporter], [{
+                url: "samplepage.html"
+            }]);
+        });
+
+        it("should wait for reporting on starting comparison to finish", function () {
+            var defer = testHelper.deferFake(),
+                callback = jasmine.createSpy('callback');
+
+            reporting.doReportComparisonStarting.and.returnValue(defer.promise);
+            reporting.doReportTestSuite.and.returnValue(testHelper.successfulPromiseFake());
+            csscritic.execute(callback);
+
+            expect(callback).not.toHaveBeenCalled();
+
+            defer.resolve();
+            expect(callback).toHaveBeenCalled();
+        });
+    });
 });
