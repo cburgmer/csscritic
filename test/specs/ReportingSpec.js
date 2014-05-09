@@ -24,14 +24,22 @@ describe("Reporting", function () {
     };
 
     var deferFake = function (value) {
-        var successHandler;
+        var successHandler,
+            resolved = false;
         return {
             resolve: function () {
-                successHandler(value);
+                if (successHandler) {
+                    successHandler(value);
+                }
+                resolved = true;
             },
             promise: {
                 then: function (theSuccessHandler) {
-                    successHandler = theSuccessHandler;
+                    if (resolved) {
+                        theSuccessHandler(value);
+                    } else {
+                        successHandler = theSuccessHandler;
+                    }
                 }
             }
         };
@@ -116,8 +124,9 @@ describe("Reporting", function () {
             });
         });
 
-        it("should only procede once the reporter returned", function () {
-            var defer = deferFake();
+        it("should only procede once the reporter returned", function (done) {
+            var defer = deferFake(),
+                resolved = false;
 
             setUpRenderedImage(htmlImage);
             setUpReferenceImage(referenceImage, viewport);
@@ -126,11 +135,16 @@ describe("Reporting", function () {
             reporter.reportComparisonStarting.and.returnValue(defer.promise);
 
             csscritic.add("samplepage.html");
-            csscritic.execute();
+            csscritic.execute(function () {
+                expect(resolved).toBe(true);
+                expect(storageBackend.readReferenceImage).toHaveBeenCalled();
+
+                done();
+            });
 
             expect(storageBackend.readReferenceImage).not.toHaveBeenCalled();
             defer.resolve();
-            expect(storageBackend.readReferenceImage).toHaveBeenCalled();
+            resolved = true;
         });
 
     });
@@ -138,14 +152,26 @@ describe("Reporting", function () {
     describe("reportComparison", function () {
         var reporter;
 
+        var poorMansSynchronousAllImplementation = function (functionReturnValues) {
+            var defer = deferFake();
+            if (functionReturnValues.length && functionReturnValues[0]) {
+                functionReturnValues[0].then(defer.resolve);
+                return defer.promise;
+            } else {
+                return successfulPromiseFake();
+            }
+        };
+
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
             csscritic.addReporter(reporter);
+
+            spyOn(util, 'all').and.callFake(poorMansSynchronousAllImplementation);
         });
 
-        it("should call the callback only after the reporter finished", function () {
+        it("should finish execution only after the reporter finished", function (done) {
             var defer = deferFake(),
-                callback = jasmine.createSpy("callback");
+                resolved = false;
 
             setUpRenderedImage(htmlImage);
             setUpReferenceImage(referenceImage, viewport);
@@ -154,11 +180,14 @@ describe("Reporting", function () {
             reporter.reportComparison.and.returnValue(defer.promise);
 
             csscritic.add({url: "samplepage.html"});
-            csscritic.execute(callback);
+            csscritic.execute(function () {
+                expect(resolved).toBe(true);
 
-            expect(callback).not.toHaveBeenCalled();
+                done();
+            });
+
+            resolved = true;
             defer.resolve();
-            expect(callback).toHaveBeenCalled();
         });
 
         it("should report a successful comparison", function () {
@@ -456,15 +485,17 @@ describe("Reporting", function () {
             csscritic.addReporter(reporter);
         });
 
-        it("should call final report", function () {
-            csscritic.execute();
+        it("should call final report", function (done) {
+            csscritic.execute(function () {
+                expect(reporter.report).toHaveBeenCalledWith({
+                    success: true
+                });
 
-            expect(reporter.report).toHaveBeenCalledWith({
-                success: true
+                done();
             });
         });
 
-        it("should indicate fail in final report", function () {
+        it("should indicate fail in final report", function (done) {
             setUpImageEqualityToBe(false);
 
             setUpRenderedImage(htmlImage);
@@ -472,24 +503,29 @@ describe("Reporting", function () {
 
             csscritic.add("failingpage.html");
 
-            csscritic.execute();
+            csscritic.execute(function () {
+                expect(reporter.report).toHaveBeenCalledWith({
+                    success: false
+                });
 
-            expect(reporter.report).toHaveBeenCalledWith({
-                success: false
+                done();
             });
         });
 
-        it("should call the callback only after the reporter finished", function () {
+        it("should call the callback only after the reporter finished", function (done) {
             var defer = deferFake(),
-                callback = jasmine.createSpy("callback");
+                resolved = false;
 
             reporter.report.and.returnValue(defer.promise);
 
-            csscritic.execute(callback);
+            csscritic.execute(function () {
+                expect(resolved).toBe(true);
 
-            expect(callback).not.toHaveBeenCalled();
+                done();
+            });
+
             defer.resolve();
-            expect(callback).toHaveBeenCalled();
+            resolved = true;
         });
 
     });
