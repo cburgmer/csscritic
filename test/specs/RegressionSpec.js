@@ -238,12 +238,21 @@ describe("Regression testing", function () {
     describe("Reporting", function () {
         var reporter;
 
-        beforeEach(function () {
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting"]);
-            csscritic.addReporter(reporter);
+        var triggerDelayedPromise = function () {
+            jasmine.clock().tick(100);
+        };
 
-            // make syncronous
-            spyOn(util, 'all').and.returnValue(testHelper.successfulPromiseFake([]));
+        beforeEach(function () {
+            jasmine.clock().install();
+        });
+
+        afterEach(function() {
+            jasmine.clock().uninstall();
+        });
+
+        beforeEach(function () {
+            reporter = {};
+            csscritic.addReporter(reporter);
         });
 
         it("should report a starting comparison", function () {
@@ -263,10 +272,55 @@ describe("Regression testing", function () {
             reporting.doReportTestSuite.and.returnValue(testHelper.successfulPromiseFake());
             csscritic.execute(callback);
 
+            jasmine.clock().tick(100);
             expect(callback).not.toHaveBeenCalled();
 
             defer.resolve();
+
+            jasmine.clock().tick(100);
             expect(callback).toHaveBeenCalled();
         });
+
+        it("should call final report on empty test case list and report as successful ", function () {
+            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
+
+            csscritic.execute();
+
+            jasmine.clock().tick(100);
+            expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
+        });
+
+        it("should indicate fail in final report", function () {
+            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
+
+            setUpImageEqualityToBe(false);
+            setUpRenderedImage(htmlImage);
+            setUpReferenceImage(referenceImage, viewport);
+
+            csscritic.add("failingpage.html");
+            csscritic.execute();
+
+            triggerDelayedPromise();
+
+            expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], false);
+        });
+
+        it("should wait for reporting on final report to finish", function () {
+            var defer = testHelper.deferFake(),
+                callback = jasmine.createSpy('callback');
+
+            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
+            reporting.doReportTestSuite.and.returnValue(defer.promise);
+            csscritic.execute(callback);
+
+            jasmine.clock().tick(100);
+            expect(callback).not.toHaveBeenCalled();
+
+            defer.resolve();
+
+            jasmine.clock().tick(100);
+            expect(callback).toHaveBeenCalled();
+        });
+
     });
 });

@@ -461,18 +461,34 @@ describe("Reporting", function () {
     describe("report", function () {
         var reporter;
 
+        var triggerDelayedPromise = function () {
+            jasmine.clock().tick(100);
+        };
+
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["report"]);
             csscritic.addReporter(reporter);
+
+            jasmine.clock().install();
         });
 
-        it("should call final report", function (done) {
-            csscritic.execute(function () {
-                expect(reporter.report).toHaveBeenCalledWith({
-                    success: true
-                });
+        afterEach(function() {
+            jasmine.clock().uninstall();
+        });
 
-                done();
+        it("should call final report with success", function () {
+            reporting.doReportTestSuite([reporter], true);
+
+            expect(reporter.report).toHaveBeenCalledWith({
+                success: true
+            });
+        });
+
+        it("should call final report with failure", function () {
+            reporting.doReportTestSuite([reporter], false);
+
+            expect(reporter.report).toHaveBeenCalledWith({
+                success: false
             });
         });
 
@@ -481,37 +497,21 @@ describe("Reporting", function () {
             reporting.doReportTestSuite([emptyReporter], true);
         });
 
-        it("should indicate fail in final report", function (done) {
-            setUpImageEqualityToBe(false);
-
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImage(referenceImage, viewport);
-
-            csscritic.add("failingpage.html");
-
-            csscritic.execute(function () {
-                expect(reporter.report).toHaveBeenCalledWith({
-                    success: false
-                });
-
-                done();
-            });
-        });
-
-        it("should call the callback only after the reporter finished", function (done) {
+        it("should only fulfill once the reporter returned", function () {
             var defer = testHelper.deferFake(),
-                resolved = false;
+                callback = jasmine.createSpy('callback');
 
             reporter.report.and.returnValue(defer.promise);
 
-            csscritic.execute(function () {
-                expect(resolved).toBe(true);
+            reporting.doReportTestSuite([reporter], true).then(callback);
 
-                done();
-            });
+            triggerDelayedPromise();
 
+            expect(callback).not.toHaveBeenCalled();
             defer.resolve();
-            resolved = true;
+
+            triggerDelayedPromise();
+            expect(callback).toHaveBeenCalled();
         });
 
     });
