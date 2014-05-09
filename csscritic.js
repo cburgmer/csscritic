@@ -19,7 +19,7 @@
             'src/browser/browserrenderer.js',
             'src/browser/domstorage.js',
             'src/browser/jobqueue.js',
-            'src/utils.js',
+            'src/util.js',
             'src/csscritic.js',
             'src/boot/browser.js'
         ];

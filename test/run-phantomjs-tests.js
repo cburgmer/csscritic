@@ -20,7 +20,7 @@ function loadCode() {
     phantom.injectJs("./node_modules/ayepromise/ayepromise.js");
     phantom.injectJs("./build/dependencies/inlineresources.js");
     phantom.injectJs("./src/boot/scope.js");
-    phantom.injectJs("./src/utils.js");
+    phantom.injectJs("./src/util.js");
     phantom.injectJs("./src/cli/phantomjsrenderer.js");
     phantom.injectJs("./src/cli/terminalreporter.js");
     phantom.injectJs("./src/cli/htmlfilereporter.js");
