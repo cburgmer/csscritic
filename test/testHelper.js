@@ -26,7 +26,7 @@ window.testHelper = (function () {
 
     module.loadImageFromUrl = function (url, successCallback) {
         loadImage(url, successCallback, function () {
-            safeLog("Error loading image " + url + " in test", url);
+            console.error("Error loading image " + url + " in test", url);
         });
     };
 
