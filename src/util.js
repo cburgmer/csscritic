@@ -160,25 +160,31 @@ csscriticLib.util = function () {
         }
     };
 
-    module.all = function (promises) {
+    module.all = function (functionReturnValues) {
         var defer = ayepromise.defer(),
-            pendingPromiseCount = promises.length;
+            pendingFunctionCalls = functionReturnValues.length;
 
-        if (promises.length === 0) {
-            defer.resolve([]);
+        var functionCallResolved = function () {
+            pendingFunctionCalls -= 1;
+
+            if (pendingFunctionCalls === 0) {
+                defer.resolve();
+            }
+        };
+
+        if (functionReturnValues.length === 0) {
+            defer.resolve();
             return defer.promise;
         }
 
-        promises.forEach(function (promise) {
-            promise.then(function () {
-                pendingPromiseCount -= 1;
-
-                if (pendingPromiseCount === 0) {
-                    defer.resolve();
-                }
-            }, function (e) {
-                defer.reject(e);
-            });
+        functionReturnValues.forEach(function (returnValue) {
+            if (returnValue) {
+                returnValue.then(functionCallResolved, function (e) {
+                    defer.reject(e);
+                });
+            } else {
+                functionCallResolved();
+            }
         });
         return defer.promise;
     };

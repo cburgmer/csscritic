@@ -224,6 +224,11 @@ describe("Utility", function () {
             resolved = true;
         });
 
+        it("should fulfill without a promise returned", function (done) {
+            util.all([undefined])
+                .then(done);
+        });
+
         it("should fulfill once multiple passed promises are fulfilled", function (done) {
             var deferOne = ayepromise.defer(),
                 deferTwo = ayepromise.defer(),
@@ -248,10 +253,9 @@ describe("Utility", function () {
             deferTwo.resolve();
         });
 
-        it("should resolve with an empty input list", function (done) {
+        it("should resolve for an empty input list", function (done) {
             util.all([])
-                .then(function (values) {
-                    expect(values).toEqual([]);
+                .then(function () {
                     done();
                 });
         });
