@@ -153,12 +153,12 @@ describe("Reporting", function () {
         var reporter;
 
         var poorMansSynchronousAllImplementation = function (functionReturnValues) {
-            var defer = deferFake();
+            var defer = deferFake([]);
             if (functionReturnValues.length && functionReturnValues[0]) {
                 functionReturnValues[0].then(defer.resolve);
                 return defer.promise;
             } else {
-                return successfulPromiseFake();
+                return successfulPromiseFake([]);
             }
         };
 

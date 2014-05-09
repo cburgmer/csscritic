@@ -161,9 +161,15 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     module.execute = function (callback) {
         reportComparisonStarting(testCases).then(function () {
 
-            util.map(testCases, function (testCase, finish) {
-                compare(testCase, finish);
-            }, function (results) {
+            util.all(testCases.map(function (testCase) {
+                var defer = ayepromise.defer();
+
+                compare(testCase, function (v) {
+                    defer.resolve(v);
+                });
+
+                return defer.promise;
+            })).then(function (results) {
                 var allPassed = results.indexOf(false) === -1;
 
                 reportTestSuite(allPassed).then(function () {

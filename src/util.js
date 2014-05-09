@@ -132,58 +132,34 @@ csscriticLib.util = function () {
         return module.getImageForUrl(dataUri);
     };
 
-    module.map = function (list, func, callback) {
-        var completedCount = 0,
-            results = [],
-            i;
-
-        if (list.length === 0) {
-            callback(results);
-        }
-
-        var callForItem = function (idx) {
-            function funcFinishCallback(result) {
-                completedCount += 1;
-
-                results[idx] = result;
-
-                if (completedCount === list.length) {
-                    callback(results);
-                }
-            }
-
-            func(list[idx], funcFinishCallback);
-        };
-
-        for(i = 0; i < list.length; i++) {
-            callForItem(i);
-        }
-    };
-
     module.all = function (functionReturnValues) {
         var defer = ayepromise.defer(),
-            pendingFunctionCalls = functionReturnValues.length;
+            pendingFunctionCalls = functionReturnValues.length,
+            resolvedValues = [];
 
-        var functionCallResolved = function () {
+        var functionCallResolved = function (value, idx) {
             pendingFunctionCalls -= 1;
+            resolvedValues[idx] = value;
 
             if (pendingFunctionCalls === 0) {
-                defer.resolve();
+                defer.resolve(resolvedValues);
             }
         };
 
         if (functionReturnValues.length === 0) {
-            defer.resolve();
+            defer.resolve([]);
             return defer.promise;
         }
 
-        functionReturnValues.forEach(function (returnValue) {
-            if (returnValue) {
-                returnValue.then(functionCallResolved, function (e) {
+        functionReturnValues.forEach(function (returnValue, idx) {
+            if (returnValue && returnValue.then) {
+                returnValue.then(function (result) {
+                    functionCallResolved(result, idx);
+                }, function (e) {
                     defer.reject(e);
                 });
             } else {
-                functionCallResolved();
+                functionCallResolved(returnValue, idx);
             }
         });
         return defer.promise;

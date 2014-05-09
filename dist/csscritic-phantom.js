@@ -5824,52 +5824,34 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
         return result;
     };
 
-    var reportComparisonStarting = function (testCases, callback) {
-        util.map(testCases, function (testCase, finishTestCase) {
-            util.map(reporters, function (reporter, finishReporter) {
-                var promise;
+    var reportComparisonStarting = function (testCases) {
+        return util.all(testCases.map(function (testCase) {
+            return util.all(reporters.map(function (reporter) {
                 if (reporter.reportComparisonStarting) {
-                    promise = reporter.reportComparisonStarting({
+                    return reporter.reportComparisonStarting({
                         testCase: testCase
                     });
                 }
-                if (promise) {
-                    promise.then(finishReporter);
-                } else {
-                    finishReporter();
-                }
-            }, finishTestCase);
-        }, callback);
+            }));
+        }));
     };
 
-    var reportComparison = function (comparison, callback) {
+    var reportComparison = function (comparison) {
         var result = buildReportResult(comparison);
 
-        util.map(reporters, function (reporter, finishUp) {
-            var promise;
+        return util.all(reporters.map(function (reporter) {
             if (reporter.reportComparison) {
-                promise = reporter.reportComparison(result);
+                return reporter.reportComparison(result);
             }
-            if (promise) {
-                promise.then(finishUp);
-            } else {
-                finishUp();
-            }
-        }, callback);
+        }));
     };
 
-    var reportTestSuite = function (passed, callback) {
-        util.map(reporters, function (reporter, finish) {
-            var promise;
+    var reportTestSuite = function (passed) {
+        return util.all(reporters.map(function (reporter) {
             if (reporter.report) {
-                promise = reporter.report({success: passed});
+                return reporter.report({success: passed});
             }
-            if (promise) {
-                promise.then(finish);
-            } else {
-                finish();
-            }
-        }, callback);
+        }));
     };
 
     module.addReporter = function (reporter) {
@@ -5904,30 +5886,26 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
                 }
 
                 reportComparison({
-                        status: textualStatus,
-                        testCase: testCase,
-                        htmlImage: renderResult.image,
-                        referenceImage: referenceImage,
-                        renderErrors: renderResult.errors,
-                        viewportWidth: viewport.width,
-                        viewportHeight: viewport.height
-                    },
-                    function () {
-                        callback(textualStatus === "passed");
-                    }
-                );
+                    status: textualStatus,
+                    testCase: testCase,
+                    htmlImage: renderResult.image,
+                    referenceImage: referenceImage,
+                    renderErrors: renderResult.errors,
+                    viewportWidth: viewport.width,
+                    viewportHeight: viewport.height
+                }).then(function () {
+                    callback(textualStatus === "passed");
+                });
             });
         }, function () {
             var textualStatus = "error";
 
             reportComparison({
-                    status: textualStatus,
-                    testCase: testCase
-                },
-                function () {
-                    callback(false);
-                }
-            );
+                status: textualStatus,
+                testCase: testCase
+            }).then(function () {
+                callback(false);
+            });
         });
     };
 
@@ -5955,14 +5933,20 @@ csscriticLib.main = function (renderer, storage, util, imagediff) {
     };
 
     module.execute = function (callback) {
-        reportComparisonStarting(testCases, function () {
+        reportComparisonStarting(testCases).then(function () {
 
-            util.map(testCases, function (testCase, finish) {
-                compare(testCase, finish);
-            }, function (results) {
+            util.all(testCases.map(function (testCase) {
+                var defer = ayepromise.defer();
+
+                compare(testCase, function (v) {
+                    defer.resolve(v);
+                });
+
+                return defer.promise;
+            })).then(function (results) {
                 var allPassed = results.indexOf(false) === -1;
 
-                reportTestSuite(allPassed, function () {
+                reportTestSuite(allPassed).then(function () {
                     if (callback) {
                         callback(allPassed);
                     }
@@ -6108,53 +6092,35 @@ csscriticLib.util = function () {
         return module.getImageForUrl(dataUri);
     };
 
-    module.map = function (list, func, callback) {
-        var completedCount = 0,
-            results = [],
-            i;
+    module.all = function (functionReturnValues) {
+        var defer = ayepromise.defer(),
+            pendingFunctionCalls = functionReturnValues.length,
+            resolvedValues = [];
 
-        if (list.length === 0) {
-            callback(results);
-        }
+        var functionCallResolved = function (value, idx) {
+            pendingFunctionCalls -= 1;
+            resolvedValues[idx] = value;
 
-        var callForItem = function (idx) {
-            function funcFinishCallback(result) {
-                completedCount += 1;
-
-                results[idx] = result;
-
-                if (completedCount === list.length) {
-                    callback(results);
-                }
+            if (pendingFunctionCalls === 0) {
+                defer.resolve(resolvedValues);
             }
-
-            func(list[idx], funcFinishCallback);
         };
 
-        for(i = 0; i < list.length; i++) {
-            callForItem(i);
-        }
-    };
-
-    module.all = function (promises) {
-        var defer = ayepromise.defer(),
-            pendingPromiseCount = promises.length;
-
-        if (promises.length === 0) {
+        if (functionReturnValues.length === 0) {
             defer.resolve([]);
             return defer.promise;
         }
 
-        promises.forEach(function (promise) {
-            promise.then(function () {
-                pendingPromiseCount -= 1;
-
-                if (pendingPromiseCount === 0) {
-                    defer.resolve();
-                }
-            }, function (e) {
-                defer.reject(e);
-            });
+        functionReturnValues.forEach(function (returnValue, idx) {
+            if (returnValue && returnValue.then) {
+                returnValue.then(function (result) {
+                    functionCallResolved(result, idx);
+                }, function (e) {
+                    defer.reject(e);
+                });
+            } else {
+                functionCallResolved(returnValue, idx);
+            }
         });
         return defer.promise;
     };

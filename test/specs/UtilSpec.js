@@ -141,73 +141,6 @@ describe("Utility", function () {
         });
     });
 
-    describe("map", function () {
-        it("should map each value to one function call and then call complete function", function () {
-            var completedValues = [],
-                completed = false;
-
-            util.map([1, 2, 3], function (val, callback) {
-                completedValues.push(val);
-
-                callback();
-            }, function () {
-                completed = true;
-            });
-
-            expect(completed).toBeTruthy();
-            expect(completedValues).toEqual([1, 2, 3]);
-        });
-
-        it("should pass computed results as array to complete function", function () {
-            var computedResults = null;
-
-            util.map([1, 2, 3], function (val, callback) {
-                callback(val + 1);
-            }, function (results) {
-                computedResults = results;
-            });
-
-            expect(computedResults).toEqual([2, 3, 4]);
-        });
-
-        it("should call complete if empty list is passed", function () {
-            var completed = false,
-                computedResults = null;
-
-            util.map([], function () {}, function (results) {
-                completed = true;
-                computedResults = results;
-            });
-
-            expect(completed).toBeTruthy();
-            expect(computedResults).toEqual([]);
-        });
-
-        it("should not call complete until last value is handled", function () {
-            var completedValues = [],
-                completed = false,
-                lastCallback = null;
-
-            util.map([1, 2, 3], function (val, callback) {
-                completedValues.push(val);
-
-                if (val < 3) {
-                    callback();
-                } else {
-                    lastCallback = callback;
-                }
-            }, function () {
-                completed = true;
-            });
-
-            expect(completed).toBeFalsy();
-
-            lastCallback();
-
-            expect(completed).toBeTruthy();
-        });
-    });
-
     describe("all", function () {
         it("should fulfill once a passed promise is fulfilled", function (done) {
             var defer = ayepromise.defer(),
@@ -253,9 +186,48 @@ describe("Utility", function () {
             deferTwo.resolve();
         });
 
+        it("should return the promises value", function (done) {
+            var defer = ayepromise.defer();
+
+            util.all([defer.promise])
+                .then(function (values) {
+                    expect(values).toEqual([42]);
+                    done();
+                });
+
+            defer.resolve(42);
+        });
+
+        it("should return a non-promise value", function (done) {
+            util.all([21])
+                .then(function (values) {
+                    expect(values).toEqual([21]);
+                    done();
+                });
+        });
+
+        it("should return the promises' values", function (done) {
+            var deferOne = ayepromise.defer(),
+                deferTwo = ayepromise.defer();
+
+            util.all([deferOne.promise, deferTwo.promise])
+                .then(function (values) {
+                    expect(values).toEqual(['12', '34']);
+                    done();
+                });
+
+            setTimeout(function () {
+                deferOne.resolve('12');
+
+            }, 1);
+            deferTwo.resolve('34');
+        });
+
         it("should resolve for an empty input list", function (done) {
             util.all([])
-                .then(function () {
+                .then(function (values) {
+                    expect(values).toEqual([]);
+
                     done();
                 });
         });
