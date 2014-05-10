@@ -265,7 +265,7 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
         entry.appendChild(createStatus(comparison));
 
-        if (comparison.renderErrors) {
+        if (comparison.renderErrors && comparison.renderErrors.length) {
             entry.appendChild(createErroneousResourceWarning(comparison));
         }
 

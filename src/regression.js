@@ -68,7 +68,7 @@ csscriticLib.regression = function (renderer, storage, util, imagediff) {
         }, function () {
             defer.resolve({
                 viewport: defaultViewport,
-                image: null
+                image: undefined
             });
         });
 

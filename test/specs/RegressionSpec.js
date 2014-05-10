@@ -178,7 +178,7 @@ describe("Regression testing", function () {
                         url: "differentpage.html"
                     },
                     pageImage: pageImage,
-                    referenceImage: null,
+                    referenceImage: undefined,
                     renderErrors: [],
                     viewport: jasmine.any(Object)
                 });

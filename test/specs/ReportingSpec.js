@@ -141,7 +141,8 @@ describe("Reporting", function () {
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage,
-                viewport: viewport
+                viewport: viewport,
+                renderErrors: []
             });
         });
 
@@ -169,7 +170,7 @@ describe("Reporting", function () {
                     url: "differentpage.html"
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: [],
                 viewport: viewport
             });
@@ -180,9 +181,11 @@ describe("Reporting", function () {
                     url: "differentpage.html"
                 },
                 pageImage: pageImage,
+                referenceImage: undefined,
                 viewport: viewport,
                 resizePageImage: jasmine.any(Function),
-                acceptPage: jasmine.any(Function)
+                acceptPage: jasmine.any(Function),
+                renderErrors: []
             });
         });
 
@@ -198,8 +201,7 @@ describe("Reporting", function () {
                 status: "error",
                 testCase: {
                     url: "differentpage.html"
-                },
-                pageImage: undefined
+                }
             });
         });
 
@@ -214,7 +216,7 @@ describe("Reporting", function () {
                     url: "differentpage.html"
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: [],
                 viewport: viewport
             });
@@ -246,7 +248,7 @@ describe("Reporting", function () {
                     hover: '.selector'
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: [],
                 viewport: viewport
             });
@@ -265,7 +267,7 @@ describe("Reporting", function () {
                     url: "differentpage.html"
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: [],
                 viewport: viewport
             });
@@ -282,7 +284,7 @@ describe("Reporting", function () {
                     url: "differentpage.html"
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: [],
                 viewport: viewport
             });
@@ -300,7 +302,7 @@ describe("Reporting", function () {
                     hover: '.selector'
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: [],
                 viewport: viewport
             });
@@ -324,7 +326,7 @@ describe("Reporting", function () {
                     hover: '.selector'
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: [],
                 viewport: viewport
             });
@@ -349,30 +351,13 @@ describe("Reporting", function () {
                     hover: '.selector'
                 },
                 pageImage: pageImage,
-                referenceImage: null,
+                referenceImage: undefined,
                 renderErrors: ["oneUrl", "anotherUrl"],
                 viewport: viewport
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
                 renderErrors: ["oneUrl", "anotherUrl"],
-            }));
-        });
-
-        it("should not pass along a list if no errors exist", function () {
-            reporting.doReportComparison([reporter], {
-                status: "referenceMissing",
-                testCase: {
-                    url: "differentpage.html"
-                },
-                pageImage: pageImage,
-                referenceImage: null,
-                renderErrors: [],
-                viewport: viewport
-            });
-
-            expect(reporter.reportComparison).not.toHaveBeenCalledWith(jasmine.objectContaining({
-                renderErrors: jasmine.any(Object)
             }));
         });
     });

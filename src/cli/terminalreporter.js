@@ -36,7 +36,7 @@ csscriticLib.terminalReporter = function (console) {
     var reportComparison = function (comparison, callback) {
         var color = statusColor[comparison.status] || "",
             statusStr = inColor(comparison.status, color);
-        if (comparison.renderErrors) {
+        if (comparison.renderErrors && comparison.renderErrors.length) {
             console.log(inColor("Error(s) loading " + comparison.testCase.url + ":", "red"));
             comparison.renderErrors.forEach(function (msg) {
                 console.log(inColor("  " + msg, "red+bold"));

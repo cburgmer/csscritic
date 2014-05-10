@@ -50,7 +50,7 @@ window.testHelper = (function () {
         comparison = {
             status: status,
             testCase: testCase,
-            renderErrors: renderErrors
+            renderErrors: renderErrors || []
         };
 
         if (status === 'error') {

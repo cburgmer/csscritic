@@ -3,19 +3,13 @@ csscriticLib.reporting = function (renderer, storage, util) {
 
     var module = {};
 
-    var buildReportResult = function (comparison) {
+    var attachPageAcceptHelpers = function (comparison) {
         var viewportWidth, viewportHeight;
-        var result = {
-                status: comparison.status,
-                testCase: comparison.testCase,
-                pageImage: comparison.pageImage
-            };
 
         if (comparison.pageImage) {
             viewportWidth = comparison.viewport.width;
             viewportHeight = comparison.viewport.height;
-            result.viewport = comparison.viewport;
-            result.resizePageImage = function (width, height, callback) {
+            comparison.resizePageImage = function (width, height, callback) {
                 viewportWidth = width;
                 viewportHeight = height;
 
@@ -26,27 +20,17 @@ csscriticLib.reporting = function (renderer, storage, util) {
                     width: width,
                     height: height
                 }).then(function (renderResult) {
-                    result.pageImage = renderResult.image;
+                    comparison.pageImage = renderResult.image;
                     callback(renderResult.image);
                 });
             };
-            result.acceptPage = function () {
-                storage.storeReferenceImage(comparison.testCase, result.pageImage, {
+            comparison.acceptPage = function () {
+                storage.storeReferenceImage(comparison.testCase, comparison.pageImage, {
                     width: viewportWidth,
                     height: viewportHeight
                 });
             };
         }
-
-        if (comparison.referenceImage) {
-            result.referenceImage = comparison.referenceImage;
-        }
-
-        if (comparison.renderErrors && comparison.renderErrors.length) {
-            result.renderErrors = comparison.renderErrors;
-        }
-
-        return result;
     };
 
     module.doReportComparisonStarting = function (reporters, testCases) {
@@ -62,7 +46,9 @@ csscriticLib.reporting = function (renderer, storage, util) {
     };
 
     module.doReportComparison = function (reporters, comparison) {
-        var result = buildReportResult(comparison);
+        var result = util.clone(comparison);
+
+        attachPageAcceptHelpers(result);
 
         return util.all(reporters.map(function (reporter) {
             if (reporter.reportComparison) {
