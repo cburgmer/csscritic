@@ -22,7 +22,7 @@
             'src/util.js',
             'src/reporting.js',
             'src/regression.js',
-            'src/csscritic.js',
+            'src/main.js',
             'src/boot/browser.js'
         ];
 
