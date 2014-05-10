@@ -140,7 +140,8 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
-                referenceImage: referenceImage
+                referenceImage: referenceImage,
+                viewport: viewport
             });
         });
 
@@ -179,6 +180,7 @@ describe("Reporting", function () {
                     url: "differentpage.html"
                 },
                 pageImage: pageImage,
+                viewport: viewport,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function)
             });

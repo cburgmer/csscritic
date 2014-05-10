@@ -5936,6 +5936,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
         if (comparison.pageImage) {
             viewportWidth = comparison.viewport.width;
             viewportHeight = comparison.viewport.height;
+            result.viewport = comparison.viewport;
             result.resizePageImage = function (width, height, callback) {
                 viewportWidth = width;
                 viewportHeight = height;
