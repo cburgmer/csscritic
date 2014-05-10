@@ -33,7 +33,7 @@ page.open(fs.absolute(csscriticLoadingPage), function (status) {
             // Don't care about the example
             csscritic.add('pageThatDoesNotExist');
             // When the callback is called, all is good
-            csscritic.execute(function () {
+            csscritic.execute().then(function () {
                 console.log('execution done');
             });
         });

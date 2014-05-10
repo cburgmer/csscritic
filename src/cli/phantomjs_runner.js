@@ -61,7 +61,7 @@ csscriticLib.phantomjsRunner = function (csscritic) {
             csscritic.add(testDocument);
         });
 
-        csscritic.execute(doneHandler);
+        csscritic.execute().then(doneHandler);
     };
 
     module.main = function () {

@@ -54,7 +54,7 @@ describe("Integration", function () {
 
         csscritic.addReporter(csscritic.BasicHTMLReporter());
         csscritic.add(testPageUrl);
-        csscritic.execute(function (passed) {
+        csscritic.execute().then(function (passed) {
             expect(passed).toBe(false);
             expect($("#csscritic_basichtmlreporter .referenceMissing.comparison")).toExist();
 
@@ -73,7 +73,7 @@ describe("Integration", function () {
             }));
 
             csscritic.add(testImageUrl);
-            csscritic.execute(function (passed) {
+            csscritic.execute().then(function (passed) {
                 expect(passed).toBe(true);
 
                 done();
@@ -89,7 +89,7 @@ describe("Integration", function () {
         }));
 
         csscritic.add(testPageUrl);
-        csscritic.execute(function (passed) {
+        csscritic.execute().then(function (passed) {
             expect(passed).toBe(true);
 
             done();
@@ -103,7 +103,7 @@ describe("Integration", function () {
 
         csscritic.addReporter(reporter);
         csscritic.add(testPageUrl);
-        csscritic.execute(function (passed) {
+        csscritic.execute().then(function (passed) {
             expect(passed).toBe(false);
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object));
 
@@ -130,7 +130,7 @@ describe("Integration", function () {
 
         csscritic.addReporter(csscritic.BasicHTMLReporter());
         csscritic.add(testPageUrl);
-        csscritic.execute(function () {
+        csscritic.execute().then(function () {
             expect($("#csscritic_basichtmlreporter .failed.comparison")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual(testPageUrl);
             expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toExist();
@@ -156,13 +156,13 @@ describe("Integration", function () {
         });
 
         csscritic.add(testPageUrl);
-        csscritic.execute(function () {
+        csscritic.execute().then(function () {
             var anothercsscritic = aCssCriticInstance();
             result.acceptPage();
 
             anothercsscritic.addReporter(reporter);
             anothercsscritic.add(testPageUrl);
-            anothercsscritic.execute(function (status) {
+            anothercsscritic.execute().then(function (status) {
                 expect(status).toBe(true);
 
                 done();

@@ -36,11 +36,11 @@ describe("Workarounds", function () {
         // Create reference image first
         csscritic.addReporter(aOnceAutoAcceptingReporter());
         csscritic.add({url: testHelper.fixture("transparencyBug.html")});
-        csscritic.execute(function () {
+        csscritic.execute().then(function () {
 
             // Now test against the reference
             csscritic.add({url: testHelper.fixture("transparencyBug.html")});
-            csscritic.execute(function (passed) {
+            csscritic.execute().then(function (passed) {
                 expect(passed).toBe(true);
 
                 done();

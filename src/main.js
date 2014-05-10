@@ -41,10 +41,10 @@ csscriticLib.main = function (regression, reporting, util) {
         return allPassed;
     };
 
-    module.execute = function (callback) {
+    module.execute = function () {
         var allPassed;
 
-        reporting.doReportComparisonStarting(reporters, testCases)
+        return reporting.doReportComparisonStarting(reporters, testCases)
             .then(function () {
                 return util.all(testCases.map(
                     executeTestCase
@@ -57,7 +57,7 @@ csscriticLib.main = function (regression, reporting, util) {
                 return reporting.doReportTestSuite(reporters, allPassed);
             })
             .then(function () {
-                callback(allPassed);
+                return allPassed;
             });
     };
 

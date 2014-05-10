@@ -29,22 +29,18 @@ describe("Main", function () {
 
     describe("adding & executing", function () {
         it("should return on an empty list of tests", function (done) {
-            csscritic.execute(function (passed) {
+            csscritic.execute().then(function (passed) {
                 expect(passed).toBeTruthy();
 
                 done();
             });
         });
 
-        it("should handle a missing callback", function () {
-            csscritic.execute();
-        });
-
         it("should execute regression test", function () {
             setUpComparison();
 
             csscritic.add("test_case");
-            csscritic.execute(function () {
+            csscritic.execute().then(function () {
                 expect(regression.compare).toHaveBeenCalledWith({
                     url: "test_case"
                 });
@@ -62,7 +58,7 @@ describe("Main", function () {
         it("should result in success", function (done) {
             csscritic.add("samplepage.html");
 
-            csscritic.execute(function (success) {
+            csscritic.execute().then(function (success) {
                 expect(success).toBeTruthy();
 
                 done();
@@ -72,7 +68,7 @@ describe("Main", function () {
         it("should report overall success in the test suite", function (done) {
             csscritic.addReporter(reporter);
             csscritic.add("succeedingpage.html");
-            csscritic.execute(function () {
+            csscritic.execute().then(function () {
                 expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
 
                 done();
@@ -90,7 +86,7 @@ describe("Main", function () {
         it("should result in failure", function (done) {
             csscritic.add("samplepage.html");
 
-            csscritic.execute(function (passed) {
+            csscritic.execute().then(function (passed) {
                 expect(passed).toBeFalsy();
 
                 done();
@@ -100,7 +96,7 @@ describe("Main", function () {
         it("should report a failure in the test suite", function (done) {
             csscritic.addReporter(reporter);
             csscritic.add("failingpage.html");
-            csscritic.execute(function () {
+            csscritic.execute().then(function () {
                 expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], false);
 
                 done();
@@ -139,7 +135,7 @@ describe("Main", function () {
                 callback = jasmine.createSpy('callback');
 
             reporting.doReportComparisonStarting.and.returnValue(defer.promise);
-            csscritic.execute(callback);
+            csscritic.execute().then(callback);
 
             triggerDelayedPromise();
             expect(callback).not.toHaveBeenCalled();
@@ -151,7 +147,7 @@ describe("Main", function () {
         });
 
         it("should call final report on empty test case list and report as successful", function (done) {
-            csscritic.execute(function () {
+            csscritic.execute().then(function () {
                 expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
 
                 done();
@@ -170,7 +166,7 @@ describe("Main", function () {
 
             reporting.doReportComparison.and.returnValue(defer.promise);
             csscritic.add('a_test');
-            csscritic.execute(callback);
+            csscritic.execute().then(callback);
 
             triggerDelayedPromise();
             expect(callback).not.toHaveBeenCalled();
@@ -186,7 +182,7 @@ describe("Main", function () {
                 callback = jasmine.createSpy('callback');
 
             reporting.doReportTestSuite.and.returnValue(defer.promise);
-            csscritic.execute(callback);
+            csscritic.execute().then(callback);
 
             triggerDelayedPromise();
             expect(callback).not.toHaveBeenCalled();
