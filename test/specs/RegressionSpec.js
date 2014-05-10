@@ -373,7 +373,7 @@ describe("Regression testing", function () {
         });
 
         it("should wait for reporting on starting comparison to finish", function () {
-            var defer = testHelper.deferFake(),
+            var defer = ayepromise.defer(),
                 callback = jasmine.createSpy('callback');
 
             reporting.doReportComparisonStarting.and.returnValue(defer.promise);
@@ -399,7 +399,7 @@ describe("Regression testing", function () {
         });
 
         it("should wait for reporting on comparison to finish", function () {
-            var defer = testHelper.deferFake(),
+            var defer = ayepromise.defer(),
                 callback = jasmine.createSpy('callback');
 
             setUpRenderedImage(htmlImage);
@@ -419,10 +419,9 @@ describe("Regression testing", function () {
         });
 
         it("should wait for reporting on final report to finish", function () {
-            var defer = testHelper.deferFake(),
+            var defer = ayepromise.defer(),
                 callback = jasmine.createSpy('callback');
 
-            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
             reporting.doReportTestSuite.and.returnValue(defer.promise);
             csscritic.execute(callback);
 
