@@ -119,8 +119,7 @@ describe("Regression testing", function () {
                     pageImage: pageImage,
                     referenceImage: referenceImage,
                     renderErrors: [],
-                    viewportWidth: viewport.width,
-                    viewportHeight: viewport.height
+                    viewport: viewport
                 });
 
                 done();
@@ -157,8 +156,7 @@ describe("Regression testing", function () {
                     pageImage: pageImage,
                     referenceImage: referenceImage,
                     renderErrors: [],
-                    viewportWidth: viewport.width,
-                    viewportHeight: viewport.height
+                    viewport: viewport
                 });
 
                 done();
@@ -182,8 +180,7 @@ describe("Regression testing", function () {
                     pageImage: pageImage,
                     referenceImage: null,
                     renderErrors: [],
-                    viewportWidth: jasmine.any(Number),
-                    viewportHeight: jasmine.any(Number)
+                    viewport: jasmine.any(Object)
                 });
 
                 done();

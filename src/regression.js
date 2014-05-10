@@ -44,8 +44,7 @@ csscriticLib.regression = function (renderer, storage, util, imagediff) {
                     pageImage: renderResult.image,
                     referenceImage: referenceImage,
                     renderErrors: renderResult.errors,
-                    viewportWidth: viewport.width,
-                    viewportHeight: viewport.height
+                    viewport: util.clone(viewport)
                 };
             });
         }, function () {

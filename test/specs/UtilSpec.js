@@ -141,6 +141,18 @@ describe("Utility", function () {
         });
     });
 
+    describe("clone", function () {
+        it("should create a copy of the given object", function () {
+            var input = {anOption: '1', yetAnotherOption: '21'},
+                output;
+
+            output = util.clone(input);
+
+            expect(input).toEqual(output);
+            expect(input).not.toBe(output);
+        });
+    });
+
     describe("all", function () {
         it("should fulfill once a passed promise is fulfilled", function (done) {
             var defer = ayepromise.defer(),

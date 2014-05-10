@@ -5,7 +5,7 @@ describe("Reporting", function () {
 
     var util = csscriticLib.util();
 
-    var pageImage, referenceImage;
+    var pageImage, referenceImage, viewport;
 
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
@@ -30,6 +30,10 @@ describe("Reporting", function () {
     beforeEach(function () {
         pageImage = "the_html_image";
         referenceImage = "the_reference_image";
+        viewport = {
+            width: 42,
+            height: 21
+        };
 
         rendererBackend = jasmine.createSpyObj('renderer', ['render']);
         storageBackend = jasmine.createSpyObj('storageBackend', ['readReferenceImage', 'storeReferenceImage']);
@@ -84,22 +88,23 @@ describe("Reporting", function () {
     });
 
     describe("reportComparison", function () {
-        var reporter;
+        var reporter, comparison;
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
+            comparison = {
+                viewport: viewport
+            };
         });
 
         it("should make method optional", function () {
-            var comparison = "blah",
-                emptyReporter = {};
+            var emptyReporter = {};
 
-            reporting.doReportComparison([emptyReporter], [comparison]);
+            reporting.doReportComparison([emptyReporter], comparison);
         });
 
         it("should only fulfill once the reporter returned", function () {
             var defer = testHelper.deferFake(),
-                comparison = "blah",
                 callback = jasmine.createSpy('callback');
 
             reporter.reportComparison.and.returnValue(defer.promise);
@@ -124,8 +129,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: referenceImage,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
@@ -149,8 +153,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: referenceImage,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -167,8 +170,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
@@ -212,8 +214,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             setUpRenderedImage(newpageImage);
@@ -245,8 +246,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(16, 34, function () {});
@@ -265,8 +265,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
@@ -283,16 +282,12 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, {
-                width: 42,
-                height: 21
-            });
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, viewport);
         });
 
         it("should pass the test case's additional parameters on accept", function () {
@@ -305,8 +300,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
@@ -330,8 +324,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             var result = reporter.reportComparison.calls.mostRecent().args[0];
@@ -356,8 +349,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: ["oneUrl", "anotherUrl"],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -374,8 +366,7 @@ describe("Reporting", function () {
                 pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
-                viewportWidth: 42,
-                viewportHeight: 21
+                viewport: viewport
             });
 
             expect(reporter.reportComparison).not.toHaveBeenCalledWith(jasmine.objectContaining({

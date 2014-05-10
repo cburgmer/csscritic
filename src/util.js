@@ -110,6 +110,17 @@ csscriticLib.util = function () {
         return serializationEntries.join(',');
     };
 
+    module.clone = function (object) {
+        var theClone = {},
+            i;
+        for (i in object) {
+            if (object.hasOwnProperty(i)) {
+               theClone[i] = object[i];
+            }
+        }
+        return theClone;
+    };
+
     var successfulPromise = function (value) {
         var defer = ayepromise.defer();
         defer.resolve(value);

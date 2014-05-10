@@ -4,8 +4,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
     var module = {};
 
     var buildReportResult = function (comparison) {
-        var viewportWidth = comparison.viewportWidth,
-            viewportHeight = comparison.viewportHeight;
+        var viewportWidth, viewportHeight;
         var result = {
                 status: comparison.status,
                 testCase: comparison.testCase,
@@ -13,6 +12,8 @@ csscriticLib.reporting = function (renderer, storage, util) {
             };
 
         if (comparison.pageImage) {
+            viewportWidth = comparison.viewport.width;
+            viewportHeight = comparison.viewport.height;
             result.resizePageImage = function (width, height, callback) {
                 viewportWidth = width;
                 viewportHeight = height;

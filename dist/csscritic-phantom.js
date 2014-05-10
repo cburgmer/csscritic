@@ -5881,11 +5881,10 @@ csscriticLib.regression = function (renderer, storage, util, imagediff) {
             return compareRenderingAndReference(renderResult.image, referenceImage).then(function (textualStatus) {
                 return {
                     status: textualStatus,
-                    htmlImage: renderResult.image,
+                    pageImage: renderResult.image,
                     referenceImage: referenceImage,
                     renderErrors: renderResult.errors,
-                    viewportWidth: viewport.width,
-                    viewportHeight: viewport.height
+                    viewport: util.clone(viewport)
                 };
             });
         }, function () {
@@ -5927,15 +5926,16 @@ csscriticLib.reporting = function (renderer, storage, util) {
     var module = {};
 
     var buildReportResult = function (comparison) {
-        var viewportWidth = comparison.viewportWidth,
-            viewportHeight = comparison.viewportHeight;
+        var viewportWidth, viewportHeight;
         var result = {
                 status: comparison.status,
                 testCase: comparison.testCase,
-                pageImage: comparison.htmlImage
+                pageImage: comparison.pageImage
             };
 
-        if (comparison.htmlImage) {
+        if (comparison.pageImage) {
+            viewportWidth = comparison.viewport.width;
+            viewportHeight = comparison.viewport.height;
             result.resizePageImage = function (width, height, callback) {
                 viewportWidth = width;
                 viewportHeight = height;
@@ -6113,6 +6113,17 @@ csscriticLib.util = function () {
             serializationEntries.push(key + '=' + theMap[key]);
         });
         return serializationEntries.join(',');
+    };
+
+    module.clone = function (object) {
+        var theClone = {},
+            i;
+        for (i in object) {
+            if (object.hasOwnProperty(i)) {
+               theClone[i] = object[i];
+            }
+        }
+        return theClone;
     };
 
     var successfulPromise = function (value) {
