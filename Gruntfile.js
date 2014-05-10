@@ -169,7 +169,9 @@ module.exports = function (grunt) {
                 trailing: true,
                 browser: true,
                 sub: true,
-                strict: true
+                strict: true,
+                freeze: true,
+                nonbsp: true
             },
             grunt: {
                 src: 'Gruntfile.js',
