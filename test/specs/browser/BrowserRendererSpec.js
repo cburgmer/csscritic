@@ -6,18 +6,6 @@ describe("Browser renderer", function () {
 
     var ajaxSpy;
 
-    var successfulPromise = function (value) {
-        var defer = ayepromise.defer();
-        defer.resolve(value);
-        return defer.promise;
-    };
-
-    var failedPromise = function () {
-        var defer = ayepromise.defer();
-        defer.reject();
-        return defer.promise;
-    };
-
     beforeEach(function () {
         ajaxSpy = spyOn(util, 'ajax');
 
@@ -37,14 +25,14 @@ describe("Browser renderer", function () {
 
         ajaxSpy.and.callFake(function (url) {
             if (url === theUrl) {
-                return successfulPromise(theBinaryContent);
+                return testHelper.successfulPromise(theBinaryContent);
             }
         });
         spyOn(util, 'getImageForBinaryContent').and.callFake(function (content) {
             if (content === theBinaryContent) {
-                return successfulPromise(theImage);
+                return testHelper.successfulPromise(theImage);
             } else {
-                return failedPromise();
+                return testHelper.failedPromise();
             }
         });
 
@@ -60,7 +48,7 @@ describe("Browser renderer", function () {
     });
 
     it("should call the error handler if a page does not exist", function (done) {
-        ajaxSpy.and.returnValue(failedPromise());
+        ajaxSpy.and.returnValue(testHelper.failedPromise());
 
         browserRenderer.render({
             url: "the_url",
@@ -84,19 +72,19 @@ describe("Browser renderer", function () {
         beforeEach(function () {
             ajaxSpy.and.callFake(function (url) {
                 if (url === theUrl) {
-                    return successfulPromise(theHtml);
+                    return testHelper.successfulPromise(theHtml);
                 } else {
-                    return successfulPromise([readHtml(url)]);
+                    return testHelper.successfulPromise([readHtml(url)]);
                 }
             });
-            spyOn(util, 'getImageForBinaryContent').and.returnValue(failedPromise());
+            spyOn(util, 'getImageForBinaryContent').and.returnValue(testHelper.failedPromise());
         });
 
         it("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
             var the_image = "the_image",
                 drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html) {
                     if (html === theHtml) {
-                        return successfulPromise({
+                        return testHelper.successfulPromise({
                             image: the_image,
                             errors: []
                         });
@@ -124,7 +112,7 @@ describe("Browser renderer", function () {
         });
 
         it("should call the error handler if a page could not be rendered", function (done) {
-            spyOn(rasterizeHTML, "drawHTML").and.returnValue(failedPromise());
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.failedPromise());
 
             browserRenderer.render({
                 url: theUrl,
@@ -155,7 +143,7 @@ describe("Browser renderer", function () {
         });
 
         it("should render with hover effect", function (done) {
-            spyOn(rasterizeHTML, "drawHTML").and.returnValue(successfulPromise({
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.successfulPromise({
                 image: "the image",
                 errors: []
             }));
@@ -175,7 +163,7 @@ describe("Browser renderer", function () {
         });
 
         it("should render with active effect", function (done) {
-            spyOn(rasterizeHTML, "drawHTML").and.returnValue(successfulPromise({
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.successfulPromise({
                 image: "the image",
                 errors: []
             }));

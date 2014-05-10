@@ -7,28 +7,12 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
 
     var util = csscriticLib.util();
 
-    var successfulPromiseFake = function (value) {
-        return {
-            then: function (successHandler) {
-                successHandler(value);
-            }
-        };
-    };
-
-    var failedPromiseFake = function (e) {
-        return {
-            then: function (successHandler, failHandler) {
-                failHandler(e);
-            }
-        };
-    };
-
     var setUpImageReturnedForUrl = function (image) {
-        util.getImageForUrl.and.returnValue(successfulPromiseFake(image));
+        util.getImageForUrl.and.returnValue(testHelper.successfulPromiseFake(image));
     };
 
     var setUpImageForUrlToFail = function (e) {
-        util.getImageForUrl.and.returnValue(failedPromiseFake(e));
+        util.getImageForUrl.and.returnValue(testHelper.failedPromiseFake(e));
     };
 
     beforeEach(function (done) {

@@ -9,17 +9,11 @@ describe("SignOffReporter", function () {
         referenceImage = "reference image",
         acceptPageSpy, loadFullDocumentSpy, calculateFingerprintSpy;
 
-    var successfulPromise = function (value) {
-        var defer = ayepromise.defer();
-        defer.resolve(value);
-        return defer.promise;
-    };
-
     beforeEach(function () {
         signOffReporter = csscriticLib.signOffReporter(signOffReporterUtil);
 
         acceptPageSpy = jasmine.createSpy("acceptPage");
-        loadFullDocumentSpy = spyOn(signOffReporterUtil, 'loadFullDocument').and.returnValue(successfulPromise("some content"));
+        loadFullDocumentSpy = spyOn(signOffReporterUtil, 'loadFullDocument').and.returnValue(testHelper.successfulPromise("some content"));
         calculateFingerprintSpy = spyOn(signOffReporterUtil, 'calculateFingerprint').and.returnValue("fIngRPrinT");
     });
 
@@ -81,7 +75,7 @@ describe("SignOffReporter", function () {
 
         var reporter = signOffReporter.SignOffReporter('fingerprints.json');
 
-        spyOn(signOffReporterUtil, 'loadFingerprintJson').and.returnValue(successfulPromise([{
+        spyOn(signOffReporterUtil, 'loadFingerprintJson').and.returnValue(testHelper.successfulPromise([{
             pageUrl: pageUrl,
             fingerprint: "fIngRPrinT"
         }]));

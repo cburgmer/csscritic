@@ -7,21 +7,9 @@ describe("Regression testing", function () {
 
     var htmlImage, referenceImage, viewport;
 
-    var successfulPromise = function (value) {
-        var defer = ayepromise.defer();
-        defer.resolve(value);
-        return defer.promise;
-    };
-
-    var failedPromise = function () {
-        var defer = ayepromise.defer();
-        defer.reject();
-        return defer.promise;
-    };
-
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
-        rendererBackend.render.and.returnValue(successfulPromise({
+        rendererBackend.render.and.returnValue(testHelper.successfulPromise({
             image: image,
             errors: errors
         }));
@@ -57,16 +45,16 @@ describe("Regression testing", function () {
         storageBackend = jasmine.createSpyObj('storageBackend', ['readReferenceImage', 'storeReferenceImage']);
 
         spyOn(util, 'workAroundTransparencyIssueInFirefox').and.callFake(function (image) {
-            return successfulPromise(image);
+            return testHelper.successfulPromise(image);
         });
 
         rendererBackend = jasmine.createSpyObj('renderer', ['render']);
         imagediff = jasmine.createSpyObj('imagediff', ['diff', 'equal']);
 
         reporting = jasmine.createSpyObj('reporting', ['doReportComparisonStarting', 'doReportComparison', 'doReportTestSuite']);
-        reporting.doReportComparisonStarting.and.returnValue(successfulPromise());
-        reporting.doReportComparison.and.returnValue(successfulPromise());
-        reporting.doReportTestSuite.and.returnValue(successfulPromise());
+        reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromise());
+        reporting.doReportComparison.and.returnValue(testHelper.successfulPromise());
+        reporting.doReportTestSuite.and.returnValue(testHelper.successfulPromise());
 
         csscritic = csscriticLib.main(
             rendererBackend,
@@ -209,7 +197,7 @@ describe("Regression testing", function () {
         });
 
         it("should handle page render error", function (done) {
-            rendererBackend.render.and.returnValue(failedPromise());
+            rendererBackend.render.and.returnValue(testHelper.failedPromise());
             setUpReferenceImageToBeMissing();
 
             csscritic.add({url: "samplepage.html"});
@@ -222,7 +210,7 @@ describe("Regression testing", function () {
         });
 
         it("should handle page render error even when reference image exists", function (done) {
-            rendererBackend.render.and.returnValue(failedPromise());
+            rendererBackend.render.and.returnValue(testHelper.failedPromise());
             setUpReferenceImage(referenceImage, viewport);
 
             csscritic.add({url: "samplepage.html"});
@@ -382,7 +370,7 @@ describe("Regression testing", function () {
         });
 
         it("should report a erroring test case", function () {
-            rendererBackend.render.and.returnValue(failedPromise());
+            rendererBackend.render.and.returnValue(testHelper.failedPromise());
             setUpReferenceImageToBeMissing();
 
             csscritic.add("differentpage.html");

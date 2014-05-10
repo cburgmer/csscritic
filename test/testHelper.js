@@ -79,10 +79,30 @@ window.testHelper = (function () {
         return tempSubPath;
     };
 
+    module.successfulPromise = function (value) {
+        var defer = ayepromise.defer();
+        defer.resolve(value);
+        return defer.promise;
+    };
+
+    module.failedPromise = function () {
+        var defer = ayepromise.defer();
+        defer.reject();
+        return defer.promise;
+    };
+
     module.successfulPromiseFake = function (value) {
         return {
             then: function (successHandler) {
                 successHandler(value);
+            }
+        };
+    };
+
+    module.failedPromiseFake = function (e) {
+        return {
+            then: function (_, failHandler) {
+                failHandler(e);
             }
         };
     };
