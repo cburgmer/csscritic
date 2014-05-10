@@ -144,6 +144,47 @@ describe("Regression testing", function () {
                 done();
             });
         });
+
+        it("should report a successful comparison", function (done) {
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
+                    status: "passed",
+                    testCase: {
+                        url: "differentpage.html"
+                    },
+                    htmlImage: htmlImage,
+                    referenceImage: referenceImage,
+                    renderErrors: [],
+                    viewportWidth: viewport.width,
+                    viewportHeight: viewport.height
+                });
+
+                done();
+            });
+        });
+
+        it("should report a list of errors during rendering", function (done) {
+            setUpRenderedImage(htmlImage, ["oneUrl", "anotherUrl"]);
+
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), jasmine.objectContaining({
+                    renderErrors: ["oneUrl", "anotherUrl"],
+                }));
+
+                done();
+            });
+        });
+
+        it("should report overall success in the test suite", function (done) {
+            csscritic.add("succeedingpage.html");
+            csscritic.execute(function () {
+                expect(reporting.doReportTestSuite).toHaveBeenCalledWith(jasmine.any(Object), true);
+
+                done();
+            });
+        });
     });
 
     describe("on a failing comparison", function () {
@@ -160,6 +201,34 @@ describe("Regression testing", function () {
                 expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
 
                 expect(passed).toBeFalsy();
+
+                done();
+            });
+        });
+
+        it("should report a failing comparison", function (done) {
+            csscritic.add("differentpage.html");
+            csscritic.execute(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
+                    status: "failed",
+                    testCase: {
+                        url: "differentpage.html"
+                    },
+                    htmlImage: htmlImage,
+                    referenceImage: referenceImage,
+                    renderErrors: [],
+                    viewportWidth: viewport.width,
+                    viewportHeight: viewport.height
+                });
+
+                done();
+            });
+        });
+
+        it("should report a failure in the test suite", function (done) {
+            csscritic.add("failingpage.html");
+            csscritic.execute(function () {
+                expect(reporting.doReportTestSuite).toHaveBeenCalledWith(jasmine.any(Object), false);
 
                 done();
             });
@@ -194,6 +263,38 @@ describe("Regression testing", function () {
                 done();
             });
         });
+
+        it("should report a missing reference image", function (done) {
+            csscritic.add("differentpage.html");
+            csscritic.execute(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
+                    status: "referenceMissing",
+                    testCase: {
+                        url: "differentpage.html"
+                    },
+                    htmlImage: htmlImage,
+                    referenceImage: null,
+                    renderErrors: [],
+                    viewportWidth: jasmine.any(Number),
+                    viewportHeight: jasmine.any(Number)
+                });
+
+                done();
+            });
+        });
+
+        it("should report a list of errors during rendering", function (done) {
+            setUpRenderedImage(htmlImage, ["oneUrl", "anotherUrl"]);
+
+            csscritic.add({url: "differentpage.html"});
+            csscritic.execute(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), jasmine.objectContaining({
+                    renderErrors: ["oneUrl", "anotherUrl"],
+                }));
+
+                done();
+            });
+        });
     });
 
     describe("on error", function () {
@@ -220,6 +321,22 @@ describe("Regression testing", function () {
             csscritic.execute(function (passed) {
                 expect(passed).toBe(false);
                 expect(imagediff.equal).not.toHaveBeenCalled();
+
+                done();
+            });
+        });
+
+        it("should report the comparison", function (done) {
+            setUpReferenceImageToBeMissing();
+
+            csscritic.add("differentpage.html");
+            csscritic.execute(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
+                    status: "error",
+                    testCase: {
+                        url: "differentpage.html"
+                    }
+                });
 
                 done();
             });
@@ -260,25 +377,25 @@ describe("Regression testing", function () {
                 callback = jasmine.createSpy('callback');
 
             reporting.doReportComparisonStarting.and.returnValue(defer.promise);
-            reporting.doReportTestSuite.and.returnValue(testHelper.successfulPromiseFake());
             csscritic.execute(callback);
 
-            jasmine.clock().tick(100);
+            triggerDelayedPromise();
             expect(callback).not.toHaveBeenCalled();
 
             defer.resolve();
 
-            jasmine.clock().tick(100);
+            triggerDelayedPromise();
             expect(callback).toHaveBeenCalled();
         });
 
-        it("should call final report on empty test case list and report as successful ", function () {
-            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
+        it("should call final report on empty test case list and report as successful", function (done) {
+            csscritic.execute(function () {
+                expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
 
-            csscritic.execute();
+                done();
+            });
 
-            jasmine.clock().tick(100);
-            expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
+            triggerDelayedPromise();
         });
 
         it("should wait for reporting on comparison to finish", function () {
@@ -288,149 +405,17 @@ describe("Regression testing", function () {
             setUpRenderedImage(htmlImage);
             setUpReferenceImage(referenceImage, viewport);
 
-            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
             reporting.doReportComparison.and.returnValue(defer.promise);
             csscritic.add('a_test');
             csscritic.execute(callback);
 
-            jasmine.clock().tick(100);
+            triggerDelayedPromise();
             expect(callback).not.toHaveBeenCalled();
 
             defer.resolve();
 
-            jasmine.clock().tick(100);
-            expect(callback).toHaveBeenCalled();
-        });
-
-        it("should report a successful comparison", function () {
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImage(referenceImage, viewport);
-            setUpImageEqualityToBe(true);
-
-            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
-
-            csscritic.add({url: "differentpage.html"});
-            csscritic.execute();
-
-            jasmine.clock().tick(100);
-
-            expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
-                status: "passed",
-                testCase: {
-                    url: "differentpage.html"
-                },
-                htmlImage: htmlImage,
-                referenceImage: referenceImage,
-                renderErrors: [],
-                viewportWidth: viewport.width,
-                viewportHeight: viewport.height
-            });
-        });
-
-        it("should report a failing comparison", function () {
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImage(referenceImage, viewport);
-            setUpImageEqualityToBe(false);
-
-            csscritic.add("differentpage.html");
-            csscritic.execute();
-
-            jasmine.clock().tick(100);
-
-            expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
-                status: "failed",
-                testCase: {
-                    url: "differentpage.html"
-                },
-                htmlImage: htmlImage,
-                referenceImage: referenceImage,
-                renderErrors: [],
-                viewportWidth: viewport.width,
-                viewportHeight: viewport.height
-            });
-        });
-
-        it("should report a missing reference image", function () {
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImageToBeMissing();
-
-            csscritic.add("differentpage.html");
-            csscritic.execute();
-
-            jasmine.clock().tick(100);
-
-            expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
-                status: "referenceMissing",
-                testCase: {
-                    url: "differentpage.html"
-                },
-                htmlImage: htmlImage,
-                referenceImage: null,
-                renderErrors: [],
-                viewportWidth: jasmine.any(Number),
-                viewportHeight: jasmine.any(Number)
-            });
-        });
-
-        it("should report a erroring test case", function () {
-            rendererBackend.render.and.returnValue(testHelper.failedPromise());
-            setUpReferenceImageToBeMissing();
-
-            csscritic.add("differentpage.html");
-            csscritic.execute();
-
-            jasmine.clock().tick(100);
-
-            expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), {
-                status: "error",
-                testCase: {
-                    url: "differentpage.html"
-                }
-            });
-        });
-
-        it("should provide a list of errors during rendering", function () {
-            setUpRenderedImage(htmlImage, ["oneUrl", "anotherUrl"]);
-            setUpReferenceImage(referenceImage, viewport);
-            setUpImageEqualityToBe(true);
-
-            csscritic.add({url: "differentpage.html"});
-            csscritic.execute();
-
-            jasmine.clock().tick(100);
-
-            expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), jasmine.objectContaining({
-                renderErrors: ["oneUrl", "anotherUrl"],
-            }));
-        });
-
-        it("should provide a list of errors during rendering independently of whether the reference image exists", function () {
-            setUpRenderedImage(htmlImage, ["oneUrl", "anotherUrl"]);
-            setUpReferenceImageToBeMissing();
-
-            csscritic.add({url: "differentpage.html"});
-            csscritic.execute();
-
-            jasmine.clock().tick(100);
-
-            expect(reporting.doReportComparison).toHaveBeenCalledWith(jasmine.any(Object), jasmine.objectContaining({
-                renderErrors: ["oneUrl", "anotherUrl"],
-            }));
-        });
-
-        it("should indicate fail in final report", function () {
-            reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromiseFake());
-
-            setUpImageEqualityToBe(false);
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImage(referenceImage, viewport);
-
-            csscritic.add("failingpage.html");
-            csscritic.execute();
-
             triggerDelayedPromise();
-
-            expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], false);
+            expect(callback).toHaveBeenCalled();
         });
 
         it("should wait for reporting on final report to finish", function () {
@@ -441,12 +426,12 @@ describe("Regression testing", function () {
             reporting.doReportTestSuite.and.returnValue(defer.promise);
             csscritic.execute(callback);
 
-            jasmine.clock().tick(100);
+            triggerDelayedPromise();
             expect(callback).not.toHaveBeenCalled();
 
             defer.resolve();
 
-            jasmine.clock().tick(100);
+            triggerDelayedPromise();
             expect(callback).toHaveBeenCalled();
         });
 
