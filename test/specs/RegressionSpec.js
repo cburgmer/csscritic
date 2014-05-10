@@ -68,36 +68,7 @@ describe("Regression testing", function () {
         beforeEach(function () {
             setUpRenderedImage(htmlImage);
             setUpReferenceImage(referenceImage, viewport);
-        });
-
-        it("should compare a page", function (done) {
             setUpImageEqualityToBe(true);
-
-            csscritic.add("samplepage.html");
-
-            expect(imagediff.equal).not.toHaveBeenCalled();
-
-            csscritic.execute(function (passed) {
-                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
-
-                expect(passed).toBeTruthy();
-
-                done();
-            });
-        });
-
-        it("should report fail on a failing test case", function (done) {
-            setUpImageEqualityToBe(false);
-
-            csscritic.add("samplepage.html");
-
-            csscritic.execute(function (passed) {
-                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
-
-                expect(passed).toBeFalsy();
-
-                done();
-            });
         });
 
         it("should return on an empty list of tests", function (done) {
@@ -113,8 +84,6 @@ describe("Regression testing", function () {
         });
 
         it("should compare the rendered page against the reference image", function (done) {
-            setUpImageEqualityToBe(true);
-
             csscritic.add({url: "differentpage.html"});
             csscritic.execute(function () {
                 expect(storageBackend.readReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, jasmine.any(Function), jasmine.any(Function));
@@ -125,8 +94,6 @@ describe("Regression testing", function () {
         });
 
         it("should render page using the viewport's size", function (done) {
-            setUpImageEqualityToBe(true);
-
             csscritic.add({url: "samplepage.html"});
             csscritic.execute(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -140,8 +107,6 @@ describe("Regression testing", function () {
         });
 
         it("should pass test case parameters to the renderer", function (done) {
-            setUpImageEqualityToBe(true);
-
             csscritic.add({
                 url: 'samplepage.html',
                 hover: '.a.selector',
@@ -161,10 +126,60 @@ describe("Regression testing", function () {
         });
     });
 
-    describe("First generation of a reference image", function () {
+    describe("on a passing comparison", function () {
+        beforeEach(function () {
+            setUpRenderedImage(htmlImage);
+            setUpReferenceImage(referenceImage, viewport);
+            setUpImageEqualityToBe(true);
+        });
+
+        it("should report success", function (done) {
+            csscritic.add("samplepage.html");
+
+            csscritic.execute(function (passed) {
+                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
+
+                expect(passed).toBeTruthy();
+
+                done();
+            });
+        });
+    });
+
+    describe("on a failing comparison", function () {
+        beforeEach(function () {
+            setUpRenderedImage(htmlImage);
+            setUpReferenceImage(referenceImage, viewport);
+            setUpImageEqualityToBe(false);
+        });
+
+        it("should report failure", function (done) {
+            csscritic.add("samplepage.html");
+
+            csscritic.execute(function (passed) {
+                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
+
+                expect(passed).toBeFalsy();
+
+                done();
+            });
+        });
+    });
+
+    describe("on a reference missing", function () {
         beforeEach(function () {
             setUpRenderedImage(htmlImage);
             setUpReferenceImageToBeMissing();
+        });
+
+        it("should report failure", function (done) {
+            csscritic.add({url: "samplepage.html"});
+            csscritic.execute(function (passed) {
+                expect(passed).toBe(false);
+                expect(imagediff.equal).not.toHaveBeenCalled();
+
+                done();
+            });
         });
 
         it("should provide a appropriately sized page rendering", function (done) {
@@ -181,23 +196,12 @@ describe("Regression testing", function () {
         });
     });
 
-    describe("Configuration error handling", function () {
-        it("should handle missing reference image", function (done) {
-            setUpRenderedImage(htmlImage);
-            setUpReferenceImageToBeMissing();
-
-
-            csscritic.add({url: "samplepage.html"});
-            csscritic.execute(function (passed) {
-                expect(passed).toBe(false);
-                expect(imagediff.equal).not.toHaveBeenCalled();
-
-                done();
-            });
+    describe("on error", function () {
+        beforeEach(function () {
+            rendererBackend.render.and.returnValue(testHelper.failedPromise());
         });
 
-        it("should handle page render error", function (done) {
-            rendererBackend.render.and.returnValue(testHelper.failedPromise());
+        it("should report failure", function (done) {
             setUpReferenceImageToBeMissing();
 
             csscritic.add({url: "samplepage.html"});
@@ -209,8 +213,7 @@ describe("Regression testing", function () {
             });
         });
 
-        it("should handle page render error even when reference image exists", function (done) {
-            rendererBackend.render.and.returnValue(testHelper.failedPromise());
+        it("should report failure even when reference image exists", function (done) {
             setUpReferenceImage(referenceImage, viewport);
 
             csscritic.add({url: "samplepage.html"});
