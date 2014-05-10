@@ -15,4 +15,5 @@ phantom.injectJs("src/cli/filestorage.js");
 phantom.injectJs("src/cli/phantomjs_runner.js");
 phantom.injectJs("src/util.js");
 phantom.injectJs("src/reporting.js");
+phantom.injectJs("src/regression.js");
 phantom.injectJs("src/csscritic.js");

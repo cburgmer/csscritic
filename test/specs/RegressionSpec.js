@@ -1,7 +1,7 @@
 describe("Regression testing", function () {
     "use strict";
 
-    var csscritic, rendererBackend, storageBackend, reporting, imagediff;
+    var csscritic, regression, rendererBackend, storageBackend, reporting, imagediff;
 
     var util = csscriticLib.util();
 
@@ -56,12 +56,12 @@ describe("Regression testing", function () {
         reporting.doReportComparison.and.returnValue(testHelper.successfulPromise());
         reporting.doReportTestSuite.and.returnValue(testHelper.successfulPromise());
 
+        regression = csscriticLib.regression(rendererBackend, storageBackend, util, imagediff);
+
         csscritic = csscriticLib.main(
-            rendererBackend,
-            storageBackend,
+            regression,
             reporting,
-            util,
-            imagediff);
+            util);
     });
 
     describe("adding & executing", function () {

@@ -21,6 +21,7 @@
             'src/browser/jobqueue.js',
             'src/util.js',
             'src/reporting.js',
+            'src/regression.js',
             'src/csscritic.js',
             'src/boot/browser.js'
         ];

@@ -4,14 +4,13 @@
     var util = csscriticLib.util(),
         phantomRenderer = csscriticLib.phantomjsRenderer(),
         filestorage = csscriticLib.filestorage(util),
-        reporting = csscriticLib.reporting(phantomRenderer, filestorage, util);
+        reporting = csscriticLib.reporting(phantomRenderer, filestorage, util),
+        regression = csscriticLib.regression(phantomRenderer, filestorage, util, imagediff);
 
     var csscritic = csscriticLib.main(
-        phantomRenderer,
-        filestorage,
+        regression,
         reporting,
-        util,
-        imagediff);
+        util);
 
     // Export convenience constructors
     var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA),
