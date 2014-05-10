@@ -5,7 +5,7 @@ describe("Regression testing", function () {
 
     var util = csscriticLib.util();
 
-    var htmlImage, referenceImage, viewport;
+    var pageImage, referenceImage, viewport;
 
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
@@ -32,7 +32,7 @@ describe("Regression testing", function () {
     };
 
     beforeEach(function () {
-        htmlImage = jasmine.createSpy('htmlImage');
+        pageImage = jasmine.createSpy('pageImage');
         referenceImage = {
             width: 42,
             height: 7
@@ -56,7 +56,7 @@ describe("Regression testing", function () {
 
     describe("comparison", function () {
         beforeEach(function () {
-            setUpRenderedImage(htmlImage);
+            setUpRenderedImage(pageImage);
             setUpReferenceImage(referenceImage, viewport);
             setUpImageEqualityToBe(true);
         });
@@ -64,7 +64,7 @@ describe("Regression testing", function () {
         it("should compare the rendered page against the reference image", function (done) {
             regression.compare({url: "differentpage.html"}).then(function () {
                 expect(storageBackend.readReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, jasmine.any(Function), jasmine.any(Function));
-                expect(imagediff.equal).toHaveBeenCalledWith(htmlImage, referenceImage);
+                expect(imagediff.equal).toHaveBeenCalledWith(pageImage, referenceImage);
 
                 done();
             });
@@ -104,7 +104,7 @@ describe("Regression testing", function () {
 
     describe("on a passing comparison", function () {
         beforeEach(function () {
-            setUpRenderedImage(htmlImage);
+            setUpRenderedImage(pageImage);
             setUpReferenceImage(referenceImage, viewport);
             setUpImageEqualityToBe(true);
         });
@@ -116,7 +116,7 @@ describe("Regression testing", function () {
                     testCase: {
                         url: "differentpage.html"
                     },
-                    htmlImage: htmlImage,
+                    pageImage: pageImage,
                     referenceImage: referenceImage,
                     renderErrors: [],
                     viewportWidth: viewport.width,
@@ -128,7 +128,7 @@ describe("Regression testing", function () {
         });
 
         it("should report a list of errors during rendering", function (done) {
-            setUpRenderedImage(htmlImage, ["oneUrl", "anotherUrl"]);
+            setUpRenderedImage(pageImage, ["oneUrl", "anotherUrl"]);
 
             regression.compare({url: "differentpage.html"}).then(function (comparison) {
                 expect(comparison).toEqual(jasmine.objectContaining({
@@ -142,7 +142,7 @@ describe("Regression testing", function () {
 
     describe("on a failing comparison", function () {
         beforeEach(function () {
-            setUpRenderedImage(htmlImage);
+            setUpRenderedImage(pageImage);
             setUpReferenceImage(referenceImage, viewport);
             setUpImageEqualityToBe(false);
         });
@@ -154,7 +154,7 @@ describe("Regression testing", function () {
                     testCase: {
                         url: "differentpage.html"
                     },
-                    htmlImage: htmlImage,
+                    pageImage: pageImage,
                     referenceImage: referenceImage,
                     renderErrors: [],
                     viewportWidth: viewport.width,
@@ -168,7 +168,7 @@ describe("Regression testing", function () {
 
     describe("on a reference missing", function () {
         beforeEach(function () {
-            setUpRenderedImage(htmlImage);
+            setUpRenderedImage(pageImage);
             setUpReferenceImageToBeMissing();
         });
 
@@ -179,7 +179,7 @@ describe("Regression testing", function () {
                     testCase: {
                         url: "differentpage.html"
                     },
-                    htmlImage: htmlImage,
+                    pageImage: pageImage,
                     referenceImage: null,
                     renderErrors: [],
                     viewportWidth: jasmine.any(Number),
@@ -203,7 +203,7 @@ describe("Regression testing", function () {
         });
 
         it("should report a list of errors during rendering", function (done) {
-            setUpRenderedImage(htmlImage, ["oneUrl", "anotherUrl"]);
+            setUpRenderedImage(pageImage, ["oneUrl", "anotherUrl"]);
 
             regression.compare({url: "differentpage.html"}).then(function (comparison) {
                 expect(comparison).toEqual(jasmine.objectContaining({

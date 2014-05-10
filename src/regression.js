@@ -41,7 +41,7 @@ csscriticLib.regression = function (renderer, storage, util, imagediff) {
             return compareRenderingAndReference(renderResult.image, referenceImage).then(function (textualStatus) {
                 return {
                     status: textualStatus,
-                    htmlImage: renderResult.image,
+                    pageImage: renderResult.image,
                     referenceImage: referenceImage,
                     renderErrors: renderResult.errors,
                     viewportWidth: viewport.width,

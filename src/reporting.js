@@ -9,10 +9,10 @@ csscriticLib.reporting = function (renderer, storage, util) {
         var result = {
                 status: comparison.status,
                 testCase: comparison.testCase,
-                pageImage: comparison.htmlImage
+                pageImage: comparison.pageImage
             };
 
-        if (comparison.htmlImage) {
+        if (comparison.pageImage) {
             result.resizePageImage = function (width, height, callback) {
                 viewportWidth = width;
                 viewportHeight = height;

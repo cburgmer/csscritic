@@ -5,7 +5,7 @@ describe("Reporting", function () {
 
     var util = csscriticLib.util();
 
-    var htmlImage, referenceImage;
+    var pageImage, referenceImage;
 
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
@@ -28,7 +28,7 @@ describe("Reporting", function () {
     });
 
     beforeEach(function () {
-        htmlImage = "the_html_image";
+        pageImage = "the_html_image";
         referenceImage = "the_reference_image";
 
         rendererBackend = jasmine.createSpyObj('renderer', ['render']);
@@ -121,7 +121,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: referenceImage,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -133,7 +133,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                pageImage: htmlImage,
+                pageImage: pageImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage
@@ -146,7 +146,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: referenceImage,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -164,7 +164,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -176,7 +176,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                pageImage: htmlImage,
+                pageImage: pageImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function)
             });
@@ -201,7 +201,7 @@ describe("Reporting", function () {
 
         it("should provide a method to repaint the HTML given width and height", function () {
             var finished = false,
-                newHtmlImage = "newHtmlImage",
+                newpageImage = "newpageImage",
                 result;
 
             reporting.doReportComparison([reporter], {
@@ -209,14 +209,14 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
                 viewportHeight: 21
             });
 
-            setUpRenderedImage(newHtmlImage);
+            setUpRenderedImage(newpageImage);
 
             result = reporter.reportComparison.calls.mostRecent().args[0];
 
@@ -230,11 +230,11 @@ describe("Reporting", function () {
                 width: 16,
                 height: 34
             }));
-            expect(result.pageImage).toBe(newHtmlImage);
+            expect(result.pageImage).toBe(newpageImage);
         });
 
         it("should pass the test case's additional parameters on resize", function () {
-            setUpRenderedImage(htmlImage);
+            setUpRenderedImage(pageImage);
 
             reporting.doReportComparison([reporter], {
                 status: "referenceMissing",
@@ -242,7 +242,7 @@ describe("Reporting", function () {
                     url: "differentpage.html",
                     hover: '.selector'
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -262,7 +262,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -271,7 +271,7 @@ describe("Reporting", function () {
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, htmlImage, jasmine.any(Object));
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, pageImage, jasmine.any(Object));
         });
 
         it("should store the viewport's size on accept", function () {
@@ -280,7 +280,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -289,7 +289,7 @@ describe("Reporting", function () {
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), htmlImage, {
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, {
                 width: 42,
                 height: 21
             });
@@ -302,7 +302,7 @@ describe("Reporting", function () {
                     url: "differentpage.html",
                     hover: '.selector'
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -313,13 +313,13 @@ describe("Reporting", function () {
 
             expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(
                 jasmine.objectContaining({hover: '.selector'}),
-                htmlImage,
+                pageImage,
                 jasmine.any(Object)
             );
         });
 
         it("should store the viewport's updated size on accept", function () {
-            setUpRenderedImage(htmlImage);
+            setUpRenderedImage(pageImage);
 
             reporting.doReportComparison([reporter], {
                 status: "referenceMissing",
@@ -327,7 +327,7 @@ describe("Reporting", function () {
                     url: "differentpage.html",
                     hover: '.selector'
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
@@ -340,7 +340,7 @@ describe("Reporting", function () {
 
             result.acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), htmlImage, {
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, {
                 width: 16,
                 height: 34
             });
@@ -353,7 +353,7 @@ describe("Reporting", function () {
                     url: "differentpage.html",
                     hover: '.selector'
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: ["oneUrl", "anotherUrl"],
                 viewportWidth: 42,
@@ -371,7 +371,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "differentpage.html"
                 },
-                htmlImage: htmlImage,
+                pageImage: pageImage,
                 referenceImage: null,
                 renderErrors: [],
                 viewportWidth: 42,
