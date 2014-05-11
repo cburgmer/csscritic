@@ -217,8 +217,8 @@ describe("Basic HTML reporter", function () {
         var paramsOnFailingTest, resizePageImageSpy, acceptPageSpy;
 
         beforeEach(function () {
-            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function (width, height, callback) {
-                callback(updatedReferenceImage);
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function () {
+                return testHelper.successfulPromiseFake(updatedReferenceImage);
             });
             acceptPageSpy = jasmine.createSpy("acceptPage");
 
@@ -312,7 +312,7 @@ describe("Basic HTML reporter", function () {
                 height: 24
             }).trigger("mouseup");
 
-            expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24, jasmine.any(Function));
+            expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24);
             expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")[0]).toBe(updatedReferenceImage);
         });
 
@@ -322,8 +322,8 @@ describe("Basic HTML reporter", function () {
         var paramsOnMissingReference, resizePageImageSpy, acceptPageSpy;
 
         beforeEach(function () {
-            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function (width, height, callback) {
-                callback(updatedReferenceImage);
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function () {
+                return testHelper.successfulPromiseFake(updatedReferenceImage);
             });
             acceptPageSpy = jasmine.createSpy("acceptPage");
 
@@ -381,7 +381,7 @@ describe("Basic HTML reporter", function () {
                 height: 24
             }).trigger("mouseup");
 
-            expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24, jasmine.any(Function));
+            expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24);
             expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")[0]).toBe(updatedReferenceImage);
         });
 

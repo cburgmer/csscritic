@@ -231,7 +231,7 @@ describe("Reporting", function () {
 
             result = reporter.reportComparison.calls.mostRecent().args[0];
 
-            result.resizePageImage(16, 34, function () {
+            result.resizePageImage(16, 34).then(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
                     url: "differentpage.html",
                     width: 16,
@@ -258,7 +258,7 @@ describe("Reporting", function () {
                 viewport: viewport
             });
 
-            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(16, 34, function () {
+            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(16, 34).then(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith(
                     jasmine.objectContaining({hover: '.selector'})
                 );
@@ -340,7 +340,7 @@ describe("Reporting", function () {
 
             var result = reporter.reportComparison.calls.mostRecent().args[0];
 
-            result.resizePageImage(16, 34, function () {
+            result.resizePageImage(16, 34).then(function () {
                 result.acceptPage();
 
                 expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, {

@@ -107,7 +107,7 @@ describe("Integration", function () {
             expect(passed).toBe(false);
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object));
 
-            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(330, 151, function () {
+            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(330, 151).then(function () {
                 var referenceObjString, referenceObj;
 
                 reporter.reportComparison.calls.mostRecent().args[0].acceptPage();

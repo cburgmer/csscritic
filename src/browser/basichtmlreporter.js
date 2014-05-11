@@ -92,7 +92,7 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
         registerResizeHandler(pageImageContainer, function (width, height) {
             var oldImage = result.pageImage;
 
-            result.resizePageImage(width, height, function (updatedImage) {
+            result.resizePageImage(width, height).then(function (updatedImage) {
                 pageImageContainer.style.width = updatedImage.width + "px";
                 pageImageContainer.style.height = updatedImage.height + "px";
 

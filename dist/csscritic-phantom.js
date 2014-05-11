@@ -5925,11 +5925,11 @@ csscriticLib.reporting = function (renderer, storage, util) {
         if (comparison.pageImage) {
             viewportWidth = comparison.viewport.width;
             viewportHeight = comparison.viewport.height;
-            comparison.resizePageImage = function (width, height, callback) {
+            comparison.resizePageImage = function (width, height) {
                 viewportWidth = width;
                 viewportHeight = height;
 
-                renderer.render({
+                return renderer.render({
                     url: comparison.testCase.url,
                     hover: comparison.testCase.hover,
                     active: comparison.testCase.active,
@@ -5937,7 +5937,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
                     height: height
                 }).then(function (renderResult) {
                     comparison.pageImage = renderResult.image;
-                    callback(renderResult.image);
+                    return renderResult.image;
                 });
             };
             comparison.acceptPage = function () {
