@@ -5806,15 +5806,6 @@ csscriticLib.main = function (regression, reporting, util) {
         });
     };
 
-    var calculateOverallOutcome = function (comparisons) {
-        var nonPassingTestCases = comparisons.filter(function (comparison) {
-                return comparison.status !== "passed";
-            }),
-            allPassed = nonPassingTestCases.length === 0;
-
-        return allPassed;
-    };
-
     module.execute = function () {
         var allPassed;
 
@@ -5825,7 +5816,7 @@ csscriticLib.main = function (regression, reporting, util) {
                 ));
             })
             .then(function (comparisons) {
-                allPassed = calculateOverallOutcome(comparisons);
+                allPassed = util.hasTestSuitePassed(comparisons);
             })
             .then(function () {
                 return reporting.doReportTestSuite(reporters, allPassed);
@@ -6133,6 +6124,15 @@ csscriticLib.util = function () {
         }
 
         return module.getImageForUrl(dataUri);
+    };
+
+    module.hasTestSuitePassed = function (comparisons) {
+        var nonPassingTestCases = comparisons.filter(function (comparison) {
+                return comparison.status !== "passed";
+            }),
+            allPassed = nonPassingTestCases.length === 0;
+
+        return allPassed;
     };
 
     module.all = function (functionReturnValues) {

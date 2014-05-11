@@ -143,6 +143,15 @@ csscriticLib.util = function () {
         return module.getImageForUrl(dataUri);
     };
 
+    module.hasTestSuitePassed = function (comparisons) {
+        var nonPassingTestCases = comparisons.filter(function (comparison) {
+                return comparison.status !== "passed";
+            }),
+            allPassed = nonPassingTestCases.length === 0;
+
+        return allPassed;
+    };
+
     module.all = function (functionReturnValues) {
         var defer = ayepromise.defer(),
             pendingFunctionCalls = functionReturnValues.length,

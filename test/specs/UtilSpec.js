@@ -153,6 +153,56 @@ describe("Utility", function () {
         });
     });
 
+    describe("hasTestSuitePassed", function () {
+        var aComparison = function (status) {
+            return {
+                status: status
+            };
+        };
+
+        it("should return true on a passing comparison", function () {
+            var passed = util.hasTestSuitePassed([
+                aComparison('passed')
+            ]);
+            expect(passed).toBe(true);
+        });
+
+        it("should return false on a failing comparison", function () {
+            var passed = util.hasTestSuitePassed([
+                aComparison('failed')
+            ]);
+            expect(passed).toBe(false);
+        });
+
+        it("should return false on a comparison with missing reference", function () {
+            var passed = util.hasTestSuitePassed([
+                aComparison('referenceMissing')
+            ]);
+            expect(passed).toBe(false);
+        });
+
+        it("should return false on a comparison with error", function () {
+            var passed = util.hasTestSuitePassed([
+                aComparison('error')
+            ]);
+            expect(passed).toBe(false);
+        });
+
+        it("should return true on an empty list of comparisons", function () {
+            var passed = util.hasTestSuitePassed([]);
+            expect(passed).toBe(true);
+        });
+
+        it("should return false on a comparison that is not passed", function () {
+            var passed = util.hasTestSuitePassed([
+                aComparison('passed'),
+                aComparison('passed'),
+                aComparison('failed')
+            ]);
+            expect(passed).toBe(false);
+        });
+    });
+
     describe("all", function () {
         it("should fulfill once a passed promise is fulfilled", function (done) {
             var defer = ayepromise.defer(),

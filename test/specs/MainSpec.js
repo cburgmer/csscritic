@@ -28,12 +28,11 @@ describe("Main", function () {
     });
 
     describe("adding & executing", function () {
-        it("should return on an empty list of tests", function (done) {
-            csscritic.execute().then(function (passed) {
-                expect(passed).toBeTruthy();
+        var comparison;
 
-                done();
-            });
+        beforeEach(function () {
+            comparison = "the_comparison";
+            setUpComparison(comparison);
         });
 
         it("should execute regression test", function (done) {
@@ -48,56 +47,46 @@ describe("Main", function () {
                 done();
             });
         });
-    });
-
-    describe("on a passing comparison", function () {
-        beforeEach(function () {
-            setUpComparison({
-                status: "passed"
-            });
-        });
 
         it("should result in success", function (done) {
+            spyOn(util, 'hasTestSuitePassed').and.returnValue(true);
             csscritic.add("samplepage.html");
 
             csscritic.execute().then(function (success) {
                 expect(success).toBeTruthy();
+                expect(util.hasTestSuitePassed).toHaveBeenCalledWith([comparison]);
 
                 done();
             });
         });
 
         it("should report overall success in the test suite", function (done) {
+            spyOn(util, 'hasTestSuitePassed').and.returnValue(true);
             csscritic.addReporter(reporter);
-            csscritic.add("succeedingpage.html");
+            csscritic.add("samplepage.html");
             csscritic.execute().then(function () {
                 expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
 
                 done();
             });
         });
-    });
-
-    describe("on a failing comparison", function () {
-        beforeEach(function () {
-            setUpComparison({
-                status: "failed"
-            });
-        });
 
         it("should result in failure", function (done) {
+            spyOn(util, 'hasTestSuitePassed').and.returnValue(false);
             csscritic.add("samplepage.html");
 
-            csscritic.execute().then(function (passed) {
-                expect(passed).toBeFalsy();
+            csscritic.execute().then(function (success) {
+                expect(success).toBeFalsy();
+                expect(util.hasTestSuitePassed).toHaveBeenCalledWith([comparison]);
 
                 done();
             });
         });
 
         it("should report a failure in the test suite", function (done) {
+            spyOn(util, 'hasTestSuitePassed').and.returnValue(false);
             csscritic.addReporter(reporter);
-            csscritic.add("failingpage.html");
+            csscritic.add("samplepage.html");
             csscritic.execute().then(function () {
                 expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], false);
 
