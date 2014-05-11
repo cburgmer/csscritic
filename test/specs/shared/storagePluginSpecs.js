@@ -134,7 +134,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     });
 
     it("should call error handler if no reference image has been stored", function (done) {
-        storage.readReferenceImage({url: "somePage.html"}, function () {}, done);
+        storage.readReferenceImage({url: "somePage.html"}).then(null, done);
     });
 
     it("should call error handler if the image is missing", function (done) {

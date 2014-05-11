@@ -64,28 +64,22 @@ csscriticLib.filestorage = function (util) {
         return defer.promise;
     };
 
-    module.readReferenceImage = function (testCase, successCallback, errorCallback) {
+    module.readReferenceImage = function (testCase) {
         var key = buildKey(testCase),
             filePath = filePathForKey(key),
             dataObj;
 
-        var p;
-
         if (! fs.exists(filePath)) {
-            p = failedPromise();
-            p.then(null, errorCallback);
-            return p;
+            return failedPromise();
         }
 
         try {
             dataObj = parseStoredItem(fs.read(filePath));
         } catch (e) {
-            p = failedPromise();
-            p.then(null, errorCallback);
-            return p;
+            return failedPromise();
         }
 
-        p = util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
+        return util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -96,14 +90,6 @@ csscriticLib.filestorage = function (util) {
                 viewport: viewport
             };
         });
-
-        p.then(function (result) {
-            if (successCallback) {
-                successCallback(result.image, result.viewport);
-            }
-        }, errorCallback);
-
-        return p;
     };
 
     return module;

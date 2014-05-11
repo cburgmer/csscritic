@@ -16,15 +16,14 @@ describe("Regression testing", function () {
     };
 
     var setUpReferenceImage = function (image, viewport) {
-        storageBackend.readReferenceImage.and.callFake(function (testCase, successCallback) {
-            successCallback(image, viewport);
-        });
+        storageBackend.readReferenceImage.and.returnValue(testHelper.successfulPromise({
+            image: image,
+            viewport: viewport
+        }));
     };
 
     var setUpReferenceImageToBeMissing = function () {
-        storageBackend.readReferenceImage.and.callFake(function (testCase, successCallback, errorCallback) {
-            errorCallback();
-        });
+        storageBackend.readReferenceImage.and.returnValue(testHelper.failedPromise());
     };
 
     var setUpImageEqualityToBe = function (equal) {
@@ -63,7 +62,7 @@ describe("Regression testing", function () {
 
         it("should compare the rendered page against the reference image", function (done) {
             regression.compare({url: "differentpage.html"}).then(function () {
-                expect(storageBackend.readReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, jasmine.any(Function), jasmine.any(Function));
+                expect(storageBackend.readReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"});
                 expect(imagediff.equal).toHaveBeenCalledWith(pageImage, referenceImage);
 
                 done();

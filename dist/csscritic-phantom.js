@@ -5248,28 +5248,22 @@ csscriticLib.filestorage = function (util) {
         return defer.promise;
     };
 
-    module.readReferenceImage = function (testCase, successCallback, errorCallback) {
+    module.readReferenceImage = function (testCase) {
         var key = buildKey(testCase),
             filePath = filePathForKey(key),
             dataObj;
 
-        var p;
-
         if (! fs.exists(filePath)) {
-            p = failedPromise();
-            p.then(null, errorCallback);
-            return p;
+            return failedPromise();
         }
 
         try {
             dataObj = parseStoredItem(fs.read(filePath));
         } catch (e) {
-            p = failedPromise();
-            p.then(null, errorCallback);
-            return p;
+            return failedPromise();
         }
 
-        p = util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
+        return util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -5280,14 +5274,6 @@ csscriticLib.filestorage = function (util) {
                 viewport: viewport
             };
         });
-
-        p.then(function (result) {
-            if (successCallback) {
-                successCallback(result.image, result.viewport);
-            }
-        }, errorCallback);
-
-        return p;
     };
 
     return module;
@@ -5907,26 +5893,22 @@ csscriticLib.regression = function (renderer, storage, util, imagediff) {
         });
     };
 
-    module.compare = function (testCase) {
+    var readReferenceImageIfAny = function (testCase) {
         var defaultViewport = {width: 800, height: 100};
 
-        var defer = ayepromise.defer();
-
-        storage.readReferenceImage(testCase, function (referenceImage, viewport) {
-            defer.resolve({
-                viewport: viewport,
-                image: referenceImage
-            });
-        }, function () {
-            defer.resolve({
+        return storage.readReferenceImage(testCase).then(null, function () {
+            return {
                 viewport: defaultViewport,
                 image: undefined
-            });
+            };
         });
+    };
 
-        return defer.promise.then(function (referenceImageRecord) {
-            return loadPageAndCompare(testCase, referenceImageRecord.viewport, referenceImageRecord.image);
-        });
+    module.compare = function (testCase) {
+        return readReferenceImageIfAny(testCase)
+            .then(function (referenceImageRecord) {
+                return loadPageAndCompare(testCase, referenceImageRecord.viewport, referenceImageRecord.image);
+            });
     };
 
     return module;

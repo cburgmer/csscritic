@@ -59,20 +59,17 @@ csscriticLib.domstorage = function (util, localStorage) {
         return defer.promise;
     };
 
-    module.readReferenceImage = function (testCase, successCallback, errorCallback) {
+    module.readReferenceImage = function (testCase) {
         var key = buildKey(testCase),
             dataObj;
 
-        var p;
         try {
             dataObj = parseStoredItem(localStorage.getItem(key));
         } catch (e) {
-            p = failedPromise();
-            p.then(null, errorCallback);
-            return p;
+            return failedPromise();
         }
 
-        p = util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
+        return util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
@@ -83,14 +80,6 @@ csscriticLib.domstorage = function (util, localStorage) {
                 viewport: viewport
             };
         });
-
-        p.then(function (result) {
-            if (successCallback) {
-                successCallback(result.image, result.viewport);
-            }
-        }, errorCallback);
-
-        return p;
     };
 
     return module;
