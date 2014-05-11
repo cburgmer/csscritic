@@ -5374,7 +5374,7 @@ csscriticLib.htmlFileReporter = function (util) {
             reportComparison: function (result) {
                 return reportComparison(result, basePath);
             },
-            report: function (results) {
+            reportTestSuite: function (results) {
                 compileReport(results, basePath);
             }
         };
@@ -5972,8 +5972,8 @@ csscriticLib.reporting = function (renderer, storage, util) {
 
     module.doReportTestSuite = function (reporters, passed) {
         return util.all(reporters.map(function (reporter) {
-            if (reporter.report) {
-                return reporter.report({success: passed});
+            if (reporter.reportTestSuite) {
+                return reporter.reportTestSuite({success: passed});
             }
         }));
     };

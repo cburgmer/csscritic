@@ -125,7 +125,7 @@ describe("HtmlFileReporter", function () {
 
     describe("'s page output", function () {
         it("should save a HTML result page", function () {
-            reporter.report({
+            reporter.reportTestSuite({
                 success: true
             });
 
@@ -135,7 +135,7 @@ describe("HtmlFileReporter", function () {
         });
 
         it("should mark a failed run", function () {
-            reporter.report({
+            reporter.reportTestSuite({
                 success: false
             });
 

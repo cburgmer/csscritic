@@ -100,7 +100,7 @@ csscriticLib.htmlFileReporter = function (util) {
             reportComparison: function (result) {
                 return reportComparison(result, basePath);
             },
-            report: function (results) {
+            reportTestSuite: function (results) {
                 compileReport(results, basePath);
             }
         };

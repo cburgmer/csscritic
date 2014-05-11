@@ -362,17 +362,17 @@ describe("Reporting", function () {
         });
     });
 
-    describe("report", function () {
+    describe("reportTestSuite", function () {
         var reporter;
 
         beforeEach(function () {
-            reporter = jasmine.createSpyObj("Reporter", ["report"]);
+            reporter = jasmine.createSpyObj("Reporter", ["reportTestSuite"]);
         });
 
         it("should call final report with success", function () {
             reporting.doReportTestSuite([reporter], true);
 
-            expect(reporter.report).toHaveBeenCalledWith({
+            expect(reporter.reportTestSuite).toHaveBeenCalledWith({
                 success: true
             });
         });
@@ -380,7 +380,7 @@ describe("Reporting", function () {
         it("should call final report with failure", function () {
             reporting.doReportTestSuite([reporter], false);
 
-            expect(reporter.report).toHaveBeenCalledWith({
+            expect(reporter.reportTestSuite).toHaveBeenCalledWith({
                 success: false
             });
         });
@@ -394,7 +394,7 @@ describe("Reporting", function () {
             var defer = testHelper.deferFake(),
                 callback = jasmine.createSpy('callback');
 
-            reporter.report.and.returnValue(defer.promise);
+            reporter.reportTestSuite.and.returnValue(defer.promise);
 
             reporting.doReportTestSuite([reporter], true).then(callback);
 
