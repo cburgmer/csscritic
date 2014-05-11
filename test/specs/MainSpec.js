@@ -36,14 +36,16 @@ describe("Main", function () {
             });
         });
 
-        it("should execute regression test", function () {
-            setUpComparison();
+        it("should execute regression test", function (done) {
+            setUpComparison("the_comparison");
 
             csscritic.add("test_case");
             csscritic.execute().then(function () {
                 expect(regression.compare).toHaveBeenCalledWith({
                     url: "test_case"
                 });
+
+                done();
             });
         });
     });
