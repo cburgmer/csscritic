@@ -9,23 +9,16 @@ describe("Reporting", function () {
 
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
-        rendererBackend.render.and.returnValue(testHelper.successfulPromiseFake({
+        rendererBackend.render.and.returnValue(testHelper.successfulPromise({
             image: image,
             errors: errors
         }));
     };
 
-    var triggerDelayedPromise = function () {
-        jasmine.clock().tick(100);
+    var delayCall = function (func) {
+        // 10 msecs is not long enough to fail some tests
+        setTimeout(func, 100);
     };
-
-    beforeEach(function () {
-        jasmine.clock().install();
-    });
-
-    afterEach(function() {
-        jasmine.clock().uninstall();
-    });
 
     beforeEach(function () {
         pageImage = "the_html_image";
@@ -67,22 +60,29 @@ describe("Reporting", function () {
             reporting.doReportComparisonStarting([emptyReporter], [startingComparison]);
         });
 
-        it("should only fulfill once the reporter returned", function () {
+        it("should only fulfill once the reporter returned", function (done) {
             var startingComparison = "blah",
                 defer = testHelper.deferFake(),
-                callback = jasmine.createSpy('callback');
+                reporterHasStarted = false,
+                reporterHasFinished = false;
 
-            reporter.reportComparisonStarting.and.returnValue(defer.promise);
+            reporter.reportComparisonStarting.and.callFake(function () {
+                delayCall(function () {
+                    expect(reporterHasStarted).toBe(true);
 
-            reporting.doReportComparisonStarting([reporter], [startingComparison]).then(callback);
+                    defer.resolve();
+                    reporterHasFinished = true;
+                });
 
-            triggerDelayedPromise();
+                reporterHasStarted = true;
+                return defer.promise;
+            });
 
-            expect(callback).not.toHaveBeenCalled();
-            defer.resolve();
+            reporting.doReportComparisonStarting([reporter], [startingComparison]).then(function () {
+                expect(reporterHasFinished).toBe(true);
 
-            triggerDelayedPromise();
-            expect(callback).toHaveBeenCalled();
+                done();
+            });
         });
 
     });
@@ -103,21 +103,28 @@ describe("Reporting", function () {
             reporting.doReportComparison([emptyReporter], comparison);
         });
 
-        it("should only fulfill once the reporter returned", function () {
+        it("should only fulfill once the reporter returned", function (done) {
             var defer = testHelper.deferFake(),
-                callback = jasmine.createSpy('callback');
+                reporterHasStarted = false,
+                reporterHasFinished = false;
 
-            reporter.reportComparison.and.returnValue(defer.promise);
+            reporter.reportComparison.and.callFake(function () {
+                delayCall(function () {
+                    expect(reporterHasStarted).toBe(true);
 
-            reporting.doReportComparison([reporter], comparison).then(callback);
+                    defer.resolve();
+                    reporterHasFinished = true;
+                });
 
-            triggerDelayedPromise();
+                reporterHasStarted = true;
+                return defer.promise;
+            });
 
-            expect(callback).not.toHaveBeenCalled();
-            defer.resolve();
+            reporting.doReportComparison([reporter], comparison).then(function () {
+                expect(reporterHasFinished).toBe(true);
 
-            triggerDelayedPromise();
-            expect(callback).toHaveBeenCalled();
+                done();
+            });
         });
 
         it("should report a successful comparison", function () {
@@ -205,9 +212,8 @@ describe("Reporting", function () {
             });
         });
 
-        it("should provide a method to repaint the HTML given width and height", function () {
-            var finished = false,
-                newpageImage = "newpageImage",
+        it("should provide a method to repaint the HTML given width and height", function (done) {
+            var newpageImage = "newpageImage",
                 result;
 
             reporting.doReportComparison([reporter], {
@@ -226,19 +232,18 @@ describe("Reporting", function () {
             result = reporter.reportComparison.calls.mostRecent().args[0];
 
             result.resizePageImage(16, 34, function () {
-                finished = true;
-            });
+                expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
+                    url: "differentpage.html",
+                    width: 16,
+                    height: 34
+                }));
+                expect(result.pageImage).toBe(newpageImage);
 
-            expect(finished).toBeTruthy();
-            expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
-                url: "differentpage.html",
-                width: 16,
-                height: 34
-            }));
-            expect(result.pageImage).toBe(newpageImage);
+                done();
+            });
         });
 
-        it("should pass the test case's additional parameters on resize", function () {
+        it("should pass the test case's additional parameters on resize", function (done) {
             setUpRenderedImage(pageImage);
 
             reporting.doReportComparison([reporter], {
@@ -253,11 +258,13 @@ describe("Reporting", function () {
                 viewport: viewport
             });
 
-            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(16, 34, function () {});
+            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(16, 34, function () {
+                expect(rendererBackend.render).toHaveBeenCalledWith(
+                    jasmine.objectContaining({hover: '.selector'})
+                );
 
-            expect(rendererBackend.render).toHaveBeenCalledWith(
-                jasmine.objectContaining({hover: '.selector'})
-            );
+                done();
+            });
         });
 
         it("should provide a method to accept the rendered page and store as new reference", function () {
@@ -316,7 +323,7 @@ describe("Reporting", function () {
             );
         });
 
-        it("should store the viewport's updated size on accept", function () {
+        it("should store the viewport's updated size on accept", function (done) {
             setUpRenderedImage(pageImage);
 
             reporting.doReportComparison([reporter], {
@@ -333,13 +340,15 @@ describe("Reporting", function () {
 
             var result = reporter.reportComparison.calls.mostRecent().args[0];
 
-            result.resizePageImage(16, 34, function () {});
+            result.resizePageImage(16, 34, function () {
+                result.acceptPage();
 
-            result.acceptPage();
+                expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, {
+                    width: 16,
+                    height: 34
+                });
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, {
-                width: 16,
-                height: 34
+                done();
             });
         });
 
@@ -390,21 +399,28 @@ describe("Reporting", function () {
             reporting.doReportTestSuite([emptyReporter], true);
         });
 
-        it("should only fulfill once the reporter returned", function () {
+        it("should only fulfill once the reporter returned", function (done) {
             var defer = testHelper.deferFake(),
-                callback = jasmine.createSpy('callback');
+                reporterHasStarted = false,
+                reporterHasFinished = false;
 
-            reporter.reportTestSuite.and.returnValue(defer.promise);
+            reporter.reportTestSuite.and.callFake(function () {
+                delayCall(function () {
+                    expect(reporterHasStarted).toBe(true);
 
-            reporting.doReportTestSuite([reporter], true).then(callback);
+                    defer.resolve();
+                    reporterHasFinished = true;
+                });
 
-            triggerDelayedPromise();
+                reporterHasStarted = true;
+                return defer.promise;
+            });
 
-            expect(callback).not.toHaveBeenCalled();
-            defer.resolve();
+            reporting.doReportTestSuite([reporter], true).then(function () {
+                expect(reporterHasFinished).toBe(true);
 
-            triggerDelayedPromise();
-            expect(callback).toHaveBeenCalled();
+                done();
+            });
         });
 
     });
