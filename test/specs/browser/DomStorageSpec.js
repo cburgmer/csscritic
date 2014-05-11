@@ -1,4 +1,4 @@
-describe("Web storage support for reference images", function () {
+describe("DOM storage", function () {
     "use strict";
 
     var util = csscriticLib.util();

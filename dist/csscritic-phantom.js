@@ -5242,31 +5242,52 @@ csscriticLib.filestorage = function (util) {
         return dataObj;
     };
 
+    var failedPromise = function () {
+        var defer = ayepromise.defer();
+        defer.reject();
+        return defer.promise;
+    };
+
     module.readReferenceImage = function (testCase, successCallback, errorCallback) {
         var key = buildKey(testCase),
             filePath = filePathForKey(key),
             dataObj;
 
+        var p;
+
         if (! fs.exists(filePath)) {
-            errorCallback();
-            return;
+            p = failedPromise();
+            p.then(null, errorCallback);
+            return p;
         }
 
         try {
             dataObj = parseStoredItem(fs.read(filePath));
         } catch (e) {
-            errorCallback();
-            return;
+            p = failedPromise();
+            p.then(null, errorCallback);
+            return p;
         }
 
-        util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
+        p = util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
             var viewport = dataObj.viewport || {
                 width: img.width,
                 height: img.height
             };
 
-            successCallback(img, viewport);
+            return {
+                image: img,
+                viewport: viewport
+            };
+        });
+
+        p.then(function (result) {
+            if (successCallback) {
+                successCallback(result.image, result.viewport);
+            }
         }, errorCallback);
+
+        return p;
     };
 
     return module;

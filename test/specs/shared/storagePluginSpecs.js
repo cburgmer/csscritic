@@ -8,11 +8,11 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     var util = csscriticLib.util();
 
     var setUpImageReturnedForUrl = function (image) {
-        util.getImageForUrl.and.returnValue(testHelper.successfulPromiseFake(image));
+        util.getImageForUrl.and.returnValue(testHelper.successfulPromise(image));
     };
 
     var setUpImageForUrlToFail = function (e) {
-        util.getImageForUrl.and.returnValue(testHelper.failedPromiseFake(e));
+        util.getImageForUrl.and.returnValue(testHelper.failedPromise(e));
     };
 
     beforeEach(function (done) {
@@ -81,26 +81,22 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
         expect(stringValue).not.toBeNull();
     });
 
-    it("should read in a reference image", function () {
-        var readImage;
-
+    it("should read in a reference image", function (done) {
         setUpImageReturnedForUrl("read image fake");
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
             referenceImageUri: imgUri
         }));
 
-        storage.readReferenceImage({url: "somePage.html"}, function (img) {
-            readImage = img;
-        }, function () {});
+        storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
+            expect(util.getImageForUrl).toHaveBeenCalledWith(imgUri);
+            expect(result.image).toEqual("read image fake");
 
-        expect(util.getImageForUrl).toHaveBeenCalledWith(imgUri);
-        expect(readImage).toEqual("read image fake");
+            done();
+        });
     });
 
-    it("should return the viewport's size", function () {
-        var viewportSize;
-
+    it("should return the viewport's size", function (done) {
         setUpImageReturnedForUrl("read image fake");
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
@@ -111,17 +107,15 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
             }
         }));
 
-        storage.readReferenceImage({url: "somePage.html"}, function (img, theViewportSize) {
-            viewportSize = theViewportSize;
-        });
+        storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
+            expect(result.viewport.width).toEqual(19);
+            expect(result.viewport.height).toEqual(84);
 
-        expect(viewportSize.width).toEqual(19);
-        expect(viewportSize.height).toEqual(84);
+            done();
+        });
     });
 
-    it("should return the viewport's size and fallback to the image's size", function () {
-        var viewportSize;
-
+    it("should return the viewport's size and fallback to the image's size", function (done) {
         setUpImageReturnedForUrl({
             width: 12,
             height: 34
@@ -131,73 +125,54 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
             referenceImageUri: imgUri
         }));
 
-        storage.readReferenceImage({url: "somePage.html"}, function (img, theViewportSize) {
-            viewportSize = theViewportSize;
+        storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
+            expect(result.viewport.width).toEqual(12);
+            expect(result.viewport.height).toEqual(34);
+
+            done();
         });
-
-        expect(viewportSize.width).toEqual(12);
-        expect(viewportSize.height).toEqual(34);
     });
 
-    it("should call error handler if no reference image has been stored", function () {
-        var errorCallback = jasmine.createSpy('errorCallback');
-
-        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
-
-        expect(errorCallback).toHaveBeenCalled();
+    it("should call error handler if no reference image has been stored", function (done) {
+        storage.readReferenceImage({url: "somePage.html"}, function () {}, done);
     });
 
-    it("should call error handler if the image is missing", function () {
-        var errorCallback = jasmine.createSpy('errorCallback');
-
+    it("should call error handler if the image is missing", function (done) {
         storeMockReferenceImage("somePage.html", JSON.stringify({}));
-        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
 
-        expect(errorCallback).toHaveBeenCalled();
+        storage.readReferenceImage({url: "somePage.html"}).then(null, done);
     });
 
-    it("should call error handler if read reference image is invalid", function () {
-        var errorCallback = jasmine.createSpy('errorCallback');
-
+    it("should call error handler if read reference image is invalid", function (done) {
         setUpImageForUrlToFail();
 
         storeMockReferenceImage( "somePage.html", JSON.stringify({
             referenceImageUri: "broken uri"
         }));
-        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
-
-        expect(errorCallback).toHaveBeenCalled();
+        storage.readReferenceImage({url: "somePage.html"}).then(null, done);
     });
 
-    it("should call error handler if the content's JSON is invalid", function () {
-        var errorCallback = jasmine.createSpy('errorCallback');
-
+    it("should call error handler if the content's JSON is invalid", function (done) {
         storeMockReferenceImage("somePage.html", ';');
-        storage.readReferenceImage({url: "somePage.html"}, function () {}, errorCallback);
-
-        expect(errorCallback).toHaveBeenCalled();
+        storage.readReferenceImage({url: "somePage.html"}).then(null, done);
     });
 
-    it("should honour test case parameters when reading", function () {
-        var readImage;
-
+    it("should honour test case parameters when reading", function (done) {
         setUpImageReturnedForUrl("read image fake");
 
         storeMockReferenceImage("somePage.html,active=anotherValue,hover=aValue", JSON.stringify({
             referenceImageUri: imgUri
         }));
 
-        storage.readReferenceImage(
-            {
+        storage.readReferenceImage({
                 url: 'somePage.html',
                 hover: 'aValue',
                 active: 'anotherValue'
-            },
-            function (img) {
-                readImage = img;
-            }
-        );
+            })
+            .then(function (img) {
+                expect(img).not.toBeNull();
 
-        expect(readImage).not.toBeNull();
+                done();
+            });
     });
 };
