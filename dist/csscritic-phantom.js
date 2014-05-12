@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.3.0-alpha - 2014-05-12
+/*! PhantomJS regression runner for CSS Critic - v0.3.0 - 2014-05-12
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
