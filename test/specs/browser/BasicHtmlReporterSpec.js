@@ -171,13 +171,13 @@ describe("Basic HTML reporter", function () {
                     url: "page_url"
                 }
             });
-            reporter.report({success: true}, function () {});
+            reporter.reportTestSuite({success: true}, function () {});
             expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
             expect($("#csscritic_basichtmlreporter .timeTaken").text()).toEqual("finished in 1.034s");
         });
 
         it("should render the time taken as 0 when no test cases given", function () {
-            reporter.report({success: true}, function () {});
+            reporter.reportTestSuite({success: true}, function () {});
             expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
             expect($("#csscritic_basichtmlreporter .timeTaken").text()).toEqual("finished in 0.000s");
         });

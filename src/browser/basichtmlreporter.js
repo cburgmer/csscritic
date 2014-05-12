@@ -402,7 +402,7 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
                 addFinalEntry(comparison, node);
             },
-            report: function () {
+            reportTestSuite: function () {
                 showTimeTaken(timer);
             }
         };
