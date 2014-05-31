@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>If your CSS is happy and you know it clap your hands</title>
+    <link href="css/reset.css" rel="stylesheet" />
+    <meta name="author" content="Christoph Burgmer">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="shortcut icon" href="css/favicon.png" />
+    <link rel="apple-touch-icon" href="css/apple-touch-icon.png" />
+    <!-- Code Prettifier: -->
+<link href="css/highlight.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+    <link href="css/style.css" rel="stylesheet" />
+
+  </head>
+
+  <body>
+  <div class="fallback-message">
+  <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+  <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+  </div>
+    <div id="impress">
+    <div class='step'  data-x='1000' data-y='-5000' data-scale='5' data-rotate-z='180'>
+    
+<h1>If your CSS is happy and you know it ...</h1>
+
+<h1>... clap your hands</h1>
+
+<p>Christoph Burgmer</p>
+
+<p><a href="http://twitter.com/cburgmer">@cburgmer</a>, <a href="mailto:cburgmer@thoughtworks.com">cburgmer@thoughtworks.com</a></p>
+
+<p><img src="images/cssconf.png" width="50" alt="CSSConf 2014">
+CSSConf 2014</p>
+</div>
+      <div class='step' >
+    
+<h1>Your CSS</h1>
+
+<p><img src="images/acid2.png" width="420">
+<img src="images/acid2_unhappy.png" width="420" style="float:right"></p>
+
+<p>Happy
+<span style="float: right">... or sad?</span></p>
+</div>
+      <div class='step' >
+    
+<h1>Or worse?</h1>
+
+<p><img src="images/acid2_broken.png" style="width: 85%">
+<small style="display: block;">Source: <a href="http://en.wikipedia.org/wiki/File:Ie7acid2.png">http://en.wikipedia.org/wiki/File:Ie7acid2.png</a></small></p>
+
+<p>Do you know?</p>
+</div>
+      <div class='step' >
+    
+<h1>We users notice</h1>
+
+<div class="tile">
+    <img src="images/bugs/facebook_sort.jpg">
+    <small>http://kaizentesting.wordpress.com/2012/08/04/different-facets-of-testing-web-applications%C2%AC-and-facebook-bugs/</small>
+</div>
+
+<div class="tile">
+    <img src="images/bugs/github_notifications.png">
+</div>
+
+<div class="tile">
+    <img src="images/bugs/google_advanced_search.png">
+    <small>http://www.seroundtable.com/google-advanced-search-bug-17091.html</small>
+</div>
+
+<div class="tile">
+    <img src="images/bugs/sofia_valley.png">
+    <small>http://atodorov.org/blog/2013/06/02/sofiavalley-ui-bug/</small>
+</div>
+</div>
+      <div class='step' >
+    
+<h1>We users notice (2)</h1>
+
+<div class="tile" style="width: 100%;">
+    <img src="images/bugs/twitter_backwards.png">
+</div>
+</div>
+      <div class='step' >
+    
+<div class="paper">
+    <h1>Missing! Reward!</h1>
+    <h2>Safety net</h2>
+
+    <img src="images/tightropewalker.png" style="width: 400px;">
+    <small style="display: block;">Source: http://en.wikipedia.org/wiki/File:Wonderland_Walker_2.jpg</small>
+
+    <p>We need our safety net to safely develop and refactor with confidence.</p>
+    <p>Missing since <em>the web exists</em>.<p>
+    <p>Please call 812-4711-4221.</p>
+</div>
+</div>
+      <div class='step' >
+    
+<h1>Professionalism</h1>
+
+<h2>We want high quality</h2>
+
+<p>But</p>
+
+<ul>
+<li>growing <em>complexity</em> in CSS as a language</li>
+<li>being <em>responsive</em></li>
+<li>on <em>larger pages</em></li>
+<li>that are shown on a <em>growing number of devices</em></li>
+<li>in <em>multiple browsers</em>.</li>
+</ul>
+
+<h2>Help!</h2>
+</div>
+      <div class='step' >
+    
+<h1>Testing, testing, testing</h1>
+
+<p><img src="images/webstack.jpg" style="width: 600px; margin-left: 50px; float: right; border: 1px solid grey;"></p>
+
+<p>Developers are using testing tools since for ever.</p>
+<pre><code class='prettyprint '>assertThat(
+    returnedStatusCode,
+    is(200)
+);
+</code></pre></div>
+      <div class='step' >
+    
+<h1>We have been missing CSS test tooling all along</h1>
+
+<p><img src="images/webstack.jpg" style="height: 300px; margin-left: 50px; border: 1px solid grey; opacity: 0.4;">
+<img src="images/webstack_missing.jpg" style="height: 300px; border: 1px solid grey; margin: 0 auto;"></p>
+</div>
+      <div class='step' >
+    
+<h1>We can fix this!</h1>
+
+<div style="color: #ccc">
+Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time Demo time
+</div>
+</div>
+      <div class='step' >
+    
+<h1>So?</h1>
+
+<ul>
+<li>We can check for changes to CSS</li>
+<li>Screenshots are one way of doing this</li>
+<li>Tests are just a &quot;change&quot; notification</li>
+<li>Automated vs. manual regression checking</li>
+</ul>
+</div>
+      <div class='step' >
+    
+<h1>Tooling</h1>
+
+<ul>
+<li>Screenshot based comparison
+
+<ul>
+<li>CSSCritic</li>
+<li>Wraith</li>
+<li>PhantomCSS</li>
+</ul></li>
+<li>Computed style checks
+
+<ul>
+<li>Hardy</li>
+</ul></li>
+</ul>
+
+<p>A longer list on <a href="http://csste.st/">http://csste.st</a>.</p>
+</div>
+      <div class='step' >
+    
+<h1>Experiences</h1>
+
+<ul>
+<li>You learn a lot about your UI components</li>
+<li>Drive out UI from a test</li>
+<li>Screenshots can be flaky
+
+<ul>
+<li>content changes</li>
+<li>renderings are unique snowflakes</li>
+</ul></li>
+<li>Different solutions to different problems</li>
+</ul>
+
+<h3>Find out what works for you!</h3>
+</div>
+      <div class='step' >
+    
+<h1>Thanks for listening.</h1>
+
+<p>Make your CSS happy! <img class="turn" src="images/acid2.png" style="width: 504px; vertical-align: middle; margin-left: 40px;"></p>
+</div>
+      <div class='step' >
+    
+<h1>Meta</h1>
+
+<p>This presentation was made with</p>
+
+<ul>
+<li>impress.js</li>
+<li>mdpress</li>
+<li>some homegrown CSS adaptions of the style &quot;obtvse&quot;</li>
+</ul>
+
+      </div>
+    <script src="js/impress.js"></script>
+    <script>impress().init();</script>
+  </body>
+</html>
+    
