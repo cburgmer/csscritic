@@ -44,16 +44,6 @@ CSS Critic checks your current layout constantly against a reference image you h
 
 3. If deliberate generate a new reference image.
 
-Running from the command line
------------------------------
-
-Currently in the making is a command-line runner using [PhantomJS](http://phantomjs.org/). While still not fit for a
-shared build-pipeline (e.g. no easy way to "fix" builds) the first shot is up and running:
-
-    $ phantomjs dist/csscritic-phantom.js -f example/signedOff.json example/pageUnderTest.html
-
-If the fingerprint of the page under test matches the one given in the `signedOff.json` file then the CLI will generate a reference image. In the future we want to combine both a signing-off process with the image diff approach to share accepted renderings inside a development team.
-
 Developing CSS Critic
 ---------------------
 For linting, tests and minification install Node.js and run
@@ -65,9 +55,9 @@ For linting, tests and minification install Node.js and run
 Limitations
 -----------
 
-- Works in Firefox only (see above for the experimental PhantomJS runner)
+- Works in Firefox only (alternatively see the [experimental CLI runner](https://github.com/cburgmer/csscritic/wiki/CLI-runner))
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files. All files referenced need to be inside the same directory as the `RegressionRunner.html` or in ones below.
-- Because of the way the HTML is rendered to the canvas inside the browser certain more esoteric pages might fail to render correctly. Here the CLI runner can be of some help as it uses the native interface to render pages.
+- Because of the way the HTML is rendered to the canvas inside the browser form inputs and certain more esoteric pages might fail to render correctly. Here the CLI runner can be of some help as it uses the native interface to render pages.
 
 For more information see the [FAQ](https://github.com/cburgmer/csscritic/wiki/FAQ) and [API](https://github.com/cburgmer/csscritic/wiki/API).
 
