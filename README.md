@@ -11,6 +11,10 @@ One picture says more than 1000 words:
 
 Need more than 1000 words? [Watch the screencast](http://youtu.be/AqQ2bNPtF60) or checkout [CSS Critic Examples](https://github.com/cburgmer/csscritic-examples) for a hands-on experience with example applications that have their UI tested. Fast forward to [see it in action testing the TodoMVC application](http://cburgmer.github.io/csscritic-examples/angularjs/).
 
+Why?
+----
+Your web stack should be fully testable - even your UI including CSS. CSS Critic can shine here. For example let it supervise changes to your project's styleguide so you know things are looking good.
+
 Install
 -------
 
