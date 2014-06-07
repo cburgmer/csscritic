@@ -92,7 +92,103 @@ describe("Utility", function () {
             util.ajax("non_existing_url.html");
             expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=43');
         });
+    });
 
+    describe("loadAsBlob", function () {
+        var blob2Text = function (blob) {
+            var defer = ayepromise.defer(),
+                reader = new FileReader();
+
+            reader.onload = function (e) {
+                defer.resolve(e.target.result);
+            };
+
+            reader.readAsText(blob);
+
+            return defer.promise;
+        };
+
+        var blob2Base64 = function (blob) {
+            var defer = ayepromise.defer(),
+                reader = new FileReader();
+
+            reader.onload = function (e) {
+                defer.resolve(btoa(e.target.result));
+            };
+
+            reader.readAsBinaryString(blob);
+
+            return defer.promise;
+        };
+
+        ifNotInPhantomIt("should load content from a URL", function (done) {
+            util.loadAsBlob(testHelper.fixture("simple.js"))
+                .then(blob2Text)
+                .then(function (blob) {
+                    expect(blob).toEqual('var s = "hello";\n');
+
+                    done();
+                });
+        });
+
+        ifNotInPhantomIt("should load binary data", function (done) {
+            util.loadAsBlob(testHelper.fixture("green.png"))
+                .then(blob2Base64)
+                .then(function (blob) {
+                    expect(blob).toEqual("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABFElEQVR4nO3OMQ0AAAjAMPybhnsKxrHUQGc2r+iBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YHAAV821mT1w27RAAAAAElFTkSuQmCC");
+
+                    done();
+                });
+        });
+
+        it("should call error callback on fail", function (done) {
+            util.loadAsBlob(testHelper.fixture("non_existing_url.html")).then(null, function () {
+                done();
+            });
+        });
+
+        it("should not cache repeated calls by default", function () {
+            var dateNowSpy = spyOn(window.Date, 'now').and.returnValue(42),
+                ajaxRequest = jasmine.createSpyObj("ajaxRequest", ["open", "addEventListener", "overrideMimeType", "send"]);
+
+            spyOn(window, "XMLHttpRequest").and.returnValue(ajaxRequest);
+
+            util.loadAsBlob("non_existing_url.html");
+
+            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=42');
+
+            dateNowSpy.and.returnValue(43);
+            util.loadAsBlob("non_existing_url.html");
+            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=43');
+        });
+    });
+
+    describe("loadBlobAsText", function () {
+        ifNotInPhantomIt("should return the text", function (done) {
+             var blob = new Blob(['<strong>The Blob</strong>'], {type : 'text/html'});
+
+             util.loadBlobAsText(blob)
+                .then(function (text) {
+                    expect(text).toEqual('<strong>The Blob</strong>');
+
+                    done();
+                });
+        });
+    });
+
+    describe("loadBlobAsDataURI", function () {
+        ifNotInPhantomIt("should return the text", function (done) {
+             var base64EncodedImage = "R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+                blob = new Blob([atob(base64EncodedImage)], {type : 'image/png'});
+
+             util.loadBlobAsDataURI(blob)
+                .then(function (dataUri) {
+                    // TODO Why is the output base64 different??
+                    expect(dataUri).toEqual('data:image/png;base64,R0lGODlhAQABAAAAACHDuQQBCgABACwAAAAAAQABAAACAkwBADs=');
+
+                    done();
+                });
+        });
     });
 
     describe("excludeKey", function () {

@@ -55,8 +55,22 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
         });
     };
 
-    var loadImageFromContent = function (content, parameters) {
-        return util.getImageForBinaryContent(content)
+    var renderHtmlFromBlob = function (blob, parameters) {
+        return util.loadBlobAsText(blob).then(function (content) {
+            return enqueueRenderHtmlJob({
+                html: content,
+                baseUrl: parameters.url,
+                width: parameters.width,
+                height: parameters.height,
+                hover: parameters.hover,
+                active: parameters.active
+            });
+        });
+    };
+
+    var loadImageFromBlob = function (blob, parameters) {
+        return util.loadBlobAsDataURI(blob)
+            .then(util.getImageForUrl)
             .then(function (image) {
                 return {
                     image: image,
@@ -64,21 +78,14 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
                 };
             }, function () {
                 // It's not an image, so it must be a HTML page
-                return enqueueRenderHtmlJob({
-                    html: content,
-                    baseUrl: parameters.url,
-                    width: parameters.width,
-                    height: parameters.height,
-                    hover: parameters.hover,
-                    active: parameters.active
-                });
+                return renderHtmlFromBlob(blob, parameters);
             });
     };
 
     module.render = function (parameters) {
-        return util.ajax(parameters.url)
-            .then(function (content) {
-                return loadImageFromContent(content, parameters);
+        return util.loadAsBlob(parameters.url)
+            .then(function (blob) {
+                return loadImageFromBlob(blob, parameters);
             });
     };
 

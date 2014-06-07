@@ -215,6 +215,7 @@ module.exports = function (grunt) {
                         imagediffForJasmine2: true,
                         csscriticLib: true,
                         ifNotInWebkitIt: true,
+                        ifNotInPhantomIt: true,
                         csscriticTestPath: true,
                         testHelper: true,
                         loadStoragePluginSpecs: true,

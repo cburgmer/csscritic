@@ -49,7 +49,7 @@ describe("Integration", function () {
         $("#csscritic_basichtmlreporter").remove();
     });
 
-    it("should complete in any browser", function (done) {
+    ifNotInPhantomIt("should complete in any browser", function (done) {
         var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
         csscritic.addReporter(csscritic.BasicHTMLReporter());
@@ -62,7 +62,7 @@ describe("Integration", function () {
         });
     });
 
-    it("should compare an image with its reference and return true if similar", function (done) {
+    ifNotInPhantomIt("should compare an image with its reference and return true if similar", function (done) {
         var testImageUrl = testHelper.fixture("redWithLetter.png");
 
         util.getImageForUrl(testImageUrl).then(function (image) {

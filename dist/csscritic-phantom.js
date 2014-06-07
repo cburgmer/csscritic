@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.3.0 - 2014-05-12
+/*! PhantomJS regression runner for CSS Critic - v0.3.0 - 2014-06-07
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -6071,6 +6071,68 @@ csscriticLib.util = function () {
         }
 
         return defer.promise;
+    };
+
+    module.loadAsBlob = function (url) {
+        var defer = ayepromise.defer(),
+            xhr = new XMLHttpRequest();
+
+        xhr.onload = function () {
+            if (xhr.status === 200 || xhr.status === 0) {
+                defer.resolve(xhr.response);
+            } else {
+                defer.reject();
+            }
+        };
+
+        xhr.onerror = function () {
+            defer.reject();
+        };
+
+        try {
+            xhr.open('get', getUncachableURL(url), true);
+            xhr.responseType = 'blob';
+            xhr.send();
+        } catch (e) {
+            defer.reject();
+        }
+
+        return defer.promise;
+    };
+
+    module.loadBlobAsText = function (blob) {
+        var defer = ayepromise.defer(),
+            reader = new FileReader();
+
+        reader.onload = function (e) {
+            defer.resolve(e.target.result);
+        };
+
+        reader.onerror = function () {
+            defer.reject();
+        };
+
+        reader.readAsText(blob);
+
+        return defer.promise;
+    };
+
+    module.loadBlobAsDataURI = function (blob) {
+        var defer = ayepromise.defer(),
+            reader = new FileReader();
+
+        reader.onload = function (e) {
+            defer.resolve(e.target.result);
+        };
+
+        reader.onerror = function () {
+            defer.reject();
+        };
+
+        reader.readAsDataURL(blob);
+
+        return defer.promise;
+
     };
 
     module.excludeKey = function (theMap, excludedKey) {

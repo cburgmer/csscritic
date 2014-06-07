@@ -4,11 +4,7 @@ describe("Browser renderer", function () {
     var util = csscriticLib.util(),
         browserRenderer;
 
-    var ajaxSpy;
-
     beforeEach(function () {
-        ajaxSpy = spyOn(util, 'ajax');
-
         var jobQueue = jasmine.createSpy('jobQueue').and.returnValue({
             execute: function (func) {
                 return func();
@@ -18,86 +14,59 @@ describe("Browser renderer", function () {
         browserRenderer = csscriticLib.browserRenderer(util, jobQueue, rasterizeHTML);
     });
 
-    it("should draw an image directly", function (done) {
-        var theUrl = "the url",
-            theBinaryContent = "the content",
-            theImage = "the image";
-
-        ajaxSpy.and.callFake(function (url) {
-            if (url === theUrl) {
-                return testHelper.successfulPromise(theBinaryContent);
-            }
-        });
-        spyOn(util, 'getImageForBinaryContent').and.callFake(function (content) {
-            if (content === theBinaryContent) {
-                return testHelper.successfulPromise(theImage);
-            } else {
-                return testHelper.failedPromise();
-            }
-        });
+    ifNotInPhantomIt("should draw an image directly", function (done) {
+        spyOn(rasterizeHTML, "drawHTML");
 
         browserRenderer.render({
-            url: theUrl,
+            url: testHelper.fixture('green.png'),
             width: 42,
             height: 7
         }).then(function (result) {
-            expect(result.image).toBe(theImage);
+            expect(result.image.src).toContain('iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAAB');
+
+            expect(rasterizeHTML.drawHTML).not.toHaveBeenCalled();
 
             done();
         });
     });
 
     it("should call the error handler if a page does not exist", function (done) {
-        ajaxSpy.and.returnValue(testHelper.failedPromise());
-
         browserRenderer.render({
-            url: "the_url",
+            url: "url_that_doesnt_exist",
             width: 42,
             height: 7
         }).then(null, done);
     });
 
     describe("HTML page rendering", function () {
-        var theUrl = "the url",
-            theHtml = "some html";
-
-        var readHtml = function (url) {
-            var xhr = new window.XMLHttpRequest();
-
-            xhr.open('GET', url, false);
-            xhr.send(null);
-            return xhr.response;
+        var setUpRasterizeHtmlToBeSuccessful = function () {
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.successfulPromise({
+                image: "the image",
+                errors: []
+            }));
         };
 
         beforeEach(function () {
-            ajaxSpy.and.callFake(function (url) {
-                if (url === theUrl) {
-                    return testHelper.successfulPromise(theHtml);
-                } else {
-                    return testHelper.successfulPromise([readHtml(url)]);
-                }
-            });
             spyOn(util, 'getImageForBinaryContent').and.returnValue(testHelper.failedPromise());
         });
 
-        it("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
-            var the_image = "the_image",
-                drawHtmlSpy = spyOn(rasterizeHTML, "drawHTML").and.callFake(function (html) {
-                    if (html === theHtml) {
-                        return testHelper.successfulPromise({
-                            image: the_image,
-                            errors: []
-                        });
-                    }
-                });
+        ifNotInPhantomIt("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
+            var theUrl = "the url",
+                theHtml = "some html";
+
+            setUpRasterizeHtmlToBeSuccessful();
+
+            spyOn(util, 'loadAsBlob').and.callFake(function () {
+                return testHelper.successfulPromise(new Blob([theHtml], {type: 'text/html'}));
+            });
 
             browserRenderer.render({
                 url: theUrl,
                 width: 42,
                 height: 7
             }).then(function (result) {
-                expect(result.image).toBe(the_image);
-                expect(drawHtmlSpy).toHaveBeenCalledWith(theHtml, {
+                expect(result.image).toBe("the image");
+                expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(theHtml, {
                     cache: 'repeated',
                     cacheBucket: jasmine.any(Object),
                     width: 42,
@@ -111,21 +80,19 @@ describe("Browser renderer", function () {
             });
         });
 
-        it("should call the error handler if a page could not be rendered", function (done) {
+        ifNotInPhantomIt("should call the error handler if a page could not be rendered", function (done) {
             spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.failedPromise());
 
             browserRenderer.render({
-                url: theUrl,
+                url: testHelper.fixture("pageUnderTest.html"),
                 width: 42,
                 height: 7
             }).then(null, done);
         });
 
-        it("should report errors from rendering", function (done) {
-            var pageUrl = testHelper.fixture("brokenPage.html");
-
+        ifNotInPhantomIt("should report errors from rendering", function (done) {
             browserRenderer.render({
-                url: pageUrl,
+                url: testHelper.fixture("brokenPage.html"),
                 width: 42,
                 height: 7
             }).then(function (result) {
@@ -142,14 +109,11 @@ describe("Browser renderer", function () {
             });
         });
 
-        it("should render with hover effect", function (done) {
-            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.successfulPromise({
-                image: "the image",
-                errors: []
-            }));
+        ifNotInPhantomIt("should render with hover effect", function (done) {
+            setUpRasterizeHtmlToBeSuccessful();
 
             browserRenderer.render({
-                url: theUrl,
+                url: testHelper.fixture("pageUnderTest.html"),
                 width: 42,
                 height: 7,
                 hover: ".someSelector"
@@ -162,14 +126,11 @@ describe("Browser renderer", function () {
             });
         });
 
-        it("should render with active effect", function (done) {
-            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.successfulPromise({
-                image: "the image",
-                errors: []
-            }));
+        ifNotInPhantomIt("should render with active effect", function (done) {
+            setUpRasterizeHtmlToBeSuccessful();
 
             browserRenderer.render({
-                url: theUrl,
+                url: testHelper.fixture("pageUnderTest.html"),
                 width: 42,
                 height: 7,
                 active: ".someSelector"
@@ -178,6 +139,18 @@ describe("Browser renderer", function () {
                     jasmine.any(String),
                     jasmine.objectContaining({active: ".someSelector"})
                 );
+                done();
+            });
+        });
+
+        ifNotInPhantomIt("should properly render Unicode", function (done) {
+            setUpRasterizeHtmlToBeSuccessful();
+
+            browserRenderer.render({
+                url: testHelper.fixture('unicode.html')
+            }).then(function () {
+                expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith("<html><body>€</body></html>\n", jasmine.any(Object));
+
                 done();
             });
         });
