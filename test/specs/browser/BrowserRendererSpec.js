@@ -46,10 +46,6 @@ describe("Browser renderer", function () {
             }));
         };
 
-        beforeEach(function () {
-            spyOn(util, 'getImageForBinaryContent').and.returnValue(testHelper.failedPromise());
-        });
-
         ifNotInPhantomIt("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
             var theUrl = "the url",
                 theHtml = "some html";

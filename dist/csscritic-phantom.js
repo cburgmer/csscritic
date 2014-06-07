@@ -6016,32 +6016,6 @@ csscriticLib.util = function () {
         return defer.promise;
     };
 
-    module.getImageForBinaryContent = function (content, callback) {
-        var defer = ayepromise.defer(),
-            image = new window.Image();
-
-        defer.promise.then(callback, callback);
-
-        image.onload = function () {
-            defer.resolve(image);
-        };
-        image.onerror = function () {
-            defer.reject();
-        };
-        image.src = 'data:image/png;base64,' + btoa(content);
-
-        return defer.promise;
-    };
-
-    var getBinary = function (data) {
-        var binaryContent = "";
-
-        for (var i = 0; i < data.length; i++) {
-            binaryContent += String.fromCharCode(data.charCodeAt(i) & 0xFF);
-        }
-        return binaryContent;
-    };
-
     var getUncachableURL = function (url) {
         return url + "?_=" + Date.now();
     };
@@ -6052,7 +6026,7 @@ csscriticLib.util = function () {
 
         xhr.onload = function () {
             if (xhr.status === 200 || xhr.status === 0) {
-                defer.resolve(getBinary(xhr.response));
+                defer.resolve(xhr.response);
             } else {
                 defer.reject();
             }
@@ -6064,7 +6038,6 @@ csscriticLib.util = function () {
 
         try {
             xhr.open('get', getUncachableURL(url), true);
-            xhr.overrideMimeType('text/plain; charset=x-user-defined');
             xhr.send();
         } catch (e) {
             defer.reject();

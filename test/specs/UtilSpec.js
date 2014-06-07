@@ -35,38 +35,11 @@ describe("Utility", function () {
         });
     });
 
-    describe("getImageForBinaryContent", function () {
-        it("should load an image", function (done) {
-            var imageData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=';
-
-            util.getImageForBinaryContent(atob(imageData)).then(function (image) {
-                expect(image instanceof HTMLElement).toBeTruthy();
-                expect(image.nodeName).toEqual("IMG");
-                expect(image.src).toEqual('data:image/png;base64,' + imageData);
-
-                done();
-            });
-        });
-
-        it("should handle invalid image content", function (done) {
-            util.getImageForBinaryContent("invalid content")
-                .then(null, done);
-        });
-    });
-
     describe("ajax", function () {
 
         it("should load content from a URL", function (done) {
             util.ajax(testHelper.fixture("simple.js")).then(function (content) {
                 expect(content).toEqual('var s = "hello";\n');
-
-                done();
-            });
-        });
-
-        it("should load binary data", function (done) {
-            util.ajax(testHelper.fixture("green.png")).then(function (content) {
-                expect(btoa(content)).toEqual("iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABFElEQVR4nO3OMQ0AAAjAMPybhnsKxrHUQGc2r+iBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YGQHgjpgZAeCOmBkB4I6YHAAV821mT1w27RAAAAAElFTkSuQmCC");
 
                 done();
             });
