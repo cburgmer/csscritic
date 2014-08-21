@@ -128,14 +128,17 @@
     margin: 8px 0 20px 0;
 }
 
-#csscritic_basichtmlreporter .currentPageSection,
 #csscritic_basichtmlreporter .innerDifferenceCanvasContainer {
     display: inline-block;
+}
+
+#csscritic_basichtmlreporter .currentPageSection,
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer {
     position: relative;
 }
 
-#csscritic_basichtmlreporter .failed.comparison:hover .currentPageSection:after,
-#csscritic_basichtmlreporter .failed.comparison:hover .innerDifferenceCanvasContainer:after {
+#csscritic_basichtmlreporter .comparison:hover .currentPageSection:after,
+#csscritic_basichtmlreporter .comparison:hover .innerDifferenceCanvasContainer:after {
     /* Tooltip for difference image */
     position: absolute;
     right: 0;
@@ -149,14 +152,14 @@
     border-radius: 5px;
 }
 
-#csscritic_basichtmlreporter .failed.comparison:hover .innerDifferenceCanvasContainer:after {
+#csscritic_basichtmlreporter .comparison:hover .innerDifferenceCanvasContainer:after {
     /* Tooltip for difference image */
     content: "< Hover over difference image to highlight subtle changes";
     margin-right: -5px;
     top: 0;
 }
 
-#csscritic_basichtmlreporter .failed.comparison:hover .currentPageSection:after {
+#csscritic_basichtmlreporter .comparison:hover .currentPageSection:after {
     content: "< Drag lower right corner to resize";
     margin-right: -5px;
     margin-bottom: 10px;
@@ -168,7 +171,7 @@
     display: none;
 }
 
-#csscritic_basichtmlreporter .lesscurrentPageSection:hover:after {
+#csscritic_basichtmlreporter .currentPageSection:hover:after {
     display: none;
 }
 
