@@ -40,7 +40,7 @@
     "grunt-regex-check": "~0.1.5",
     "grunt-shell": "~0.7.0",
     "grunt-umd": "~1.7.3",
-    "jasmine-core": "~2.0.0",
+    "jasmine-core": "2.0.0",
     "jasmine-jquery": "git://github.com/velesin/jasmine-jquery",
     "jquery": "~2.1.0"
   },
