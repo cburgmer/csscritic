@@ -8,6 +8,8 @@
     min-height: 1.5em;
 }
 
+/* Test result entry */
+
 #csscritic_basichtmlreporter .comparison {
     padding: 8px;
     margin: 5px 0;
@@ -86,13 +88,15 @@
     float: right;
 }
 
-#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas {
+/* Pure-CSS image resizing */
+
+#csscritic_basichtmlreporter .currentPageResizableCanvas {
     resize: both;               /* Use CSS3 native resizing */
     overflow: hidden;
     padding: 0 10px 10px 0;     /* Show the dnd handle in the bottom right corner */
 }
 
-#csscritic_basichtmlreporter .comparison .currentPageImageContainer {
+#csscritic_basichtmlreporter .currentPageImageContainer {
     /* provides the white area that resizes together with the outer canvas container, while showing the dnd handle */
     width: 100%;
     height: 100%;
@@ -101,9 +105,11 @@
     resize: none;
 }
 
-#csscritic_basichtmlreporter .comparison .currentPageImageContainer img {
+#csscritic_basichtmlreporter .currentPageImageContainer img {
     border: none;
 }
+
+/* Page rendering, reference & diff */
 
 #csscritic_basichtmlreporter .referenceSection,
 #csscritic_basichtmlreporter .currentPageSection {
@@ -117,8 +123,7 @@
     border: 1px solid black;
 }
 
-#csscritic_basichtmlreporter_tooltip,
-#csscritic_basichtmlreporter .comparison .currentPageImageContainer,
+#csscritic_basichtmlreporter .currentPageImageContainer,
 #csscritic_basichtmlreporter .referenceImageContainer img {
     /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
@@ -131,6 +136,20 @@
 #csscritic_basichtmlreporter .innerDifferenceCanvasContainer {
     display: inline-block;
 }
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .differenceCanvas {
+    display: none;
+}
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer .highlightedDifferenceCanvas {
+    display: none;
+}
+
+#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .highlightedDifferenceCanvas {
+    display: block;
+}
+
+/* Hint tooltips */
 
 #csscritic_basichtmlreporter .currentPageSection,
 #csscritic_basichtmlreporter .innerDifferenceCanvasContainer {
@@ -175,17 +194,7 @@
     display: none;
 }
 
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .differenceCanvas {
-    display: none;
-}
-
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer .highlightedDifferenceCanvas {
-    display: none;
-}
-
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .highlightedDifferenceCanvas {
-    display: block;
-}
+/* Buttons & textual hints */
 
 #csscritic_basichtmlreporter .saveHint button,
 #csscritic_basichtmlreporter .updateHint button {
@@ -253,6 +262,13 @@
     margin: 4px 0;
 }
 
+/* Reference image tooltip */
+
+#csscritic_basichtmlreporter_tooltip {
+    /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
+}
+
 #csscritic_basichtmlreporter_tooltip {
     border: 1px solid black;
     max-width: 400px;
@@ -261,6 +277,8 @@
 #csscritic_basichtmlreporter_tooltip img {
     width: 100%;
 }
+
+/* Warning for Chrome + Safari */
 
 #csscritic_basichtmlreporter .browserWarning:before {
     content: "⚠";
