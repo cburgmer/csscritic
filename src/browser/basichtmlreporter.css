@@ -129,39 +129,37 @@
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
 }
 
-#csscritic_basichtmlreporter .differenceCanvasContainer {
+#csscritic_basichtmlreporter .differenceCanvasSection {
     margin: 8px 0 20px 0;
 }
 
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer {
+#csscritic_basichtmlreporter .differenceCanvasContainer {
     display: inline-block;
 }
 
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .differenceCanvas {
+#csscritic_basichtmlreporter .differenceCanvasContainer:hover .differenceCanvas {
     display: none;
 }
 
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer .highlightedDifferenceCanvas {
+#csscritic_basichtmlreporter .differenceCanvasContainer .highlightedDifferenceCanvas {
     display: none;
 }
 
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover .highlightedDifferenceCanvas {
+#csscritic_basichtmlreporter .differenceCanvasContainer:hover .highlightedDifferenceCanvas {
     display: block;
 }
 
 /* Hint tooltips */
 
 #csscritic_basichtmlreporter .currentPageSection,
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer {
+#csscritic_basichtmlreporter .differenceCanvasContainer {
     position: relative;
 }
 
 #csscritic_basichtmlreporter .comparison:hover .currentPageSection:after,
-#csscritic_basichtmlreporter .comparison:hover .innerDifferenceCanvasContainer:after {
+#csscritic_basichtmlreporter .comparison:hover .differenceCanvasContainer:after {
     /* Tooltip for difference image */
     position: absolute;
-    right: 0;
-    transform: translateX(100%);
     padding: 4px;
 
     white-space: nowrap;
@@ -171,11 +169,17 @@
     border-radius: 5px;
 }
 
-#csscritic_basichtmlreporter .comparison:hover .innerDifferenceCanvasContainer:after {
+#csscritic_basichtmlreporter .comparison:hover .differenceCanvasContainer:after {
     /* Tooltip for difference image */
     content: "< Hover over difference image to highlight subtle changes";
     margin-right: -5px;
     top: 0;
+    right: 0;
+    -moz-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    -o-transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 #csscritic_basichtmlreporter .comparison:hover .currentPageSection:after {
@@ -183,10 +187,15 @@
     margin-right: -5px;
     margin-bottom: 10px;
     bottom: 0;
+    right: 0;
+    -moz-transform: translateX(100%) translateY(100%);
+    -ms-transform: translateX(100%) translateY(100%);
+    -o-transform: translateX(100%) translateY(100%);
+    -webkit-transform: translateX(100%) translateY(100%);
     transform: translateX(100%) translateY(100%);
 }
 
-#csscritic_basichtmlreporter .innerDifferenceCanvasContainer:hover:after {
+#csscritic_basichtmlreporter .differenceCanvasContainer:hover:after {
     display: none;
 }
 

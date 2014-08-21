@@ -249,7 +249,7 @@ describe("Basic HTML reporter", function () {
         it("should show the diff on a failing comparison", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasContainer canvas").get(0)).toBe(differenceImageCanvas);
+            expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasSection canvas").get(0)).toBe(differenceImageCanvas);
         });
 
         it("should show the highlighted diff on a failing comparison", function () {
@@ -261,37 +261,15 @@ describe("Basic HTML reporter", function () {
         it("should show the rendered page for reference and so that the user can save it", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img").get(0)).toBe(htmlImage);
-        });
-
-        it("should show a caption with the rendered page", function () {
-            reporter.reportComparison(paramsOnFailingTest);
-
-            expect($("#csscritic_basichtmlreporter .comparison .outerPageImageContainer .pageImageContainer img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .outerPageImageContainer .caption")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .outerPageImageContainer .caption").text()).toEqual("Page");
-        });
-
-        it("should provide an inner div between page container and canvas for styling purposes", function () {
-            reporter.reportComparison(paramsOnFailingTest);
-
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer .innerPageImageContainer img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img").get(0)).toBe(htmlImage);
         });
 
         it("should show the reference image", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img").get(0)).toBe(referenceImage);
-        });
-
-        it("should show a caption with the image reference", function () {
-            reporter.reportComparison(paramsOnFailingTest);
-
-            expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .referenceImageContainer img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .caption")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .outerReferenceImageContainer .caption").text()).toEqual("Reference");
+            expect($("#csscritic_basichtmlreporter .comparison .referenceSection img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .referenceSection img").get(0)).toBe(referenceImage);
         });
 
         it("should allow the user to accept the rendered page and update the reference image", function () {
@@ -307,13 +285,13 @@ describe("Basic HTML reporter", function () {
         it("should resize the page canvas when user resizes the container", function () {
             reporter.reportComparison(paramsOnFailingTest);
 
-            $("#csscritic_basichtmlreporter .comparison .pageImageContainer").css({
+            $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                 width: 42,
                 height: 24
             }).trigger("mouseup");
 
             expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24);
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")[0]).toBe(updatedReferenceImage);
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")[0]).toBe(updatedReferenceImage);
         });
 
     });
@@ -353,8 +331,8 @@ describe("Basic HTML reporter", function () {
         it("should show the rendered page for reference", function () {
             reporter.reportComparison(paramsOnMissingReference);
 
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img").get(0)).toBe(htmlImage);
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img").get(0)).toBe(htmlImage);
         });
 
         it("should allow the user to accept the rendered page", function () {
@@ -367,22 +345,16 @@ describe("Basic HTML reporter", function () {
             expect(acceptPageSpy).toHaveBeenCalled();
         });
 
-        it("should provide an inner div between container and canvas for styling purposes", function () {
-            reporter.reportComparison(paramsOnMissingReference);
-
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer .innerPageImageContainer img")).toExist();
-        });
-
         it("should resize the canvas when user resizes the container", function () {
             reporter.reportComparison(paramsOnMissingReference);
 
-            $("#csscritic_basichtmlreporter .comparison .pageImageContainer").css({
+            $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                 width: 42,
                 height: 24
             }).trigger("mouseup");
 
             expect(resizePageImageSpy).toHaveBeenCalledWith(42, 24);
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")[0]).toBe(updatedReferenceImage);
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")[0]).toBe(updatedReferenceImage);
         });
 
         it("should correctly set the current image size after a resize", function (done) {
@@ -391,13 +363,13 @@ describe("Basic HTML reporter", function () {
 
                 reporter.reportComparison(paramsOnMissingReference);
 
-                $("#csscritic_basichtmlreporter .comparison .pageImageContainer").css({
+                $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                     width: 42,
                     height: 24
                 }).trigger("mouseup");
 
-                expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer").width()).toEqual(123);
-                expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer").height()).toEqual(234);
+                expect($("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").width()).toEqual(123);
+                expect($("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").height()).toEqual(234);
 
                 done();
             });

@@ -135,9 +135,9 @@ describe("Integration", function () {
             expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual(testPageUrl);
             expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .loadErrors").text()).toContain("background_image_does_not_exist.jpg");
-            expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasContainer canvas")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .pageImageContainer img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .referenceImageContainer img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasSection canvas")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
+            expect($("#csscritic_basichtmlreporter .comparison .referenceSection img")).toExist();
 
             done();
         });

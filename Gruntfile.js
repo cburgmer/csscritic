@@ -143,7 +143,8 @@ module.exports = function (grunt) {
                     "ids": false,
                     "adjoining-classes": false,
                     "box-model": false,
-                    "box-sizing": false
+                    "box-sizing": false,
+                    "duplicate-background-images": false
                 }
             }
         },

@@ -185,20 +185,20 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     };
 
     var createDifferenceCanvasContainer = function (result) {
-        var differenceCanvasContainer = elementFor(
-                '<div class="differenceCanvasContainer"><div class="innerDifferenceCanvasContainer"></div></div>'
+        var differenceCanvasSection = elementFor(
+                '<div class="differenceCanvasSection"><div class="differenceCanvasContainer"></div></div>'
             ),
-            innerDifferenceCanvasContainer = differenceCanvasContainer.querySelector('.innerDifferenceCanvasContainer'),
+            differenceCanvasContainer = differenceCanvasSection.querySelector('.differenceCanvasContainer'),
             differenceCanvas = reporterUtil.getDifferenceCanvas(result.pageImage, result.referenceImage),
             highlightedDifferenceCanvas = reporterUtil.getHighlightedDifferenceCanvas(result.pageImage, result.referenceImage);
 
         differenceCanvas.className = "differenceCanvas";
-        innerDifferenceCanvasContainer.appendChild(differenceCanvas);
+        differenceCanvasContainer.appendChild(differenceCanvas);
 
         highlightedDifferenceCanvas.className = "highlightedDifferenceCanvas";
-        innerDifferenceCanvasContainer.appendChild(highlightedDifferenceCanvas);
+        differenceCanvasContainer.appendChild(highlightedDifferenceCanvas);
 
-        return differenceCanvasContainer;
+        return differenceCanvasSection;
     };
 
     var textualStatus = {
