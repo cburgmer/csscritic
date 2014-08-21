@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "ayepromise": "~1.1.0",
-    "imagediff": "git://github.com/HumbleSoftware/js-imagediff",
+    "imagediff": "~1.0.7",
     "inlineresources": "~0.1.0",
     "jssha": "1.5.0",
     "rasterizehtml": "~0.9.0"

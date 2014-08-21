@@ -1,4 +1,4 @@
-/*! PhantomJS regression runner for CSS Critic - v0.3.0 - 2014-06-07
+/*! PhantomJS regression runner for CSS Critic - v0.3.0 - 2014-08-21
 * http://www.github.com/cburgmer/csscritic
 * Copyright (c) 2014 Christoph Burgmer, Copyright (c) 2012 ThoughtWorks, Inc.; Licensed MIT */
 /* Integrated dependencies:
@@ -619,6 +619,185 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
 }));
 
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var n;"undefined"!=typeof window?n=window:"undefined"!=typeof global?n=global:"undefined"!=typeof self&&(n=self),n.inlineresources=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+// UMD header
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.ayepromise = factory();
+    }
+}(this, function () {
+    'use strict';
+
+    var ayepromise = {};
+
+    /* Wrap an arbitrary number of functions and allow only one of them to be
+       executed and only once */
+    var once = function () {
+        var wasCalled = false;
+
+        return function wrapper(wrappedFunction) {
+            return function () {
+                if (wasCalled) {
+                    return;
+                }
+                wasCalled = true;
+                wrappedFunction.apply(null, arguments);
+            };
+        };
+    };
+
+    var getThenableIfExists = function (obj) {
+        // Make sure we only access the accessor once as required by the spec
+        var then = obj && obj.then;
+
+        if (typeof obj === "object" && typeof then === "function") {
+            // Bind function back to it's object (so fan's of 'this' don't get sad)
+            return function() { return then.apply(obj, arguments); };
+        }
+    };
+
+    var aThenHandler = function (onFulfilled, onRejected) {
+        var defer = ayepromise.defer();
+
+        var doHandlerCall = function (func, value) {
+            setTimeout(function () {
+                var returnValue;
+                try {
+                    returnValue = func(value);
+                } catch (e) {
+                    defer.reject(e);
+                    return;
+                }
+
+                if (returnValue === defer.promise) {
+                    defer.reject(new TypeError('Cannot resolve promise with itself'));
+                } else {
+                    defer.resolve(returnValue);
+                }
+            }, 1);
+        };
+
+        var callFulfilled = function (value) {
+            if (onFulfilled && onFulfilled.call) {
+                doHandlerCall(onFulfilled, value);
+            } else {
+                defer.resolve(value);
+            }
+        };
+
+        var callRejected = function (value) {
+            if (onRejected && onRejected.call) {
+                doHandlerCall(onRejected, value);
+            } else {
+                defer.reject(value);
+            }
+        };
+
+        return {
+            promise: defer.promise,
+            handle: function (state, value) {
+                if (state === FULFILLED) {
+                    callFulfilled(value);
+                } else {
+                    callRejected(value);
+                }
+            }
+        };
+    };
+
+    // States
+    var PENDING = 0,
+        FULFILLED = 1,
+        REJECTED = 2;
+
+    ayepromise.defer = function () {
+        var state = PENDING,
+            outcome,
+            thenHandlers = [];
+
+        var doSettle = function (settledState, value) {
+            state = settledState;
+            // persist for handlers registered after settling
+            outcome = value;
+
+            thenHandlers.forEach(function (then) {
+                then.handle(state, outcome);
+            });
+
+            // Discard all references to handlers to be garbage collected
+            thenHandlers = null;
+        };
+
+        var doFulfill = function (value) {
+            doSettle(FULFILLED, value);
+        };
+
+        var doReject = function (error) {
+            doSettle(REJECTED, error);
+        };
+
+        var registerThenHandler = function (onFulfilled, onRejected) {
+            var thenHandler = aThenHandler(onFulfilled, onRejected);
+
+            if (state === PENDING) {
+                thenHandlers.push(thenHandler);
+            } else {
+                thenHandler.handle(state, outcome);
+            }
+
+            return thenHandler.promise;
+        };
+
+        var safelyResolveThenable = function (thenable) {
+            // Either fulfill, reject or reject with error
+            var onceWrapper = once();
+            try {
+                thenable(
+                    onceWrapper(transparentlyResolveThenablesAndSettle),
+                    onceWrapper(doReject)
+                );
+            } catch (e) {
+                onceWrapper(doReject)(e);
+            }
+        };
+
+        var transparentlyResolveThenablesAndSettle = function (value) {
+            var thenable;
+
+            try {
+                thenable = getThenableIfExists(value);
+            } catch (e) {
+                doReject(e);
+                return;
+            }
+
+            if (thenable) {
+                safelyResolveThenable(thenable);
+            } else {
+                doFulfill(value);
+            }
+        };
+
+        var onceWrapper = once();
+        return {
+            resolve: onceWrapper(transparentlyResolveThenablesAndSettle),
+            reject: onceWrapper(doReject),
+            promise: {
+                then: registerThenHandler,
+                fail: function (onRejected) {
+                    return registerThenHandler(null, onRejected);
+                }
+            }
+        };
+    };
+
+    return ayepromise;
+}));
+
+},{}],2:[function(_dereq_,module,exports){
 (function (global){
 /*! http://mths.be/punycode v1.2.4 by @mathias */
 ;(function(root) {
@@ -1129,7 +1308,7 @@ d[0].b,d[1].a,d[1].b,d[2].a,d[2].b,d[3].a,d[3].b,d[4].a,d[4].b,d[5].a,d[5].b,d[6
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],2:[function(_dereq_,module,exports){
+},{}],3:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1215,7 +1394,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],3:[function(_dereq_,module,exports){
+},{}],4:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1302,13 +1481,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],4:[function(_dereq_,module,exports){
+},{}],5:[function(_dereq_,module,exports){
 'use strict';
 
 exports.decode = exports.parse = _dereq_('./decode');
 exports.encode = exports.stringify = _dereq_('./encode');
 
-},{"./decode":2,"./encode":3}],5:[function(_dereq_,module,exports){
+},{"./decode":3,"./encode":4}],6:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2017,189 +2196,628 @@ function isNullOrUndefined(arg) {
   return  arg == null;
 }
 
-},{"punycode":1,"querystring":4}],6:[function(_dereq_,module,exports){
-// UMD header
-(function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(factory);
-    } else if (typeof exports === 'object') {
-        module.exports = factory();
-    } else {
-        root.ayepromise = factory();
+},{"punycode":2,"querystring":5}],7:[function(_dereq_,module,exports){
+module.exports = (function() {
+  /*
+   * Generated by PEG.js 0.8.0.
+   *
+   * http://pegjs.majda.cz/
+   */
+
+  function peg$subclass(child, parent) {
+    function ctor() { this.constructor = child; }
+    ctor.prototype = parent.prototype;
+    child.prototype = new ctor();
+  }
+
+  function SyntaxError(message, expected, found, offset, line, column) {
+    this.message  = message;
+    this.expected = expected;
+    this.found    = found;
+    this.offset   = offset;
+    this.line     = line;
+    this.column   = column;
+
+    this.name     = "SyntaxError";
+  }
+
+  peg$subclass(SyntaxError, Error);
+
+  function parse(input) {
+    var options = arguments.length > 1 ? arguments[1] : {},
+
+        peg$FAILED = {},
+
+        peg$startRuleFunctions = { start: peg$parsestart },
+        peg$startRuleFunction  = peg$parsestart,
+
+        peg$c0 = [],
+        peg$c1 = function() { return []},
+        peg$c2 = peg$FAILED,
+        peg$c3 = ",",
+        peg$c4 = { type: "literal", value: ",", description: "\",\"" },
+        peg$c5 = function(x, xs) { return [x].concat(xs); },
+        peg$c6 = function(entry) { return [entry]; },
+        peg$c7 = function(url, format) { return {url: url, format: format}; },
+        peg$c8 = function(url) { return {url: url}; },
+        peg$c9 = "url(",
+        peg$c10 = { type: "literal", value: "url(", description: "\"url(\"" },
+        peg$c11 = ")",
+        peg$c12 = { type: "literal", value: ")", description: "\")\"" },
+        peg$c13 = function(value) { return value; },
+        peg$c14 = "format(",
+        peg$c15 = { type: "literal", value: "format(", description: "\"format(\"" },
+        peg$c16 = "local(",
+        peg$c17 = { type: "literal", value: "local(", description: "\"local(\"" },
+        peg$c18 = function(value) { return {local: value}; },
+        peg$c19 = /^[^)]/,
+        peg$c20 = { type: "class", value: "[^)]", description: "[^)]" },
+        peg$c21 = function(chars) { return util.extractValue(chars.join("")); },
+        peg$c22 = /^[ \t\r\n\f]/,
+        peg$c23 = { type: "class", value: "[ \\t\\r\\n\\f]", description: "[ \\t\\r\\n\\f]" },
+
+        peg$currPos          = 0,
+        peg$reportedPos      = 0,
+        peg$cachedPos        = 0,
+        peg$cachedPosDetails = { line: 1, column: 1, seenCR: false },
+        peg$maxFailPos       = 0,
+        peg$maxFailExpected  = [],
+        peg$silentFails      = 0,
+
+        peg$result;
+
+    if ("startRule" in options) {
+      if (!(options.startRule in peg$startRuleFunctions)) {
+        throw new Error("Can't start parsing from rule \"" + options.startRule + "\".");
+      }
+
+      peg$startRuleFunction = peg$startRuleFunctions[options.startRule];
     }
-}(this, function () {
-    'use strict';
 
-    var ayepromise = {};
+    function text() {
+      return input.substring(peg$reportedPos, peg$currPos);
+    }
 
-    /* Wrap an arbitrary number of functions and allow only one of them to be
-       executed and only once */
-    var once = function () {
-        var wasCalled = false;
+    function offset() {
+      return peg$reportedPos;
+    }
 
-        return function wrapper(wrappedFunction) {
-            return function () {
-                if (wasCalled) {
-                    return;
-                }
-                wasCalled = true;
-                wrappedFunction.apply(null, arguments);
-            };
-        };
-    };
+    function line() {
+      return peg$computePosDetails(peg$reportedPos).line;
+    }
 
-    var getThenableIfExists = function (obj) {
-        // Make sure we only access the accessor once
-        var then = obj && obj.then;
+    function column() {
+      return peg$computePosDetails(peg$reportedPos).column;
+    }
 
-        if (obj !== null &&
-            typeof obj === "object" &&
-            typeof then === "function") {
+    function expected(description) {
+      throw peg$buildException(
+        null,
+        [{ type: "other", description: description }],
+        peg$reportedPos
+      );
+    }
 
-            return then.bind(obj);
+    function error(message) {
+      throw peg$buildException(message, null, peg$reportedPos);
+    }
+
+    function peg$computePosDetails(pos) {
+      function advance(details, startPos, endPos) {
+        var p, ch;
+
+        for (p = startPos; p < endPos; p++) {
+          ch = input.charAt(p);
+          if (ch === "\n") {
+            if (!details.seenCR) { details.line++; }
+            details.column = 1;
+            details.seenCR = false;
+          } else if (ch === "\r" || ch === "\u2028" || ch === "\u2029") {
+            details.line++;
+            details.column = 1;
+            details.seenCR = true;
+          } else {
+            details.column++;
+            details.seenCR = false;
+          }
         }
-    };
+      }
 
-    var doChainCall = function (defer, func, value) {
-        setTimeout(function () {
-            var returnValue;
-            try {
-                returnValue = func(value);
-            } catch (e) {
-                defer.reject(e);
-                return;
+      if (peg$cachedPos !== pos) {
+        if (peg$cachedPos > pos) {
+          peg$cachedPos = 0;
+          peg$cachedPosDetails = { line: 1, column: 1, seenCR: false };
+        }
+        advance(peg$cachedPosDetails, peg$cachedPos, pos);
+        peg$cachedPos = pos;
+      }
+
+      return peg$cachedPosDetails;
+    }
+
+    function peg$fail(expected) {
+      if (peg$currPos < peg$maxFailPos) { return; }
+
+      if (peg$currPos > peg$maxFailPos) {
+        peg$maxFailPos = peg$currPos;
+        peg$maxFailExpected = [];
+      }
+
+      peg$maxFailExpected.push(expected);
+    }
+
+    function peg$buildException(message, expected, pos) {
+      function cleanupExpected(expected) {
+        var i = 1;
+
+        expected.sort(function(a, b) {
+          if (a.description < b.description) {
+            return -1;
+          } else if (a.description > b.description) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+
+        while (i < expected.length) {
+          if (expected[i - 1] === expected[i]) {
+            expected.splice(i, 1);
+          } else {
+            i++;
+          }
+        }
+      }
+
+      function buildMessage(expected, found) {
+        function stringEscape(s) {
+          function hex(ch) { return ch.charCodeAt(0).toString(16).toUpperCase(); }
+
+          return s
+            .replace(/\\/g,   '\\\\')
+            .replace(/"/g,    '\\"')
+            .replace(/\x08/g, '\\b')
+            .replace(/\t/g,   '\\t')
+            .replace(/\n/g,   '\\n')
+            .replace(/\f/g,   '\\f')
+            .replace(/\r/g,   '\\r')
+            .replace(/[\x00-\x07\x0B\x0E\x0F]/g, function(ch) { return '\\x0' + hex(ch); })
+            .replace(/[\x10-\x1F\x80-\xFF]/g,    function(ch) { return '\\x'  + hex(ch); })
+            .replace(/[\u0180-\u0FFF]/g,         function(ch) { return '\\u0' + hex(ch); })
+            .replace(/[\u1080-\uFFFF]/g,         function(ch) { return '\\u'  + hex(ch); });
+        }
+
+        var expectedDescs = new Array(expected.length),
+            expectedDesc, foundDesc, i;
+
+        for (i = 0; i < expected.length; i++) {
+          expectedDescs[i] = expected[i].description;
+        }
+
+        expectedDesc = expected.length > 1
+          ? expectedDescs.slice(0, -1).join(", ")
+              + " or "
+              + expectedDescs[expected.length - 1]
+          : expectedDescs[0];
+
+        foundDesc = found ? "\"" + stringEscape(found) + "\"" : "end of input";
+
+        return "Expected " + expectedDesc + " but " + foundDesc + " found.";
+      }
+
+      var posDetails = peg$computePosDetails(pos),
+          found      = pos < input.length ? input.charAt(pos) : null;
+
+      if (expected !== null) {
+        cleanupExpected(expected);
+      }
+
+      return new SyntaxError(
+        message !== null ? message : buildMessage(expected, found),
+        expected,
+        found,
+        pos,
+        posDetails.line,
+        posDetails.column
+      );
+    }
+
+    function peg$parsestart() {
+      var s0, s1;
+
+      s0 = peg$parsesourceEntries();
+      if (s0 === peg$FAILED) {
+        s0 = peg$currPos;
+        s1 = [];
+        if (s1 !== peg$FAILED) {
+          peg$reportedPos = s0;
+          s1 = peg$c1();
+        }
+        s0 = s1;
+      }
+
+      return s0;
+    }
+
+    function peg$parsesourceEntries() {
+      var s0, s1, s2, s3, s4, s5;
+
+      s0 = peg$currPos;
+      s1 = peg$parsesourceEntry();
+      if (s1 !== peg$FAILED) {
+        s2 = [];
+        s3 = peg$parsewhitespace();
+        while (s3 !== peg$FAILED) {
+          s2.push(s3);
+          s3 = peg$parsewhitespace();
+        }
+        if (s2 !== peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 44) {
+            s3 = peg$c3;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c4); }
+          }
+          if (s3 !== peg$FAILED) {
+            s4 = [];
+            s5 = peg$parsewhitespace();
+            while (s5 !== peg$FAILED) {
+              s4.push(s5);
+              s5 = peg$parsewhitespace();
             }
-
-            if (returnValue === defer.promise) {
-                defer.reject(new TypeError('Cannot resolve promise with itself'));
+            if (s4 !== peg$FAILED) {
+              s5 = peg$parsesourceEntries();
+              if (s5 !== peg$FAILED) {
+                peg$reportedPos = s0;
+                s1 = peg$c5(s1, s5);
+                s0 = s1;
+              } else {
+                peg$currPos = s0;
+                s0 = peg$c2;
+              }
             } else {
-                defer.resolve(returnValue);
+              peg$currPos = s0;
+              s0 = peg$c2;
             }
-        }, 1);
-    };
-
-    var doFulfillCall = function (defer, onFulfilled, value) {
-        if (onFulfilled && onFulfilled.call) {
-            doChainCall(defer, onFulfilled, value);
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c2;
+          }
         } else {
-            defer.resolve(value);
+          peg$currPos = s0;
+          s0 = peg$c2;
         }
-    };
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c2;
+      }
+      if (s0 === peg$FAILED) {
+        s0 = peg$currPos;
+        s1 = peg$parsesourceEntry();
+        if (s1 !== peg$FAILED) {
+          peg$reportedPos = s0;
+          s1 = peg$c6(s1);
+        }
+        s0 = s1;
+      }
 
-    var doRejectCall = function (defer, onRejected, value) {
-        if (onRejected && onRejected.call) {
-            doChainCall(defer, onRejected, value);
+      return s0;
+    }
+
+    function peg$parsesourceEntry() {
+      var s0;
+
+      s0 = peg$parseurlEntry();
+      if (s0 === peg$FAILED) {
+        s0 = peg$parselocalEntry();
+      }
+
+      return s0;
+    }
+
+    function peg$parseurlEntry() {
+      var s0, s1, s2, s3;
+
+      s0 = peg$currPos;
+      s1 = peg$parseurl();
+      if (s1 !== peg$FAILED) {
+        s2 = [];
+        s3 = peg$parsewhitespace();
+        if (s3 !== peg$FAILED) {
+          while (s3 !== peg$FAILED) {
+            s2.push(s3);
+            s3 = peg$parsewhitespace();
+          }
         } else {
-            defer.reject(value);
+          s2 = peg$c2;
         }
-    };
+        if (s2 !== peg$FAILED) {
+          s3 = peg$parseformat();
+          if (s3 !== peg$FAILED) {
+            peg$reportedPos = s0;
+            s1 = peg$c7(s1, s3);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c2;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c2;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c2;
+      }
+      if (s0 === peg$FAILED) {
+        s0 = peg$currPos;
+        s1 = peg$parseurl();
+        if (s1 !== peg$FAILED) {
+          peg$reportedPos = s0;
+          s1 = peg$c8(s1);
+        }
+        s0 = s1;
+      }
 
-    var aCallChainLink = function (onFulfilled, onRejected) {
-        var defer = ayepromise.defer();
-        return {
-            promise: defer.promise,
-            callFulfilled: function (value) {
-                doFulfillCall(defer, onFulfilled, value);
-            },
-            callRejected: function (value) {
-                doRejectCall(defer, onRejected, value);
+      return s0;
+    }
+
+    function peg$parseurl() {
+      var s0, s1, s2, s3;
+
+      s0 = peg$currPos;
+      if (input.substr(peg$currPos, 4) === peg$c9) {
+        s1 = peg$c9;
+        peg$currPos += 4;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c10); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parsevalue();
+        if (s2 !== peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 41) {
+            s3 = peg$c11;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c12); }
+          }
+          if (s3 !== peg$FAILED) {
+            peg$reportedPos = s0;
+            s1 = peg$c13(s2);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c2;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c2;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c2;
+      }
+
+      return s0;
+    }
+
+    function peg$parseformat() {
+      var s0, s1, s2, s3;
+
+      s0 = peg$currPos;
+      if (input.substr(peg$currPos, 7) === peg$c14) {
+        s1 = peg$c14;
+        peg$currPos += 7;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c15); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parsevalue();
+        if (s2 !== peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 41) {
+            s3 = peg$c11;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c12); }
+          }
+          if (s3 !== peg$FAILED) {
+            peg$reportedPos = s0;
+            s1 = peg$c13(s2);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c2;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c2;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c2;
+      }
+
+      return s0;
+    }
+
+    function peg$parselocalEntry() {
+      var s0, s1, s2, s3;
+
+      s0 = peg$currPos;
+      if (input.substr(peg$currPos, 6) === peg$c16) {
+        s1 = peg$c16;
+        peg$currPos += 6;
+      } else {
+        s1 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c17); }
+      }
+      if (s1 !== peg$FAILED) {
+        s2 = peg$parsevalue();
+        if (s2 !== peg$FAILED) {
+          if (input.charCodeAt(peg$currPos) === 41) {
+            s3 = peg$c11;
+            peg$currPos++;
+          } else {
+            s3 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c12); }
+          }
+          if (s3 !== peg$FAILED) {
+            peg$reportedPos = s0;
+            s1 = peg$c18(s2);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c2;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c2;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c2;
+      }
+
+      return s0;
+    }
+
+    function peg$parsevalue() {
+      var s0, s1, s2;
+
+      s0 = peg$currPos;
+      s1 = [];
+      if (peg$c19.test(input.charAt(peg$currPos))) {
+        s2 = input.charAt(peg$currPos);
+        peg$currPos++;
+      } else {
+        s2 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c20); }
+      }
+      if (s2 !== peg$FAILED) {
+        while (s2 !== peg$FAILED) {
+          s1.push(s2);
+          if (peg$c19.test(input.charAt(peg$currPos))) {
+            s2 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s2 = peg$FAILED;
+            if (peg$silentFails === 0) { peg$fail(peg$c20); }
+          }
+        }
+      } else {
+        s1 = peg$c2;
+      }
+      if (s1 !== peg$FAILED) {
+        peg$reportedPos = s0;
+        s1 = peg$c21(s1);
+      }
+      s0 = s1;
+
+      return s0;
+    }
+
+    function peg$parsewhitespace() {
+      var s0;
+
+      if (peg$c22.test(input.charAt(peg$currPos))) {
+        s0 = input.charAt(peg$currPos);
+        peg$currPos++;
+      } else {
+        s0 = peg$FAILED;
+        if (peg$silentFails === 0) { peg$fail(peg$c23); }
+      }
+
+      return s0;
+    }
+
+
+      var util = _dereq_('../util');
+
+
+    peg$result = peg$startRuleFunction();
+
+    if (peg$result !== peg$FAILED && peg$currPos === input.length) {
+      return peg$result;
+    } else {
+      if (peg$result !== peg$FAILED && peg$currPos < input.length) {
+        peg$fail({ type: "end", description: "end of input" });
+      }
+
+      throw peg$buildException(null, peg$maxFailExpected, peg$maxFailPos);
+    }
+  }
+
+  return {
+    SyntaxError: SyntaxError,
+    parse:       parse
+  };
+})();
+
+},{"../util":9}],8:[function(_dereq_,module,exports){
+var grammar = _dereq_('./grammar');
+
+
+exports.SyntaxError = function (message, offset) {
+    this.message  = message;
+    this.offset   = offset;
+};
+
+exports.parse = function (fontFaceSourceValue) {
+    try {
+        return grammar.parse(fontFaceSourceValue);
+    } catch (e) {
+        throw new exports.SyntaxError(e.message, e.offset);
+    }
+};
+
+exports.serialize = function (parsedFontFaceSources) {
+    return parsedFontFaceSources.map(function (sourceItem) {
+        var itemValue;
+
+        if (sourceItem.url) {
+            itemValue = 'url("' + sourceItem.url + '")';
+            if (sourceItem.format) {
+                itemValue += ' format("' + sourceItem.format + '")';
             }
-        };
-    };
+        } else {
+            itemValue = 'local("' + sourceItem.local + '")';
+        }
+        return itemValue;
+    }).join(', ');
+};
 
-    // States
-    var PENDING = 0,
-        FULFILLED = 1,
-        REJECTED = 2;
+},{"./grammar":7}],9:[function(_dereq_,module,exports){
+var trimCSSWhitespace = function (value) {
+    var whitespaceRegex = /^[\t\r\f\n ]*(.+?)[\t\r\f\n ]*$/;
 
-    ayepromise.defer = function () {
-        var state = PENDING,
-            outcome,
-            callbacks = [];
+    return value.replace(whitespaceRegex, "$1");
+};
 
-        var doFulfill = function (value) {
-            state = FULFILLED;
-            outcome = value;
+var unquoteString = function (quotedUrl) {
+    var doubleQuoteRegex = /^"(.*)"$/,
+        singleQuoteRegex = /^'(.*)'$/;
 
-            callbacks.forEach(function (link) {
-                link.callFulfilled(outcome);
-            });
-        };
+    if (doubleQuoteRegex.test(quotedUrl)) {
+        return quotedUrl.replace(doubleQuoteRegex, "$1");
+    } else {
+        if (singleQuoteRegex.test(quotedUrl)) {
+            return quotedUrl.replace(singleQuoteRegex, "$1");
+        } else {
+            return quotedUrl;
+        }
+    }
+};
 
-        var doReject = function (error) {
-            state = REJECTED;
-            outcome = error;
+exports.extractValue = function (value) {
+    return unquoteString(trimCSSWhitespace(value));
+};
 
-            callbacks.forEach(function (link) {
-                link.callRejected(outcome);
-            });
-        };
-
-        var executeResultHandlerDirectlyIfStateNotPendingAnymore = function (link) {
-            if (state === FULFILLED) {
-                link.callFulfilled(outcome);
-            } else if (state === REJECTED) {
-                link.callRejected(outcome);
-            }
-        };
-
-        var registerResultHandler = function (onFulfilled, onRejected) {
-            var link = aCallChainLink(onFulfilled, onRejected);
-
-            callbacks.push(link);
-
-            executeResultHandlerDirectlyIfStateNotPendingAnymore(link);
-
-            return link.promise;
-        };
-
-        var safelyResolveThenable = function (thenable) {
-            // Either fulfill, reject or reject with error
-            var onceWrapper = once();
-            try {
-                thenable(
-                    onceWrapper(transparentlyResolveThenablesAndFulfill),
-                    onceWrapper(doReject)
-                );
-            } catch (e) {
-                onceWrapper(doReject)(e);
-            }
-        };
-
-        var transparentlyResolveThenablesAndFulfill = function (value) {
-            var thenable;
-
-            try {
-                thenable = getThenableIfExists(value);
-            } catch (e) {
-                doReject(e);
-                return;
-            }
-
-            if (thenable) {
-                safelyResolveThenable(thenable);
-            } else {
-                doFulfill(value);
-            }
-        };
-
-        var onceWrapper = once();
-        return {
-            resolve: onceWrapper(transparentlyResolveThenablesAndFulfill),
-            reject: onceWrapper(doReject),
-            promise: {
-                then: registerResultHandler,
-                fail: function (onRejected) {
-                    return registerResultHandler(null, onRejected);
-                }
-            }
-        };
-    };
-
-    return ayepromise;
-}));
-
-},{}],7:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
     CSSRule: _dereq_("./CSSRule").CSSRule,
@@ -2240,7 +2858,7 @@ Object.defineProperty(CSSOM.CSSDocumentRule.prototype, "cssText", {
 exports.CSSDocumentRule = CSSOM.CSSDocumentRule;
 ///CommonJS
 
-},{"./CSSRule":13,"./MatcherList":19}],8:[function(_dereq_,module,exports){
+},{"./CSSRule":16,"./MatcherList":22}],11:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSStyleDeclaration: _dereq_("./CSSStyleDeclaration").CSSStyleDeclaration,
@@ -2278,7 +2896,7 @@ Object.defineProperty(CSSOM.CSSFontFaceRule.prototype, "cssText", {
 exports.CSSFontFaceRule = CSSOM.CSSFontFaceRule;
 ///CommonJS
 
-},{"./CSSRule":13,"./CSSStyleDeclaration":14}],9:[function(_dereq_,module,exports){
+},{"./CSSRule":16,"./CSSStyleDeclaration":17}],12:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSRule: _dereq_("./CSSRule").CSSRule,
@@ -2413,7 +3031,7 @@ Object.defineProperty(CSSOM.CSSImportRule.prototype, "cssText", {
 exports.CSSImportRule = CSSOM.CSSImportRule;
 ///CommonJS
 
-},{"./CSSRule":13,"./CSSStyleSheet":16,"./MediaList":20}],10:[function(_dereq_,module,exports){
+},{"./CSSRule":16,"./CSSStyleSheet":19,"./MediaList":23}],13:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSRule: _dereq_("./CSSRule").CSSRule,
@@ -2452,7 +3070,7 @@ Object.defineProperty(CSSOM.CSSKeyframeRule.prototype, "cssText", {
 exports.CSSKeyframeRule = CSSOM.CSSKeyframeRule;
 ///CommonJS
 
-},{"./CSSRule":13,"./CSSStyleDeclaration":14}],11:[function(_dereq_,module,exports){
+},{"./CSSRule":16,"./CSSStyleDeclaration":17}],14:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSRule: _dereq_("./CSSRule").CSSRule
@@ -2493,7 +3111,7 @@ Object.defineProperty(CSSOM.CSSKeyframesRule.prototype, "cssText", {
 exports.CSSKeyframesRule = CSSOM.CSSKeyframesRule;
 ///CommonJS
 
-},{"./CSSRule":13}],12:[function(_dereq_,module,exports){
+},{"./CSSRule":16}],15:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSRule: _dereq_("./CSSRule").CSSRule,
@@ -2536,7 +3154,7 @@ Object.defineProperty(CSSOM.CSSMediaRule.prototype, "cssText", {
 exports.CSSMediaRule = CSSOM.CSSMediaRule;
 ///CommonJS
 
-},{"./CSSRule":13,"./MediaList":20}],13:[function(_dereq_,module,exports){
+},{"./CSSRule":16,"./MediaList":23}],16:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {};
 ///CommonJS
@@ -2577,7 +3195,7 @@ CSSOM.CSSRule.prototype = {
 exports.CSSRule = CSSOM.CSSRule;
 ///CommonJS
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],17:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {};
 ///CommonJS
@@ -2727,7 +3345,7 @@ exports.CSSStyleDeclaration = CSSOM.CSSStyleDeclaration;
 CSSOM.parse = _dereq_('./parse').parse; // Cannot be included sooner due to the mutual dependency between parse.js and CSSStyleDeclaration.js
 ///CommonJS
 
-},{"./parse":24}],15:[function(_dereq_,module,exports){
+},{"./parse":27}],18:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSStyleDeclaration: _dereq_("./CSSStyleDeclaration").CSSStyleDeclaration,
@@ -2919,7 +3537,7 @@ CSSOM.CSSStyleRule.parse = function(ruleText) {
 exports.CSSStyleRule = CSSOM.CSSStyleRule;
 ///CommonJS
 
-},{"./CSSRule":13,"./CSSStyleDeclaration":14}],16:[function(_dereq_,module,exports){
+},{"./CSSRule":16,"./CSSStyleDeclaration":17}],19:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	StyleSheet: _dereq_("./StyleSheet").StyleSheet,
@@ -3009,7 +3627,7 @@ exports.CSSStyleSheet = CSSOM.CSSStyleSheet;
 CSSOM.parse = _dereq_('./parse').parse; // Cannot be included sooner due to the mutual dependency between parse.js and CSSStyleSheet.js
 ///CommonJS
 
-},{"./CSSStyleRule":15,"./StyleSheet":21,"./parse":24}],17:[function(_dereq_,module,exports){
+},{"./CSSStyleRule":18,"./StyleSheet":24,"./parse":27}],20:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {};
 ///CommonJS
@@ -3054,7 +3672,7 @@ CSSOM.CSSValue.prototype = {
 exports.CSSValue = CSSOM.CSSValue;
 ///CommonJS
 
-},{}],18:[function(_dereq_,module,exports){
+},{}],21:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSValue: _dereq_('./CSSValue').CSSValue
@@ -3400,7 +4018,7 @@ CSSOM.CSSValueExpression.prototype._findMatchedIdx = function(token, idx, sep) {
 exports.CSSValueExpression = CSSOM.CSSValueExpression;
 ///CommonJS
 
-},{"./CSSValue":17}],19:[function(_dereq_,module,exports){
+},{"./CSSValue":20}],22:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {};
 ///CommonJS
@@ -3464,7 +4082,7 @@ CSSOM.MatcherList.prototype = {
 exports.MatcherList = CSSOM.MatcherList;
 ///CommonJS
 
-},{}],20:[function(_dereq_,module,exports){
+},{}],23:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {};
 ///CommonJS
@@ -3527,7 +4145,7 @@ CSSOM.MediaList.prototype = {
 exports.MediaList = CSSOM.MediaList;
 ///CommonJS
 
-},{}],21:[function(_dereq_,module,exports){
+},{}],24:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {};
 ///CommonJS
@@ -3546,7 +4164,7 @@ CSSOM.StyleSheet = function StyleSheet() {
 exports.StyleSheet = CSSOM.StyleSheet;
 ///CommonJS
 
-},{}],22:[function(_dereq_,module,exports){
+},{}],25:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {
 	CSSStyleSheet: _dereq_("./CSSStyleSheet").CSSStyleSheet,
@@ -3624,7 +4242,7 @@ CSSOM.clone = function clone(stylesheet) {
 exports.clone = CSSOM.clone;
 ///CommonJS
 
-},{"./CSSKeyframeRule":10,"./CSSKeyframesRule":11,"./CSSMediaRule":12,"./CSSStyleDeclaration":14,"./CSSStyleRule":15,"./CSSStyleSheet":16}],23:[function(_dereq_,module,exports){
+},{"./CSSKeyframeRule":13,"./CSSKeyframesRule":14,"./CSSMediaRule":15,"./CSSStyleDeclaration":17,"./CSSStyleRule":18,"./CSSStyleSheet":19}],26:[function(_dereq_,module,exports){
 'use strict';
 
 exports.CSSStyleDeclaration = _dereq_('./CSSStyleDeclaration').CSSStyleDeclaration;
@@ -3645,7 +4263,7 @@ exports.CSSValueExpression = _dereq_('./CSSValueExpression').CSSValueExpression;
 exports.parse = _dereq_('./parse').parse;
 exports.clone = _dereq_('./clone').clone;
 
-},{"./CSSDocumentRule":7,"./CSSFontFaceRule":8,"./CSSImportRule":9,"./CSSKeyframeRule":10,"./CSSKeyframesRule":11,"./CSSMediaRule":12,"./CSSRule":13,"./CSSStyleDeclaration":14,"./CSSStyleRule":15,"./CSSStyleSheet":16,"./CSSValue":17,"./CSSValueExpression":18,"./MatcherList":19,"./MediaList":20,"./StyleSheet":21,"./clone":22,"./parse":24}],24:[function(_dereq_,module,exports){
+},{"./CSSDocumentRule":10,"./CSSFontFaceRule":11,"./CSSImportRule":12,"./CSSKeyframeRule":13,"./CSSKeyframesRule":14,"./CSSMediaRule":15,"./CSSRule":16,"./CSSStyleDeclaration":17,"./CSSStyleRule":18,"./CSSStyleSheet":19,"./CSSValue":20,"./CSSValueExpression":21,"./MatcherList":22,"./MediaList":23,"./StyleSheet":24,"./clone":25,"./parse":27}],27:[function(_dereq_,module,exports){
 //.CommonJS
 var CSSOM = {};
 ///CommonJS
@@ -4024,441 +4642,12 @@ CSSOM.CSSValueExpression = _dereq_('./CSSValueExpression').CSSValueExpression;
 CSSOM.CSSDocumentRule = _dereq_('./CSSDocumentRule').CSSDocumentRule;
 ///CommonJS
 
-},{"./CSSDocumentRule":7,"./CSSFontFaceRule":8,"./CSSImportRule":9,"./CSSKeyframeRule":10,"./CSSKeyframesRule":11,"./CSSMediaRule":12,"./CSSStyleDeclaration":14,"./CSSStyleRule":15,"./CSSStyleSheet":16,"./CSSValueExpression":18}],25:[function(_dereq_,module,exports){
+},{"./CSSDocumentRule":10,"./CSSFontFaceRule":11,"./CSSImportRule":12,"./CSSKeyframeRule":13,"./CSSKeyframesRule":14,"./CSSMediaRule":15,"./CSSStyleDeclaration":17,"./CSSStyleRule":18,"./CSSStyleSheet":19,"./CSSValueExpression":21}],28:[function(_dereq_,module,exports){
+// Simple, stupid "background"/"background-image" value parser that just aims at exposing the image URLs
 "use strict";
 
-var inlineUtil = _dereq_('./inlineUtil'),
-    inlineCss = _dereq_('./inlineCss');
+var cssSupport = _dereq_('./cssSupport');
 
-
-var getUrlBasePath = function (url) {
-    return inlineUtil.joinUrl(url, '.');
-};
-
-var parameterHashFunction = function (params) {
-    // HACK JSON.stringify is poor man's hashing;
-    // same objects might not receive same result as key order is not guaranteed
-    var a = params.map(function (param, idx) {
-        // Only include options relevant for method
-        if (idx === (params.length - 1)) {
-            param = {
-                // Two different HTML pages on the same path level have the same base path, but a different URL
-                baseUrl: getUrlBasePath(param.baseUrl)
-            };
-        }
-        return JSON.stringify(param);
-    });
-    return a;
-};
-
-var memoizeFunctionOnCaching = function (func, options) {
-    if ((options.cache !== false && options.cache !== 'none') && options.cacheBucket) {
-        return inlineUtil.memoize(func, parameterHashFunction, options.cacheBucket);
-    } else {
-        return func;
-    }
-};
-
-/* Img Inlining */
-
-var encodeImageAsDataURI = function (image, options) {
-    var url = image.attributes.src ? image.attributes.src.nodeValue : null,
-        documentBase = inlineUtil.getDocumentBaseUrl(image.ownerDocument),
-        ajaxOptions = inlineUtil.clone(options);
-
-    if (!ajaxOptions.baseUrl && documentBase) {
-        ajaxOptions.baseUrl = documentBase;
-    }
-
-    return inlineUtil.getDataURIForImageURL(url, ajaxOptions)
-        .then(function (dataURI) {
-            return dataURI;
-        }, function (e) {
-            throw {
-                resourceType: "image",
-                url: e.url,
-                msg: "Unable to load image " + e.url
-            };
-        });
-};
-
-var filterExternalImages = function (images) {
-    return images.filter(function (image) {
-        var url = image.attributes.src ? image.attributes.src.nodeValue : null;
-
-        return url !== null && !inlineUtil.isDataUri(url);
-    });
-};
-
-var filterInputsForImageType = function (inputs) {
-    return Array.prototype.filter.call(inputs, function (input) {
-        return input.type === "image";
-    });
-};
-
-var toArray = function (arrayLike) {
-    return Array.prototype.slice.call(arrayLike);
-};
-
-exports.loadAndInlineImages = function (doc, options) {
-    var images = toArray(doc.getElementsByTagName("img")),
-        imageInputs = filterInputsForImageType(doc.getElementsByTagName("input")),
-        externalImages = filterExternalImages(images.concat(imageInputs));
-
-    return inlineUtil.collectAndReportErrors(externalImages.map(function (image) {
-        return encodeImageAsDataURI(image, options).then(function (dataURI) {
-            image.attributes.src.nodeValue = dataURI;
-        });
-    }));
-};
-
-/* Style inlining */
-
-var requestExternalsForStylesheet = function (styleContent, alreadyLoadedCssUrls, options) {
-    var cssRules = inlineCss.rulesForCssText(styleContent);
-
-    return inlineCss.loadCSSImportsForRules(cssRules, alreadyLoadedCssUrls, options).then(function (cssImportResult) {
-        return inlineCss.loadAndInlineCSSResourcesForRules(cssRules, options).then(function (cssResourcesResult) {
-            var errors = cssImportResult.errors.concat(cssResourcesResult.errors),
-                hasChanges = cssImportResult.hasChanges || cssResourcesResult.hasChanges;
-
-            if (hasChanges) {
-                styleContent = inlineCss.cssRulesToText(cssRules);
-            }
-
-            return {
-                hasChanges: hasChanges,
-                content: styleContent,
-                errors: errors
-            };
-        });
-    });
-};
-
-var loadAndInlineCssForStyle = function (style, options, alreadyLoadedCssUrls) {
-    var styleContent = style.textContent,
-        processExternals = memoizeFunctionOnCaching(requestExternalsForStylesheet, options);
-
-    return processExternals(styleContent, alreadyLoadedCssUrls, options).then(function (result) {
-        if (result.hasChanges) {
-            style.childNodes[0].nodeValue = result.content;
-        }
-
-        return inlineUtil.cloneArray(result.errors);
-    });
-};
-
-var getCssStyleElements = function (doc) {
-    var styles = doc.getElementsByTagName("style");
-
-    return Array.prototype.filter.call(styles, function (style) {
-        return !style.attributes.type || style.attributes.type.nodeValue === "text/css";
-    });
-};
-
-exports.loadAndInlineStyles = function (doc, options) {
-    var styles = getCssStyleElements(doc),
-        allErrors = [],
-        alreadyLoadedCssUrls = [],
-        inlineOptions;
-
-    inlineOptions = inlineUtil.clone(options);
-    inlineOptions.baseUrl = inlineOptions.baseUrl || inlineUtil.getDocumentBaseUrl(doc);
-
-    return inlineUtil.all(styles.map(function (style) {
-        return loadAndInlineCssForStyle(style, inlineOptions, alreadyLoadedCssUrls).then(function (errors) {
-            allErrors = allErrors.concat(errors);
-        });
-    })).then(function () {
-        return allErrors;
-    });
-};
-
-/* CSS link inlining */
-
-var substituteLinkWithInlineStyle = function (oldLinkNode, styleContent) {
-    var parent = oldLinkNode.parentNode,
-        styleNode;
-
-    styleContent = styleContent.trim();
-    if (styleContent) {
-        styleNode = oldLinkNode.ownerDocument.createElement("style");
-        styleNode.type = "text/css";
-        styleNode.appendChild(oldLinkNode.ownerDocument.createTextNode(styleContent));
-
-        parent.insertBefore(styleNode, oldLinkNode);
-    }
-
-    parent.removeChild(oldLinkNode);
-};
-
-var requestStylesheetAndInlineResources = function (url, options) {
-    return inlineUtil.ajax(url, options)
-        .then(function (content) {
-            var cssRules = inlineCss.rulesForCssText(content);
-
-            return {
-                content: content,
-                cssRules: cssRules
-            };
-        })
-        .then(function (result) {
-            var hasChangesFromPathAdjustment = inlineCss.adjustPathsOfCssResources(url, result.cssRules);
-
-            return {
-                content: result.content,
-                cssRules: result.cssRules,
-                hasChanges: hasChangesFromPathAdjustment
-            };
-        })
-        .then(function (result) {
-            return inlineCss.loadCSSImportsForRules(result.cssRules, [], options)
-                .then(function (cssImportResult) {
-                    return {
-                        content: result.content,
-                        cssRules: result.cssRules,
-                        hasChanges: result.hasChanges || cssImportResult.hasChanges,
-                        errors: cssImportResult.errors
-                    };
-                });
-        })
-        .then(function (result) {
-            return inlineCss.loadAndInlineCSSResourcesForRules(result.cssRules, options)
-                .then(function (cssResourcesResult) {
-                    return {
-                        content: result.content,
-                        cssRules: result.cssRules,
-                        hasChanges: result.hasChanges || cssResourcesResult.hasChanges,
-                        errors: result.errors.concat(cssResourcesResult.errors)
-                    };
-                });
-        })
-        .then(function (result) {
-            var content = result.content;
-            if (result.hasChanges) {
-                content = inlineCss.cssRulesToText(result.cssRules);
-            }
-            return {
-                content: content,
-                errors: result.errors
-            };
-        });
-};
-
-var loadLinkedCSS = function (link, options) {
-    var cssHref = link.attributes.href.nodeValue,
-        documentBaseUrl = inlineUtil.getDocumentBaseUrl(link.ownerDocument),
-        ajaxOptions = inlineUtil.clone(options);
-
-    if (!ajaxOptions.baseUrl && documentBaseUrl) {
-        ajaxOptions.baseUrl = documentBaseUrl;
-    }
-
-    var processStylesheet = memoizeFunctionOnCaching(requestStylesheetAndInlineResources, options);
-
-    return processStylesheet(cssHref, ajaxOptions).then(function (result) {
-        return {
-            content: result.content,
-            errors: inlineUtil.cloneArray(result.errors)
-        };
-    });
-};
-
-var getCssStylesheetLinks = function (doc) {
-    var links = doc.getElementsByTagName("link");
-
-    return Array.prototype.filter.call(links, function (link) {
-        return link.attributes.rel && link.attributes.rel.nodeValue === "stylesheet" &&
-            (!link.attributes.type || link.attributes.type.nodeValue === "text/css");
-    });
-};
-
-exports.loadAndInlineCssLinks = function (doc, options) {
-    var links = getCssStylesheetLinks(doc),
-        errors = [];
-
-    return inlineUtil.all(links.map(function (link) {
-        return loadLinkedCSS(link, options).then(function(result) {
-            substituteLinkWithInlineStyle(link, result.content + "\n");
-
-            errors = errors.concat(result.errors);
-        }, function (e) {
-            errors.push({
-                resourceType: "stylesheet",
-                url: e.url,
-                msg: "Unable to load stylesheet " + e.url
-            });
-        });
-    })).then(function () {
-        return errors;
-    });
-};
-
-/* Script inlining */
-
-var loadLinkedScript = function (script, options) {
-    var src = script.attributes.src.nodeValue,
-        documentBase = inlineUtil.getDocumentBaseUrl(script.ownerDocument),
-        ajaxOptions = inlineUtil.clone(options);
-
-    if (!ajaxOptions.baseUrl && documentBase) {
-        ajaxOptions.baseUrl = documentBase;
-    }
-
-    return inlineUtil.ajax(src, ajaxOptions)
-        .fail(function (e) {
-            throw {
-                resourceType: "script",
-                url: e.url,
-                msg: "Unable to load script " + e.url
-            };
-        });
-};
-
-var escapeClosingTags = function (text) {
-    // http://stackoverflow.com/questions/9246382/escaping-script-tag-inside-javascript
-    return text.replace(/<\//g, '<\\/');
-};
-
-var substituteExternalScriptWithInline = function (scriptNode, jsCode) {
-    scriptNode.attributes.removeNamedItem('src');
-    scriptNode.textContent = escapeClosingTags(jsCode);
-};
-
-var getScripts = function (doc) {
-    var scripts = doc.getElementsByTagName("script");
-
-    return Array.prototype.filter.call(scripts, function (script) {
-        return !!script.attributes.src;
-    });
-};
-
-exports.loadAndInlineScript = function (doc, options) {
-    var scripts = getScripts(doc);
-
-    return inlineUtil.collectAndReportErrors(scripts.map(function (script) {
-        return loadLinkedScript(script, options).then(function (jsCode) {
-            substituteExternalScriptWithInline(script, jsCode);
-        });
-    }));
-};
-
-/* Main */
-
-exports.inlineReferences = function (doc, options) {
-    var allErrors = [],
-        inlineFuncs = [
-            exports.loadAndInlineImages,
-            exports.loadAndInlineStyles,
-            exports.loadAndInlineCssLinks];
-
-    if (options.inlineScripts !== false) {
-        inlineFuncs.push(exports.loadAndInlineScript);
-    }
-
-    return inlineUtil.all(inlineFuncs.map(function (func) {
-        return func(doc, options)
-            .then(function (errors) {
-                allErrors = allErrors.concat(errors);
-            });
-    })).then(function () {
-        return allErrors;
-    });
-};
-
-},{"./inlineCss":26,"./inlineUtil":27}],26:[function(_dereq_,module,exports){
-"use strict";
-
-var cssom = _dereq_('cssom'),
-    ayepromise = _dereq_('ayepromise'),
-    inlineUtil = _dereq_('./inlineUtil');
-
-
-var updateCssPropertyValue = function (rule, property, value) {
-    rule.style.setProperty(property, value, rule.style.getPropertyPriority(property));
-};
-
-var rulesForCssTextFromBrowser = function (styleContent) {
-    var doc = document.implementation.createHTMLDocument(""),
-        styleElement = document.createElement("style"),
-        rules;
-
-    styleElement.textContent = styleContent;
-    // the style will only be parsed once it is added to a document
-    doc.body.appendChild(styleElement);
-    rules = styleElement.sheet.cssRules;
-
-    return Array.prototype.slice.call(rules);
-};
-
-var browserHasBackgroundImageUrlIssue = (function () {
-    // Checks for http://code.google.com/p/chromium/issues/detail?id=161644
-    var rules = rulesForCssTextFromBrowser('a{background:url(i)}');
-    return !rules.length || rules[0].cssText.indexOf('url()') >= 0;
-}());
-
-exports.rulesForCssText = function (styleContent) {
-    if (browserHasBackgroundImageUrlIssue && cssom.parse) {
-        return cssom.parse(styleContent).cssRules;
-    } else {
-        return rulesForCssTextFromBrowser(styleContent);
-    }
-};
-
-var findBackgroundImageRules = function (cssRules) {
-    return cssRules.filter(function (rule) {
-        return rule.type === window.CSSRule.STYLE_RULE && (rule.style.getPropertyValue('background-image') || rule.style.getPropertyValue('background'));
-    });
-};
-
-var findBackgroundDeclarations = function (rules) {
-    var backgroundDeclarations = [];
-
-    rules.forEach(function (rule) {
-        if (rule.style.getPropertyValue('background-image')) {
-            backgroundDeclarations.push({
-                property: 'background-image',
-                value: rule.style.getPropertyValue('background-image'),
-                rule: rule
-            });
-        } else if (rule.style.getPropertyValue('background')) {
-            backgroundDeclarations.push({
-                property: 'background',
-                value: rule.style.getPropertyValue('background'),
-                rule: rule
-            });
-        }
-    });
-
-    return backgroundDeclarations;
-};
-
-var findFontFaceRules = function (cssRules) {
-    return cssRules.filter(function (rule) {
-        return rule.type === window.CSSRule.FONT_FACE_RULE && rule.style.getPropertyValue("src");
-    });
-};
-
-exports.cssRulesToText = function (cssRules) {
-    return cssRules.reduce(function (cssText, rule) {
-        return cssText + rule.cssText;
-    }, '');
-};
-
-var unquoteString = function (quotedUrl) {
-    var doubleQuoteRegex = /^"(.*)"$/,
-        singleQuoteRegex = /^'(.*)'$/;
-
-    if (doubleQuoteRegex.test(quotedUrl)) {
-        return quotedUrl.replace(doubleQuoteRegex, "$1");
-    } else {
-        if (singleQuoteRegex.test(quotedUrl)) {
-            return quotedUrl.replace(singleQuoteRegex, "$1");
-        } else {
-            return quotedUrl;
-        }
-    }
-};
 
 var trimCSSWhitespace = function (url) {
     var whitespaceRegex = /^[\t\r\f\n ]*(.+?)[\t\r\f\n ]*$/;
@@ -4466,6 +4655,7 @@ var trimCSSWhitespace = function (url) {
     return url.replace(whitespaceRegex, "$1");
 };
 
+// TODO exporting this for the sake of unit testing. Should rather test the background value parser explicitly.
 exports.extractCssUrl = function (cssUrl) {
     var urlRegex = /^url\(([^\)]+)\)/,
         quotedUrl;
@@ -4475,67 +4665,7 @@ exports.extractCssUrl = function (cssUrl) {
     }
 
     quotedUrl = urlRegex.exec(cssUrl)[1];
-    return unquoteString(trimCSSWhitespace(quotedUrl));
-};
-
-var findFontFaceFormat = function (value) {
-    var fontFaceFormatRegex = /^format\(([^\)]+)\)/,
-        quotedFormat;
-
-    if (!fontFaceFormatRegex.test(value)) {
-        return null;
-    }
-
-    quotedFormat = fontFaceFormatRegex.exec(value)[1];
-    return unquoteString(quotedFormat);
-};
-
-var extractFontFaceSrcUrl = function (reference) {
-    var url, format = null;
-
-    try {
-        url = exports.extractCssUrl(reference[0]);
-        if (reference[1]) {
-            format = findFontFaceFormat(reference[1]);
-        }
-        return {
-            url: url,
-            format: format
-        };
-    } catch (e) {}
-};
-
-var exchangeRule = function (cssRules, rule, newRuleText) {
-    var ruleIdx = cssRules.indexOf(rule),
-        styleSheet = rule.parentStyleSheet;
-
-    // Generate a new rule
-    styleSheet.insertRule(newRuleText, ruleIdx+1);
-    styleSheet.deleteRule(ruleIdx);
-    // Exchange with the new
-    cssRules[ruleIdx] = styleSheet.cssRules[ruleIdx];
-};
-
-var findCSSImportRules = function (cssRules) {
-    return cssRules.filter(function (rule) {
-        return rule.type === window.CSSRule.IMPORT_RULE && rule.href;
-    });
-};
-
-// Workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=443978
-var changeFontFaceRuleSrc = function (cssRules, rule, newSrc) {
-    var newRuleText = '@font-face { font-family: ' + rule.style.getPropertyValue("font-family") + '; ';
-
-    if (rule.style.getPropertyValue("font-style")) {
-        newRuleText += 'font-style: ' + rule.style.getPropertyValue("font-style") + '; ';
-    }
-
-    if (rule.style.getPropertyValue("font-weight")) {
-        newRuleText += 'font-weight: ' + rule.style.getPropertyValue("font-weight") + '; ';
-    }
-
-    newRuleText += 'src: ' + newSrc + '}';
-    exchangeRule(cssRules, rule, newRuleText);
+    return cssSupport.unquoteString(trimCSSWhitespace(quotedUrl));
 };
 
 var sliceBackgroundDeclaration = function (backgroundDeclarationText) {
@@ -4587,7 +4717,7 @@ var findBackgroundImageUrlInValues = function (values) {
     }
 };
 
-var parseBackgroundDeclaration = function (backgroundValue) {
+exports.parse = function (backgroundValue) {
     var backgroundLayers = sliceBackgroundDeclaration(backgroundValue);
 
     return backgroundLayers.map(function (backgroundLayerValues) {
@@ -4607,29 +4737,7 @@ var parseBackgroundDeclaration = function (backgroundValue) {
     });
 };
 
-var findExternalBackgroundUrls = function (parsedBackground) {
-    var matchIndices = [];
-
-    parsedBackground.forEach(function (backgroundLayer, i) {
-        if (backgroundLayer.url && !inlineUtil.isDataUri(backgroundLayer.url)) {
-            matchIndices.push(i);
-        }
-    });
-
-    return matchIndices;
-};
-
-var findExternalFontFaceUrls = function (parsedFontFaceSources) {
-    var sourceIndices = [];
-    parsedFontFaceSources.forEach(function (sourceItem, i) {
-        if (sourceItem.url && !inlineUtil.isDataUri(sourceItem.url)) {
-            sourceIndices.push(i);
-        }
-    });
-    return sourceIndices;
-};
-
-var parsedBackgroundDeclarationToText = function (parsedBackground) {
+exports.serialize = function (parsedBackground) {
     var backgroundLayers = parsedBackground.map(function (backgroundLayer) {
         var values = [].concat(backgroundLayer.preUrl);
 
@@ -4646,68 +4754,407 @@ var parsedBackgroundDeclarationToText = function (parsedBackground) {
     return backgroundLayers.join(', ');
 };
 
-var sliceFontFaceSrcReferences = function (fontFaceSrc) {
-    var functionParamRegexS = "\\s*(?:\"[^\"]*\"|'[^']*'|[^\\(]+)\\s*",
-        referenceRegexS = "(local\\(" + functionParamRegexS + "\\))" + "|" +
-                          "(url\\(" + functionParamRegexS + "\\))" + "(?:\\s+(format\\(" + functionParamRegexS + "\\)))?",
-        simpleFontFaceSrcRegexS = "^\\s*(" + referenceRegexS + ")" +
-                                  "(?:\\s*,\\s*(" + referenceRegexS + "))*" +
-                                  "\\s*$",
-        referenceRegex = new RegExp(referenceRegexS, "g"),
-        repeatedMatch,
-        fontFaceSrcReferences = [],
-        getReferences = function (match) {
-            var references = [];
-            match.slice(1).forEach(function (elem) {
-                if (elem) {
-                    references.push(elem);
-                }
-            });
-            return references;
-        };
+},{"./cssSupport":29}],29:[function(_dereq_,module,exports){
+"use strict";
 
-    if (fontFaceSrc.match(new RegExp(simpleFontFaceSrcRegexS))) {
-        repeatedMatch = referenceRegex.exec(fontFaceSrc);
-        while (repeatedMatch) {
-            fontFaceSrcReferences.push(getReferences(repeatedMatch));
-            repeatedMatch = referenceRegex.exec(fontFaceSrc);
+var cssom = _dereq_('cssom');
+
+
+exports.unquoteString = function (quotedUrl) {
+    var doubleQuoteRegex = /^"(.*)"$/,
+        singleQuoteRegex = /^'(.*)'$/;
+
+    if (doubleQuoteRegex.test(quotedUrl)) {
+        return quotedUrl.replace(doubleQuoteRegex, "$1");
+    } else {
+        if (singleQuoteRegex.test(quotedUrl)) {
+            return quotedUrl.replace(singleQuoteRegex, "$1");
+        } else {
+            return quotedUrl;
         }
-        return fontFaceSrcReferences;
     }
-    // we should probably throw an exception here
-    return [];
 };
 
-var parseFontFaceSrcDeclaration = function (fontFaceSourceValue) {
-    var fontReferences = sliceFontFaceSrcReferences(fontFaceSourceValue);
+var rulesForCssTextFromBrowser = function (styleContent) {
+    var doc = document.implementation.createHTMLDocument(""),
+        styleElement = document.createElement("style"),
+        rules;
 
-    return fontReferences.map(function (reference) {
-        var fontSrc = extractFontFaceSrcUrl(reference);
+    styleElement.textContent = styleContent;
+    // the style will only be parsed once it is added to a document
+    doc.body.appendChild(styleElement);
+    rules = styleElement.sheet.cssRules;
 
-        if (fontSrc) {
-            return fontSrc;
-        } else {
-            return {
-                local: reference
+    return Array.prototype.slice.call(rules);
+};
+
+var browserHasBackgroundImageUrlIssue = (function () {
+    // Checks for http://code.google.com/p/chromium/issues/detail?id=161644
+    var rules = rulesForCssTextFromBrowser('a{background:url(i)}');
+    return !rules.length || rules[0].cssText.indexOf('url()') >= 0;
+}());
+
+exports.rulesForCssText = function (styleContent) {
+    if (browserHasBackgroundImageUrlIssue && cssom.parse) {
+        return cssom.parse(styleContent).cssRules;
+    } else {
+        return rulesForCssTextFromBrowser(styleContent);
+    }
+};
+
+exports.cssRulesToText = function (cssRules) {
+    return cssRules.reduce(function (cssText, rule) {
+        return cssText + rule.cssText;
+    }, '');
+};
+
+exports.exchangeRule = function (cssRules, rule, newRuleText) {
+    var ruleIdx = cssRules.indexOf(rule),
+        styleSheet = rule.parentStyleSheet;
+
+    // Generate a new rule
+    styleSheet.insertRule(newRuleText, ruleIdx+1);
+    styleSheet.deleteRule(ruleIdx);
+    // Exchange with the new
+    cssRules[ruleIdx] = styleSheet.cssRules[ruleIdx];
+};
+
+// Workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=443978
+exports.changeFontFaceRuleSrc = function (cssRules, rule, newSrc) {
+    var newRuleText = '@font-face { font-family: ' + rule.style.getPropertyValue("font-family") + '; ';
+
+    if (rule.style.getPropertyValue("font-style")) {
+        newRuleText += 'font-style: ' + rule.style.getPropertyValue("font-style") + '; ';
+    }
+
+    if (rule.style.getPropertyValue("font-weight")) {
+        newRuleText += 'font-weight: ' + rule.style.getPropertyValue("font-weight") + '; ';
+    }
+
+    newRuleText += 'src: ' + newSrc + '}';
+    exports.exchangeRule(cssRules, rule, newRuleText);
+};
+
+},{"cssom":26}],30:[function(_dereq_,module,exports){
+"use strict";
+
+var util = _dereq_('./util'),
+    inlineImage = _dereq_('./inlineImage'),
+    inlineScript = _dereq_('./inlineScript'),
+    inlineCss = _dereq_('./inlineCss'),
+    cssSupport = _dereq_('./cssSupport');
+
+
+var getUrlBasePath = function (url) {
+    return util.joinUrl(url, '.');
+};
+
+var parameterHashFunction = function (params) {
+    // HACK JSON.stringify is poor man's hashing;
+    // same objects might not receive same result as key order is not guaranteed
+    var a = params.map(function (param, idx) {
+        // Only include options relevant for method
+        if (idx === (params.length - 1)) {
+            param = {
+                // Two different HTML pages on the same path level have the same base path, but a different URL
+                baseUrl: getUrlBasePath(param.baseUrl)
             };
         }
+        return JSON.stringify(param);
+    });
+    return a;
+};
+
+var memoizeFunctionOnCaching = function (func, options) {
+    if ((options.cache !== false && options.cache !== 'none') && options.cacheBucket) {
+        return util.memoize(func, parameterHashFunction, options.cacheBucket);
+    } else {
+        return func;
+    }
+};
+
+/* Style inlining */
+
+var requestExternalsForStylesheet = function (styleContent, alreadyLoadedCssUrls, options) {
+    var cssRules = cssSupport.rulesForCssText(styleContent);
+
+    return inlineCss.loadCSSImportsForRules(cssRules, alreadyLoadedCssUrls, options).then(function (cssImportResult) {
+        return inlineCss.loadAndInlineCSSResourcesForRules(cssRules, options).then(function (cssResourcesResult) {
+            var errors = cssImportResult.errors.concat(cssResourcesResult.errors),
+                hasChanges = cssImportResult.hasChanges || cssResourcesResult.hasChanges;
+
+            if (hasChanges) {
+                styleContent = cssSupport.cssRulesToText(cssRules);
+            }
+
+            return {
+                hasChanges: hasChanges,
+                content: styleContent,
+                errors: errors
+            };
+        });
     });
 };
 
-var parsedFontFaceSrcDeclarationToText = function (parsedFontFaceSources) {
-    return parsedFontFaceSources.map(function (sourceItem) {
-        var itemValue;
+var loadAndInlineCssForStyle = function (style, options, alreadyLoadedCssUrls) {
+    var styleContent = style.textContent,
+        processExternals = memoizeFunctionOnCaching(requestExternalsForStylesheet, options);
 
-        if (sourceItem.url) {
-            itemValue = 'url("' + sourceItem.url + '")';
-            if (sourceItem.format) {
-                itemValue += ' format("' + sourceItem.format + '")';
-            }
-        } else {
-            itemValue = sourceItem.local;
+    return processExternals(styleContent, alreadyLoadedCssUrls, options).then(function (result) {
+        if (result.hasChanges) {
+            style.childNodes[0].nodeValue = result.content;
         }
-        return itemValue;
-    }).join(', ');
+
+        return util.cloneArray(result.errors);
+    });
+};
+
+var getCssStyleElements = function (doc) {
+    var styles = doc.getElementsByTagName("style");
+
+    return Array.prototype.filter.call(styles, function (style) {
+        return !style.attributes.type || style.attributes.type.nodeValue === "text/css";
+    });
+};
+
+exports.loadAndInlineStyles = function (doc, options) {
+    var styles = getCssStyleElements(doc),
+        allErrors = [],
+        alreadyLoadedCssUrls = [],
+        inlineOptions;
+
+    inlineOptions = util.clone(options);
+    inlineOptions.baseUrl = inlineOptions.baseUrl || util.getDocumentBaseUrl(doc);
+
+    return util.all(styles.map(function (style) {
+        return loadAndInlineCssForStyle(style, inlineOptions, alreadyLoadedCssUrls).then(function (errors) {
+            allErrors = allErrors.concat(errors);
+        });
+    })).then(function () {
+        return allErrors;
+    });
+};
+
+/* CSS link inlining */
+
+var substituteLinkWithInlineStyle = function (oldLinkNode, styleContent) {
+    var parent = oldLinkNode.parentNode,
+        styleNode;
+
+    styleContent = styleContent.trim();
+    if (styleContent) {
+        styleNode = oldLinkNode.ownerDocument.createElement("style");
+        styleNode.type = "text/css";
+        styleNode.appendChild(oldLinkNode.ownerDocument.createTextNode(styleContent));
+
+        parent.insertBefore(styleNode, oldLinkNode);
+    }
+
+    parent.removeChild(oldLinkNode);
+};
+
+var requestStylesheetAndInlineResources = function (url, options) {
+    return util.ajax(url, options)
+        .then(function (content) {
+            var cssRules = cssSupport.rulesForCssText(content);
+
+            return {
+                content: content,
+                cssRules: cssRules
+            };
+        })
+        .then(function (result) {
+            var hasChangesFromPathAdjustment = inlineCss.adjustPathsOfCssResources(url, result.cssRules);
+
+            return {
+                content: result.content,
+                cssRules: result.cssRules,
+                hasChanges: hasChangesFromPathAdjustment
+            };
+        })
+        .then(function (result) {
+            return inlineCss.loadCSSImportsForRules(result.cssRules, [], options)
+                .then(function (cssImportResult) {
+                    return {
+                        content: result.content,
+                        cssRules: result.cssRules,
+                        hasChanges: result.hasChanges || cssImportResult.hasChanges,
+                        errors: cssImportResult.errors
+                    };
+                });
+        })
+        .then(function (result) {
+            return inlineCss.loadAndInlineCSSResourcesForRules(result.cssRules, options)
+                .then(function (cssResourcesResult) {
+                    return {
+                        content: result.content,
+                        cssRules: result.cssRules,
+                        hasChanges: result.hasChanges || cssResourcesResult.hasChanges,
+                        errors: result.errors.concat(cssResourcesResult.errors)
+                    };
+                });
+        })
+        .then(function (result) {
+            var content = result.content;
+            if (result.hasChanges) {
+                content = cssSupport.cssRulesToText(result.cssRules);
+            }
+            return {
+                content: content,
+                errors: result.errors
+            };
+        });
+};
+
+var loadLinkedCSS = function (link, options) {
+    var cssHref = link.attributes.href.nodeValue,
+        documentBaseUrl = util.getDocumentBaseUrl(link.ownerDocument),
+        ajaxOptions = util.clone(options);
+
+    if (!ajaxOptions.baseUrl && documentBaseUrl) {
+        ajaxOptions.baseUrl = documentBaseUrl;
+    }
+
+    var processStylesheet = memoizeFunctionOnCaching(requestStylesheetAndInlineResources, options);
+
+    return processStylesheet(cssHref, ajaxOptions).then(function (result) {
+        return {
+            content: result.content,
+            errors: util.cloneArray(result.errors)
+        };
+    });
+};
+
+var getCssStylesheetLinks = function (doc) {
+    var links = doc.getElementsByTagName("link");
+
+    return Array.prototype.filter.call(links, function (link) {
+        return link.attributes.rel && link.attributes.rel.nodeValue === "stylesheet" &&
+            (!link.attributes.type || link.attributes.type.nodeValue === "text/css");
+    });
+};
+
+exports.loadAndInlineCssLinks = function (doc, options) {
+    var links = getCssStylesheetLinks(doc),
+        errors = [];
+
+    return util.all(links.map(function (link) {
+        return loadLinkedCSS(link, options).then(function(result) {
+            substituteLinkWithInlineStyle(link, result.content + "\n");
+
+            errors = errors.concat(result.errors);
+        }, function (e) {
+            errors.push({
+                resourceType: "stylesheet",
+                url: e.url,
+                msg: "Unable to load stylesheet " + e.url
+            });
+        });
+    })).then(function () {
+        return errors;
+    });
+};
+
+/* Main */
+
+exports.loadAndInlineImages = inlineImage.inline;
+exports.loadAndInlineScript = inlineScript.inline;
+
+exports.inlineReferences = function (doc, options) {
+    var allErrors = [],
+        inlineFuncs = [
+            exports.loadAndInlineImages,
+            exports.loadAndInlineStyles,
+            exports.loadAndInlineCssLinks];
+
+    if (options.inlineScripts !== false) {
+        inlineFuncs.push(exports.loadAndInlineScript);
+    }
+
+    return util.all(inlineFuncs.map(function (func) {
+        return func(doc, options)
+            .then(function (errors) {
+                allErrors = allErrors.concat(errors);
+            });
+    })).then(function () {
+        return allErrors;
+    });
+};
+
+},{"./cssSupport":29,"./inlineCss":31,"./inlineImage":32,"./inlineScript":33,"./util":34}],31:[function(_dereq_,module,exports){
+"use strict";
+
+var ayepromise = _dereq_('ayepromise'),
+    util = _dereq_('./util'),
+    cssSupport = _dereq_('./cssSupport'),
+    backgroundValueParser = _dereq_('./backgroundValueParser'),
+    fontFaceSrcValueParser = _dereq_('css-font-face-src');
+
+
+var updateCssPropertyValue = function (rule, property, value) {
+    rule.style.setProperty(property, value, rule.style.getPropertyPriority(property));
+};
+
+var findBackgroundImageRules = function (cssRules) {
+    return cssRules.filter(function (rule) {
+        return rule.type === window.CSSRule.STYLE_RULE && (rule.style.getPropertyValue('background-image') || rule.style.getPropertyValue('background'));
+    });
+};
+
+var findBackgroundDeclarations = function (rules) {
+    var backgroundDeclarations = [];
+
+    rules.forEach(function (rule) {
+        if (rule.style.getPropertyValue('background-image')) {
+            backgroundDeclarations.push({
+                property: 'background-image',
+                value: rule.style.getPropertyValue('background-image'),
+                rule: rule
+            });
+        } else if (rule.style.getPropertyValue('background')) {
+            backgroundDeclarations.push({
+                property: 'background',
+                value: rule.style.getPropertyValue('background'),
+                rule: rule
+            });
+        }
+    });
+
+    return backgroundDeclarations;
+};
+
+var findFontFaceRules = function (cssRules) {
+    return cssRules.filter(function (rule) {
+        return rule.type === window.CSSRule.FONT_FACE_RULE && rule.style.getPropertyValue("src");
+    });
+};
+
+var findCSSImportRules = function (cssRules) {
+    return cssRules.filter(function (rule) {
+        return rule.type === window.CSSRule.IMPORT_RULE && rule.href;
+    });
+};
+
+var findExternalBackgroundUrls = function (parsedBackground) {
+    var matchIndices = [];
+
+    parsedBackground.forEach(function (backgroundLayer, i) {
+        if (backgroundLayer.url && !util.isDataUri(backgroundLayer.url)) {
+            matchIndices.push(i);
+        }
+    });
+
+    return matchIndices;
+};
+
+var findExternalFontFaceUrls = function (parsedFontFaceSources) {
+    var sourceIndices = [];
+    parsedFontFaceSources.forEach(function (sourceItem, i) {
+        if (sourceItem.url && !util.isDataUri(sourceItem.url)) {
+            sourceIndices.push(i);
+        }
+    });
+    return sourceIndices;
 };
 
 exports.adjustPathsOfCssResources = function (baseUrl, cssRules) {
@@ -4716,18 +5163,18 @@ exports.adjustPathsOfCssResources = function (baseUrl, cssRules) {
         change = false;
 
     backgroundDeclarations.forEach(function (declaration) {
-        var parsedBackground = parseBackgroundDeclaration(declaration.value),
+        var parsedBackground = backgroundValueParser.parse(declaration.value),
             externalBackgroundIndices = findExternalBackgroundUrls(parsedBackground),
             backgroundValue;
 
         if (externalBackgroundIndices.length > 0) {
             externalBackgroundIndices.forEach(function (backgroundLayerIndex) {
                 var relativeUrl = parsedBackground[backgroundLayerIndex].url,
-                    url = inlineUtil.joinUrl(baseUrl, relativeUrl);
+                    url = util.joinUrl(baseUrl, relativeUrl);
                 parsedBackground[backgroundLayerIndex].url = url;
             });
 
-            backgroundValue = parsedBackgroundDeclarationToText(parsedBackground);
+            backgroundValue = backgroundValueParser.serialize(parsedBackground);
 
             updateCssPropertyValue(declaration.rule, declaration.property, backgroundValue);
 
@@ -4736,27 +5183,33 @@ exports.adjustPathsOfCssResources = function (baseUrl, cssRules) {
     });
     findFontFaceRules(cssRules).forEach(function (rule) {
         var fontFaceSrcDeclaration = rule.style.getPropertyValue("src"),
-            parsedFontFaceSources = parseFontFaceSrcDeclaration(fontFaceSrcDeclaration),
-            externalFontFaceUrlIndices = findExternalFontFaceUrls(parsedFontFaceSources);
+            parsedFontFaceSources, externalFontFaceUrlIndices;
+
+        try {
+            parsedFontFaceSources = fontFaceSrcValueParser.parse(fontFaceSrcDeclaration);
+        } catch (e) {
+            return;
+        }
+        externalFontFaceUrlIndices = findExternalFontFaceUrls(parsedFontFaceSources);
 
         if (externalFontFaceUrlIndices.length > 0) {
             externalFontFaceUrlIndices.forEach(function (fontFaceUrlIndex) {
                 var relativeUrl = parsedFontFaceSources[fontFaceUrlIndex].url,
-                    url = inlineUtil.joinUrl(baseUrl, relativeUrl);
+                    url = util.joinUrl(baseUrl, relativeUrl);
 
                 parsedFontFaceSources[fontFaceUrlIndex].url = url;
             });
 
-            changeFontFaceRuleSrc(cssRules, rule, parsedFontFaceSrcDeclarationToText(parsedFontFaceSources));
+            cssSupport.changeFontFaceRuleSrc(cssRules, rule, fontFaceSrcValueParser.serialize(parsedFontFaceSources));
 
             change = true;
         }
     });
     findCSSImportRules(cssRules).forEach(function (rule) {
         var cssUrl = rule.href,
-            url = inlineUtil.joinUrl(baseUrl, cssUrl);
+            url = util.joinUrl(baseUrl, cssUrl);
 
-        exchangeRule(cssRules, rule, "@import url(" + url + ");");
+        cssSupport.exchangeRule(cssRules, rule, "@import url(" + url + ");");
 
         change = true;
     });
@@ -4776,13 +5229,6 @@ var substituteRule = function (cssRules, rule, newCssRules) {
     });
 };
 
-var isQuotedString = function (string) {
-    var doubleQuoteRegex = /^"(.*)"$/,
-        singleQuoteRegex = /^'(.*)'$/;
-
-    return doubleQuoteRegex.test(string) || singleQuoteRegex.test(string);
-};
-
 var fulfilledPromise = function (value) {
     var defer = ayepromise.defer();
     defer.resolve(value);
@@ -4793,11 +5239,9 @@ var loadAndInlineCSSImport = function (cssRules, rule, alreadyLoadedCssUrls, opt
     var url = rule.href,
         cssHrefRelativeToDoc;
 
-    if (isQuotedString(url)) {
-        url = unquoteString(url);
-    }
+    url = cssSupport.unquoteString(url);
 
-    cssHrefRelativeToDoc = inlineUtil.joinUrl(options.baseUrl, url);
+    cssHrefRelativeToDoc = util.joinUrl(options.baseUrl, url);
 
     if (alreadyLoadedCssUrls.indexOf(cssHrefRelativeToDoc) >= 0) {
         // Remove URL by adding empty string
@@ -4807,9 +5251,9 @@ var loadAndInlineCSSImport = function (cssRules, rule, alreadyLoadedCssUrls, opt
         alreadyLoadedCssUrls.push(cssHrefRelativeToDoc);
     }
 
-    return inlineUtil.ajax(url, options)
+    return util.ajax(url, options)
         .then(function (cssText) {
-            var externalCssRules = exports.rulesForCssText(cssText);
+            var externalCssRules = cssSupport.rulesForCssText(cssText);
 
             // Recursively follow @import statements
             return exports.loadCSSImportsForRules(externalCssRules, alreadyLoadedCssUrls, options)
@@ -4834,7 +5278,7 @@ exports.loadCSSImportsForRules = function (cssRules, alreadyLoadedCssUrls, optio
         errors = [],
         hasChanges = false;
 
-    return inlineUtil.all(rulesToInline.map(function (rule) {
+    return util.all(rulesToInline.map(function (rule) {
         return loadAndInlineCSSImport(cssRules, rule, alreadyLoadedCssUrls, options).then(function (moreErrors) {
             errors = errors.concat(moreErrors);
 
@@ -4853,14 +5297,14 @@ exports.loadCSSImportsForRules = function (cssRules, alreadyLoadedCssUrls, optio
 /* CSS linked resource inlining */
 
 var loadAndInlineBackgroundImages = function (backgroundValue, options) {
-    var parsedBackground = parseBackgroundDeclaration(backgroundValue),
+    var parsedBackground = backgroundValueParser.parse(backgroundValue),
         externalBackgroundLayerIndices = findExternalBackgroundUrls(parsedBackground),
         hasChanges = false;
 
-    return inlineUtil.collectAndReportErrors(externalBackgroundLayerIndices.map(function (backgroundLayerIndex) {
+    return util.collectAndReportErrors(externalBackgroundLayerIndices.map(function (backgroundLayerIndex) {
         var url = parsedBackground[backgroundLayerIndex].url;
 
-        return inlineUtil.getDataURIForImageURL(url, options)
+        return util.getDataURIForImageURL(url, options)
             .then(function (dataURI) {
                 parsedBackground[backgroundLayerIndex].url = dataURI;
 
@@ -4874,7 +5318,7 @@ var loadAndInlineBackgroundImages = function (backgroundValue, options) {
             });
     })).then(function (errors) {
         return {
-            backgroundValue: parsedBackgroundDeclarationToText(parsedBackground),
+            backgroundValue: backgroundValueParser.serialize(parsedBackground),
             hasChanges: hasChanges,
             errors: errors
         };
@@ -4887,7 +5331,7 @@ var iterateOverRulesAndInlineBackgroundImages = function (cssRules, options) {
         errors = [],
         cssHasChanges = false;
 
-    return inlineUtil.all(backgroundDeclarations.map(function (declaration) {
+    return util.all(backgroundDeclarations.map(function (declaration) {
         return loadAndInlineBackgroundImages(declaration.value, options)
             .then(function (result) {
                 if (result.hasChanges) {
@@ -4907,15 +5351,21 @@ var iterateOverRulesAndInlineBackgroundImages = function (cssRules, options) {
 };
 
 var loadAndInlineFontFace = function (srcDeclarationValue, options) {
-    var parsedFontFaceSources = parseFontFaceSrcDeclaration(srcDeclarationValue),
-        externalFontFaceUrlIndices = findExternalFontFaceUrls(parsedFontFaceSources),
-        hasChanges = false;
+    var hasChanges = false,
+        parsedFontFaceSources, externalFontFaceUrlIndices;
 
-    return inlineUtil.collectAndReportErrors(externalFontFaceUrlIndices.map(function (urlIndex) {
+    try {
+        parsedFontFaceSources = fontFaceSrcValueParser.parse(srcDeclarationValue);
+    } catch (e) {
+        parsedFontFaceSources = [];
+    }
+    externalFontFaceUrlIndices = findExternalFontFaceUrls(parsedFontFaceSources);
+
+    return util.collectAndReportErrors(externalFontFaceUrlIndices.map(function (urlIndex) {
         var fontSrc = parsedFontFaceSources[urlIndex],
             format = fontSrc.format || "woff";
 
-        return inlineUtil.binaryAjax(fontSrc.url, options)
+        return util.binaryAjax(fontSrc.url, options)
             .then(function (content) {
                 var base64Content = btoa(content);
                 fontSrc.url = 'data:font/' + format + ';base64,' + base64Content;
@@ -4930,7 +5380,7 @@ var loadAndInlineFontFace = function (srcDeclarationValue, options) {
             });
     })).then(function (errors) {
         return {
-            srcDeclarationValue: parsedFontFaceSrcDeclarationToText(parsedFontFaceSources),
+            srcDeclarationValue: fontFaceSrcValueParser.serialize(parsedFontFaceSources),
             hasChanges: hasChanges,
             errors: errors
         };
@@ -4942,12 +5392,12 @@ var iterateOverRulesAndInlineFontFace = function (cssRules, options) {
         errors = [],
         hasChanges = false;
 
-    return inlineUtil.all(rulesToInline.map(function (rule) {
+    return util.all(rulesToInline.map(function (rule) {
         var srcDeclarationValue = rule.style.getPropertyValue("src");
 
         return loadAndInlineFontFace(srcDeclarationValue, options).then(function (result) {
             if (result.hasChanges) {
-                changeFontFaceRuleSrc(cssRules, rule, result.srcDeclarationValue);
+                cssSupport.changeFontFaceRuleSrc(cssRules, rule, result.srcDeclarationValue);
 
                 hasChanges = true;
             }
@@ -4966,7 +5416,7 @@ exports.loadAndInlineCSSResourcesForRules = function (cssRules, options) {
     var hasChanges = false,
         errors = [];
 
-    return inlineUtil.all([iterateOverRulesAndInlineBackgroundImages, iterateOverRulesAndInlineFontFace].map(function (func) {
+    return util.all([iterateOverRulesAndInlineBackgroundImages, iterateOverRulesAndInlineFontFace].map(function (func) {
         return func(cssRules, options)
             .then(function (result) {
                 hasChanges = hasChanges || result.hasChanges;
@@ -4980,7 +5430,117 @@ exports.loadAndInlineCSSResourcesForRules = function (cssRules, options) {
     });
 };
 
-},{"./inlineUtil":27,"ayepromise":6,"cssom":23}],27:[function(_dereq_,module,exports){
+},{"./backgroundValueParser":28,"./cssSupport":29,"./util":34,"ayepromise":1,"css-font-face-src":8}],32:[function(_dereq_,module,exports){
+"use strict";
+
+var util = _dereq_('./util');
+
+
+var encodeImageAsDataURI = function (image, options) {
+    var url = image.attributes.src ? image.attributes.src.nodeValue : null,
+        documentBase = util.getDocumentBaseUrl(image.ownerDocument),
+        ajaxOptions = util.clone(options);
+
+    if (!ajaxOptions.baseUrl && documentBase) {
+        ajaxOptions.baseUrl = documentBase;
+    }
+
+    return util.getDataURIForImageURL(url, ajaxOptions)
+        .then(function (dataURI) {
+            return dataURI;
+        }, function (e) {
+            throw {
+                resourceType: "image",
+                url: e.url,
+                msg: "Unable to load image " + e.url
+            };
+        });
+};
+
+var filterExternalImages = function (images) {
+    return images.filter(function (image) {
+        var url = image.attributes.src ? image.attributes.src.nodeValue : null;
+
+        return url !== null && !util.isDataUri(url);
+    });
+};
+
+var filterInputsForImageType = function (inputs) {
+    return Array.prototype.filter.call(inputs, function (input) {
+        return input.type === "image";
+    });
+};
+
+var toArray = function (arrayLike) {
+    return Array.prototype.slice.call(arrayLike);
+};
+
+exports.inline = function (doc, options) {
+    var images = toArray(doc.getElementsByTagName("img")),
+        imageInputs = filterInputsForImageType(doc.getElementsByTagName("input")),
+        externalImages = filterExternalImages(images.concat(imageInputs));
+
+    return util.collectAndReportErrors(externalImages.map(function (image) {
+        return encodeImageAsDataURI(image, options).then(function (dataURI) {
+            image.attributes.src.nodeValue = dataURI;
+        });
+    }));
+};
+
+},{"./util":34}],33:[function(_dereq_,module,exports){
+"use strict";
+
+var util = _dereq_('./util');
+
+
+var loadLinkedScript = function (script, options) {
+    var src = script.attributes.src.nodeValue,
+        documentBase = util.getDocumentBaseUrl(script.ownerDocument),
+        ajaxOptions = util.clone(options);
+
+    if (!ajaxOptions.baseUrl && documentBase) {
+        ajaxOptions.baseUrl = documentBase;
+    }
+
+    return util.ajax(src, ajaxOptions)
+        .fail(function (e) {
+            throw {
+                resourceType: "script",
+                url: e.url,
+                msg: "Unable to load script " + e.url
+            };
+        });
+};
+
+var escapeClosingTags = function (text) {
+    // http://stackoverflow.com/questions/9246382/escaping-script-tag-inside-javascript
+    return text.replace(/<\//g, '<\\/');
+};
+
+var substituteExternalScriptWithInline = function (scriptNode, jsCode) {
+    scriptNode.attributes.removeNamedItem('src');
+    scriptNode.textContent = escapeClosingTags(jsCode);
+};
+
+var getScripts = function (doc) {
+    var scripts = doc.getElementsByTagName("script");
+
+    return Array.prototype.filter.call(scripts, function (script) {
+        return !!script.attributes.src;
+    });
+};
+
+exports.inline = function (doc, options) {
+    var scripts = getScripts(doc);
+
+    return util.collectAndReportErrors(scripts.map(function (script) {
+        return loadLinkedScript(script, options).then(function (jsCode) {
+            substituteExternalScriptWithInline(script, jsCode);
+        });
+    }));
+};
+
+},{"./util":34}],34:[function(_dereq_,module,exports){
 "use strict";
 
 var url = _dereq_('url'),
@@ -5011,6 +5571,9 @@ exports.cloneArray = function (nodeList) {
 };
 
 exports.joinUrl = function (baseUrl, relUrl) {
+    if (!baseUrl) {
+        return relUrl;
+    }
     return url.resolve(baseUrl, relUrl);
 };
 
@@ -5177,8 +5740,8 @@ exports.memoize = function (func, hasher, memo) {
     };
 };
 
-},{"ayepromise":6,"url":5}]},{},[25])
-(25)
+},{"ayepromise":1,"url":6}]},{},[30])
+(30)
 });
 var csscriticLib = {};
 
