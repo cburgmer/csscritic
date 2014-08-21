@@ -1,46 +1,15 @@
-[{
-    "pageUrl": "test/ui/failingTest.html",
-    "fingerprint": "351ca2e4c56d8c4f820f930b0e997cb4ddd93086ee7fa6d44343126e"
-}, {
-    "pageUrl": "test/ui/failingTestMissingResources.html",
-    "fingerprint": "0b7d6b6952d7e368aa051d2737a6cb18961792b858b4b3ffd85b54d6"
-}, {
-    "pageUrl": "test/ui/missingBrowserSupport.html",
-    "fingerprint": "29ae275e086726ac203256d2ebea3f5f22bcd635e0b38212f1471c61"
-}, {
-    "pageUrl": "test/ui/missingPage.html",
-    "fingerprint": "7fa7a28de52368fa1b4507ec62ef9a43a617391cf35b3fbf279ae883"
-}, {
-    "pageUrl": "test/ui/missingReference.html",
-    "fingerprint": "8a583537f26f09fde748742cabb4211d3f46c5ff157169870a666739"
-}, {
-    "pageUrl": "test/ui/missingReferenceMissingResources.html",
-    "fingerprint": "94546cbf9a7403026c2334a45d14a6734783ac507d4da3b1e86fa44b"
-}, {
-    "pageUrl": "test/ui/passedTest.html",
-    "fingerprint": "7e10e1b8c62ab71f9fc36da444484efac6284b997e5cd57beedcf895"
-}, {
-    "pageUrl": "test/ui/passedTestMissingResources.html",
-    "fingerprint": "c794014884bfe8446042ffa6eac4d67b8d2d6d75e802b2812c28f1f1"
-}, {
-    "pageUrl": "test/ui/previewTooltip.html",
-    "fingerprint": "d27d41b30dbd659adb0e176c5bc90682549cce15a7372744fd744fdb"
-}, {
-    "pageUrl": "test/ui/startingTest.html",
-    "fingerprint": "f5e0fd1b1104d71861f9495ae8d9f414a40de911e1cc412dbfc133a1"
-}, {
-    "pageUrl": "test/ui/statusBreakAround.html",
-    "fingerprint": "d443dfc3ec71662b5d156f4e7b121f083c7e414976b86ea431ee428a"
-}, {
-    "pageUrl": "test/ui/testWithASingleParameter.html",
-    "fingerprint": "fe76870a20150bf4737deec876fcb1c183f6cd565a0d1b7e1af1a73b"
-}, {
-    "pageUrl": "test/ui/testWithMultipleParameters.html",
-    "fingerprint": "f0d504d979ae31b3188433dafa6ea2702b9ead96f3c7e7a699ec396c"
-}, {
-    "pageUrl": "test/ui/twoTests.html",
-    "fingerprint": "d5b48b6aa3840d3cb6ff6d9c104ff9cd272df46f4e3ed3489b21e813"
-}, {
-    "pageUrl": "test/ui/durationCount.html",
-    "fingerprint": "5f6a818669063bd010a50ff8f4ed04b5a937e057d38825374d2b448b"
-}]
+[{"pageUrl": "test/ui/durationCount.html", "fingerprint": "987be7b0aed801e7eec94e7c8f2246b7547fb14769f5a2f8e34c673e"},
+{"pageUrl": "test/ui/failingTest.html", "fingerprint": "4a10c7d488b98efe3bffe3b0398b889f15bea21ce6737a3236a28f2e"},
+{"pageUrl": "test/ui/failingTestMissingResources.html", "fingerprint": "0f0d09db727c7a77c2e4c815a46b612cd72c0e44eeb5c5ca0a4c2da4"},
+{"pageUrl": "test/ui/missingBrowserSupport.html", "fingerprint": "a74142c145f55c9c709ac41b512d01f78ae2b8be1f8095657881e0ba"},
+{"pageUrl": "test/ui/missingPage.html", "fingerprint": "71233bd5bfcf84855ef943b5343510b534fad814f6e9ef3ed938afcf"},
+{"pageUrl": "test/ui/missingReference.html", "fingerprint": "8a13c8073a9754384e3ff0faf13be75758133db64bfdd82c9494ffe2"},
+{"pageUrl": "test/ui/missingReferenceMissingResources.html", "fingerprint": "8e54f48178ded5fdb0b8c46b5492a0a805be92cf8e55515a3acd32d9"},
+{"pageUrl": "test/ui/passedTest.html", "fingerprint": "d77b4dd8e894d8b774d3ac524af4e36adc845d669eb003772a60998a"},
+{"pageUrl": "test/ui/passedTestMissingResources.html", "fingerprint": "915fbf4c74ad9dac417a9c1c694b246903c47f84e888f581bbb924eb"},
+{"pageUrl": "test/ui/previewTooltip.html", "fingerprint": "357e7f3fce9d262198f491671634d69092c38a5f47c92e9fa83325cc"},
+{"pageUrl": "test/ui/startingTest.html", "fingerprint": "fa25f55478a6a34c721cd8c24b3d4730cd4d37efaeae1fcd83394282"},
+{"pageUrl": "test/ui/statusBreakAround.html", "fingerprint": "9960412c903ffedf5ddbdd89d089ccd05649256d7c338c2479c3d834"},
+{"pageUrl": "test/ui/testWithASingleParameter.html", "fingerprint": "e451abbbd954a6385cef38dc2d2ac0da0e1363f06e94b7f5c2654555"},
+{"pageUrl": "test/ui/testWithMultipleParameters.html", "fingerprint": "44eb585525cd3b8c1a2395cb62cbb220985cfbc3364a97f4747a6f81"},
+{"pageUrl": "test/ui/twoTests.html", "fingerprint": "b1c743e97a403c68cd3aeffe7488c9cd73de9dc32773717e41226e17"}]
