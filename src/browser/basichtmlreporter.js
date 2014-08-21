@@ -67,56 +67,56 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
     var createPageCanvasContainer = function (result, withCaption) {
         var caption = '',
-            outerPageImageContainer, pageImageContainer, innerPageImageContainer;
+            currentPageSection, currentPageResizableCanvas, currentPageImageContainer;
 
         if (withCaption) {
             caption = '<span class="caption">Page</span>';
         }
 
-        outerPageImageContainer = elementFor(template(
-            '<div class="outerPageImageContainer">' +
+        currentPageSection = elementFor(template(
+            '<div class="currentPageSection">' +
             caption +
-            '<div class="pageImageContainer" style="width: {{width}}px; height: {{height}}px;">' +
-            '<div class="innerPageImageContainer"></div>' +
+            '<div class="currentPageResizableCanvas" style="width: {{width}}px; height: {{height}}px;">' +
+            '<div class="currentPageImageContainer"></div>' +
             '</div>' +
             '</div>', {
             width: result.pageImage.width,
             height: result.pageImage.height
         }));
 
-        pageImageContainer = outerPageImageContainer.querySelector('.pageImageContainer');
-        innerPageImageContainer = outerPageImageContainer.querySelector('.innerPageImageContainer');
+        currentPageResizableCanvas = currentPageSection.querySelector('.currentPageResizableCanvas');
+        currentPageImageContainer = currentPageSection.querySelector('.currentPageImageContainer');
 
-        innerPageImageContainer.appendChild(result.pageImage);
+        currentPageImageContainer.appendChild(result.pageImage);
 
-        registerResizeHandler(pageImageContainer, function (width, height) {
+        registerResizeHandler(currentPageResizableCanvas, function (width, height) {
             var oldImage = result.pageImage;
 
             result.resizePageImage(width, height).then(function (updatedImage) {
-                pageImageContainer.style.width = updatedImage.width + "px";
-                pageImageContainer.style.height = updatedImage.height + "px";
+                currentPageResizableCanvas.style.width = updatedImage.width + "px";
+                currentPageResizableCanvas.style.height = updatedImage.height + "px";
 
-                innerPageImageContainer.removeChild(oldImage);
-                innerPageImageContainer.appendChild(updatedImage);
+                currentPageImageContainer.removeChild(oldImage);
+                currentPageImageContainer.appendChild(updatedImage);
             });
         });
 
-        return outerPageImageContainer;
+        return currentPageSection;
     };
 
     var createReferenceImageContainer = function (result) {
-        var outerReferenceImageContainer = elementFor(
-                '<div class="outerReferenceImageContainer">' +
+        var referenceSection = elementFor(
+                '<div class="referenceSection">' +
                 '<span class="caption">Reference</span>' +
                 '<div class="referenceImageContainer">' +
                 '</div>' +
                 '</div>'
             );
 
-        var referenceImageContainer = outerReferenceImageContainer.querySelector('.referenceImageContainer');
+        var referenceImageContainer = referenceSection.querySelector('.referenceImageContainer');
         referenceImageContainer.appendChild(result.referenceImage);
 
-        return outerReferenceImageContainer;
+        return referenceSection;
     };
 
     var createAcceptHint = function (result, parameters) {

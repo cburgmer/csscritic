@@ -85,7 +85,7 @@ window.testHelper = (function () {
     };
 
     testHelper.increasePageImageSizeToShowTransparentBackground = function () {
-        var elements = document.getElementsByClassName("pageImageContainer");
+        var elements = document.getElementsByClassName("currentPageResizableCanvas");
         Array.prototype.forEach.call(elements, function (elem) {
             elem.style.setProperty("width", "120px");
             elem.style.setProperty("height", "110px");
