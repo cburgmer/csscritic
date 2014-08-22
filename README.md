@@ -33,7 +33,12 @@ CSS Critic checks your current layout constantly against a reference image you h
 
 2. Register your page under test via:
 
-        csscritic.add(PUT_THE_PAGE_URL_HERE);
+        csscritic.add({
+            url: 'SOME_URL', // link to the test case HTML document
+            // Optionally:
+            hover: 'A.SELECTOR', // element receiving a :hover effect
+            active: 'A.SELECTOR' // element receiving an :active effect
+        });
         csscritic.execute();
 
 3. Open the RegressionRunner.html in Firefox for the first time and save the resulting image as future reference.
