@@ -65,6 +65,16 @@ describe("Utility", function () {
             util.ajax("non_existing_url.html");
             expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url.html?_=43');
         });
+
+        it("should not break existing query parameters", function () {
+            var ajaxRequest = jasmine.createSpyObj("ajaxRequest", ["open", "addEventListener", "overrideMimeType", "send"]);
+            spyOn(window.Date, 'now').and.returnValue(42);
+            spyOn(window, "XMLHttpRequest").and.returnValue(ajaxRequest);
+
+            util.ajax("non_existing_url?someParam=foo");
+
+            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual('non_existing_url?someParam=foo&_=42');
+        });
     });
 
     describe("loadAsBlob", function () {

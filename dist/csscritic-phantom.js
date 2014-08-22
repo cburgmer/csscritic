@@ -6580,7 +6580,13 @@ csscriticLib.util = function () {
     };
 
     var getUncachableURL = function (url) {
-        return url + "?_=" + Date.now();
+        var delimiter;
+        if (url.indexOf("?") < 0) {
+            delimiter = "?";
+        } else {
+            delimiter = "&";
+        }
+        return url + delimiter + "_=" + Date.now();
     };
 
     module.ajax = function (url) {
