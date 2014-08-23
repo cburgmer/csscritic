@@ -187,6 +187,18 @@ describe("Basic HTML reporter", function () {
             };
         };
 
+        var aFixedWidthFailingTest = function () {
+            return {
+                status: "failed",
+                testCase: {
+                    url: "page_url"
+                },
+                pageImage: htmlImage,
+                acceptPage: acceptPageSpy,
+                referenceImage: referenceImage
+            };
+        };
+
         beforeEach(function () {
             resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function () {
                 return testHelper.successfulPromiseFake(updatedReferenceImage);
@@ -242,6 +254,18 @@ describe("Basic HTML reporter", function () {
             expect(acceptPageSpy).toHaveBeenCalled();
         });
 
+        it("should mark the rendered page image as resizable", function () {
+            reporter.reportComparison(aFailingTest());
+
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection.resizable")).toExist();
+        });
+
+        it("should mark the rendered page with a preset size as not resizable", function () {
+            reporter.reportComparison(aFixedWidthFailingTest());
+
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection")).not.toHaveClass('resizable');
+        });
+
         it("should resize the page canvas when user resizes the container", function () {
             reporter.reportComparison(aFailingTest());
 
@@ -267,6 +291,17 @@ describe("Basic HTML reporter", function () {
                 },
                 pageImage: htmlImage,
                 resizePageImage: resizePageImageSpy,
+                acceptPage: acceptPageSpy
+            };
+        };
+
+        var aFixedWidthTestWithMissingReference = function () {
+            return {
+                status: "referenceMissing",
+                testCase: {
+                    url: "page_url<img>"
+                },
+                pageImage: htmlImage,
                 acceptPage: acceptPageSpy
             };
         };
@@ -305,6 +340,18 @@ describe("Basic HTML reporter", function () {
             $("#csscritic_basichtmlreporter .comparison .saveHint button").click();
 
             expect(acceptPageSpy).toHaveBeenCalled();
+        });
+
+        it("should mark the rendered page as resizable", function () {
+            reporter.reportComparison(aTestWithMissingReference());
+
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection.resizable")).toExist();
+        });
+
+        it("should mark the rendered page with a preset size as not resizable", function () {
+            reporter.reportComparison(aFixedWidthTestWithMissingReference());
+
+            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection")).not.toHaveClass('resizable');
         });
 
         it("should resize the canvas when user resizes the container", function () {

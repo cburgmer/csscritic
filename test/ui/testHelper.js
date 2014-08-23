@@ -40,7 +40,7 @@ window.testHelper = (function () {
         return mocks;
     };
 
-    testHelper.comparison = function (status, testCase, renderErrors) {
+    testHelper.comparison = function (status, testCase, renderErrors, resizable) {
         var dummyFunc = function () {},
             mocks = setUpMocks(),
             comparison;
@@ -68,7 +68,9 @@ window.testHelper = (function () {
         }
 
         if (status === 'failed' || status === 'referenceMissing') {
-            comparison.resizePageImage = dummyFunc;
+            if (resizable !== false) {
+                comparison.resizePageImage = dummyFunc;
+            }
             comparison.acceptPage = dummyFunc;
         }
 

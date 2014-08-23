@@ -90,7 +90,7 @@
 
 /* Pure-CSS image resizing */
 
-#csscritic_basichtmlreporter .currentPageResizableCanvas {
+#csscritic_basichtmlreporter .resizable .currentPageResizableCanvas {
     resize: both;               /* Use CSS3 native resizing */
     overflow: hidden;
     padding: 0 10px 10px 0;     /* Show the dnd handle in the bottom right corner */
@@ -152,7 +152,7 @@
     position: relative;
 }
 
-#csscritic_basichtmlreporter .comparison:hover .currentPageSection:after,
+#csscritic_basichtmlreporter .comparison:hover .resizable.currentPageSection:after,
 #csscritic_basichtmlreporter .comparison:hover .differenceCanvasContainer:after {
     /* Tooltip for difference image */
     position: absolute;
@@ -178,7 +178,7 @@
     transform: translateX(100%);
 }
 
-#csscritic_basichtmlreporter .comparison:hover .currentPageSection:after {
+#csscritic_basichtmlreporter .comparison:hover .resizable.currentPageSection:after {
     content: "< Drag lower right corner to resize";
     margin-right: -5px;
     margin-bottom: 10px;

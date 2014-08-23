@@ -18,6 +18,10 @@
                 url: 'test/ui/failingTest.html',
                 hover: '.updateHint button'
             });
+            csscritic.add({
+                url: 'test/ui/failingNonResizableTest.html',
+                hover: '.comparison'
+            });
             csscritic.add('test/ui/missingReference.html');
             csscritic.add({
                 url: 'test/ui/missingReference.html',
@@ -27,6 +31,10 @@
                 url: 'test/ui/missingReference.html',
                 active: '.saveHint button',
                 hover: '.saveHint button'
+            });
+            csscritic.add({
+                url: 'test/ui/missingReferenceNonResizable.html',
+                hover: '.comparison'
             });
             csscritic.add('test/ui/passedTest.html');
             csscritic.add('test/ui/missingPage.html');

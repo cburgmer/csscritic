@@ -89,17 +89,21 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
         currentPageImageContainer.appendChild(result.pageImage);
 
-        registerResizeHandler(currentPageResizableCanvas, function (width, height) {
-            var oldImage = result.pageImage;
+        if (result.resizePageImage) {
+            currentPageSection.classList.add('resizable');
 
-            result.resizePageImage(width, height).then(function (updatedImage) {
-                currentPageResizableCanvas.style.width = updatedImage.width + "px";
-                currentPageResizableCanvas.style.height = updatedImage.height + "px";
+            registerResizeHandler(currentPageResizableCanvas, function (width, height) {
+                var oldImage = result.pageImage;
 
-                currentPageImageContainer.removeChild(oldImage);
-                currentPageImageContainer.appendChild(updatedImage);
+                result.resizePageImage(width, height).then(function (updatedImage) {
+                    currentPageResizableCanvas.style.width = updatedImage.width + "px";
+                    currentPageResizableCanvas.style.height = updatedImage.height + "px";
+
+                    currentPageImageContainer.removeChild(oldImage);
+                    currentPageImageContainer.appendChild(updatedImage);
+                });
             });
-        });
+        }
 
         return currentPageSection;
     };

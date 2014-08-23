@@ -1,0 +1,28 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" href="src/browser/basichtmlreporter.css">
+    <script src="src/boot/scope.js"></script>
+    <script src="src/util.js"></script>
+    <script src="src/browser/basichtmlreporterutil.js"></script>
+    <script src="src/browser/basichtmlreporter.js"></script>
+</head>
+<body>
+    <script src="testHelper.js"></script>
+    <script>
+        var reporter = testHelper.constructBasicHTMLReporter();
+
+        testHelper.setUp();
+
+        var resizable = false;
+
+        reporter.reportComparison(
+            testHelper.comparison('failed', {url: 'aPage.html', width: 123}, [], resizable)
+        );
+
+        testHelper.increasePageImageSizeToShowTransparentBackground();
+        testHelper.clickAcceptButtonToShowTick();
+    </script>
+</body>
+</html>
