@@ -5,8 +5,40 @@ describe("Basic HTML reporter", function () {
         basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
         reporter;
 
-    var htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas,
-        paramsOnPassingTest;
+    var htmlImage, referenceImage, updatedReferenceImage, differenceImageCanvas, highlightedDifferenceImageCanvas;
+
+    var aStartingComparison = function () {
+        return {
+            testCase: {
+                url: "page_url"
+            }
+        };
+    };
+
+    var aStartingComparisonWithTestCase = function (testCase) {
+        return {
+            testCase: testCase
+        };
+    };
+
+    var aPassedTest = function () {
+        return aPassedTestWithUrl("page_url");
+    };
+
+    var aPassedTestWithUrl = function (url) {
+        return aPassedTestWithTestCase({
+            url: url
+        });
+    };
+
+    var aPassedTestWithTestCase = function (testCase) {
+        return {
+            status: "passed",
+            testCase: testCase,
+            pageImage: htmlImage,
+            referenceImage: referenceImage
+        };
+    };
 
     beforeEach(function () {
         spyOn(basicHTMLReporterUtil, 'supportsReadingHtmlFromCanvas');
@@ -30,15 +62,6 @@ describe("Basic HTML reporter", function () {
         });
 
         reporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document).BasicHTMLReporter();
-
-        paramsOnPassingTest = {
-            status: "passed",
-            testCase: {
-                url: "page_url"
-            },
-            pageImage: htmlImage,
-            referenceImage: referenceImage
-        };
     });
 
     afterEach(function () {
@@ -46,40 +69,26 @@ describe("Basic HTML reporter", function () {
     });
 
     it("should show an entry for the reported test", function () {
-        reporter.reportComparison(paramsOnPassingTest);
+        reporter.reportComparison(aPassedTest());
 
         expect($("#csscritic_basichtmlreporter")).toExist();
         expect($("#csscritic_basichtmlreporter .comparison")).toExist();
     });
 
     it("should show the page url", function () {
-        reporter.reportComparison({
-            status: "passed",
-            testCase: {
-                url: "page_url<img>"
-            },
-            pageImage: htmlImage,
-            referenceImage: referenceImage
-        });
+        reporter.reportComparison(aPassedTestWithUrl("page_url<img>"));
 
         expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url<img>");
     });
 
     it("should show a link to the page", function () {
-        reporter.reportComparison({
-            status: "passed",
-            testCase: {
-                url: "dir/page_url"
-            },
-            pageImage: htmlImage,
-            referenceImage: referenceImage
-        });
+        reporter.reportComparison(aPassedTestWithUrl("dir/page_url"));
 
         expect($("#csscritic_basichtmlreporter .comparison a.pageUrl")).toHaveAttr("href", "dir/page_url");
     });
 
     it("should show page render errors", function () {
-        var comparison = paramsOnPassingTest;
+        var comparison = aPassedTest();
         comparison.renderErrors = ["theFirstBadUrl", "yetAnotherBadUrl"];
 
         reporter.reportComparison(comparison);
@@ -93,11 +102,7 @@ describe("Basic HTML reporter", function () {
     describe("on running tests", function () {
 
         it("should render all currently running", function () {
-            reporter.reportComparisonStarting({
-                testCase: {
-                    url: "page_url"
-                }
-            });
+            reporter.reportComparisonStarting(aStartingComparison());
 
             expect($("#csscritic_basichtmlreporter .comparison")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison.running")).toExist();
@@ -105,54 +110,25 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should report the final result 'on top' of the running entry", function () {
-            reporter.reportComparisonStarting({
-                testCase: {
-                    url: "page_url"
-                }
-            });
-            reporter.reportComparison({
-                status: "passed",
-                testCase: {
-                    url: "page_url"
-                },
-                pageImage: htmlImage,
-                referenceImage: referenceImage
-            });
+            reporter.reportComparisonStarting(aStartingComparison());
+            reporter.reportComparison(aPassedTest());
 
             expect($("#csscritic_basichtmlreporter .comparison").length).toEqual(1);
             expect($("#csscritic_basichtmlreporter .comparison.running")).not.toExist();
         });
 
         it("should show two different entries for different test cases with the same url", function () {
-            reporter.reportComparisonStarting({
-                testCase: {
-                    url: "page_url"
-                }
-            });
-            reporter.reportComparisonStarting({
-                testCase: {
-                    url: "page_url",
-                    active: '.selector'
-                }
-            });
+            reporter.reportComparisonStarting(aStartingComparison());
+            reporter.reportComparisonStarting(aStartingComparisonWithTestCase({
+                url: "page_url",
+                active: '.selector'
+            }));
 
-            reporter.reportComparison({
-                status: "passed",
-                testCase: {
-                    url: "page_url"
-                },
-                pageImage: htmlImage,
-                referenceImage: referenceImage
-            });
-            reporter.reportComparison({
-                status: "passed",
-                testCase: {
-                    url: "page_url",
-                    active: '.selector'
-                },
-                pageImage: htmlImage,
-                referenceImage: referenceImage
-            });
+            reporter.reportComparison(aPassedTest());
+            reporter.reportComparison(aPassedTestWithTestCase({
+                url: "page_url",
+                active: '.selector'
+            }));
 
             expect($("#csscritic_basichtmlreporter .comparison.passed").length).toBe(2);
         });
@@ -166,11 +142,7 @@ describe("Basic HTML reporter", function () {
                 return dateNowValues.shift();
             });
 
-            reporter.reportComparisonStarting({
-                testCase: {
-                    url: "page_url"
-                }
-            });
+            reporter.reportComparisonStarting(aStartingComparison());
             reporter.reportTestSuite({success: true}, function () {});
             expect($("#csscritic_basichtmlreporter .timeTaken")).toExist();
             expect($("#csscritic_basichtmlreporter .timeTaken").text()).toEqual("finished in 1.034s");
@@ -186,27 +158,13 @@ describe("Basic HTML reporter", function () {
     describe("Passed tests", function () {
 
         it("should show an entry as passed", function () {
-            reporter.reportComparison({
-                status: "passed",
-                testCase: {
-                    url: "page_url"
-                },
-                pageImage: htmlImage,
-                referenceImage: referenceImage
-            });
+            reporter.reportComparison(aPassedTest());
 
             expect($("#csscritic_basichtmlreporter .passed.comparison")).toExist();
         });
 
         it("should show the status as passed", function () {
-            reporter.reportComparison({
-                status: "passed",
-                testCase: {
-                    url: "page_url"
-                },
-                pageImage: htmlImage,
-                referenceImage: referenceImage
-            });
+            reporter.reportComparison(aPassedTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("passed");
         });
@@ -214,15 +172,10 @@ describe("Basic HTML reporter", function () {
     });
 
     describe("Failed tests", function () {
-        var paramsOnFailingTest, resizePageImageSpy, acceptPageSpy;
+        var resizePageImageSpy, acceptPageSpy;
 
-        beforeEach(function () {
-            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function () {
-                return testHelper.successfulPromiseFake(updatedReferenceImage);
-            });
-            acceptPageSpy = jasmine.createSpy("acceptPage");
-
-            paramsOnFailingTest = {
+        var aFailingTest = function () {
+            return {
                 status: "failed",
                 testCase: {
                     url: "page_url"
@@ -232,48 +185,55 @@ describe("Basic HTML reporter", function () {
                 acceptPage: acceptPageSpy,
                 referenceImage: referenceImage
             };
+        };
+
+        beforeEach(function () {
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function () {
+                return testHelper.successfulPromiseFake(updatedReferenceImage);
+            });
+            acceptPageSpy = jasmine.createSpy("acceptPage");
         });
 
         it("should show an entry as failed", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             expect($("#csscritic_basichtmlreporter .failed.comparison")).toExist();
         });
 
         it("should show the status as failed", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("failed");
         });
 
         it("should show the diff on a failing comparison", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasSection canvas").get(0)).toBe(differenceImageCanvas);
         });
 
         it("should show the highlighted diff on a failing comparison", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .highlightedDifferenceCanvas").get(0)).toBe(highlightedDifferenceImageCanvas);
         });
 
         it("should show the rendered page for reference and so that the user can save it", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img").get(0)).toBe(htmlImage);
         });
 
         it("should show the reference image", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .referenceSection img")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .referenceSection img").get(0)).toBe(referenceImage);
         });
 
         it("should allow the user to accept the rendered page and update the reference image", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .updateHint button")).toExist();
 
@@ -283,7 +243,7 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should resize the page canvas when user resizes the container", function () {
-            reporter.reportComparison(paramsOnFailingTest);
+            reporter.reportComparison(aFailingTest());
 
             $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                 width: 42,
@@ -297,15 +257,10 @@ describe("Basic HTML reporter", function () {
     });
 
     describe("Missing image references", function () {
-        var paramsOnMissingReference, resizePageImageSpy, acceptPageSpy;
+        var resizePageImageSpy, acceptPageSpy;
 
-        beforeEach(function () {
-            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function () {
-                return testHelper.successfulPromiseFake(updatedReferenceImage);
-            });
-            acceptPageSpy = jasmine.createSpy("acceptPage");
-
-            paramsOnMissingReference = {
+        var aTestWithMissingReference = function () {
+            return {
                 status: "referenceMissing",
                 testCase: {
                     url: "page_url<img>"
@@ -314,29 +269,36 @@ describe("Basic HTML reporter", function () {
                 resizePageImage: resizePageImageSpy,
                 acceptPage: acceptPageSpy
             };
+        };
+
+        beforeEach(function () {
+            resizePageImageSpy = jasmine.createSpy("resizePageImage").and.callFake(function () {
+                return testHelper.successfulPromiseFake(updatedReferenceImage);
+            });
+            acceptPageSpy = jasmine.createSpy("acceptPage");
         });
 
         it("should show an entry as status 'referenceMissing'", function () {
-            reporter.reportComparison(paramsOnMissingReference);
+            reporter.reportComparison(aTestWithMissingReference());
 
             expect($("#csscritic_basichtmlreporter .referenceMissing.comparison")).toExist();
         });
 
         it("should show the status as 'missing reference'", function () {
-            reporter.reportComparison(paramsOnMissingReference);
+            reporter.reportComparison(aTestWithMissingReference());
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("missing reference");
         });
 
         it("should show the rendered page for reference", function () {
-            reporter.reportComparison(paramsOnMissingReference);
+            reporter.reportComparison(aTestWithMissingReference());
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img").get(0)).toBe(htmlImage);
         });
 
         it("should allow the user to accept the rendered page", function () {
-            reporter.reportComparison(paramsOnMissingReference);
+            reporter.reportComparison(aTestWithMissingReference());
 
             expect($("#csscritic_basichtmlreporter .comparison .saveHint button")).toExist();
 
@@ -346,7 +308,7 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should resize the canvas when user resizes the container", function () {
-            reporter.reportComparison(paramsOnMissingReference);
+            reporter.reportComparison(aTestWithMissingReference());
 
             $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                 width: 42,
@@ -361,7 +323,7 @@ describe("Basic HTML reporter", function () {
             testHelper.createImageOfSize(123, 234, function (img) {
                 updatedReferenceImage = img;
 
-                reporter.reportComparison(paramsOnMissingReference);
+                reporter.reportComparison(aTestWithMissingReference());
 
                 $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                     width: 42,
@@ -377,32 +339,30 @@ describe("Basic HTML reporter", function () {
     });
 
     describe("Erroneous tests", function () {
-        var paramsOnErroneousTest;
-
-        beforeEach(function () {
-            paramsOnErroneousTest = {
+        var anErroneousTest = function () {
+            return {
                 status: "error",
                 testCase: {
                     url: "page_url"
                 },
                 pageImage: null
             };
-        });
+        };
 
         it("should show an entry as erroneous", function () {
-            reporter.reportComparison(paramsOnErroneousTest);
+            reporter.reportComparison(anErroneousTest());
 
             expect($("#csscritic_basichtmlreporter .error.comparison")).toExist();
         });
 
         it("should show the status is 'error'", function () {
-            reporter.reportComparison(paramsOnErroneousTest);
+            reporter.reportComparison(anErroneousTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("error");
         });
 
         it("should say what the error is about", function () {
-            reporter.reportComparison(paramsOnErroneousTest);
+            reporter.reportComparison(anErroneousTest());
 
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("could not be rendered");
@@ -413,14 +373,7 @@ describe("Basic HTML reporter", function () {
 
     describe("Mouse over image preview", function () {
         beforeEach(function () {
-            reporter.reportComparison({
-                status: "passed",
-                testCase: {
-                    url: "page_url"
-                },
-                pageImage: htmlImage,
-                referenceImage: referenceImage
-            });
+            reporter.reportComparison(aPassedTest());
 
             setFixtures('<style>' +
                 '#csscritic_basichtmlreporter_tooltip {' +
