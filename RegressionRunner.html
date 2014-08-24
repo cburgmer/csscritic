@@ -47,7 +47,10 @@
             csscritic.add('test/ui/previewTooltip.html');
             csscritic.add('test/ui/testWithASingleParameter.html');
             csscritic.add('test/ui/testWithMultipleParameters.html');
-            csscritic.add('test/ui/statusBreakAround.html');
+            csscritic.add({
+                url: 'test/ui/statusBreakAround.html',
+                width: 550
+            });
             csscritic.add('test/ui/twoTests.html');
             csscritic.execute();
         };

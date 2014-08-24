@@ -56,7 +56,12 @@ csscriticLib.regression = function (renderer, storage, util, imagediff) {
     };
 
     var readReferenceImageIfAny = function (testCase) {
-        var defaultViewport = {width: 800, height: 100};
+        var fallbackWidth = 800,
+            fallbackHeight = 100,
+            defaultViewport = {
+                width: testCase.width || fallbackWidth,
+                height: testCase.height || fallbackHeight
+            };
 
         return storage.readReferenceImage(testCase).then(null, function () {
             return {

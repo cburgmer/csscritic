@@ -198,6 +198,30 @@ describe("Regression testing", function () {
             });
         });
 
+        it("should use the specified width", function (done) {
+            regression.compare({url: "differentpage.html", width: 42}).then(function () {
+                expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
+                    url: "differentpage.html",
+                    width: 42,
+                    height: 100
+                }));
+
+                done();
+            });
+        });
+
+        it("should use the specified height", function (done) {
+            regression.compare({url: "differentpage.html", height: 21}).then(function () {
+                expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
+                    url: "differentpage.html",
+                    width: 800,
+                    height: 21
+                }));
+
+                done();
+            });
+        });
+
         it("should report a list of errors during rendering", function (done) {
             setUpRenderedImage(pageImage, ["oneUrl", "anotherUrl"]);
 
