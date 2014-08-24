@@ -3,27 +3,34 @@ csscriticLib.reporting = function (renderer, storage, util) {
 
     var module = {};
 
+    var testCaseIsResizable = function (testCase) {
+        return testCase.width === undefined && testCase.height === undefined;
+    };
+
     var attachPageAcceptHelpers = function (comparison) {
         var viewportWidth, viewportHeight;
 
         if (comparison.pageImage) {
             viewportWidth = comparison.viewport.width;
             viewportHeight = comparison.viewport.height;
-            comparison.resizePageImage = function (width, height) {
-                viewportWidth = width;
-                viewportHeight = height;
 
-                return renderer.render({
-                    url: comparison.testCase.url,
-                    hover: comparison.testCase.hover,
-                    active: comparison.testCase.active,
-                    width: width,
-                    height: height
-                }).then(function (renderResult) {
-                    comparison.pageImage = renderResult.image;
-                    return renderResult.image;
-                });
-            };
+            if (testCaseIsResizable(comparison.testCase)) {
+                comparison.resizePageImage = function (width, height) {
+                    viewportWidth = width;
+                    viewportHeight = height;
+
+                    return renderer.render({
+                        url: comparison.testCase.url,
+                        hover: comparison.testCase.hover,
+                        active: comparison.testCase.active,
+                        width: width,
+                        height: height
+                    }).then(function (renderResult) {
+                        comparison.pageImage = renderResult.image;
+                        return renderResult.image;
+                    });
+                };
+            }
             comparison.acceptPage = function () {
                 storage.storeReferenceImage(comparison.testCase, comparison.pageImage, {
                     width: viewportWidth,

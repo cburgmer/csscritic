@@ -267,6 +267,42 @@ describe("Reporting", function () {
             });
         });
 
+        it("should not pass resizing handle on a fixed height test case", function () {
+            reporting.doReportComparison([reporter], {
+                status: "referenceMissing",
+                testCase: {
+                    url: "differentpage.html",
+                    height: 21
+                },
+                pageImage: pageImage,
+                referenceImage: undefined,
+                renderErrors: [],
+                viewport: viewport
+            });
+
+            expect(reporter.reportComparison).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                resizePageImage: jasmine.any(Function)
+            }));
+        });
+
+        it("should not pass resizing handle on a fixed width test case", function () {
+            reporting.doReportComparison([reporter], {
+                status: "referenceMissing",
+                testCase: {
+                    url: "differentpage.html",
+                    width: 42
+                },
+                pageImage: pageImage,
+                referenceImage: undefined,
+                renderErrors: [],
+                viewport: viewport
+            });
+
+            expect(reporter.reportComparison).not.toHaveBeenCalledWith(jasmine.objectContaining({
+                resizePageImage: jasmine.any(Function)
+            }));
+        });
+
         it("should provide a method to accept the rendered page and store as new reference", function () {
             reporting.doReportComparison([reporter], {
                 status: "referenceMissing",
