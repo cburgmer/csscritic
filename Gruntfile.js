@@ -112,7 +112,7 @@ module.exports = function (grunt) {
                     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
                         '* <%= pkg.homepage %>\n' +
-                        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
+                        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012, 2013 ThoughtWorks, Inc.;' +
                         ' Licensed <%= pkg.license %> */' +
                         '\n/* Integrated dependencies:\n' +
                         ' * imagediff.js (MIT License),\n' +
@@ -120,7 +120,7 @@ module.exports = function (grunt) {
                         ' * url (MIT License),\n' +
                         ' * CSSOM (MIT License),\n' +
                         ' * xmlserializer (MIT License),\n' +
-                        // not yet ' * css-font-face-src (BSD License),\n' +
+                        ' * css-font-face-src (BSD License),\n' +
                         ' * inlineresources (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n'
                 },
