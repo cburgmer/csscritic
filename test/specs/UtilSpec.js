@@ -33,6 +33,22 @@ describe("Utility", function () {
                 done();
             });
         });
+
+        it("should correctly encode image independently of rendered width and height", function (done) {
+            var imageDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=";
+
+            testHelper.loadImageFromUrl(imageDataUri, function (image) {
+                image.width = 2;
+                image.height = 3;
+                var dataUri = util.getDataURIForImage(image);
+
+                testHelper.loadImageFromUrl(dataUri, function (reConvertedImage) {
+                    expect(reConvertedImage.width).toBe(1);
+                    expect(reConvertedImage.height).toBe(1);
+                    done();
+                });
+            });
+        });
     });
 
     describe("ajax", function () {

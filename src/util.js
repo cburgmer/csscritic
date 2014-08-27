@@ -7,8 +7,8 @@ csscriticLib.util = function () {
         var canvas = window.document.createElement("canvas"),
             context = canvas.getContext("2d");
 
-        canvas.width = image.width;
-        canvas.height = image.height;
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
 
         context.drawImage(image, 0, 0);
 
