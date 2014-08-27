@@ -106,6 +106,17 @@
 
 /* Page rendering, reference & diff */
 
+@media (min--moz-device-pixel-ratio: 2) {
+    /* Work around https://bugzilla.mozilla.org/show_bug.cgi?id=986403 */
+    #csscritic_basichtmlreporter .currentPageImageContainer img {
+        width: 50%;
+        -moz-transform: scale(2);
+        -moz-transform-origin: 0 0;
+        transform: scale(2);
+        transform-origin: 0 0;
+    }
+}
+
 #csscritic_basichtmlreporter .referenceSection,
 #csscritic_basichtmlreporter .currentPageSection {
     display: inline-block;
