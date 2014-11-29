@@ -42,7 +42,8 @@
     "grunt-umd": "~1.7.3",
     "jasmine-core": "2.0.0",
     "jasmine-jquery": "git://github.com/velesin/jasmine-jquery",
-    "jquery": "~2.1.0"
+    "jquery": "~2.1.0",
+    "phantomjs": "1.9.8"
   },
   "scripts": {
     "test": "bash go --verbose"
