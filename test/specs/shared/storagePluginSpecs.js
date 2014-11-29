@@ -1,4 +1,4 @@
-var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceImage, storeMockReferenceImage) {
+var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImage, storeMockReferenceImage) {
     "use strict";
 
     var imgUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
@@ -18,7 +18,7 @@ var loadStoragePluginSpecs = function (constructDomstorage, readStoredReferenceI
     beforeEach(function (done) {
         spyOn(util, 'getImageForUrl');
 
-        storage = constructDomstorage(util);
+        storage = constructStorage(util);
 
         jasmine.addMatchers(imagediffForJasmine2);
 
