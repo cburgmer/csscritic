@@ -18,6 +18,7 @@
             'src/browser/basichtmlreporter.js',
             'src/browser/browserrenderer.js',
             'src/browser/domstorage.js',
+            'src/browser/indexeddbstorage.js',
             'src/browser/jobqueue.js',
             'src/util.js',
             'src/reporting.js',
