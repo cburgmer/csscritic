@@ -34,10 +34,17 @@ describe("IndexedDB storage", function () {
 
     var storeReferenceImage = function (key, stringData) {
         // TODO move away from JSON encoded test input, doesn't match internals of this module
-        var data = JSON.parse(stringData);
+        var data = JSON.parse(stringData),
+            dataObj = {};
+        if (data.referenceImageUri) {
+            dataObj.imageUri = data.referenceImageUri;
+        }
+        if (data.viewport) {
+            dataObj.viewport = data.viewport;
+        }
         db.transaction(['references'], 'readwrite')
             .objectStore('references')
-            .add({testCase: key, data: data});
+            .add({testCase: key, reference: dataObj});
     };
 
     loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);

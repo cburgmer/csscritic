@@ -40,14 +40,14 @@ csscriticLib.indexeddbstorage = function (util) {
             request.onsuccess = function (event) {
                 db.close();
                 
-                if (request.result === undefined || request.result.data.referenceImageUri === undefined) {
+                if (request.result === undefined || request.result.reference === undefined || request.result.reference.imageUri === undefined) {
                     defer.reject();
                     return;
                 }
                 
-                var dataObj = request.result.data;
+                var dataObj = request.result.reference;
 
-                util.getImageForUrl(dataObj.referenceImageUri).then(function (img) {
+                util.getImageForUrl(dataObj.imageUri).then(function (img) {
                     var viewport = dataObj.viewport || {
                         width: img.width,
                         height: img.height
