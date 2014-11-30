@@ -37,7 +37,7 @@ csscriticLib.indexeddbstorage = function (util) {
                 .objectStore('references')
                 .get(key);
 
-            request.onsuccess = function (event) {
+            request.onsuccess = function () {
                 db.close();
                 
                 if (request.result === undefined || request.result.reference === undefined || request.result.reference.imageUri === undefined) {

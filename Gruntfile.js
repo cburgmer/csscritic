@@ -187,6 +187,7 @@ module.exports = function (grunt) {
                         imagediff: true,
                         ayepromise: true,
                         phantom: true,
+                        indexedDB: true,
                         console: true,
                         require: true,
                         csscriticLib: true,
@@ -222,7 +223,8 @@ module.exports = function (grunt) {
                         testHelper: true,
                         loadStoragePluginSpecs: true,
                         CanvasRenderingContext2D: true,
-                        ayepromise: true
+                        ayepromise: true,
+                        indexedDB: true
                     },
                     exported: ['loadStoragePluginSpecs']
                 },

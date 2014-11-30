@@ -30,7 +30,7 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
     });
 
     it("should store a the rendered page", function (done) {
-        var stringValue, value;
+        var value;
 
         storage.storeReferenceImage({url: "somePage.html"}, img, {
             width: 47,
@@ -71,8 +71,6 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
     });
 
     it("should honour test case parameters when storing", function (done) {
-        var stringValue;
-
         storage.storeReferenceImage({
                 url: 'somePage.html',
                 hover: 'aValue',
@@ -197,7 +195,7 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
         storage.readReferenceImage({
             url: 'somePage.html',
             width: 42
-        }).then(function (img) {
+        }).then(function () {
             expect(util.getImageForUrl).toHaveBeenCalledWith("some image uri matching the width");
 
             done();

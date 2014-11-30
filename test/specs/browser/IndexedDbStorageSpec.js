@@ -1,8 +1,6 @@
 describe("IndexedDB storage", function () {
     "use strict";
 
-    var util = csscriticLib.util();
-
     var db;
 
     var constructStorage = function (util) {
@@ -29,7 +27,7 @@ describe("IndexedDB storage", function () {
         request.onsuccess = done;
     });
 
-    var readStoredReferenceImage = function (key) {
+    var readStoredReferenceImage = function () {
         var defer = ayepromise.defer();
         defer.resolve();
         return defer.promise;
