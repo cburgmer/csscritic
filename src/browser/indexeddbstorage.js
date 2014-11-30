@@ -26,9 +26,32 @@ csscriticLib.indexeddbstorage = function (util) {
         return key;
     };
 
-    module.storeReferenceImage = function () {
-        var defer = ayepromise.defer();
-        defer.resolve();
+    module.storeReferenceImage = function (testCase, referenceImage, viewport) {
+        var defer = ayepromise.defer(),
+            imageUri;
+
+        imageUri = util.getDataURIForImage(referenceImage);
+
+        var key = buildKey(testCase);
+
+        getDb().then(function (db) {
+            var request = db.transaction(['references'], 'readwrite')
+                .objectStore('references')
+                .put({
+                    testCase: key,
+                    reference: {
+                        imageUri: imageUri,
+                        viewport: viewport
+                    }
+                });
+
+            request.onsuccess = function (e) {
+                db.close();
+
+                defer.resolve();
+            };
+        });
+
         return defer.promise;
     };
 

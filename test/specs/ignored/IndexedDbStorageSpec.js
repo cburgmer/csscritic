@@ -27,9 +27,21 @@ describe("IndexedDB storage", function () {
         request.onsuccess = done;
     });
 
-    var readStoredReferenceImage = function () {
+    var readStoredReferenceImage = function (key) {
         var defer = ayepromise.defer();
-        defer.resolve();
+
+        var request = db.transaction(['references'])
+            .objectStore('references')
+            .get(key);
+
+        request.onsuccess = function () {
+            // TODO stop using JSON string as interface in test
+            defer.resolve(JSON.stringify({
+                referenceImageUri: request.result.reference.imageUri,
+                viewport: request.result.reference.viewport
+            }));
+        };
+
         return defer.promise;
     };
 
