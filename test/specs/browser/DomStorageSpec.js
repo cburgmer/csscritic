@@ -3,8 +3,8 @@ describe("DOM storage", function () {
 
     var util = csscriticLib.util();
 
-    var constructDomstorage = function (util) {
-        return csscriticLib.domstorage(util, localStorage);
+    var constructDomstorage = function (utilDependency) {
+        return csscriticLib.domstorage(utilDependency, localStorage);
     };
 
     beforeEach(function () {
@@ -21,14 +21,20 @@ describe("DOM storage", function () {
         return defer.promise;
     };
 
-    var storeReferenceImage = function (key, stringData) {
+    var storeMockReferenceImage = function (key, stringData) {
         var defer = ayepromise.defer();
         localStorage.setItem(key, stringData);
         defer.resolve();
         return defer.promise;
     };
 
-    loadStoragePluginSpecs(constructDomstorage, readStoredReferenceImage, storeReferenceImage);
+    loadStoragePluginSpecs(constructDomstorage, readStoredReferenceImage, storeMockReferenceImage);
+
+    it("should call error handler if the content's JSON is invalid", function (done) {
+        var storage = constructDomstorage(util);
+        storeMockReferenceImage("somePage.html", ';');
+        storage.readReferenceImage({url: "somePage.html"}).then(null, done);
+    });
 
     it("should alert the user that possibly the wrong browser is used", function () {
         var storage = constructDomstorage(util);

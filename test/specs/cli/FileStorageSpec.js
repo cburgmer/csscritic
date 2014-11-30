@@ -4,8 +4,10 @@ describe("Phantom storage support for reference images", function () {
     var fs = require("fs"),
         tempPath;
 
-    var constructStorage = function (util) {
-        var filestorage = csscriticLib.filestorage(util);
+    var util = csscriticLib.util();
+
+    var constructStorage = function (utilDependency) {
+        var filestorage = csscriticLib.filestorage(utilDependency);
         filestorage.options.basePath = tempPath;
         return filestorage;
     };
@@ -20,12 +22,18 @@ describe("Phantom storage support for reference images", function () {
         return defer.promise;
     };
 
-    var storeReferenceImage = function (key, stringData) {
+    var storeMockReferenceImage = function (key, stringData) {
         var defer = ayepromise.defer();
         fs.write(tempPath + key + ".json", stringData, 'w');
         defer.resolve();
         return defer.promise;
     };
 
-    loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);
+    loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeMockReferenceImage);
+
+    it("should call error handler if the content's JSON is invalid", function (done) {
+        var storage = constructStorage(util);
+        storeMockReferenceImage("somePage.html", ';');
+        storage.readReferenceImage({url: "somePage.html"}).then(null, done);
+    });
 });

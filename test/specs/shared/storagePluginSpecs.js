@@ -158,11 +158,6 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
         storage.readReferenceImage({url: "somePage.html"}).then(null, done);
     });
 
-    it("should call error handler if the content's JSON is invalid", function (done) {
-        storeMockReferenceImage("somePage.html", ';');
-        storage.readReferenceImage({url: "somePage.html"}).then(null, done);
-    });
-
     it("should honour test case parameters when reading", function (done) {
         setUpImageReturnedForUrl("read image fake");
 
