@@ -45,7 +45,7 @@ csscriticLib.indexeddbstorage = function (util) {
                     }
                 });
 
-            request.onsuccess = function (e) {
+            request.onsuccess = function () {
                 db.close();
 
                 defer.resolve();
@@ -84,7 +84,7 @@ csscriticLib.indexeddbstorage = function (util) {
                         image: img,
                         viewport: viewport
                     });
-                });
+                }, defer.reject);
             };
         });
 
