@@ -15,11 +15,17 @@ describe("Phantom storage support for reference images", function () {
     });
 
     var readStoredReferenceImage = function (key) {
-            return fs.read(tempPath + key + ".json");
-        },
-        storeReferenceImage = function (key, stringData) {
-            fs.write(tempPath + key + ".json", stringData, 'w');
-        };
+        var defer = ayepromise.defer();
+        defer.resolve(fs.read(tempPath + key + ".json"));
+        return defer.promise;
+    };
+
+    var storeReferenceImage = function (key, stringData) {
+        var defer = ayepromise.defer();
+        fs.write(tempPath + key + ".json", stringData, 'w');
+        defer.resolve();
+        return defer.promise;
+    };
 
     loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);
 });

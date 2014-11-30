@@ -16,11 +16,17 @@ describe("DOM storage", function () {
     });
 
     var readStoredReferenceImage = function (key) {
-            return localStorage.getItem(key);
-        },
-        storeReferenceImage = function (key, stringData) {
-            localStorage.setItem(key, stringData);
-        };
+        var defer = ayepromise.defer();
+        defer.resolve(localStorage.getItem(key));
+        return defer.promise;
+    };
+
+    var storeReferenceImage = function (key, stringData) {
+        var defer = ayepromise.defer();
+        localStorage.setItem(key, stringData);
+        defer.resolve();
+        return defer.promise;
+    };
 
     loadStoragePluginSpecs(constructDomstorage, readStoredReferenceImage, storeReferenceImage);
 

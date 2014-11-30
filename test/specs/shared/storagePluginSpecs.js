@@ -37,18 +37,19 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
             height: 11
         });
 
-        stringValue = readStoredReferenceImage("somePage.html");
-        expect(stringValue).not.toBeNull();
+        readStoredReferenceImage("somePage.html").then(function (stringValue) {
+            expect(stringValue).not.toBeNull();
 
-        value = JSON.parse(stringValue);
-        testHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
-            expect(image).toImageDiffEqual(img);
+            value = JSON.parse(stringValue);
+            testHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
+                expect(image).toImageDiffEqual(img);
 
-            done();
+                done();
+            });
         });
     });
 
-    it("should store the viewport's size", function () {
+    it("should store the viewport's size", function (done) {
         var image = "the image",
             storedValue;
 
@@ -59,13 +60,17 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
             height: 11
         });
 
-        storedValue = JSON.parse(readStoredReferenceImage("somePage.html"));
+        readStoredReferenceImage("somePage.html").then(function (stringValue) {
+            storedValue = JSON.parse(stringValue);
 
-        expect(storedValue.viewport.width).toEqual(47);
-        expect(storedValue.viewport.height).toEqual(11);
+            expect(storedValue.viewport.width).toEqual(47);
+            expect(storedValue.viewport.height).toEqual(11);
+
+            done();
+        });
     });
 
-    it("should honour test case parameters when storing", function () {
+    it("should honour test case parameters when storing", function (done) {
         var stringValue;
 
         storage.storeReferenceImage({
@@ -77,8 +82,11 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
             {}
         );
 
-        stringValue = readStoredReferenceImage("somePage.html,active=anotherValue,hover=aValue");
-        expect(stringValue).not.toBeNull();
+        readStoredReferenceImage("somePage.html,active=anotherValue,hover=aValue").then(function (stringValue) {
+            expect(stringValue).not.toBeNull();
+
+            done();
+        });
     });
 
     it("should read in a reference image", function (done) {
@@ -86,13 +94,13 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
             referenceImageUri: imgUri
-        }));
+        })).then(function () {
+            storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
+                expect(util.getImageForUrl).toHaveBeenCalledWith(imgUri);
+                expect(result.image).toEqual("read image fake");
 
-        storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
-            expect(util.getImageForUrl).toHaveBeenCalledWith(imgUri);
-            expect(result.image).toEqual("read image fake");
-
-            done();
+                done();
+            });
         });
     });
 
@@ -105,13 +113,13 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
                 width: 19,
                 height: 84
             }
-        }));
+        })).then(function () {
+            storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
+                expect(result.viewport.width).toEqual(19);
+                expect(result.viewport.height).toEqual(84);
 
-        storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
-            expect(result.viewport.width).toEqual(19);
-            expect(result.viewport.height).toEqual(84);
-
-            done();
+                done();
+            });
         });
     });
 
