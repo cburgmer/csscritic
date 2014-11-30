@@ -14,15 +14,28 @@ csscriticLib.indexeddbstorage = function (util) {
         return defer.promise;
     };
 
+    var buildKey = function (testCase) {
+        var testCaseParameters = util.excludeKey(testCase, 'url'),
+            serializedParameters = util.serializeMap(testCaseParameters),
+            key = testCase.url;
+
+        if (serializedParameters) {
+            key += ',' + serializedParameters;
+        }
+
+        return key;
+    };
+
     module.storeReferenceImage = function () {};
 
     module.readReferenceImage = function (testCase) {
-        var defer = ayepromise.defer();
+        var defer = ayepromise.defer(),
+            key = buildKey(testCase);
 
         getDb().then(function (db) {
             var request = db.transaction(['references'])
                 .objectStore('references')
-                .get(testCase.url);
+                .get(key);
 
             request.onsuccess = function (event) {
                 db.close();

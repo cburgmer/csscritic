@@ -18,7 +18,7 @@ describe("IndexedDB storage", function () {
         request.onupgradeneeded = function(event) {
             var db = event.target.result;
 
-            db.createObjectStore('references', { keyPath: "testCase.url" });
+            db.createObjectStore('references', { keyPath: "testCase" });
         };
     });
 
@@ -32,15 +32,12 @@ describe("IndexedDB storage", function () {
     var readStoredReferenceImage = function (key) {
     };
 
-    var storeReferenceImage = function (keyString, stringData) {
+    var storeReferenceImage = function (key, stringData) {
         // TODO move away from JSON encoded test input, doesn't match internals of this module
         var data = JSON.parse(stringData);
-        var keyValues = keyString.split(',');
-        var testCase = {url: keyValues[0]};
-        keyValues.slice(1).forEach(function (kv) { var pair = kv.split('='); testCase[pair[0]] = pair[1]; });
         db.transaction(['references'], 'readwrite')
             .objectStore('references')
-            .add({testCase: testCase, data: data});
+            .add({testCase: key, data: data});
     };
 
     loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);

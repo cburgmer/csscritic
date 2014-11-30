@@ -175,4 +175,24 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
                 done();
             });
     });
+
+    it("should find the matching test case for multiple tests of the same url", function (done) {
+        setUpImageReturnedForUrl("read image fake");
+
+        storeMockReferenceImage("somePage.html", JSON.stringify({
+            referenceImageUri: "some image uri"
+        }));
+        storeMockReferenceImage("somePage.html,width=42", JSON.stringify({
+            referenceImageUri: "some image uri matching the width"
+        }));
+
+        storage.readReferenceImage({
+            url: 'somePage.html',
+            width: 42
+        }).then(function (img) {
+            expect(util.getImageForUrl).toHaveBeenCalledWith("some image uri matching the width");
+
+            done();
+        });
+    });
 };
