@@ -35,16 +35,16 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
         storage.storeReferenceImage({url: "somePage.html"}, img, {
             width: 47,
             height: 11
-        });
+        }).then(function () {
+            readStoredReferenceImage("somePage.html").then(function (stringValue) {
+                expect(stringValue).not.toBeNull();
 
-        readStoredReferenceImage("somePage.html").then(function (stringValue) {
-            expect(stringValue).not.toBeNull();
+                value = JSON.parse(stringValue);
+                testHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
+                    expect(image).toImageDiffEqual(img);
 
-            value = JSON.parse(stringValue);
-            testHelper.loadImageFromUrl(value.referenceImageUri, function (image) {
-                expect(image).toImageDiffEqual(img);
-
-                done();
+                    done();
+                });
             });
         });
     });
@@ -58,15 +58,15 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
         storage.storeReferenceImage({url: "somePage.html"}, image, {
             width: 47,
             height: 11
-        });
+        }).then(function () {
+            readStoredReferenceImage("somePage.html").then(function (stringValue) {
+                storedValue = JSON.parse(stringValue);
 
-        readStoredReferenceImage("somePage.html").then(function (stringValue) {
-            storedValue = JSON.parse(stringValue);
+                expect(storedValue.viewport.width).toEqual(47);
+                expect(storedValue.viewport.height).toEqual(11);
 
-            expect(storedValue.viewport.width).toEqual(47);
-            expect(storedValue.viewport.height).toEqual(11);
-
-            done();
+                done();
+            });
         });
     });
 
@@ -78,12 +78,12 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
             },
             img,
             {}
-        );
+        ).then(function () {
+            readStoredReferenceImage("somePage.html,active=anotherValue,hover=aValue").then(function (stringValue) {
+                expect(stringValue).not.toBeNull();
 
-        readStoredReferenceImage("somePage.html,active=anotherValue,hover=aValue").then(function (stringValue) {
-            expect(stringValue).not.toBeNull();
-
-            done();
+                done();
+            });
         });
     });
 

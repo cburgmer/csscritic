@@ -15,6 +15,12 @@ csscriticLib.domstorage = function (util, localStorage) {
         return key;
     };
 
+    var successfulPromise = function () {
+        var defer = ayepromise.defer();
+        defer.resolve();
+        return defer.promise;
+    };
+
     module.storeReferenceImage = function (testCase, pageImage, viewport) {
         var uri, dataObj, key;
 
@@ -35,6 +41,8 @@ csscriticLib.domstorage = function (util, localStorage) {
         key = buildKey(testCase);
 
         localStorage.setItem(key, JSON.stringify(dataObj));
+
+        return successfulPromise();
     };
 
     var parseStoredItem = function (dataObjString) {

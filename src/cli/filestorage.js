@@ -25,6 +25,12 @@ csscriticLib.filestorage = function (util) {
         return module.options.basePath + key + ".json";
     };
 
+    var successfulPromise = function () {
+        var defer = ayepromise.defer();
+        defer.resolve();
+        return defer.promise;
+    };
+
     module.storeReferenceImage = function (testCase, pageImage, viewport) {
         var key, uri, dataObj;
 
@@ -40,6 +46,8 @@ csscriticLib.filestorage = function (util) {
         key = buildKey(testCase);
 
         fs.write(filePathForKey(key), JSON.stringify(dataObj), "w");
+
+        return successfulPromise();
     };
 
     var parseStoredItem = function (dataObjString) {

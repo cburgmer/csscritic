@@ -26,7 +26,11 @@ csscriticLib.indexeddbstorage = function (util) {
         return key;
     };
 
-    module.storeReferenceImage = function () {};
+    module.storeReferenceImage = function () {
+        var defer = ayepromise.defer();
+        defer.resolve();
+        return defer.promise;
+    };
 
     module.readReferenceImage = function (testCase) {
         var defer = ayepromise.defer(),
