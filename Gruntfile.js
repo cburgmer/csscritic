@@ -20,6 +20,7 @@ module.exports = function (grunt) {
                     'test/testHelper.js'
                 ],
                 fixturesPath: './fixtures/',
+                summary: true,
                 display: 'short'
             }
         },
@@ -219,6 +220,7 @@ module.exports = function (grunt) {
                         csscriticLib: true,
                         ifNotInWebkitIt: true,
                         ifNotInPhantomIt: true,
+                        isPhantom: true,
                         csscriticTestPath: true,
                         testHelper: true,
                         loadStoragePluginSpecs: true,

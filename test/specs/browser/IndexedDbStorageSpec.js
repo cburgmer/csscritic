@@ -65,5 +65,7 @@ describe("IndexedDB storage", function () {
         return defer.promise;
     };
 
-    loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);
+    if (!isPhantom) {
+        loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);
+    }
 });
