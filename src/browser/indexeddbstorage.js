@@ -3,6 +3,10 @@ csscriticLib.indexeddbstorage = function (util) {
 
     var module = {};
 
+    var createDb = function(db) {
+        db.createObjectStore('references', { keyPath: "testCase" });
+    };
+
     var getDb = function () {
         var defer = ayepromise.defer(),
             request = indexedDB.open('csscritic', 1);
@@ -10,6 +14,10 @@ csscriticLib.indexeddbstorage = function (util) {
         request.onsuccess = function (event) {
             var db = event.target.result;
             defer.resolve(db);
+        };
+        request.onupgradeneeded = function (event) {
+            var db = event.target.result;
+            createDb(db);
         };
         return defer.promise;
     };
