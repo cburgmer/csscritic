@@ -5,9 +5,11 @@ var csscritic;
 
     var util = csscriticLib.util(),
         browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-        domstorage = csscriticLib.domstorage(util, localStorage),
-        reporting = csscriticLib.reporting(browserRenderer, domstorage, util),
-        regression = csscriticLib.regression(browserRenderer, domstorage, util, imagediff);
+        domStorage = csscriticLib.domstorage(util, localStorage),
+        indexedDbStorage = csscriticLib.indexeddbstorage(util),
+        migrateToIndexedDbStorage = csscriticLib.migratetoindexeddbstorage(domStorage, indexedDbStorage),
+        reporting = csscriticLib.reporting(browserRenderer, migrateToIndexedDbStorage, util),
+        regression = csscriticLib.regression(browserRenderer, migrateToIndexedDbStorage, util, imagediff);
 
     csscritic = csscriticLib.main(
         regression,
