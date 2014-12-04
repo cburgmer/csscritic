@@ -7,10 +7,6 @@ describe("DOM storage", function () {
         return csscriticLib.domstorage(utilDependency, localStorage);
     };
 
-    beforeEach(function () {
-        localStorage.clear();
-    });
-
     afterEach(function () {
         localStorage.clear();
     });
