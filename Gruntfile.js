@@ -29,10 +29,10 @@ module.exports = function (grunt) {
                 command: 'phantomjs test/run-phantomjs-tests.js'
             },
             smokeTestLoader: {
-                command: 'phantomjs test/smokeTest.js test/smokeTestLoader.html'
+                command: './node_modules/.bin/slimerjs test/smokeTest.js test/smokeTestLoader.html | grep "Smoke test successful"'
             },
             smokeTestBundle: {
-                command: 'phantomjs test/smokeTest.js test/smokeTestBundled.html'
+                command: './node_modules/.bin/slimerjs test/smokeTest.js test/smokeTestBundled.html | grep "Smoke test successful"'
             }
         },
         concat: {

@@ -43,7 +43,8 @@
     "jasmine-core": "2.1.2",
     "jasmine-jquery": "git://github.com/velesin/jasmine-jquery",
     "jquery": "~2.1.0",
-    "phantomjs": "1.9.8"
+    "phantomjs": "1.9.8",
+    "slimerjs": "0.9.1-2"
   },
   "scripts": {
     "test": "bash go --verbose"
