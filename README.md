@@ -57,7 +57,7 @@ CSS Critic checks your current layout constantly against a reference image you h
 
 Developing CSS Critic
 ---------------------
-For linting, tests and minification install Node.js and run
+For tests install Node.js and run
 
     $ ./go
 

@@ -28,6 +28,7 @@ module.exports = function (grunt) {
             runPhantomTests: {
                 command: 'phantomjs test/run-phantomjs-tests.js'
             },
+            // Use grep to fail the build as slimerjs does not understand exitcodes
             smokeTestLoader: {
                 command: './node_modules/.bin/slimerjs test/smokeTest.js test/smokeTestLoader.html | grep "Smoke test successful"'
             },
