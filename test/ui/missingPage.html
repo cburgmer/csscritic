@@ -15,9 +15,9 @@
 
         testHelper.setUp();
 
-        reporter.reportComparison(
-            testHelper.comparison('error')
-        );
+        var test = testHelper.comparison('error');
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
     </script>
 </body>
 </html>

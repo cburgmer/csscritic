@@ -15,13 +15,13 @@
 
         testHelper.setUp();
 
-        reporter.reportComparison(
-            testHelper.comparison('passed', {},
+        var test = testHelper.comparison('passed', {},
                 [
                     'Unable to load stylesheet missing_stylesheet.css',
                     'TypeError: undefined is not a function'
-                ])
-        );
+                ]);
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
     </script>
 </body>
 </html>

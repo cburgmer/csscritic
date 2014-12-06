@@ -15,9 +15,9 @@
 
         testHelper.setUp();
 
-        reporter.reportComparison(
-            testHelper.comparison('failed')
-        );
+        var test = testHelper.comparison('failed');
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
 
         testHelper.increasePageImageSizeToShowTransparentBackground();
         testHelper.clickAcceptButtonToShowTick();

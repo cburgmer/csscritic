@@ -15,9 +15,9 @@
 
         testHelper.setUp();
 
-        reporter.reportComparison(
-            testHelper.comparison('referenceMissing')
-        );
+        var test = testHelper.comparison('referenceMissing');
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
 
         testHelper.increasePageImageSizeToShowTransparentBackground();
         testHelper.clickAcceptButtonToShowTick();

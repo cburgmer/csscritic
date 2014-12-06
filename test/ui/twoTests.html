@@ -15,12 +15,12 @@
 
         testHelper.setUp();
 
-        reporter.reportComparison(
-            testHelper.comparison('passed', {url: 'firstTest.html'})
-        );
-        reporter.reportComparison(
-            testHelper.comparison('passed', {url: 'secondTest.html'})
-        );
+        var firstTest = testHelper.comparison('passed', {url: 'firstTest.html'});
+        var secondTest = testHelper.comparison('passed', {url: 'secondTest.html'});
+        reporter.reportComparisonStarting (firstTest);
+        reporter.reportComparison(firstTest);
+        reporter.reportComparisonStarting(secondTest);
+        reporter.reportComparison(secondTest);
     </script>
 </body>
 </html>

@@ -378,16 +378,19 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
 
         showBrowserWarningIfNeeded();
 
-        var getOrCreateComparisonEntry = function (comparison) {
+        var createComparisonEntry = function (comparison) {
             var key = util.serializeMap(comparison.testCase),
-                node;
-
-            if (! runningComparisonEntries[key]) {
                 node = createRunningEntry(comparison);
-                getOrCreateBody().appendChild(node);
 
-                runningComparisonEntries[key] = node;
-            }
+            getOrCreateBody().appendChild(node);
+
+            runningComparisonEntries[key] = node;
+
+            return node;
+        };
+
+        var getComparisonEntry = function (comparison) {
+            var key = util.serializeMap(comparison.testCase);
 
             return runningComparisonEntries[key];
         };
@@ -398,11 +401,10 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
                     timer = createTimer();
                 }
 
-                getOrCreateComparisonEntry(comparison);
+                createComparisonEntry(comparison);
             },
             reportComparison: function (comparison) {
-                // Work with old api `compare()` where no start node is created
-                var node = getOrCreateComparisonEntry(comparison);
+                var node = getComparisonEntry(comparison);
 
                 addFinalEntry(comparison, node);
             },

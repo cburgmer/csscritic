@@ -69,29 +69,36 @@ describe("Basic HTML reporter", function () {
     });
 
     it("should show an entry for the reported test", function () {
-        reporter.reportComparison(aPassedTest());
+        var test = aPassedTest();
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
 
         expect($("#csscritic_basichtmlreporter")).toExist();
         expect($("#csscritic_basichtmlreporter .comparison")).toExist();
     });
 
     it("should show the page url", function () {
-        reporter.reportComparison(aPassedTestWithUrl("page_url<img>"));
+        var test = aPassedTestWithUrl("page_url<img>");
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
 
         expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual("page_url<img>");
     });
 
     it("should show a link to the page", function () {
-        reporter.reportComparison(aPassedTestWithUrl("dir/page_url"));
+        var test = aPassedTestWithUrl("dir/page_url");
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
 
         expect($("#csscritic_basichtmlreporter .comparison a.pageUrl")).toHaveAttr("href", "dir/page_url");
     });
 
     it("should show page render errors", function () {
-        var comparison = aPassedTest();
-        comparison.renderErrors = ["theFirstBadUrl", "yetAnotherBadUrl"];
+        var test = aPassedTest();
+        test.renderErrors = ["theFirstBadUrl", "yetAnotherBadUrl"];
 
-        reporter.reportComparison(comparison);
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
 
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toExist();
         expect($("#csscritic_basichtmlreporter .comparison .loadErrors li").length).toEqual(2);
@@ -158,13 +165,17 @@ describe("Basic HTML reporter", function () {
     describe("Passed tests", function () {
 
         it("should show an entry as passed", function () {
-            reporter.reportComparison(aPassedTest());
+            var test = aPassedTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .passed.comparison")).toExist();
         });
 
         it("should show the status as passed", function () {
-            reporter.reportComparison(aPassedTest());
+            var test = aPassedTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("passed");
         });
@@ -207,45 +218,59 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should show an entry as failed", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .failed.comparison")).toExist();
         });
 
         it("should show the status as failed", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("failed");
         });
 
         it("should show the diff on a failing comparison", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasSection canvas").get(0)).toBe(differenceImageCanvas);
         });
 
         it("should show the highlighted diff on a failing comparison", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .highlightedDifferenceCanvas").get(0)).toBe(highlightedDifferenceImageCanvas);
         });
 
         it("should show the rendered page for reference and so that the user can save it", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img").get(0)).toBe(htmlImage);
         });
 
         it("should show the reference image", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .referenceSection img")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .referenceSection img").get(0)).toBe(referenceImage);
         });
 
         it("should allow the user to accept the rendered page and update the reference image", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .updateHint button")).toExist();
 
@@ -255,19 +280,25 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should mark the rendered page image as resizable", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection.resizable")).toExist();
         });
 
         it("should mark the rendered page with a preset size as not resizable", function () {
-            reporter.reportComparison(aFixedWidthFailingTest());
+            var test = aFixedWidthFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection")).not.toHaveClass('resizable');
         });
 
         it("should resize the page canvas when user resizes the container", function () {
-            reporter.reportComparison(aFailingTest());
+            var test = aFailingTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                 width: 42,
@@ -314,26 +345,34 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should show an entry as status 'referenceMissing'", function () {
-            reporter.reportComparison(aTestWithMissingReference());
+            var test = aTestWithMissingReference();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .referenceMissing.comparison")).toExist();
         });
 
         it("should show the status as 'missing reference'", function () {
-            reporter.reportComparison(aTestWithMissingReference());
+            var test = aTestWithMissingReference();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("missing reference");
         });
 
         it("should show the rendered page for reference", function () {
-            reporter.reportComparison(aTestWithMissingReference());
+            var test = aTestWithMissingReference();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img").get(0)).toBe(htmlImage);
         });
 
         it("should allow the user to accept the rendered page", function () {
-            reporter.reportComparison(aTestWithMissingReference());
+            var test = aTestWithMissingReference();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .saveHint button")).toExist();
 
@@ -343,19 +382,25 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should mark the rendered page as resizable", function () {
-            reporter.reportComparison(aTestWithMissingReference());
+            var test = aTestWithMissingReference();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection.resizable")).toExist();
         });
 
         it("should mark the rendered page with a preset size as not resizable", function () {
-            reporter.reportComparison(aFixedWidthTestWithMissingReference());
+            var test = aFixedWidthTestWithMissingReference();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .currentPageSection")).not.toHaveClass('resizable');
         });
 
         it("should resize the canvas when user resizes the container", function () {
-            reporter.reportComparison(aTestWithMissingReference());
+            var test = aTestWithMissingReference();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                 width: 42,
@@ -367,10 +412,13 @@ describe("Basic HTML reporter", function () {
         });
 
         it("should correctly set the current image size after a resize", function (done) {
+            var test = aTestWithMissingReference();
+
             testHelper.createImageOfSize(123, 234, function (img) {
                 updatedReferenceImage = img;
 
-                reporter.reportComparison(aTestWithMissingReference());
+                reporter.reportComparisonStarting(test);
+                reporter.reportComparison(test);
 
                 $("#csscritic_basichtmlreporter .comparison .currentPageResizableCanvas").css({
                     width: 42,
@@ -397,19 +445,25 @@ describe("Basic HTML reporter", function () {
         };
 
         it("should show an entry as erroneous", function () {
-            reporter.reportComparison(anErroneousTest());
+            var test = anErroneousTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .error.comparison")).toExist();
         });
 
         it("should show the status is 'error'", function () {
-            reporter.reportComparison(anErroneousTest());
+            var test = anErroneousTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .status").text()).toEqual("error");
         });
 
         it("should say what the error is about", function () {
-            reporter.reportComparison(anErroneousTest());
+            var test = anErroneousTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg")).toExist();
             expect($("#csscritic_basichtmlreporter .comparison .errorMsg").text()).toContain("could not be rendered");
@@ -420,7 +474,9 @@ describe("Basic HTML reporter", function () {
 
     describe("Mouse over image preview", function () {
         beforeEach(function () {
-            reporter.reportComparison(aPassedTest());
+            var test = aPassedTest();
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
 
             setFixtures('<style>' +
                 '#csscritic_basichtmlreporter_tooltip {' +
