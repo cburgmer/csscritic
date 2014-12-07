@@ -2,6 +2,11 @@
     font-family: sans-serif;
 }
 
+#csscritic_nicereporter a {
+    text-decoration: none;
+    color: inherit;
+}
+
 #csscritic_nicereporter #progressBar {
     padding: 15px;
 }
@@ -22,9 +27,6 @@
     font-size: 1.8em;
     line-height: 0.5em;
     width: 0.5em;
-}
-#csscritic_nicereporter #progressBar li:before {
-    content: "⚫";
 }
 #csscritic_nicereporter #progressBar .inprogress {
     color: grey;

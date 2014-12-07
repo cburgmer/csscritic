@@ -54,10 +54,12 @@ csscriticLib.niceReporter = function (util) {
         return container.querySelector('#' + progressBarId);
     };
 
-    var addTickToProgressBar = function () {
+    var addTickToProgressBar = function (linkTarget) {
         var progressBar = theProgressBar();
 
-        var tick = elementFor('<li></li>');
+        var tick = elementFor(template('<li><a href="#{{linkTarget}}">⚫</a></li>', {
+            linkTarget: linkTarget
+        }));
         tick.classList.add('inprogress');
         progressBar.appendChild(tick);
     };
@@ -78,16 +80,30 @@ csscriticLib.niceReporter = function (util) {
 
     // comparisons
 
+    var comparisonKey = function (testCase) {
+        var testCaseParameters = util.excludeKey(testCase, 'url'),
+            serializedParameters = util.serializeMap(testCaseParameters),
+            key = testCase.url;
+
+        if (serializedParameters) {
+            return key + ',' + serializedParameters;
+        }
+
+        return key;
+    };
+
     var imageContainerClassName = 'imageContainer';
 
-    var addComparison = function (url) {
+    var addComparison = function (url, key) {
         var container = getOrCreateContainer(),
-            comparison = elementFor(template('<section class="comparison">' +
+            comparison = elementFor(template('<section class="comparison" id="{{id}}">' +
                                              '<h3 class="title">{{url}}</h3>' +
-                                             '<div class="' + imageContainerClassName + '"></div>' +
+                                             '<div class="{{imageContainerClassName}}"></div>' +
                                              '</section>', {
-                url: url
-            }));
+                                                 url: url,
+                                                 id: key,
+                                                 imageContainerClassName: imageContainerClassName
+                                             }));
 
         container.appendChild(comparison);
 
@@ -105,14 +121,14 @@ csscriticLib.niceReporter = function (util) {
 
         return {
             reportComparisonStarting: function (comparison) {
-                var key = util.serializeMap(comparison.testCase);
+                var key = comparisonKey(comparison.testCase);
                 
-                addTickToProgressBar();
-                var comparisonElement = addComparison(comparison.testCase.url);
+                addTickToProgressBar(key);
+                var comparisonElement = addComparison(comparison.testCase.url, key);
                 runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
-                var key = util.serializeMap(comparison.testCase);
+                var key = comparisonKey(comparison.testCase);
 
                 markTickDone(comparison.status);
                 if (comparison.pageImage) {
