@@ -29,22 +29,45 @@ csscriticLib.niceReporter = function (util) {
 
     // stuff
 
-    var progressBarId = 'progressBar';
+    var headerId = 'header',
+        progressBarId = 'progressBar',
+        statusTotalId = 'statusTotalCount',
+        statusIssueId = 'statusIssueCount';
 
     var getOrCreateContainer = function () {
         var reporterId = "csscritic_nicereporter",
             reportBody = document.getElementById(reporterId);
 
         if (reportBody === null) {
-            reportBody = elementFor(template('<div id="{{reporterId}}"><ul id="{{progressBarId}}"></ul></div>', {
-                reporterId: reporterId,
-                progressBarId: progressBarId
-            }));
+            reportBody = elementFor(template('<div id="{{reporterId}}">' +
+                                             '<header id="{{headerId}}">' +
+                                             '<ul id="{{progressBarId}}"></ul>' +
+                                             '<div>' +
+                                             '<span id="{{statusTotalId}}">0</span> entries, ' +
+                                             '<span id="{{statusIssueId}}">0</span> need some love' +
+                                             '</div>' +
+                                             '</header>' +
+                                             '</div>', {
+                                                 reporterId: reporterId,
+                                                 headerId: headerId,
+                                                 progressBarId: progressBarId,
+                                                 statusTotalId: statusTotalId,
+                                                 statusIssueId: statusIssueId
+                                             }));
 
             document.getElementsByTagName("body")[0].appendChild(reportBody);
         }
 
         return reportBody;
+    };
+
+    // header
+
+    var setOutcomeOnHeader = function (successful) {
+        var container = getOrCreateContainer(),
+            header = container.querySelector('#' + headerId);
+
+        header.classList.add(successful ? 'pass' : 'fail');
     };
 
     // progress bar
@@ -72,10 +95,21 @@ csscriticLib.niceReporter = function (util) {
         unfinishedTick.classList.add(status);
     };
 
-    var colorProgressBar = function (successful) {
-        var progressBar = theProgressBar();
+    // status bar
 
-        progressBar.classList.add(successful ? 'pass' : 'fail');
+    var totalComparisonCount = 0,
+        totalIssueCount = 0;
+
+    var incrementTotalComparisonCount = function () {
+        var container = getOrCreateContainer();
+        totalComparisonCount += 1;
+        container.querySelector('#' + statusTotalId).textContent = totalComparisonCount;
+    };
+
+    var incrementTotalIssueCount = function () {
+        var container = getOrCreateContainer();
+        totalIssueCount += 1;
+        container.querySelector('#' + statusIssueId).textContent = totalIssueCount;
     };
 
     // comparisons
@@ -124,6 +158,7 @@ csscriticLib.niceReporter = function (util) {
                 var key = comparisonKey(comparison.testCase);
                 
                 addTickToProgressBar(key);
+                incrementTotalComparisonCount();
                 var comparisonElement = addComparison(comparison.testCase.url, key);
                 runningComparisonEntries[key] = comparisonElement;
             },
@@ -131,12 +166,15 @@ csscriticLib.niceReporter = function (util) {
                 var key = comparisonKey(comparison.testCase);
 
                 markTickDone(comparison.status);
+                if (comparison.status !== 'passed') {
+                    incrementTotalIssueCount();
+                }
                 if (comparison.pageImage) {
                     showComparisonWithRenderedPage(comparison.pageImage, runningComparisonEntries[key]);
                 }
             },
             reportTestSuite: function (result) {
-                colorProgressBar(result.success);
+                setOutcomeOnHeader(result.success);
             }
         };
     };

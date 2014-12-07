@@ -7,22 +7,28 @@
     color: inherit;
 }
 
-#csscritic_nicereporter #progressBar {
+#csscritic_nicereporter ul {
+    list-style: none;
+    padding: 0;
+}
+
+#csscritic_nicereporter #header {
     padding: 15px;
     transition: background-color 1s;
 }
 
-#csscritic_nicereporter #progressBar.pass {
+#csscritic_nicereporter #header.pass {
     background-color: #66FFCC;
 }
 
-#csscritic_nicereporter #progressBar.fail {
+#csscritic_nicereporter #header.fail {
     background-color: #FF9933;
 }
 
-#csscritic_nicereporter #progressBar ul {
-    list-style: none;
+#csscritic_nicereporter #progressBar {
+    margin: 0.4em 0;
 }
+
 #csscritic_nicereporter #progressBar li {
     display: inline-block;
     font-size: 1.8em;
