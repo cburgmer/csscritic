@@ -155,7 +155,8 @@ window.testHelper = (function () {
     };
 
     testHelper.constructNiceReporter = function () {
-        var niceReporter = csscriticLib.niceReporter();
+        var util = csscriticLib.util(),
+            niceReporter = csscriticLib.niceReporter(util);
 
         return niceReporter.NiceReporter();
     };

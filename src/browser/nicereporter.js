@@ -1,4 +1,4 @@
-csscriticLib.niceReporter = function () {
+csscriticLib.niceReporter = function (util) {
     "use strict";
 
     var module = {};
@@ -78,23 +78,46 @@ csscriticLib.niceReporter = function () {
 
     // comparisons
 
-    var addComparison = function (testCase) {
+    var imageContainerClassName = 'imageContainer';
+
+    var addComparison = function (url) {
         var container = getOrCreateContainer(),
-            comparison = elementFor(template('<section class="comparison"><h3 class="title">{{url}}</h3></section>', {
-                url: testCase.url
+            comparison = elementFor(template('<section class="comparison">' +
+                                             '<h3 class="title">{{url}}</h3>' +
+                                             '<div class="' + imageContainerClassName + '"></div>' +
+                                             '</section>', {
+                url: url
             }));
 
         container.appendChild(comparison);
+
+        return comparison;
+    };
+
+    var showComparisonWithRenderedPage = function (pageImage, comparison) {
+        var imageContainer = comparison.querySelector('.' + imageContainerClassName);
+
+        imageContainer.appendChild(pageImage);
     };
 
     module.NiceReporter = function () {
+        var runningComparisonEntries = {};
+
         return {
             reportComparisonStarting: function (comparison) {
+                var key = util.serializeMap(comparison.testCase);
+                
                 addTickToProgressBar();
-                addComparison(comparison.testCase);
+                var comparisonElement = addComparison(comparison.testCase.url);
+                runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
+                var key = util.serializeMap(comparison.testCase);
+
                 markTickDone(comparison.status);
+                if (comparison.pageImage) {
+                    showComparisonWithRenderedPage(comparison.pageImage, runningComparisonEntries[key]);
+                }
             },
             reportTestSuite: function (result) {
                 colorProgressBar(result.success);

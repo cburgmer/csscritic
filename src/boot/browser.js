@@ -22,7 +22,7 @@ var csscritic;
 
     csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
 
-    var niceReporter = csscriticLib.niceReporter();
+    var niceReporter = csscriticLib.niceReporter(util);
 
     csscritic.NiceReporter = niceReporter.NiceReporter;
 }());

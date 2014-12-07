@@ -28,9 +28,7 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
     var someComparisonIsNotRight = false,
         shouldBeComparisons = [];
 
-    var acceptPageIfSignedOff = function (comparison, signedOffPages) {
-        var signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
-
+    var acceptPageIfSignedOff = function (comparison, signedOffPageEntry) {
         return calculateFingerprintForPage(comparison.testCase.url).then(function (actualFingerprint) {
             shouldBeComparisons.push({
                 pageUrl: comparison.testCase.url,
@@ -53,8 +51,14 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
     };
 
     var acceptOpenTest = function (comparison, signedOffPages) {
+        var signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
         if (comparison.status === "failed" || comparison.status === "referenceMissing") {
-            return acceptPageIfSignedOff(comparison, signedOffPages);
+            return acceptPageIfSignedOff(comparison, signedOffPageEntry);
+        } else {
+            shouldBeComparisons.push({
+                pageUrl: comparison.testCase.url,
+                fingerprint: signedOffPageEntry.fingerprint
+            });
         }
     };
 

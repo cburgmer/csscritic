@@ -49,3 +49,7 @@
 #csscritic_nicereporter .comparison .title {
     font-weight: normal;
 }
+
+#csscritic_nicereporter .comparison img {
+    border: 1px solid black;
+}
