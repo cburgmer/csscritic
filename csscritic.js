@@ -7,7 +7,8 @@
  */
 (function () {
     var cssDependencies = [
-            'src/browser/basichtmlreporter.css'
+            'src/browser/basichtmlreporter.css',
+            'src/browser/nicereporter.css'
         ],
         jsDependencies = [
             'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
@@ -16,6 +17,7 @@
             'src/boot/scope.js',
             'src/browser/basichtmlreporterutil.js',
             'src/browser/basichtmlreporter.js',
+            'src/browser/nicereporter.js',
             'src/browser/browserrenderer.js',
             'src/browser/domstorage.js',
             'src/browser/indexeddbstorage.js',

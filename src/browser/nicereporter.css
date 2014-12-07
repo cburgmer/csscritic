@@ -1,0 +1,51 @@
+#csscritic_nicereporter {
+    font-family: sans-serif;
+}
+
+#csscritic_nicereporter #progressBar {
+    padding: 15px;
+}
+
+#csscritic_nicereporter #progressBar.pass {
+    background-color: #66FFCC;
+}
+
+#csscritic_nicereporter #progressBar.fail {
+    background-color: #FF9933;
+}
+
+#csscritic_nicereporter #progressBar ul {
+    list-style: none;
+}
+#csscritic_nicereporter #progressBar li {
+    display: inline-block;
+    font-size: 1.8em;
+    line-height: 0.5em;
+    width: 0.5em;
+}
+#csscritic_nicereporter #progressBar li:before {
+    content: "⚫";
+}
+#csscritic_nicereporter #progressBar .inprogress {
+    color: grey;
+}
+#csscritic_nicereporter #progressBar .passed {
+    color: green;
+}
+#csscritic_nicereporter #progressBar .failed {
+    color: red;
+}
+#csscritic_nicereporter #progressBar .error {
+    color: darkred;
+}
+#csscritic_nicereporter #progressBar .referenceMissing {
+    color: orange;
+}
+
+#csscritic_nicereporter .comparison {
+    padding: 15px;
+}
+
+#csscritic_nicereporter .comparison .title {
+    font-weight: normal;
+}
