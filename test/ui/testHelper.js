@@ -129,6 +129,18 @@ window.testHelper = (function () {
         };
     };
 
+    testHelper.passingTestSuite = function () {
+        return {
+            success: true
+        };
+    };
+
+    testHelper.failingTestSuite = function () {
+        return {
+            success: false
+        };
+    };
+
     testHelper.setUp = function () {
         mockImagediff();
         mockCanvasReadSupport();
@@ -140,6 +152,12 @@ window.testHelper = (function () {
             basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
 
         return basicHTMLReporter.BasicHTMLReporter();
+    };
+
+    testHelper.constructNiceReporter = function () {
+        var niceReporter = csscriticLib.niceReporter();
+
+        return niceReporter.NiceReporter();
     };
 
     return testHelper;

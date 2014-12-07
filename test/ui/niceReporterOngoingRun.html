@@ -1,0 +1,27 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" href="src/browser/nicereporter.css">
+    <script src="src/boot/scope.js"></script>
+    <script src="src/browser/nicereporter.js"></script>
+</head>
+<body>
+    <script src="testHelper.js"></script>
+    <script>
+        var reporter = testHelper.constructNiceReporter();
+
+        testHelper.setUp();
+
+        var firstTest = testHelper.comparison('passed', {
+            url: 'firstPage.html'
+        });
+        var secondTest = testHelper.comparison('failed', {
+            url: 'secondTest.html'
+        });
+        reporter.reportComparisonStarting(firstTest);
+        reporter.reportComparisonStarting(secondTest);
+        reporter.reportComparison(firstTest);
+    </script>
+</body>
+</html>

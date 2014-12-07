@@ -25,19 +25,29 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
         return signedOffPage;
     };
 
+    var someComparisonIsNotRight = false,
+        shouldBeComparisons = [];
+
     var acceptPageIfSignedOff = function (comparison, signedOffPages) {
         var signedOffPageEntry = findPage(comparison.testCase.url, signedOffPages);
 
         return calculateFingerprintForPage(comparison.testCase.url).then(function (actualFingerprint) {
+            shouldBeComparisons.push({
+                pageUrl: comparison.testCase.url,
+                fingerprint: actualFingerprint
+            });
+
             if (signedOffPageEntry) {
                 if (actualFingerprint === signedOffPageEntry.fingerprint) {
                     console.log("Generating reference image for " + comparison.testCase.url);
                     comparison.acceptPage();
                 } else {
                     console.log("Fingerprint does not match for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
+                    someComparisonIsNotRight = true;
                 }
             } else {
                 console.log("No sign-off for " + comparison.testCase.url + ", current fingerprint " + actualFingerprint);
+                someComparisonIsNotRight = true;
             }
         });
     };
@@ -57,6 +67,12 @@ csscriticLib.signOffReporter = function (signOffReporterUtil) {
                     });
                 } else {
                     return acceptOpenTest(comparison, signedOffPages);
+                }
+            },
+            reportTestSuite: function () {
+                if (someComparisonIsNotRight) {
+                    console.log("You might want to use this 'signedOff.json':");
+                    console.log(JSON.stringify(shouldBeComparisons));
                 }
             }
         };

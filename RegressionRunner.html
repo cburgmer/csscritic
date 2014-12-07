@@ -9,6 +9,13 @@
     <script>
         window.onload = function() {
             csscritic.addReporter(csscritic.BasicHTMLReporter());
+            csscritic.add('test/ui/niceReporterPassedTest.html');
+            csscritic.add('test/ui/niceReporterFailingTest.html');
+            csscritic.add('test/ui/niceReporterMissingReference.html');
+            csscritic.add('test/ui/niceReporterBrokenUrl.html');
+            csscritic.add('test/ui/niceReporterTwoTests.html');
+            csscritic.add('test/ui/niceReporterStartingTest.html');
+            csscritic.add('test/ui/niceReporterOngoingRun.html');
             csscritic.add('test/ui/failingTest.html');
             csscritic.add({
                 url: 'test/ui/failingTest.html',
