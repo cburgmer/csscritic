@@ -9,6 +9,7 @@
 
 #csscritic_nicereporter #progressBar {
     padding: 15px;
+    transition: background-color 1s;
 }
 
 #csscritic_nicereporter #progressBar.pass {
@@ -27,6 +28,7 @@
     font-size: 1.8em;
     line-height: 0.5em;
     width: 0.5em;
+    transition: color 1s;
 }
 #csscritic_nicereporter #progressBar .inprogress {
     color: grey;
@@ -50,6 +52,13 @@
 
 #csscritic_nicereporter .comparison .title {
     font-weight: normal;
+}
+
+#csscritic_nicereporter .comparison .title a {
+    vertical-align: top;
+    font-size: 0.9em;
+    line-height: 0.6em;
+    color: #888;
 }
 
 #csscritic_nicereporter .comparison img {

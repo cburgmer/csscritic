@@ -44,4 +44,12 @@ describe("Nice reporter", function () {
         expect(reporterContainer().find('#progressBar a').attr('href')).toEqual('#aTest.html,width=42');
         expect(reporterContainer().find('section').attr('id')).toEqual('aTest.html,width=42');
     });
+
+    it("should link to the test case's href", function () {
+        var test = aPassedTest();
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
+
+        expect(reporterContainer().find('.comparison .title a').attr('href')).toEqual('aPage.html');
+    });
 });
