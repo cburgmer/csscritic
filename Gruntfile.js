@@ -92,8 +92,8 @@ module.exports = function (grunt) {
                 src: 'node_modules/inlineresources/src/inline.js',
                 dest: 'build/dependencies/inlineresources.js',
                 options: {
-                    bundleOptions: {
-                        'standalone': 'inlineresources'
+                    browserifyOptions: {
+                        standalone: 'inlineresources'
                     }
                 }
             },
@@ -101,7 +101,7 @@ module.exports = function (grunt) {
                 src: 'build/<%= pkg.name %>.umd.js',
                 dest: 'build/<%= pkg.name %>.allinone.js',
                 options: {
-                    bundleOptions: {
+                    browserifyOptions: {
                         standalone: 'csscritic'
                     },
                     transform: ['cssify']
