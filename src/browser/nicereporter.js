@@ -61,24 +61,23 @@ csscriticLib.niceReporter = function (util) {
         return reportBody;
     };
 
+    var findElementFor = function (elementId) {
+        var container = getOrCreateContainer();
+        return container.querySelector('#' + elementId);
+    };
+
     // header
 
     var setOutcomeOnHeader = function (successful) {
-        var container = getOrCreateContainer(),
-            header = container.querySelector('#' + headerId);
+        var header = findElementFor(headerId);
 
         header.classList.add(successful ? 'pass' : 'fail');
     };
 
     // progress bar
 
-    var theProgressBar = function () {
-        var container = getOrCreateContainer();
-        return container.querySelector('#' + progressBarId);
-    };
-
     var addTickToProgressBar = function (linkTarget) {
-        var progressBar = theProgressBar();
+        var progressBar = findElementFor(progressBarId);
 
         var tick = elementFor(template('<li><a href="#{{linkTarget}}">⚫</a></li>', {
             linkTarget: linkTarget
@@ -88,7 +87,7 @@ csscriticLib.niceReporter = function (util) {
     };
 
     var markTickDone = function (status) {
-        var progressBar = theProgressBar(),
+        var progressBar = findElementFor(progressBarId),
             unfinishedTick = progressBar.querySelector('.inprogress');
 
         unfinishedTick.classList.remove('inprogress');
@@ -101,15 +100,15 @@ csscriticLib.niceReporter = function (util) {
         totalIssueCount = 0;
 
     var incrementTotalComparisonCount = function () {
-        var container = getOrCreateContainer();
+        var statusTotal = findElementFor(statusTotalId);
         totalComparisonCount += 1;
-        container.querySelector('#' + statusTotalId).textContent = totalComparisonCount;
+        statusTotal.textContent = totalComparisonCount;
     };
 
     var incrementTotalIssueCount = function () {
-        var container = getOrCreateContainer();
+        var statusIssue = findElementFor(statusIssueId);
         totalIssueCount += 1;
-        container.querySelector('#' + statusIssueId).textContent = totalIssueCount;
+        statusIssue.textContent = totalIssueCount;
     };
 
     // comparisons
