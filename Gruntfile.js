@@ -82,9 +82,8 @@ module.exports = function (grunt) {
                 indent: '    ',
                 deps: {
                     default: ['ayepromise', 'imagediff', 'rasterizeHTML'],
-                    cjs: ['ayepromise', 'imagediff', 'rasterizehtml'],
-                    amd: ['ayepromise', 'imagediff', 'rasterizehtml']
-
+                    // HACK, use the css require to include css via cssify
+                    cjs: ['ayepromise', 'imagediff', 'rasterizehtml', '../build/<%= pkg.name %>.concat.css']
                 }
             }
         },
@@ -104,7 +103,8 @@ module.exports = function (grunt) {
                 options: {
                     bundleOptions: {
                         standalone: 'csscritic'
-                    }
+                    },
+                    transform: ['cssify']
                 }
             }
         },
@@ -134,7 +134,7 @@ module.exports = function (grunt) {
         cssmin: {
             dist: {
                 files: {
-                    'dist/<%= pkg.name %>.min.css': ['src/browser/*.css']
+                    'build/<%= pkg.name %>.concat.css': ['src/browser/*.css']
                 }
             }
         },
@@ -324,9 +324,9 @@ module.exports = function (grunt) {
         'clean:dist',
         'concat',
         'umd',
+        'cssmin',
         'browserify:allinone',
-        'uglify',
-        'cssmin'
+        'uglify'
     ]);
 
     grunt.registerTask('default', [
