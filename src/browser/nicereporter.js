@@ -125,22 +125,33 @@ csscriticLib.niceReporter = function (util) {
         return key;
     };
 
-    var imageContainerClassName = 'imageContainer';
+    var changedImageContainerClassName = 'changedImageContainer',
+        imageContainerClassName = 'imageContainer';
 
     var addComparison = function (url, key) {
         var container = getOrCreateContainer(),
             comparison = elementFor(template('<section class="comparison" id="{{id}}">' +
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
                                              '<div class="{{imageContainerClassName}}"></div>' +
+                                             '<div class="{{changedImageContainerClassName}}"></div>' +
                                              '</section>', {
                                                  url: url,
                                                  id: key,
-                                                 imageContainerClassName: imageContainerClassName
+                                                 imageContainerClassName: imageContainerClassName,
+                                                 changedImageContainerClassName: changedImageContainerClassName
                                              }));
 
         container.appendChild(comparison);
 
         return comparison;
+    };
+
+    var showComparisonWithDiff = function (pageImage, referenceImage, comparison) {
+        var changedImageContainer = comparison.querySelector('.' + changedImageContainerClassName),
+            imageContainer = comparison.querySelector('.' + imageContainerClassName);
+
+        changedImageContainer.appendChild(pageImage);
+        imageContainer.appendChild(referenceImage);
     };
 
     var showComparisonWithRenderedPage = function (pageImage, comparison) {
@@ -168,7 +179,9 @@ csscriticLib.niceReporter = function (util) {
                 if (comparison.status !== 'passed') {
                     incrementTotalIssueCount();
                 }
-                if (comparison.pageImage) {
+                if (comparison.status === 'failed') {
+                    showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, runningComparisonEntries[key]);
+                } else if (comparison.pageImage) {
                     showComparisonWithRenderedPage(comparison.pageImage, runningComparisonEntries[key]);
                 }
             },
