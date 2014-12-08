@@ -15,12 +15,24 @@ describe("Nice reporter", function () {
         };
     };
 
+    var aFailedTest = function (pageImage, referenceImage) {
+        return {
+            status: 'failed',
+            testCase: {
+                url: 'aPage.html'
+            },
+            pageImage: pageImage,
+            referenceImage: referenceImage
+        };
+    };
+
     var reporterContainer = function () {
         return $('#csscritic_nicereporter');
     };
     
     beforeEach(function () {
         reporter = csscriticLib.niceReporter(util).NiceReporter();
+        jasmine.addMatchers(imagediffForJasmine2);
     });
 
     afterEach(function () {
@@ -51,5 +63,20 @@ describe("Nice reporter", function () {
         reporter.reportComparison(test);
 
         expect(reporterContainer().find('.comparison .title a').attr('href')).toEqual('aPage.html');
+    });
+
+    it("should show a difference canvas on a failed comparison", function (done) {
+        testHelper.loadImageFromUrl(testHelper.fixture("blue.png"), function (expectedDiffImage) {
+            testHelper.loadImageFromUrl(testHelper.fixture("green.png"), function (pageImage) {
+                testHelper.loadImageFromUrl(testHelper.fixture("redWithLetter.png"), function (referenceImage) {
+                    var test = aFailedTest(pageImage, referenceImage);
+                    reporter.reportComparisonStarting(test);
+                    reporter.reportComparison(test);
+
+                    expect(reporterContainer().find('canvas').get(0)).toImageDiffEqual(expectedDiffImage);
+                    done();
+                });
+            });
+        });
     });
 });

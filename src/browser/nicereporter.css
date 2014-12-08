@@ -12,6 +12,8 @@
     padding: 0;
 }
 
+/* Header */
+
 #csscritic_nicereporter #header {
     padding: 15px;
     transition: background-color 1s;
@@ -24,6 +26,8 @@
 #csscritic_nicereporter #header.fail {
     background-color: #FF9933;
 }
+
+/* Progress bar */
 
 #csscritic_nicereporter #progressBar {
     margin: 0.4em 0;
@@ -52,6 +56,8 @@
     color: orange;
 }
 
+/* Comparison */
+
 #csscritic_nicereporter .comparison {
     padding: 15px;
 }
@@ -67,6 +73,30 @@
     color: #888;
 }
 
-#csscritic_nicereporter .comparison img {
+/* Diff image */
+
+#csscritic_nicereporter .comparison img,
+#csscritic_nicereporter .comparison canvas {
     border: 1px solid black;
+}
+
+#csscritic_nicereporter .comparison .imageContainer {
+    position: relative;
+}
+
+#csscritic_nicereporter .comparison .imageContainer canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+#csscritic_nicereporter .failed.comparison .imageContainer:hover canvas {
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+#csscritic_nicereporter .failed.comparison .imageContainer:hover img {
+    opacity: 0.5;
+    transition: opacity 1s;
 }

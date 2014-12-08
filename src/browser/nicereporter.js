@@ -146,12 +146,54 @@ csscriticLib.niceReporter = function (util) {
         return comparison;
     };
 
+    var canvasForImageCanvas = function (imageData) {
+        var canvas = document.createElement("canvas"),
+            context;
+
+        canvas.height = imageData.height;
+        canvas.width  = imageData.width;
+
+        context = canvas.getContext("2d");
+        context.putImageData(imageData, 0, 0);
+
+        return canvas;
+    };
+
+    var diffPageImages = function (imageA, imageB) {
+        return imagediff.diff(imageA, imageB, {align: 'top'});
+    };
+
+    var embossChanges = function (imageData) {
+        var d = imageData.data,
+            i;
+        for (i = 0; i < d.length; i += 4) {
+            if (d[i] === 0 && d[i+1] === 0 && d[i+2] === 0) {
+                d[i+3] = 0;
+            } else {
+                d[i] = 0;
+                d[i+1] = 0;
+                d[i+2] = 255;
+                d[i+3] = 255;
+            }
+        }
+        return imageData;
+    };
+
+    var getDifferenceCanvas = function (imageA, imageB) {
+        var differenceImageData = diffPageImages(imageA, imageB);
+
+        return canvasForImageCanvas(embossChanges(differenceImageData));
+    };
+
     var showComparisonWithDiff = function (pageImage, referenceImage, comparison) {
         var changedImageContainer = comparison.querySelector('.' + changedImageContainerClassName),
             imageContainer = comparison.querySelector('.' + imageContainerClassName);
 
         changedImageContainer.appendChild(pageImage);
         imageContainer.appendChild(referenceImage);
+        imageContainer.appendChild(getDifferenceCanvas(referenceImage, pageImage));
+
+        comparison.classList.add('failed');
     };
 
     var showComparisonWithRenderedPage = function (pageImage, comparison) {

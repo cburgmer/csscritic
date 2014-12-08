@@ -11,6 +11,10 @@
             csscritic.addReporter(csscritic.BasicHTMLReporter());
             csscritic.add('test/ui/niceReporterPassedTest.html');
             csscritic.add('test/ui/niceReporterFailingTest.html');
+            csscritic.add({
+                url: 'test/ui/niceReporterFailingTest.html',
+                hover: '.failed.comparison .imageContainer'
+            });
             csscritic.add('test/ui/niceReporterMissingReference.html');
             csscritic.add('test/ui/niceReporterBrokenUrl.html');
             csscritic.add('test/ui/niceReporterTwoTests.html');
