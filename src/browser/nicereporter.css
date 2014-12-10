@@ -75,6 +75,12 @@
 
 /* Diff image */
 
+#csscritic_nicereporter .comparison img {
+    /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
+    display: block;
+}
+
 #csscritic_nicereporter .comparison .imageContainer,
 #csscritic_nicereporter .comparison .changedImageContainer:not(:empty) {
     border: 1px solid black;
