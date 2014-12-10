@@ -132,7 +132,7 @@ csscriticLib.niceReporter = function (util) {
         var container = getOrCreateContainer(),
             comparison = elementFor(template('<section class="comparison" id="{{id}}">' +
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
-                                             '<div class="{{imageContainerClassName}}"></div>' +
+                                             '<div><div class="{{imageContainerClassName}}"></div></div>' +
                                              '<div class="{{changedImageContainerClassName}}"></div>' +
                                              '</section>', {
                                                  url: url,

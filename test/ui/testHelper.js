@@ -4,13 +4,12 @@ window.testHelper = (function () {
     var testHelper = {};
 
     var mockImagediff = function () {
-        var canvas = document.createElement("canvas"),
-            imageData;
-        imageData = canvas.getContext("2d").createImageData(100, 100);
-
         window.imagediff = {
-            diff: function () {
-                return imageData;
+            diff: function (imageA, imageB) {
+                var canvas = document.createElement("canvas"),
+                    height = Math.max(imageA.height, imageB.height),
+                    width = Math.max(imageA.width, imageB.width);
+                return canvas.getContext("2d").createImageData(width, height);
             }
         };
     };
@@ -19,6 +18,8 @@ window.testHelper = (function () {
         var mocks = {};
 
         var mockImageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AsECh0kn2LdqQAAAKlJREFUeNrt3bERADAIAzGT/XeGLQiFfgR0rql0OjrTcwIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABAaJvlXcuFiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAA0U4DUeIDxDHtCI8AAAAASUVORK5CYII=";
+
+        var heigherMockImageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAACWCAYAAAAouC1GAAABSklEQVR4nO3OsQ3AMADDsJzez9vZFygoaMK7znm5Sh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIA1nnP4xfdzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM7If7AKXEFkl4JVdsAAAAAElFTkSuQmCC";
 
         mocks.image = function () {
             var image = window.document.createElement("img");
@@ -29,12 +30,21 @@ window.testHelper = (function () {
             return image;
         };
 
+        mocks.heigherImage = function () {
+            var image = window.document.createElement("img");
+            image.src = heigherMockImageUrl;
+            // Work around image being loaded asynchronously and the reporter needing the size immediatelly
+            image.height = 150;
+            image.width = 100;
+            return image;
+        };
+
         mocks.differenceImageCanvas = function () {
             return window.document.createElement("canvas");
         };
 
-        mocks.differenceImageData = function () {
-            return mocks.differenceImageCanvas().getContext("2d").createImageData(100, 100);
+        mocks.differenceImageData = function (width, height) {
+            return mocks.differenceImageCanvas().getContext("2d").createImageData(width, height);
         };
 
         return mocks;
@@ -43,28 +53,45 @@ window.testHelper = (function () {
     testHelper.comparison = function (status, testCase, renderErrors, resizable) {
         var dummyFunc = function () {},
             mocks = setUpMocks(),
-            comparison;
+            pageImage;
 
         testCase = testCase || {};
         testCase.url = testCase.url || "aPage.html";
+
+        if (status === 'error') {
+            pageImage = null;
+        } else {
+            pageImage = mocks.image();
+        }
+
+        return aComparison(status, testCase, pageImage, renderErrors || [], resizable);
+    };
+
+    testHelper.comparisonWithLargerPageImage = function () {
+        var mocks = setUpMocks();
+
+        return aComparison('failed', {url: 'aPage.html'}, mocks.heigherImage(), [], false);
+    };
+
+    var aComparison = function (status, testCase, pageImage, renderErrors, resizable) {
+        var dummyFunc = function () {},
+            mocks = setUpMocks(),
+            comparison;
+
         comparison = {
             status: status,
             testCase: testCase,
-            renderErrors: renderErrors || []
+            renderErrors: renderErrors
         };
 
-        if (status === 'error') {
-            comparison.pageImage = null;
-        } else {
-            comparison.pageImage = mocks.image();
-        }
+        comparison.pageImage = pageImage;
 
         if (status === 'failed' || status === 'passed') {
             comparison.referenceImage = mocks.image();
         }
 
         if (status === 'failed') {
-            comparison.differenceImageData = mocks.differenceImageData();
+            comparison.differenceImageData = mocks.differenceImageData(pageImage.width, pageImage.height);
         }
 
         if (status === 'failed' || status === 'referenceMissing') {

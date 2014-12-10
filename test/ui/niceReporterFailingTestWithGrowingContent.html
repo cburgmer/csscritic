@@ -14,7 +14,7 @@
 
         testHelper.setUp();
 
-        var test = testHelper.comparison('failed');
+        var test = testHelper.comparisonWithLargerPageImage();
         reporter.reportComparisonStarting(test);
         reporter.reportComparison(test);
         reporter.reportTestSuite(testHelper.failingTestSuite());
@@ -24,7 +24,7 @@
       canvas {
         display: inline-block;
         width: 100px;
-        height: 100px;
+        height: 150px;
       }
     </style>
 </body>

@@ -75,9 +75,14 @@
 
 /* Diff image */
 
-#csscritic_nicereporter .comparison img,
-#csscritic_nicereporter .comparison canvas {
+#csscritic_nicereporter .comparison .imageContainer,
+#csscritic_nicereporter .comparison .changedImageContainer:not(:empty) {
     border: 1px solid black;
+    display: inline-block;
+}
+
+#csscritic_nicereporter .comparison .changedImageContainer:not(:empty) {
+    margin-top: 4px;
 }
 
 #csscritic_nicereporter .comparison .imageContainer {
@@ -85,13 +90,15 @@
 }
 
 #csscritic_nicereporter .comparison .imageContainer canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* display:none solution that transitions on hover - using max-{height|width} to work around issue with canvas needing CSS help to render in our own UI tests */
+    max-height: 0;
+    max-width: 0;
     opacity: 0;
 }
 
 #csscritic_nicereporter .failed.comparison .imageContainer:hover canvas {
+    max-height: none;
+    max-width: none;
     opacity: 1;
     transition: opacity 1s;
 }
@@ -99,4 +106,8 @@
 #csscritic_nicereporter .failed.comparison .imageContainer:hover img {
     opacity: 0.5;
     transition: opacity 1s;
+    /* Display underneath transparent diff, while having the imageContainer's height auto adapt */
+    position: absolute;
+    top: 0;
+    left: 0;
 }
