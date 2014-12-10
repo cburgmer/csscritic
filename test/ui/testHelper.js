@@ -39,20 +39,11 @@ window.testHelper = (function () {
             return image;
         };
 
-        mocks.differenceImageCanvas = function () {
-            return window.document.createElement("canvas");
-        };
-
-        mocks.differenceImageData = function (width, height) {
-            return mocks.differenceImageCanvas().getContext("2d").createImageData(width, height);
-        };
-
         return mocks;
     };
 
     testHelper.comparison = function (status, testCase, renderErrors, resizable) {
-        var dummyFunc = function () {},
-            mocks = setUpMocks(),
+        var mocks = setUpMocks(),
             pageImage;
 
         testCase = testCase || {};
@@ -88,10 +79,6 @@ window.testHelper = (function () {
 
         if (status === 'failed' || status === 'passed') {
             comparison.referenceImage = mocks.image();
-        }
-
-        if (status === 'failed') {
-            comparison.differenceImageData = mocks.differenceImageData(pageImage.width, pageImage.height);
         }
 
         if (status === 'failed' || status === 'referenceMissing') {
