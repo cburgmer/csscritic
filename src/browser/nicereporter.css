@@ -78,7 +78,6 @@
 #csscritic_nicereporter .comparison img {
     /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
-    display: block;
 }
 
 #csscritic_nicereporter .comparison .imageContainer,
@@ -94,6 +93,13 @@
 #csscritic_nicereporter .comparison .imageContainer {
     position: relative;
 }
+
+#csscritic_nicereporter .comparison .imageContainer img,
+#csscritic_nicereporter .comparison .imageContainer canvas,
+#csscritic_nicereporter .comparison .changedImageContainer img {
+    display: block;
+}
+
 
 #csscritic_nicereporter .comparison .imageContainer canvas {
     /* display:none solution that transitions on hover - using max-{height|width} to work around issue with canvas needing CSS help to render in our own UI tests */
