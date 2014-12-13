@@ -185,12 +185,18 @@ csscriticLib.niceReporter = function (util) {
         return canvasForImageCanvas(embossChanges(differenceImageData));
     };
 
+    var imageWrapper = function (image) {
+        var wrapper = elementFor('<div class="imageWrapper"></div>');
+        wrapper.appendChild(image);
+        return wrapper;
+    };
+
     var showComparisonWithDiff = function (pageImage, referenceImage, comparison) {
         var changedImageContainer = comparison.querySelector('.' + changedImageContainerClassName),
             imageContainer = comparison.querySelector('.' + imageContainerClassName);
 
-        changedImageContainer.appendChild(pageImage);
-        imageContainer.appendChild(referenceImage);
+        changedImageContainer.appendChild(imageWrapper(pageImage));
+        imageContainer.appendChild(imageWrapper(referenceImage));
         imageContainer.appendChild(getDifferenceCanvas(referenceImage, pageImage));
 
         comparison.classList.add('failed');
@@ -199,7 +205,7 @@ csscriticLib.niceReporter = function (util) {
     var showComparisonWithRenderedPage = function (pageImage, comparison) {
         var imageContainer = comparison.querySelector('.' + imageContainerClassName);
 
-        imageContainer.appendChild(pageImage);
+        imageContainer.appendChild(imageWrapper(pageImage));
     };
 
     module.NiceReporter = function () {

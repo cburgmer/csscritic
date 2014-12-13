@@ -75,7 +75,7 @@
 
 /* Diff image */
 
-#csscritic_nicereporter .comparison img {
+#csscritic_nicereporter .comparison .imageWrapper {
     /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
 }
@@ -115,11 +115,13 @@
     transition: opacity 1s;
 }
 
-#csscritic_nicereporter .failed.comparison .imageContainer:hover img {
+#csscritic_nicereporter .failed.comparison .imageContainer:hover .imageWrapper {
     opacity: 0.5;
     transition: opacity 1s;
     /* Display underneath transparent diff, while having the imageContainer's height auto adapt */
     position: absolute;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
 }
