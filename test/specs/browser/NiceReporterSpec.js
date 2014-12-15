@@ -26,10 +26,28 @@ describe("Nice reporter", function () {
         };
     };
 
+    var aFailedTestWithAccept = function (acceptPage) {
+        var image = document.createElement('img');
+        return {
+            status: 'failed',
+            testCase: {
+                url: 'aPage.html'
+            },
+            pageImage: image,
+            referenceImage: image,
+            acceptPage: acceptPage
+        };
+    };
+
+    var imageData = function () {
+        var canvas = document.createElement("canvas");
+        return canvas.getContext("2d").createImageData(1, 1);
+    };
+
     var reporterContainer = function () {
         return $('#csscritic_nicereporter');
     };
-    
+
     beforeEach(function () {
         reporter = csscriticLib.niceReporter(util).NiceReporter();
         jasmine.addMatchers(imagediffForJasmine2);
@@ -78,5 +96,19 @@ describe("Nice reporter", function () {
                 });
             });
         });
+    });
+
+    it("should allow the user to accept the rendered page", function () {
+        var acceptSpy = jasmine.createSpy('accept'),
+            test = aFailedTestWithAccept(acceptSpy);
+
+        spyOn(imagediff, 'diff').and.returnValue(imageData());
+
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
+
+        $('.failed.comparison button').click();
+
+        expect(acceptSpy).toHaveBeenCalled();
     });
 });

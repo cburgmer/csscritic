@@ -133,7 +133,7 @@ csscriticLib.niceReporter = function (util) {
             comparison = elementFor(template('<section class="comparison" id="{{id}}">' +
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
                                              '<div><div class="{{imageContainerClassName}}"></div></div>' +
-                                             '<div class="{{changedImageContainerClassName}}"></div>' +
+                                             '<div class="{{changedImageContainerClassName}}"><button>Accept</button></div>' +
                                              '</section>', {
                                                  url: url,
                                                  id: key,
@@ -191,13 +191,16 @@ csscriticLib.niceReporter = function (util) {
         return wrapper;
     };
 
-    var showComparisonWithDiff = function (pageImage, referenceImage, comparison) {
+    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, comparison) {
         var changedImageContainer = comparison.querySelector('.' + changedImageContainerClassName),
-            imageContainer = comparison.querySelector('.' + imageContainerClassName);
+            imageContainer = comparison.querySelector('.' + imageContainerClassName),
+            acceptButton = comparison.querySelector('button');
 
         changedImageContainer.appendChild(imageWrapper(pageImage));
         imageContainer.appendChild(imageWrapper(referenceImage));
         imageContainer.appendChild(getDifferenceCanvas(referenceImage, pageImage));
+
+        acceptButton.onclick = acceptPage;
 
         comparison.classList.add('failed');
     };
@@ -228,7 +231,7 @@ csscriticLib.niceReporter = function (util) {
                     incrementTotalIssueCount();
                 }
                 if (comparison.status === 'failed') {
-                    showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, runningComparisonEntries[key]);
+                    showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, runningComparisonEntries[key]);
                 } else if (comparison.pageImage) {
                     showComparisonWithRenderedPage(comparison.pageImage, runningComparisonEntries[key]);
                 }
