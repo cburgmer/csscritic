@@ -125,20 +125,17 @@ csscriticLib.niceReporter = function (util) {
         return key;
     };
 
-    var changedImageContainerClassName = 'changedImageContainer',
-        imageContainerClassName = 'imageContainer';
+    var imageContainerClassName = 'imageContainer';
 
     var addComparison = function (url, key) {
         var container = getOrCreateContainer(),
             comparison = elementFor(template('<section class="comparison" id="{{id}}">' +
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
                                              '<div><div class="{{imageContainerClassName}}"></div></div>' +
-                                             '<div class="{{changedImageContainerClassName}}"><button>Accept</button></div>' +
                                              '</section>', {
                                                  url: url,
                                                  id: key,
-                                                 imageContainerClassName: imageContainerClassName,
-                                                 changedImageContainerClassName: changedImageContainerClassName
+                                                 imageContainerClassName: imageContainerClassName
                                              }));
 
         container.appendChild(comparison);
@@ -192,15 +189,23 @@ csscriticLib.niceReporter = function (util) {
     };
 
     var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, comparison) {
-        var changedImageContainer = comparison.querySelector('.' + changedImageContainerClassName),
-            imageContainer = comparison.querySelector('.' + imageContainerClassName),
-            acceptButton = comparison.querySelector('button');
+        var imageContainer = comparison.querySelector('.' + imageContainerClassName),
+            changedImageContainerClassName = 'changedImageContainer',
+            outerChangedImageContainer = elementFor(template('<div>' +
+                                                             '<div class="{{changedImageContainerClassName}}"></div>' +
+                                                             '<button>Accept</button>' +
+                                                             '</div>', {
+                                                                 changedImageContainerClassName: changedImageContainerClassName
+                                                             })),
+            changedImageContainer = outerChangedImageContainer.querySelector('.' + changedImageContainerClassName),
+            acceptButton = outerChangedImageContainer.querySelector('button');
 
-        changedImageContainer.appendChild(imageWrapper(pageImage));
         imageContainer.appendChild(imageWrapper(referenceImage));
         imageContainer.appendChild(getDifferenceCanvas(referenceImage, pageImage));
 
+        changedImageContainer.appendChild(imageWrapper(pageImage));
         acceptButton.onclick = acceptPage;
+        comparison.appendChild(outerChangedImageContainer);
 
         comparison.classList.add('failed');
     };

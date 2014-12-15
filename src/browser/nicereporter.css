@@ -81,12 +81,12 @@
 }
 
 #csscritic_nicereporter .comparison .imageContainer,
-#csscritic_nicereporter .comparison .changedImageContainer:not(:empty) {
+#csscritic_nicereporter .comparison .changedImageContainer {
     border: 1px solid black;
     display: inline-block;
 }
 
-#csscritic_nicereporter .comparison .changedImageContainer:not(:empty) {
+#csscritic_nicereporter .comparison .changedImageContainer {
     margin-top: 4px;
 }
 
