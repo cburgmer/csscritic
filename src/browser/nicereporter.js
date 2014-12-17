@@ -188,9 +188,8 @@ csscriticLib.niceReporter = function (util) {
         return wrapper;
     };
 
-    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, comparison) {
-        var imageContainer = comparison.querySelector('.' + imageContainerClassName),
-            changedImageContainerClassName = 'changedImageContainer',
+    var imageToAccept = function (pageImage, acceptPage) {
+        var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div>' +
                                                              '<div class="{{changedImageContainerClassName}}"></div>' +
                                                              '<button>Accept</button>' +
@@ -200,12 +199,19 @@ csscriticLib.niceReporter = function (util) {
             changedImageContainer = outerChangedImageContainer.querySelector('.' + changedImageContainerClassName),
             acceptButton = outerChangedImageContainer.querySelector('button');
 
+        changedImageContainer.appendChild(imageWrapper(pageImage));
+        acceptButton.onclick = acceptPage;
+
+        return outerChangedImageContainer;
+    };
+
+    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, comparison) {
+        var imageContainer = comparison.querySelector('.' + imageContainerClassName);
+
         imageContainer.appendChild(imageWrapper(referenceImage));
         imageContainer.appendChild(getDifferenceCanvas(referenceImage, pageImage));
 
-        changedImageContainer.appendChild(imageWrapper(pageImage));
-        acceptButton.onclick = acceptPage;
-        comparison.appendChild(outerChangedImageContainer);
+        comparison.appendChild(imageToAccept(pageImage, acceptPage));
 
         comparison.classList.add('failed');
     };
@@ -214,6 +220,12 @@ csscriticLib.niceReporter = function (util) {
         var imageContainer = comparison.querySelector('.' + imageContainerClassName);
 
         imageContainer.appendChild(imageWrapper(pageImage));
+    };
+
+    var showComparisonWithoutReference = function (pageImage, acceptPage, comparison) {
+        comparison.appendChild(imageToAccept(pageImage, acceptPage));
+
+        comparison.classList.add('referenceMissing');
     };
 
     module.NiceReporter = function () {
@@ -229,16 +241,19 @@ csscriticLib.niceReporter = function (util) {
                 runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
-                var key = comparisonKey(comparison.testCase);
+                var key = comparisonKey(comparison.testCase),
+                    entry = runningComparisonEntries[key];
 
                 markTickDone(comparison.status);
                 if (comparison.status !== 'passed') {
                     incrementTotalIssueCount();
                 }
                 if (comparison.status === 'failed') {
-                    showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, runningComparisonEntries[key]);
+                    showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, entry);
+                } else if (comparison.status === 'referenceMissing') {
+                    showComparisonWithoutReference(comparison.pageImage, comparison.acceptPage, entry);
                 } else if (comparison.pageImage) {
-                    showComparisonWithRenderedPage(comparison.pageImage, runningComparisonEntries[key]);
+                    showComparisonWithRenderedPage(comparison.pageImage, entry);
                 }
             },
             reportTestSuite: function (result) {

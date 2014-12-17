@@ -39,6 +39,18 @@ describe("Nice reporter", function () {
         };
     };
 
+    var aMissingReferenceTestWithAccept = function (acceptPage) {
+        var image = document.createElement('img');
+        return {
+            status: 'referenceMissing',
+            testCase: {
+                url: 'aPage.html'
+            },
+            pageImage: image,
+            acceptPage: acceptPage
+        };
+    };
+
     var imageData = function () {
         var canvas = document.createElement("canvas");
         return canvas.getContext("2d").createImageData(1, 1);
@@ -98,7 +110,7 @@ describe("Nice reporter", function () {
         });
     });
 
-    it("should allow the user to accept the rendered page", function () {
+    it("should allow the user to accept the rendered page on a failing test", function () {
         var acceptSpy = jasmine.createSpy('accept'),
             test = aFailedTestWithAccept(acceptSpy);
 
@@ -107,7 +119,21 @@ describe("Nice reporter", function () {
         reporter.reportComparisonStarting(test);
         reporter.reportComparison(test);
 
-        $('.failed.comparison button').click();
+        reporterContainer().find('.failed.comparison button').click();
+
+        expect(acceptSpy).toHaveBeenCalled();
+    });
+
+    it("should allow the user to accept the rendered page for a missing reference image", function () {
+        var acceptSpy = jasmine.createSpy('accept'),
+            test = aMissingReferenceTestWithAccept(acceptSpy);
+
+        spyOn(imagediff, 'diff').and.returnValue(imageData());
+
+        reporter.reportComparisonStarting(test);
+        reporter.reportComparison(test);
+
+        reporterContainer().find('.referenceMissing.comparison button').click();
 
         expect(acceptSpy).toHaveBeenCalled();
     });
