@@ -6,12 +6,15 @@ describe("Nice reporter", function () {
     var util = csscriticLib.util();
 
     var aPassedTest = function (testCase) {
+        var image = document.createElement('img');
         testCase = testCase || {
             url: "aPage.html"
         }; 
         return {
             status: "passed",
-            testCase: testCase
+            testCase: testCase,
+            pageImage: image,
+            referenceImage: image
         };
     };
 

@@ -125,17 +125,13 @@ csscriticLib.niceReporter = function (util) {
         return key;
     };
 
-    var imageContainerClassName = 'imageContainer';
-
     var addComparison = function (url, key) {
         var container = getOrCreateContainer(),
             comparison = elementFor(template('<section class="comparison" id="{{id}}">' +
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
-                                             '<div><div class="{{imageContainerClassName}}"></div></div>' +
                                              '</section>', {
                                                  url: url,
-                                                 id: key,
-                                                 imageContainerClassName: imageContainerClassName
+                                                 id: key
                                              }));
 
         container.appendChild(comparison);
@@ -188,7 +184,23 @@ csscriticLib.niceReporter = function (util) {
         return wrapper;
     };
 
-    var imageToAccept = function (pageImage, acceptPage) {
+    var imageContainer = function (image, imageForDiff) {
+        var imageContainerClassName = 'imageContainer',
+            outerImageContainer = elementFor(template('<div><div class="{{imageContainerClassName}}"></div></div>', {
+                imageContainerClassName: imageContainerClassName
+            })),
+            imageContainer = outerImageContainer.querySelector('.' + imageContainerClassName);
+
+        imageContainer.appendChild(imageWrapper(image));
+
+        if (imageForDiff) {
+            imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
+        }
+
+        return outerImageContainer;
+    };
+
+    var changedImageContainer = function (pageImage, acceptPage) {
         var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div>' +
                                                              '<div class="{{changedImageContainerClassName}}"></div>' +
@@ -205,27 +217,17 @@ csscriticLib.niceReporter = function (util) {
         return outerChangedImageContainer;
     };
 
-    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, comparison) {
-        var imageContainer = comparison.querySelector('.' + imageContainerClassName);
-
-        imageContainer.appendChild(imageWrapper(referenceImage));
-        imageContainer.appendChild(getDifferenceCanvas(referenceImage, pageImage));
-
-        comparison.appendChild(imageToAccept(pageImage, acceptPage));
-
-        comparison.classList.add('failed');
+    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, container) {
+        container.appendChild(imageContainer(referenceImage, pageImage));
+        container.appendChild(changedImageContainer(pageImage, acceptPage));
     };
 
-    var showComparisonWithRenderedPage = function (pageImage, comparison) {
-        var imageContainer = comparison.querySelector('.' + imageContainerClassName);
-
-        imageContainer.appendChild(imageWrapper(pageImage));
+    var showComparisonWithRenderedPage = function (pageImage, container) {
+        container.appendChild(imageContainer(pageImage));
     };
 
-    var showComparisonWithoutReference = function (pageImage, acceptPage, comparison) {
-        comparison.appendChild(imageToAccept(pageImage, acceptPage));
-
-        comparison.classList.add('referenceMissing');
+    var showComparisonWithoutReference = function (pageImage, acceptPage, container) {
+        container.appendChild(changedImageContainer(pageImage, acceptPage));
     };
 
     module.NiceReporter = function () {
@@ -252,9 +254,11 @@ csscriticLib.niceReporter = function (util) {
                     showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, entry);
                 } else if (comparison.status === 'referenceMissing') {
                     showComparisonWithoutReference(comparison.pageImage, comparison.acceptPage, entry);
-                } else if (comparison.pageImage) {
+                } else if (comparison.status === 'passed') {
                     showComparisonWithRenderedPage(comparison.pageImage, entry);
                 }
+
+                entry.classList.add(comparison.status);
             },
             reportTestSuite: function (result) {
                 setOutcomeOnHeader(result.success);
