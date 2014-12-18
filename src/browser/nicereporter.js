@@ -84,14 +84,13 @@ csscriticLib.niceReporter = function (util) {
         }));
         tick.classList.add('inprogress');
         progressBar.appendChild(tick);
+
+        return tick;
     };
 
-    var markTickDone = function (status) {
-        var progressBar = findElementFor(progressBarId),
-            unfinishedTick = progressBar.querySelector('.inprogress');
-
-        unfinishedTick.classList.remove('inprogress');
-        unfinishedTick.classList.add(status);
+    var markTickDone = function (status, tickElement) {
+        tickElement.classList.remove('inprogress');
+        tickElement.classList.add(status);
     };
 
     // status bar
@@ -231,22 +230,28 @@ csscriticLib.niceReporter = function (util) {
     };
 
     module.NiceReporter = function () {
-        var runningComparisonEntries = {};
+        var progressTickElements = {},
+            runningComparisonEntries = {};
 
         return {
             reportComparisonStarting: function (comparison) {
                 var key = comparisonKey(comparison.testCase);
                 
-                addTickToProgressBar(key);
+                var tickElement = addTickToProgressBar(key);
+                progressTickElements[key] = tickElement;
+
                 incrementTotalComparisonCount();
+
                 var comparisonElement = addComparison(comparison.testCase.url, key);
                 runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
                 var key = comparisonKey(comparison.testCase),
+                    tickElement = progressTickElements[key],
                     entry = runningComparisonEntries[key];
 
-                markTickDone(comparison.status);
+                markTickDone(comparison.status, tickElement);
+
                 if (comparison.status !== 'passed') {
                     incrementTotalIssueCount();
                 }

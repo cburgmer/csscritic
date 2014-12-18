@@ -22,8 +22,9 @@
         });
         reporter.reportComparisonStarting(firstTest);
         reporter.reportComparisonStarting(secondTest);
-        reporter.reportComparison(firstTest);
+        // simulate tests finishing in the wrong order
         reporter.reportComparison(secondTest);
+        reporter.reportComparison(firstTest);
         reporter.reportTestSuite(testHelper.failingTestSuite());
     </script>
 </body>
