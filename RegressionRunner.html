@@ -8,7 +8,7 @@
 
     <script>
         window.onload = function() {
-            csscritic.addReporter(csscritic.BasicHTMLReporter());
+            csscritic.addReporter(csscritic.NiceReporter());
             csscritic.add('test/ui/niceReporterPassedTest.html');
             csscritic.add('test/ui/niceReporterFailingTest.html');
             csscritic.add({
