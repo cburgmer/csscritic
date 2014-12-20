@@ -80,6 +80,11 @@
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
 }
 
+#csscritic_nicereporter .comparison img,
+#csscritic_nicereporter .comparison canvas {
+    display: block;
+}
+
 #csscritic_nicereporter .comparison .imageContainer,
 #csscritic_nicereporter .comparison .changedImageContainer {
     border: 1px solid black;
@@ -94,21 +99,14 @@
     position: relative;
 }
 
-#csscritic_nicereporter .comparison .imageContainer img,
-#csscritic_nicereporter .comparison .imageContainer canvas,
-#csscritic_nicereporter .comparison .changedImageContainer img {
-    display: block;
-}
-
-
-#csscritic_nicereporter .comparison .imageContainer canvas {
+#csscritic_nicereporter .comparison .imageContainer .diff {
     /* display:none solution that transitions on hover - using max-{height|width} to work around issue with canvas needing CSS help to render in our own UI tests */
     max-height: 0;
     max-width: 0;
     opacity: 0;
 }
 
-#csscritic_nicereporter .failed.comparison .imageContainer:hover canvas {
+#csscritic_nicereporter .failed.comparison .imageContainer:hover .diff {
     max-height: none;
     max-width: none;
     opacity: 1;

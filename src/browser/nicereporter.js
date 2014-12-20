@@ -172,9 +172,11 @@ csscriticLib.niceReporter = function (util) {
     };
 
     var getDifferenceCanvas = function (imageA, imageB) {
-        var differenceImageData = diffPageImages(imageA, imageB);
+        var differenceImageData = diffPageImages(imageA, imageB),
+            canvas = canvasForImageCanvas(embossChanges(differenceImageData));
 
-        return canvasForImageCanvas(embossChanges(differenceImageData));
+        canvas.classList.add('diff');
+        return canvas;
     };
 
     var imageWrapper = function (image) {
