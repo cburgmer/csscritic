@@ -56,6 +56,10 @@
     color: orange;
 }
 
+#csscritic_nicereporter #progressBar a:active {
+    outline: none;
+}
+
 /* Comparison */
 
 #csscritic_nicereporter .comparison {

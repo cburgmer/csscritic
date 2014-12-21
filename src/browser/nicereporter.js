@@ -66,6 +66,10 @@ csscriticLib.niceReporter = function (util) {
         return container.querySelector('#' + elementId);
     };
 
+    var escapeId = function (id) {
+        return id.replace(' ', '_', 'g');
+    };
+
     // header
 
     var setOutcomeOnHeader = function (successful) {
@@ -76,14 +80,53 @@ csscriticLib.niceReporter = function (util) {
 
     // progress bar
 
+    var scrollTo = function (id) {
+        var targetElement;
+
+        if (id) {
+            targetElement = document.getElementById(id);
+            targetElement.scrollIntoView();
+        } else {
+            window.scrollTo(0, 0);
+        }
+    };
+
+    var globalNavigationHandlingInstalled = false;
+
+    var installGlobalNavigationHandling = function () {
+        if (!globalNavigationHandlingInstalled) {
+            globalNavigationHandlingInstalled = true;
+
+            window.onpopstate = function (e) {
+                scrollTo(e.state);
+            };
+        }
+    };
+
+    var installExplicitNavigationHandling = function (element) {
+        installGlobalNavigationHandling();
+
+        element.onclick = function (e) {
+            var targetLink = e.target.href,
+                targetId = targetLink.substr(targetLink.indexOf('#')+1);
+
+            scrollTo(targetId);
+            history.pushState(targetId, targetId);
+            e.preventDefault();
+        };
+    };
+
     var addTickToProgressBar = function (linkTarget) {
         var progressBar = findElementFor(progressBarId);
 
         var tick = elementFor(template('<li><a href="#{{linkTarget}}">⚫</a></li>', {
-            linkTarget: linkTarget
+            linkTarget: escapeId(linkTarget)
         }));
         tick.classList.add('inprogress');
         progressBar.appendChild(tick);
+
+        // work around https://bugzilla.mozilla.org/show_bug.cgi?id=1005634
+        installExplicitNavigationHandling(tick.querySelector('a'));
 
         return tick;
     };
@@ -130,7 +173,7 @@ csscriticLib.niceReporter = function (util) {
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
                                              '</section>', {
                                                  url: url,
-                                                 id: key
+                                                 id: escapeId(key)
                                              }));
 
         container.appendChild(comparison);
