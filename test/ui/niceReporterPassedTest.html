@@ -14,10 +14,11 @@
 
         testHelper.setUp();
 
-        var test = testHelper.comparison('passed');
-        reporter.reportComparisonStarting(test);
-        reporter.reportComparison(test);
-        reporter.reportTestSuite(testHelper.passingTestSuite());
+        testHelper.comparisonP('passed').then(function (test) {
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
+            reporter.reportTestSuite(testHelper.passingTestSuite());
+        });
     </script>
 </body>
 </html>

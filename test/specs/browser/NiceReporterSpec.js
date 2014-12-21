@@ -5,16 +5,23 @@ describe("Nice reporter", function () {
 
     var util = csscriticLib.util();
 
+    var anImage;
+
+    beforeEach(function (done) {
+        anImage = document.createElement('img');
+        anImage.onload = done;
+        anImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2P8DwQACgAD/il4QJ8AAAAASUVORK5CYII=";
+    });
+
     var aPassedTest = function (testCase) {
-        var image = document.createElement('img');
         testCase = testCase || {
             url: "aPage.html"
         }; 
         return {
             status: "passed",
             testCase: testCase,
-            pageImage: image,
-            referenceImage: image
+            pageImage: anImage,
+            referenceImage: anImage
         };
     };
 
@@ -30,26 +37,24 @@ describe("Nice reporter", function () {
     };
 
     var aFailedTestWithAccept = function (acceptPage) {
-        var image = document.createElement('img');
         return {
             status: 'failed',
             testCase: {
                 url: 'aPage.html'
             },
-            pageImage: image,
-            referenceImage: image,
+            pageImage: anImage,
+            referenceImage: anImage,
             acceptPage: acceptPage
         };
     };
 
     var aMissingReferenceTestWithAccept = function (acceptPage) {
-        var image = document.createElement('img');
         return {
             status: 'referenceMissing',
             testCase: {
                 url: 'aPage.html'
             },
-            pageImage: image,
+            pageImage: anImage,
             acceptPage: acceptPage
         };
     };

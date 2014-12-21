@@ -42,6 +42,41 @@ window.testHelper = (function () {
         return mocks;
     };
 
+    var cheapPromise = function () {
+        var handler;
+        return {
+            promise: {
+                then: function (func) {
+                    handler = func;
+                }
+            },
+            resolve: function (value) {
+                handler(value);
+            }
+        };
+    };
+
+    testHelper.comparisonP = function (status, testCase, renderErrors, resizable) {
+        var mocks = setUpMocks(),
+            pageImage;
+
+        testCase = testCase || {};
+        testCase.url = testCase.url || "aPage.html";
+
+        if (status === 'error') {
+            pageImage = null;
+        } else {
+            pageImage = mocks.image();
+        }
+
+        var defer = cheapPromise();
+
+        pageImage.onload = function() {
+            defer.resolve(aComparison(status, testCase, pageImage, renderErrors || [], resizable));
+        };
+        return defer.promise;
+    };
+
     testHelper.comparison = function (status, testCase, renderErrors, resizable) {
         var mocks = setUpMocks(),
             pageImage;
@@ -59,9 +94,14 @@ window.testHelper = (function () {
     };
 
     testHelper.comparisonWithLargerPageImage = function () {
-        var mocks = setUpMocks();
+        var mocks = setUpMocks(),
+            pageImage = mocks.heigherImage(),
+            defer = cheapPromise();
 
-        return aComparison('failed', {url: 'aPage.html'}, mocks.heigherImage(), [], false);
+        pageImage.onload = function() {
+            defer.resolve(aComparison('failed', {url: 'aPage.html'}, pageImage, [], false));
+        };
+        return defer.promise;
     };
 
     var aComparison = function (status, testCase, pageImage, renderErrors, resizable) {

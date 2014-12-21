@@ -14,8 +14,9 @@
 
         testHelper.setUp();
 
-        var test = testHelper.comparison('passed');
-        reporter.reportComparisonStarting(test);
+        testHelper.comparisonP('passed').then(function (test) {
+            reporter.reportComparisonStarting(test);
+        });
     </script>
 </body>
 </html>

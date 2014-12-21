@@ -14,10 +14,11 @@
 
         testHelper.setUp();
 
-        var test = testHelper.comparison('referenceMissing');
-        reporter.reportComparisonStarting(test);
-        reporter.reportComparison(test);
-        reporter.reportTestSuite(testHelper.failingTestSuite());
+        testHelper.comparisonP('referenceMissing').then(function (test) {
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
+            reporter.reportTestSuite(testHelper.failingTestSuite());
+        });
     </script>
 </body>
 </html>

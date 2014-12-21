@@ -14,10 +14,11 @@
 
         testHelper.setUp();
 
-        var test = testHelper.comparisonWithLargerPageImage();
-        reporter.reportComparisonStarting(test);
-        reporter.reportComparison(test);
-        reporter.reportTestSuite(testHelper.failingTestSuite());
+        testHelper.comparisonWithLargerPageImage().then(function (test) {
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
+            reporter.reportTestSuite(testHelper.failingTestSuite());
+        });
     </script>
     <style>
       /* Work around rasterizeHTML.js not rendering canvas */

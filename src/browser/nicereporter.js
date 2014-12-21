@@ -179,6 +179,26 @@ csscriticLib.niceReporter = function (util) {
         return canvas;
     };
 
+    // Use a canvas for display to work around https://bugzilla.mozilla.org/show_bug.cgi?id=986403
+    var canvasForImage = function (image) {
+        var canvas = document.createElement("canvas"),
+            width  = image.naturalWidth,
+            height = image.naturalHeight,
+            context;
+
+        canvas.width  = width;
+        canvas.height = height;
+
+        context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0, width, height);
+
+        // fix size in css so the tests will show something (canvas is not supported so far)
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+
+        return canvas;
+    };
+
     var imageWrapper = function (image) {
         var wrapper = elementFor('<div class="imageWrapper"></div>');
         wrapper.appendChild(image);
@@ -220,15 +240,15 @@ csscriticLib.niceReporter = function (util) {
 
     var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, container) {
         container.appendChild(imageContainer(referenceImage, pageImage));
-        container.appendChild(changedImageContainer(pageImage, acceptPage));
+        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
     };
 
     var showComparisonWithRenderedPage = function (pageImage, container) {
-        container.appendChild(imageContainer(pageImage));
+        container.appendChild(imageContainer(canvasForImage(pageImage)));
     };
 
     var showComparisonWithoutReference = function (pageImage, acceptPage, container) {
-        container.appendChild(changedImageContainer(pageImage, acceptPage));
+        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
     };
 
     module.NiceReporter = function () {
