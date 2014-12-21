@@ -92,15 +92,35 @@
 #csscritic_nicereporter .comparison .imageContainer,
 #csscritic_nicereporter .comparison .changedImageContainer {
     border: 1px solid black;
-    display: inline-block;
 }
 
-#csscritic_nicereporter .comparison .changedImageContainer {
+#csscritic_nicereporter .comparison .outerChangedImageContainer {
     margin-top: 4px;
+    display: inline-block;
+    position: relative;
+}
+
+#csscritic_nicereporter .comparison .outerChangedImageContainer button {
+    vertical-align: top;
+    background: lightgreen;
+    border: 1px solid black;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -65px;
+    width: 50px;
+
+    padding: 1px;
+}
+
+#csscritic_nicereporter .comparison .outerChangedImageContainer button:active {
+    padding: 2px 0 0 2px;
 }
 
 #csscritic_nicereporter .comparison .imageContainer {
     position: relative;
+    display: inline-block;
 }
 
 #csscritic_nicereporter .comparison .imageContainer .diff {
