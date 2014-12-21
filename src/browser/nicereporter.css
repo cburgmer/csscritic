@@ -56,7 +56,7 @@
     color: orange;
 }
 
-#csscritic_nicereporter #progressBar a:active {
+#csscritic_nicereporter #progressBar a:focus {
     outline: none;
 }
 
