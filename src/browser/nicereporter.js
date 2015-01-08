@@ -301,12 +301,6 @@ csscriticLib.niceReporter = function (util) {
             svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><foreignObject></foreignObject></svg>',
             image = new Image();
 
-        // PhantomJS
-        if (!window.URL || !window.URL.createObjectURL) {
-            callback(false);
-            return;
-        }
-
         image.onload = function () {
             var context = canvas.getContext("2d");
             try {
@@ -319,7 +313,12 @@ csscriticLib.niceReporter = function (util) {
             }
             callback(true);
         };
-        image.src = window.URL.createObjectURL(new Blob([svg], {"type": "image/svg+xml;charset=utf-8"}));
+        if (window.URL && window.URL.createObjectURL) {
+            image.src = window.URL.createObjectURL(new Blob([svg], {"type": "image/svg+xml;charset=utf-8"}));
+        } else {
+            // PhantomJS
+            image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+        }
     };
 
     var browserIssueChecked = false;

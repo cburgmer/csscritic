@@ -168,11 +168,16 @@ window.testHelper = (function () {
         CanvasRenderingContext2D.prototype.getImageData = function () {
             throw new Error();
         };
+        HTMLCanvasElement.prototype.toDataURL = function () {
+            throw new Error();
+        };
     };
 
     var mockCanvasReadSupport = function () {
         // Overwrite method to pass in PhantomJS
         CanvasRenderingContext2D.prototype.getImageData = function () {};
+
+        HTMLCanvasElement.prototype.toDataURL = function () {};
     };
 
     testHelper.mockDateWith = function (date) {
