@@ -156,3 +156,28 @@
     right: 0;
     bottom: 0;
 }
+
+/* Warning for Chrome + Safari */
+
+#csscritic_nicereporter .browserWarning:before {
+    content: "⚠";
+    font-size: 25px;
+    padding-right: 5px;
+    vertical-align: middle;
+}
+
+#csscritic_nicereporter .browserWarning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+
+    background-color: rgba(182, 39, 5, 0.85);
+    color: white;
+    font-size: 120%;
+    border: 2px solid black;
+    padding: 20px;
+}

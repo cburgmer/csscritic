@@ -145,4 +145,47 @@ describe("Nice reporter", function () {
 
         expect(acceptSpy).toHaveBeenCalled();
     });
+
+
+    describe("Browser compatibility warning", function () {
+        var fakeCanvas;
+
+        beforeEach(function () {
+            fakeCanvas = jasmine.createSpyObj('canvas', ['getContext', 'toDataURL']);
+            var fakeContext = jasmine.createSpyObj('context', ['drawImage']);
+            fakeCanvas.getContext.and.returnValue(fakeContext);
+
+            var origCreateElement = document.createElement;
+
+            spyOn(document, 'createElement').and.callFake(function (tagName) {
+                if (tagName === 'canvas') {
+                    return fakeCanvas;
+                } else {
+                    return origCreateElement.call(document, tagName);
+                }
+            });
+        });
+
+        it("should show a warning if the browser is not supported", function (done) {
+            fakeCanvas.toDataURL.and.throwError(new Error('poof'));
+
+            reporter.reportComparisonStarting(aPassedTest());
+
+            setTimeout(function () {
+                expect($(".browserWarning")).toExist();
+
+                done();
+            }, 100);
+        });
+
+        ifNotInPhantomIt("should not show a warning if the browser is supported", function (done) {
+            reporter.reportComparisonStarting(aPassedTest());
+
+            setTimeout(function () {
+                expect($(".browserWarning")).not.toExist();
+
+                done();
+            }, 100);
+        });
+    });
 });

@@ -294,12 +294,68 @@ csscriticLib.niceReporter = function (util) {
         container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
     };
 
+    // browser warning
+
+    var supportsReadingHtmlFromCanvas = function (callback) {
+        var canvas = document.createElement("canvas"),
+            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><foreignObject></foreignObject></svg>',
+            image = new Image();
+
+        // PhantomJS
+        if (!window.URL || !window.URL.createObjectURL) {
+            callback(false);
+            return;
+        }
+
+        image.onload = function () {
+            var context = canvas.getContext("2d");
+            try {
+                context.drawImage(image, 0, 0);
+                // This will fail in Chrome & Safari
+                canvas.toDataURL("image/png");
+            } catch (e) {
+                callback(false);
+                return;
+            }
+            callback(true);
+        };
+        image.src = window.URL.createObjectURL(new Blob([svg], {"type": "image/svg+xml;charset=utf-8"}));
+    };
+
+    var browserIssueChecked = false;
+
+    var showBrowserWarningIfNeeded = function () {
+        if (browserIssueChecked) {
+            return;
+        }
+        browserIssueChecked = true;
+
+        supportsReadingHtmlFromCanvas(function (supported) {
+            if (supported) {
+                return;
+            }
+
+            getOrCreateContainer().appendChild(elementFor(
+                '<div class="browserWarning">' +
+                    'Your browser is currently not supported, ' +
+                    'as it does not support reading rendered HTML from the canvas ' +
+                    '(<a href="https://code.google.com/p/chromium/issues/detail?id=294129">Chrome #294129</a>, ' +
+                    '<a href="https://bugs.webkit.org/show_bug.cgi?id=17352">Safari #17352</a>). How about trying Firefox?' +
+                    '</div>'
+            ));
+        });
+    };
+
+    // the reporter
+
     module.NiceReporter = function () {
         var progressTickElements = {},
             runningComparisonEntries = {};
 
         return {
             reportComparisonStarting: function (comparison) {
+                showBrowserWarningIfNeeded();
+
                 var key = comparisonKey(comparison.testCase);
                 
                 var tickElement = addTickToProgressBar(key);
