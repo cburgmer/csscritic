@@ -268,7 +268,7 @@ csscriticLib.niceReporter = function (util) {
         var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div class="outerChangedImageContainer">' +
                                                              '<div class="{{changedImageContainerClassName}}"></div>' +
-                                                             '<button>Accept</button>' +
+                                                             '<button><span>Accept</span></button>' +
                                                              '</div>', {
                                                                  changedImageContainerClassName: changedImageContainerClassName
                                                              })),

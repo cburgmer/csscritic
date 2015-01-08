@@ -22,11 +22,11 @@
 }
 
 #csscritic_nicereporter #header.pass {
-    background-image: linear-gradient(to right, rgba(0, 192, 78, 255) 50%, rgba(0, 192, 78, 0));
+    background-color: rgb(0, 192, 78);
 }
 
 #csscritic_nicereporter #header.fail {
-    background-image: linear-gradient(to right, rgba(255, 49, 0, 255) 50%, rgba(255, 49, 0, 0));
+    background-color: rgb(255, 49, 0);
 }
 
 /* Progress bar */
@@ -65,7 +65,7 @@
 /* Comparison */
 
 #csscritic_nicereporter .comparison {
-    background-image: linear-gradient(to right, rgba(245, 245, 245, 255) 50%, rgba(245, 245, 245, 0));
+    background-color: rgb(245, 245, 245);
     padding: 15px;
     margin: 4px 0;
 }
@@ -115,11 +115,16 @@
     right: -65px;
     width: 50px;
 
-    padding: 1px;
+    padding: 0;
 }
 
-#csscritic_nicereporter .comparison .outerChangedImageContainer button:active {
-    padding: 2px 0 0 2px;
+#csscritic_nicereporter .comparison .outerChangedImageContainer button span {
+    transform: rotate(-90deg);
+    display: block;
+}
+
+#csscritic_nicereporter .comparison .outerChangedImageContainer button:active span {
+    color: rgb(0, 64, 26);
 }
 
 #csscritic_nicereporter .comparison .imageContainer {
