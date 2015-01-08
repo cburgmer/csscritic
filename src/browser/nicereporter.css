@@ -1,3 +1,5 @@
+/* Colors from http://paletton.com/#uid=7091K0kxazMlKS-qBIEv5mP-lbb */
+
 #csscritic_nicereporter {
     font-family: sans-serif;
 }
@@ -20,11 +22,11 @@
 }
 
 #csscritic_nicereporter #header.pass {
-    background-color: #66FFCC;
+    background-image: linear-gradient(to right, rgba(0, 192, 78, 255) 50%, rgba(0, 192, 78, 0));
 }
 
 #csscritic_nicereporter #header.fail {
-    background-color: #FF9933;
+    background-image: linear-gradient(to right, rgba(255, 49, 0, 255) 50%, rgba(255, 49, 0, 0));
 }
 
 /* Progress bar */
@@ -44,16 +46,16 @@
     color: grey;
 }
 #csscritic_nicereporter #progressBar .passed {
-    color: green;
+    color: rgb(4, 131, 55);
 }
 #csscritic_nicereporter #progressBar .failed {
-    color: red;
+    color: rgb(182, 39, 5);
 }
 #csscritic_nicereporter #progressBar .error {
-    color: darkred;
+    color: rgb(89, 17, 0);
 }
 #csscritic_nicereporter #progressBar .referenceMissing {
-    color: orange;
+    color: rgb(255, 255, 0);
 }
 
 #csscritic_nicereporter #progressBar a:focus {
@@ -63,7 +65,9 @@
 /* Comparison */
 
 #csscritic_nicereporter .comparison {
+    background-image: linear-gradient(to right, rgba(245, 245, 245, 255) 50%, rgba(245, 245, 245, 0));
     padding: 15px;
+    margin: 4px 0;
 }
 
 #csscritic_nicereporter .comparison .title {
@@ -102,7 +106,7 @@
 
 #csscritic_nicereporter .comparison .outerChangedImageContainer button {
     vertical-align: top;
-    background: lightgreen;
+    background-color: rgb(0, 192, 78);
     border: 1px solid black;
 
     position: absolute;
