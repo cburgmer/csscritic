@@ -174,9 +174,35 @@
     bottom: 0;
 }
 
+/* Tooltip for difference image */
+#csscritic_nicereporter .failed.comparison:hover .imageContainer {
+    position: relative;
+}
+#csscritic_nicereporter .failed.comparison:hover .imageContainer::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateX(100%);
+
+    margin-right: -8px;
+    padding: 4px;
+
+    white-space: nowrap;
+    background-color: black;
+    opacity: 0.55;
+    color: white;
+    font-size: 0.9em;
+    border-radius: 5px;
+
+    content: "< Hover over reference image to highlight changes";
+}
+#csscritic_nicereporter .failed.comparison .imageContainer:hover::after {
+    display: none;
+}
+
 /* Warning for Chrome + Safari */
 
-#csscritic_nicereporter .browserWarning:before {
+#csscritic_nicereporter .browserWarning::before {
     content: "⚠";
     font-size: 25px;
     padding-right: 5px;
