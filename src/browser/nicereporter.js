@@ -340,11 +340,11 @@ csscriticLib.niceReporter = function (util) {
             }
             callback(true);
         };
-        if (window.URL && window.URL.createObjectURL) {
-            image.src = window.URL.createObjectURL(new Blob([svg], {"type": "image/svg+xml;charset=utf-8"}));
-        } else {
-            // PhantomJS
+        if (!window.URL || !window.URL.createObjectURL || (navigator.userAgent.indexOf('WebKit') >= 0 && navigator.userAgent.indexOf('Chrome') <= 0)) {
+            // PhantomJS & Safari
             image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+        } else {
+            image.src = window.URL.createObjectURL(new Blob([svg], {"type": "image/svg+xml;charset=utf-8"}));
         }
     };
 
