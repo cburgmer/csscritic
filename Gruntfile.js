@@ -147,7 +147,8 @@ module.exports = function (grunt) {
                     "box-model": false,
                     "box-sizing": false,
                     "duplicate-background-images": false,
-                    "compatible-vendor-prefixes": false
+                    "compatible-vendor-prefixes": false,
+                    "fallback-colors": false
                 }
             }
         },

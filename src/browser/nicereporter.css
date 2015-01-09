@@ -43,6 +43,17 @@
     width: 0.5em;
     transition: color 1s;
 }
+
+#csscritic_nicereporter #progressBar a {
+    width: 0;
+    height: 0;
+    border-width: 0.35em;
+    border-style: solid;
+    border-color: inherit;
+    border-radius: 0.35em;
+    display: block;
+}
+
 #csscritic_nicereporter #progressBar .inprogress {
     color: grey;
 }
