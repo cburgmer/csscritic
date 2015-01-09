@@ -5,6 +5,16 @@ describe("Nice reporter", function () {
 
     var util = csscriticLib.util();
 
+    var originalTitle;
+
+    beforeEach(function () {
+        originalTitle = document.title;
+    });
+
+    afterEach(function () {
+        document.title = originalTitle;
+    });
+
     var anImage;
 
     beforeEach(function (done) {
@@ -146,6 +156,50 @@ describe("Nice reporter", function () {
         expect(acceptSpy).toHaveBeenCalled();
     });
 
+    describe("Document title progress counter", function () {
+        it("should show a pending comparison", function () {
+            document.title = "a test title";
+
+            reporter.reportComparisonStarting(aPassedTest());
+
+            expect(document.title).toEqual("(0/1) a test title");
+        });
+
+        it("should show two pending comparisons", function () {
+            document.title = "a test title";
+
+            reporter.reportComparisonStarting(aPassedTest());
+            reporter.reportComparisonStarting(aFailedTest());
+
+            expect(document.title).toEqual("(0/2) a test title");
+        });
+
+        it("should show one finished comparison", function () {
+            var passedTest = aPassedTest();
+            document.title = "a test title";
+
+            reporter.reportComparisonStarting(passedTest);
+            reporter.reportComparisonStarting(aFailedTest());
+
+            reporter.reportComparison(passedTest);
+
+            expect(document.title).toEqual("(1/2) a test title");
+        });
+
+        it("should show one finished comparison", function () {
+            var passedTest = aPassedTest(),
+                failedTest = aFailedTest(anImage, anImage);
+            document.title = "a test title";
+
+            reporter.reportComparisonStarting(passedTest);
+            reporter.reportComparisonStarting(failedTest);
+
+            reporter.reportComparison(passedTest);
+            reporter.reportComparison(failedTest);
+
+            expect(document.title).toEqual("(2/2) a test title");
+        });
+    });
 
     describe("Browser compatibility warning", function () {
         var fakeCanvas;

@@ -70,6 +70,18 @@ csscriticLib.niceReporter = function (util) {
         return id.replace(' ', '_', 'g');
     };
 
+    // document title
+
+    var originalTitle;
+
+    var showStatusInDocumentTitle = function (totalCount, doneCount) {
+        if (originalTitle === undefined) {
+            originalTitle = document.title;
+        }
+
+        document.title = "(" + doneCount + "/" + totalCount + ") " + originalTitle;
+    };
+
     // header
 
     var setOutcomeOnHeader = function (successful) {
@@ -349,12 +361,17 @@ csscriticLib.niceReporter = function (util) {
     // the reporter
 
     module.NiceReporter = function () {
-        var progressTickElements = {},
+        var totalCount = 0,
+            doneCount = 0,
+            progressTickElements = {},
             runningComparisonEntries = {};
 
         return {
             reportComparisonStarting: function (comparison) {
+                totalCount += 1;
+
                 showBrowserWarningIfNeeded();
+                showStatusInDocumentTitle(totalCount, doneCount);
 
                 var key = comparisonKey(comparison.testCase);
                 
@@ -371,6 +388,9 @@ csscriticLib.niceReporter = function (util) {
                     tickElement = progressTickElements[key],
                     entry = runningComparisonEntries[key];
 
+                doneCount += 1;
+
+                showStatusInDocumentTitle(totalCount, doneCount);
                 markTickDone(comparison.status, tickElement);
 
                 if (comparison.status !== 'passed') {
