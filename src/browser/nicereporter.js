@@ -74,7 +74,7 @@ csscriticLib.niceReporter = function (util) {
 
     var originalTitle;
 
-    var showStatusInDocumentTitle = function (totalCount, doneCount) {
+    var updateStatusInDocumentTitle = function (totalCount, doneCount) {
         if (originalTitle === undefined) {
             originalTitle = document.title;
         }
@@ -151,19 +151,11 @@ csscriticLib.niceReporter = function (util) {
 
     // status bar
 
-    var totalComparisonCount = 0,
-        totalIssueCount = 0;
-
-    var incrementTotalComparisonCount = function () {
-        var statusTotal = findElementFor(statusTotalId);
-        totalComparisonCount += 1;
-        statusTotal.textContent = totalComparisonCount;
-    };
-
-    var incrementTotalIssueCount = function () {
-        var statusIssue = findElementFor(statusIssueId);
-        totalIssueCount += 1;
-        statusIssue.textContent = totalIssueCount;
+    var updateStatusBar = function (totalCount, issueCount) {
+        var statusTotal = findElementFor(statusTotalId),
+            statusIssue = findElementFor(statusIssueId);
+        statusTotal.textContent = totalCount;
+        statusIssue.textContent = issueCount;
     };
 
     // comparisons
@@ -363,6 +355,7 @@ csscriticLib.niceReporter = function (util) {
     module.NiceReporter = function () {
         var totalCount = 0,
             doneCount = 0,
+            issueCount = 0,
             progressTickElements = {},
             runningComparisonEntries = {};
 
@@ -371,14 +364,13 @@ csscriticLib.niceReporter = function (util) {
                 totalCount += 1;
 
                 showBrowserWarningIfNeeded();
-                showStatusInDocumentTitle(totalCount, doneCount);
+                updateStatusInDocumentTitle(totalCount, doneCount);
+                updateStatusBar(totalCount, issueCount);
 
                 var key = comparisonKey(comparison.testCase);
                 
                 var tickElement = addTickToProgressBar(key);
                 progressTickElements[key] = tickElement;
-
-                incrementTotalComparisonCount();
 
                 var comparisonElement = addComparison(comparison.testCase.url, key);
                 runningComparisonEntries[key] = comparisonElement;
@@ -389,13 +381,14 @@ csscriticLib.niceReporter = function (util) {
                     entry = runningComparisonEntries[key];
 
                 doneCount += 1;
+                if (comparison.status !== 'passed') {
+                    issueCount += 1;
+                }
 
-                showStatusInDocumentTitle(totalCount, doneCount);
+                updateStatusInDocumentTitle(totalCount, doneCount);
+                updateStatusBar(totalCount, issueCount);
                 markTickDone(comparison.status, tickElement);
 
-                if (comparison.status !== 'passed') {
-                    incrementTotalIssueCount();
-                }
                 if (comparison.status === 'failed') {
                     showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, entry);
                 } else if (comparison.status === 'referenceMissing') {
