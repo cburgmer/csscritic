@@ -7,10 +7,20 @@ csscriticLib.migratetoindexeddbstorage = function (domStorage, indexedDbStorage)
         return indexedDbStorage.storeReferenceImage(testCase, referenceImage, viewport);
     };
 
+    var fallbackToDomStorageAndMigrate = function (testCase) {
+        return domStorage.readReferenceImage(testCase)
+            .then(function (result) {
+                return module.storeReferenceImage(testCase, result.image, result.viewport)
+                    .then(function () {
+                        return result;
+                    });
+            });
+    };
+
     module.readReferenceImage = function (testCase) {
         return indexedDbStorage.readReferenceImage(testCase)
             .then(null, function () {
-                return domStorage.readReferenceImage(testCase);
+                return fallbackToDomStorageAndMigrate(testCase);
             });
     };
 

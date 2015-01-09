@@ -90,6 +90,36 @@ describe('Migrate to IndexedDB storage', function () {
         }
     });
 
+    describe('ongoing migration', function () {
+        ifNotInPhantomIt("should transfer referenceImage from localStorage to indexedDB", function (done) {
+            var storage = constructStorage(util),
+                imageUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
+                testCaseUrl = "somePage.html";
+
+            storeReferenceImageToDomStorage(testCaseUrl, JSON.stringify({
+                referenceImageUri: imageUri,
+                viewport: {
+                    width: 12,
+                    height: 34
+                }
+            })).then(function () {
+                return storage.readReferenceImage({url: testCaseUrl});
+            }).then(function () {
+                return readStoredReferenceImage(testCaseUrl);
+            }).then(function (jsonResult) {
+                var result = JSON.parse(jsonResult);
+
+                expect(result.referenceImageUri).toEqual(imageUri);
+                expect(result.viewport).toEqual({
+                    width: 12,
+                    height: 34
+                });
+
+                done();
+            });
+        });
+    });
+
     describe('when already migrated', function () {
         beforeEach(function (done) {
             spyOn(util, 'getImageForUrl').and.returnValue(successfulPromise('image'));

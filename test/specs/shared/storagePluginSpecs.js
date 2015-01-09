@@ -88,25 +88,25 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
     });
 
     it("should read in a reference image", function (done) {
-        setUpImageReturnedForUrl("read image fake");
+        setUpImageReturnedForUrl(img);
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
             referenceImageUri: imgUri
         })).then(function () {
             storage.readReferenceImage({url: "somePage.html"}).then(function (result) {
                 expect(util.getImageForUrl).toHaveBeenCalledWith(imgUri);
-                expect(result.image).toEqual("read image fake");
+                expect(result.image).toBe(img);
 
                 done();
             });
         });
     });
 
-    it("should return the viewport's size", function (done) {
-        setUpImageReturnedForUrl("read image fake");
+    it("should return the viewport's size with viewport", function (done) {
+        setUpImageReturnedForUrl(img);
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
-            referenceImageUri: "some image uri",
+            referenceImageUri: imgUri,
             viewport: {
                 width: 19,
                 height: 84
@@ -122,10 +122,9 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
     });
 
     it("should return the viewport's size and fallback to the image's size", function (done) {
-        setUpImageReturnedForUrl({
-            width: 12,
-            height: 34
-        });
+        img.height = 34;
+        img.width = 12;
+        setUpImageReturnedForUrl(img);
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
             referenceImageUri: imgUri
@@ -159,7 +158,7 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
     });
 
     it("should honour test case parameters when reading", function (done) {
-        setUpImageReturnedForUrl("read image fake");
+        setUpImageReturnedForUrl(img);
 
         storeMockReferenceImage("somePage.html,active=anotherValue,hover=aValue", JSON.stringify({
             referenceImageUri: imgUri
@@ -178,7 +177,7 @@ var loadStoragePluginSpecs = function (constructStorage, readStoredReferenceImag
     });
 
     it("should find the matching test case for multiple tests of the same url", function (done) {
-        setUpImageReturnedForUrl("read image fake");
+        setUpImageReturnedForUrl(img);
 
         storeMockReferenceImage("somePage.html", JSON.stringify({
             referenceImageUri: "some image uri"
