@@ -119,8 +119,9 @@ csscriticLib.niceReporter = function (util) {
     var addTickToProgressBar = function (linkTarget) {
         var progressBar = findElementFor(progressBarId);
 
-        var tick = elementFor(template('<li><a href="#{{linkTarget}}" title="{{linkTarget}}"></a></li>', {
-            linkTarget: escapeId(linkTarget)
+        var tick = elementFor(template('<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>', {
+            linkTarget: escapeId(linkTarget),
+            title: linkTarget
         }));
         tick.classList.add('inprogress');
         progressBar.appendChild(tick);
