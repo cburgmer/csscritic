@@ -30,6 +30,11 @@
     background-color: rgb(255, 49, 0);
 }
 
+#csscritic_nicereporter #timeTaken {
+    float: right;
+    padding: 0.5em 0 0 1em;
+}
+
 /* Progress bar */
 
 #csscritic_nicereporter #progressBar {

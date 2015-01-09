@@ -188,6 +188,16 @@ window.testHelper = (function () {
         };
     };
 
+    var mockDateAutoIncreasing = function () {
+        var date = 0;
+        window.Date = {
+            now: function () {
+                date += 123;
+                return date;
+            }
+        };
+    };
+
     testHelper.passingTestSuite = function () {
         return {
             success: true
@@ -203,6 +213,7 @@ window.testHelper = (function () {
     testHelper.setUp = function () {
         mockImagediff();
         mockCanvasReadSupport();
+        mockDateAutoIncreasing();
     };
 
     testHelper.constructBasicHTMLReporter = function () {

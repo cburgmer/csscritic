@@ -30,6 +30,7 @@ csscriticLib.niceReporter = function (util) {
     // stuff
 
     var headerId = 'header',
+        timeTakenId = 'timeTaken',
         progressBarId = 'progressBar',
         statusTotalId = 'statusTotalCount',
         statusIssueId = 'statusIssueCount';
@@ -41,6 +42,7 @@ csscriticLib.niceReporter = function (util) {
         if (reportBody === null) {
             reportBody = elementFor(template('<div id="{{reporterId}}">' +
                                              '<header id="{{headerId}}">' +
+                                             '<span id="{{timeTakenId}}"></span>' +
                                              '<ul id="{{progressBarId}}"></ul>' +
                                              '<div>' +
                                              '<span id="{{statusTotalId}}">0</span> entries, ' +
@@ -50,6 +52,7 @@ csscriticLib.niceReporter = function (util) {
                                              '</div>', {
                                                  reporterId: reporterId,
                                                  headerId: headerId,
+                                                 timeTakenId: timeTakenId,
                                                  progressBarId: progressBarId,
                                                  statusTotalId: statusTotalId,
                                                  statusIssueId: statusIssueId
@@ -83,6 +86,25 @@ csscriticLib.niceReporter = function (util) {
     };
 
     // header
+
+    var padNumber = function (number, length) {
+        number += '';
+        while (number.length < length) {
+            number = "0" + number;
+        }
+        return number;
+    };
+
+    var renderMilliseconds = function (time) {
+        var seconds = Math.floor(time / 1000),
+            milliSeconds = time % 1000;
+        return seconds + '.' + padNumber(milliSeconds, 3);
+    };
+
+    var showTimeTaken = function (timeTakenInMillis) {
+        var timeTaken = findElementFor(timeTakenId);
+        timeTaken.textContent = "finished in " + renderMilliseconds(timeTakenInMillis) + "s";
+    };
 
     var setOutcomeOnHeader = function (successful) {
         var header = findElementFor(headerId);
@@ -357,11 +379,15 @@ csscriticLib.niceReporter = function (util) {
             doneCount = 0,
             issueCount = 0,
             progressTickElements = {},
-            runningComparisonEntries = {};
+            runningComparisonEntries = {},
+            timeStarted;
 
         return {
             reportComparisonStarting: function (comparison) {
                 totalCount += 1;
+                if (!timeStarted) {
+                    timeStarted = Date.now();
+                }
 
                 showBrowserWarningIfNeeded();
                 updateStatusInDocumentTitle(totalCount, doneCount);
@@ -400,6 +426,7 @@ csscriticLib.niceReporter = function (util) {
                 entry.classList.add(comparison.status);
             },
             reportTestSuite: function (result) {
+                showTimeTaken(timeStarted ? Date.now() - timeStarted : 0);
                 setOutcomeOnHeader(result.success);
             }
         };
