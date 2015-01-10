@@ -6,7 +6,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         clean: {
             deps: ['build/dependencies/*.js'],
-            dist: ['build/*.js'],
+            dist: ['build/*.js', 'dist/'],
             all: ['build', 'test/ui/*.html.json', 'example/*.html.json']
         },
         jasmine: {
