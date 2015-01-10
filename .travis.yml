@@ -5,9 +5,6 @@ env:
   - DISPLAY=:99.0
 before_script:
   - "sh -e /etc/init.d/xvfb start"
-branches:
-  only:
-    - master
 deploy:
   provider: npm
   email: christoph.burgmer@gmail.com
