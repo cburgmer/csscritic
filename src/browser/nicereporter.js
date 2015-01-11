@@ -195,7 +195,8 @@ csscriticLib.niceReporter = function (util) {
     };
 
     var runningComparisonClassName = 'running',
-        imageContainerClassName = 'imageContainer';
+        imageContainerClassName = 'imageContainer',
+        errorContainerClassName = 'errorText';
 
     var imageWrapper = function (image) {
         var wrapper = elementFor('<div class="imageWrapper"></div>');
@@ -207,11 +208,13 @@ csscriticLib.niceReporter = function (util) {
         var container = getOrCreateContainer(),
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
+                                             '<div class="{{errorContainerClassName}}"></div>' +
                                              '<div><div class="{{imageContainerClassName}}"></div></div>' +
                                              '</section>', {
                                                  url: url,
                                                  id: escapeId(key),
                                                  runningComparisonClassName: runningComparisonClassName,
+                                                 errorContainerClassName: errorContainerClassName,
                                                  imageContainerClassName: imageContainerClassName
                                              })),
             imageContainer = comparison.querySelector('.' + imageContainerClassName);
@@ -325,6 +328,41 @@ csscriticLib.niceReporter = function (util) {
         container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
     };
 
+    var sameOriginWarning = 'Make sure the path lies within the ' +
+        '<a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">' +
+        'same origin' +
+        '</a> ' +
+        'as this document.';
+
+    var showComparisonWithError = function (url, container) {
+        var errorMsg = elementFor(template('<span>' +
+                                           'The page "{{url}}" could not be rendered. ' +
+                                           sameOriginWarning +
+                                           '</span>', {
+                                               url: url
+                                           })),
+            errorContainer = container.querySelector('.' + errorContainerClassName);
+        errorContainer.appendChild(errorMsg);
+    };
+
+    var showRenderErrors = function (errors, container) {
+        var errorMsg = elementFor(template('<span>' +
+                                           'Had the following errors rendering the page:' +
+                                           '<ul></ul>' +
+                                           sameOriginWarning +
+                                           '</span>')),
+            listElement = errorMsg.querySelector('ul'),
+            errorContainer = container.querySelector('.' + errorContainerClassName);
+
+        errors.map(function (error) {
+            return elementFor(template('<li>{{msg}}</li>', {msg: error}));
+        }).forEach(function (li) {
+            listElement.appendChild(li);
+        });
+
+        errorContainer.appendChild(errorMsg);
+    };
+
     var updateComparisonStatus = function (status, container) {
         container.classList.remove(runningComparisonClassName);
         container.classList.add(status);
@@ -430,6 +468,12 @@ csscriticLib.niceReporter = function (util) {
                     showComparisonWithoutReference(comparison.pageImage, comparison.acceptPage, entry);
                 } else if (comparison.status === 'passed') {
                     showComparisonWithRenderedPage(comparison.pageImage, entry);
+                } else if (comparison.status === 'error') {
+                    showComparisonWithError(comparison.testCase.url, entry);
+                }
+
+                if (comparison.renderErrors.length > 0) {
+                    showRenderErrors(comparison.renderErrors, entry);
                 }
 
                 updateComparisonStatus(comparison.status, entry);

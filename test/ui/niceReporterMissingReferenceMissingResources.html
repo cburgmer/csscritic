@@ -1,0 +1,24 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" href="src/browser/nicereporter.css">
+    <script src="src/boot/scope.js"></script>
+    <script src="src/util.js"></script>
+    <script src="src/browser/nicereporter.js"></script>
+</head>
+<body>
+    <script src="testHelper.js"></script>
+    <script>
+        var reporter = testHelper.constructNiceReporter();
+
+        testHelper.setUp();
+
+        testHelper.comparisonP('referenceMissing', {}, ['an error', 'another error']).then(function (test) {
+            reporter.reportComparisonStarting(test);
+            reporter.reportComparison(test);
+            reporter.reportTestSuite(testHelper.failingTestSuite());
+        });
+    </script>
+</body>
+</html>

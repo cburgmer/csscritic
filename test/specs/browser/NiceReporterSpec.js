@@ -31,7 +31,8 @@ describe("Nice reporter", function () {
             status: "passed",
             testCase: testCase,
             pageImage: anImage,
-            referenceImage: anImage
+            referenceImage: anImage,
+            renderErrors: []
         };
     };
 
@@ -42,7 +43,8 @@ describe("Nice reporter", function () {
                 url: 'aPage.html'
             },
             pageImage: pageImage,
-            referenceImage: referenceImage
+            referenceImage: referenceImage,
+            renderErrors: []
         };
     };
 
@@ -54,7 +56,8 @@ describe("Nice reporter", function () {
             },
             pageImage: anImage,
             referenceImage: anImage,
-            acceptPage: acceptPage
+            acceptPage: acceptPage,
+            renderErrors: []
         };
     };
 
@@ -65,7 +68,8 @@ describe("Nice reporter", function () {
                 url: 'aPage.html'
             },
             pageImage: anImage,
-            acceptPage: acceptPage
+            acceptPage: acceptPage,
+            renderErrors: []
         };
     };
 

@@ -10,9 +10,27 @@
     color: inherit;
 }
 
-#csscritic_nicereporter ul {
-    list-style: none;
-    padding: 0;
+/* Error messages */
+
+#csscritic_nicereporter .errorText {
+    color: rgb(89, 17, 0);
+    margin-bottom: 1em;
+}
+
+#csscritic_nicereporter .errorText:not(:empty)::before {
+    content: "⚠";
+    color: rgb(89, 17, 0);
+    font-size: 25px;
+    padding-right: 5px;
+    vertical-align: middle;
+}
+
+#csscritic_nicereporter .errorText ul {
+    margin: 0.2em 0;
+}
+
+#csscritic_nicereporter .errorText a {
+    text-decoration: underline;
 }
 
 /* Header */
@@ -39,6 +57,8 @@
 
 #csscritic_nicereporter #progressBar {
     margin: 0.4em 0;
+    list-style: none;
+    padding: 0;
 }
 
 #csscritic_nicereporter #progressBar li {
