@@ -20,7 +20,7 @@ describe("Workarounds", function () {
             browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
             domstorage = csscriticLib.domstorage(util, localStorage),
             reporting = csscriticLib.reporting(browserRenderer, domstorage, util),
-            regression = csscriticLib.regression(browserRenderer, domstorage, util, imagediff);
+            regression = csscriticLib.regression(browserRenderer, util, imagediff);
 
         csscritic = csscriticLib.main(
             regression,

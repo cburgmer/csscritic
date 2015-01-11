@@ -55,7 +55,11 @@ describe("Main", function () {
             csscritic.add("test_case");
             csscritic.execute().then(function () {
                 expect(regression.compare).toHaveBeenCalledWith({
-                    url: "test_case"
+                    testCase: {
+                        url: "test_case"
+                    },
+                    referenceImage: 'the image',
+                    viewport: 'the viewport'
                 });
 
                 done();

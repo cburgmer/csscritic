@@ -9,7 +9,7 @@ var csscritic;
         indexedDbStorage = csscriticLib.indexeddbstorage(util),
         migrateToIndexedDbStorage = csscriticLib.migratetoindexeddbstorage(domStorage, indexedDbStorage),
         reporting = csscriticLib.reporting(browserRenderer, migrateToIndexedDbStorage, util),
-        regression = csscriticLib.regression(browserRenderer, migrateToIndexedDbStorage, util, imagediff);
+        regression = csscriticLib.regression(browserRenderer, util, imagediff);
 
     csscritic = csscriticLib.main(
         regression,

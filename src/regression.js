@@ -1,4 +1,4 @@
-csscriticLib.regression = function (renderer, storage, util, imagediff) {
+csscriticLib.regression = function (renderer, util, imagediff) {
     "use strict";
 
     var module = {};
@@ -55,27 +55,23 @@ csscriticLib.regression = function (renderer, storage, util, imagediff) {
         });
     };
 
-    var readReferenceImageIfAny = function (testCase) {
+    var viewportFallback = function (testCase) {
         var fallbackWidth = 800,
-            fallbackHeight = 100,
-            defaultViewport = {
-                width: testCase.width || fallbackWidth,
-                height: testCase.height || fallbackHeight
-            };
-
-        return storage.readReferenceImage(testCase).then(null, function () {
-            return {
-                viewport: defaultViewport,
-                image: undefined
-            };
-        });
+            fallbackHeight = 100;
+        return {
+            width: testCase.width || fallbackWidth,
+            height: testCase.height || fallbackHeight
+        };
     };
 
-    module.compare = function (testCase) {
-        return readReferenceImageIfAny(testCase)
-            .then(function (referenceImageRecord) {
-                return loadPageAndCompare(testCase, referenceImageRecord.viewport, referenceImageRecord.image);
-            });
+    module.compare = function (startingComparison) {
+        var viewport = startingComparison.viewport;
+
+        if (startingComparison.referenceImage === undefined) {
+            viewport = viewportFallback(startingComparison.testCase);
+        }
+
+        return loadPageAndCompare(startingComparison.testCase, viewport, startingComparison.referenceImage);
     };
 
     return module;

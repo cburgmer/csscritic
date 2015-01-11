@@ -5,7 +5,7 @@
         phantomRenderer = csscriticLib.phantomjsRenderer(),
         filestorage = csscriticLib.filestorage(util),
         reporting = csscriticLib.reporting(phantomRenderer, filestorage, util),
-        regression = csscriticLib.regression(phantomRenderer, filestorage, util, imagediff);
+        regression = csscriticLib.regression(phantomRenderer, util, imagediff);
 
     var csscritic = csscriticLib.main(
         regression,

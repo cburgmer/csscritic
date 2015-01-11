@@ -42,8 +42,8 @@ csscriticLib.main = function (regression, reporting, util, storage) {
         }));
     };
 
-    var executeTestCase = function (testCase) {
-        return regression.compare(testCase).then(function (comparison) {
+    var executeTestCase = function (startingComparison) {
+        return regression.compare(startingComparison).then(function (comparison) {
             return reporting.doReportComparison(reporters, comparison).then(function () {
                 return comparison;
             });
@@ -51,14 +51,16 @@ csscriticLib.main = function (regression, reporting, util, storage) {
     };
 
     module.execute = function () {
-        var allPassed;
+        var startingComparisons, allPassed;
 
         return fetchStartingComparisons(testCases)
-            .then(function (startingComparisons) {
+            .then(function (startingComp) {
+                startingComparisons = startingComp;
+
                 return reporting.doReportComparisonStarting(reporters, startingComparisons);
             })
             .then(function () {
-                return util.all(testCases.map(
+                return util.all(startingComparisons.map(
                     executeTestCase
                 ));
             })
