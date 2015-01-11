@@ -19,6 +19,20 @@ describe("Regression testing", function () {
         imagediff.equal.and.returnValue(equal);
     };
 
+    var testCaseWithReferenceImage = function (testCase) {
+        return {
+            testCase: testCase,
+            referenceImage: referenceImage,
+            viewport: viewport
+        };
+    };
+
+    var testCaseWithMissingReferenceImage = function (testCase) {
+        return {
+            testCase: testCase
+        };
+    };
+
     beforeEach(function () {
         pageImage = jasmine.createSpy('pageImage');
         referenceImage = {
@@ -47,13 +61,9 @@ describe("Regression testing", function () {
         });
 
         it("should compare the rendered page against the reference image", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                },
-                referenceImage: referenceImage,
-                viewport: viewport
-            }).then(function () {
+            regression.compare(testCaseWithReferenceImage({
+                url: "differentpage.html"
+            })).then(function () {
                 expect(imagediff.equal).toHaveBeenCalledWith(pageImage, referenceImage);
 
                 done();
@@ -61,13 +71,9 @@ describe("Regression testing", function () {
         });
 
         it("should render page using the viewport's size", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "samplepage.html"
-                },
-                referenceImage: referenceImage,
-                viewport: viewport
-            }).then(function () {
+            regression.compare(testCaseWithReferenceImage({
+                url: "samplepage.html"
+            })).then(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
                     url: "samplepage.html",
                     width: 98,
@@ -79,26 +85,21 @@ describe("Regression testing", function () {
         });
 
         it("should pass test case parameters to the renderer", function (done) {
-            regression.compare({
-                testCase: {
-                    url: 'samplepage.html',
+            regression.compare(testCaseWithReferenceImage({
+                url: 'samplepage.html',
+                hover: '.a.selector',
+                active: '.another.selector'
+            })).then(function () {
+                expect(rendererBackend.render).toHaveBeenCalledWith({
+                    url: "samplepage.html",
                     hover: '.a.selector',
-                    active: '.another.selector'
-                },
-                referenceImage: referenceImage,
-                viewport: viewport
-            })
-                .then(function () {
-                    expect(rendererBackend.render).toHaveBeenCalledWith({
-                        url: "samplepage.html",
-                        hover: '.a.selector',
-                        active: '.another.selector',
-                        width: 98,
-                        height: 76
-                    });
-
-                    done();
+                    active: '.another.selector',
+                    width: 98,
+                    height: 76
                 });
+
+                done();
+            });
         });
     });
 
@@ -109,13 +110,9 @@ describe("Regression testing", function () {
         });
 
         it("should report the comparison", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                },
-                referenceImage: referenceImage,
-                viewport: viewport
-            }).then(function (comparison) {
+            regression.compare(testCaseWithReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
                 expect(comparison).toEqual({
                     status: "passed",
                     testCase: {
@@ -134,13 +131,9 @@ describe("Regression testing", function () {
         it("should report a list of errors during rendering", function (done) {
             setUpRenderedImage(pageImage, ["oneUrl", "anotherUrl"]);
 
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                },
-                referenceImage: referenceImage,
-                viewport: viewport
-            }).then(function (comparison) {
+            regression.compare(testCaseWithReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
                 expect(comparison).toEqual(jasmine.objectContaining({
                     renderErrors: ["oneUrl", "anotherUrl"],
                 }));
@@ -157,13 +150,9 @@ describe("Regression testing", function () {
         });
 
         it("should report the comparison", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                },
-                viewport: viewport,
-                referenceImage: referenceImage
-            }).then(function (comparison) {
+            regression.compare(testCaseWithReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
                 expect(comparison).toEqual({
                     status: "failed",
                     testCase: {
@@ -186,11 +175,9 @@ describe("Regression testing", function () {
         });
 
         it("should report the comparison", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                }
-            }).then(function (comparison) {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
                 expect(comparison).toEqual({
                     status: "referenceMissing",
                     testCase: {
@@ -207,11 +194,9 @@ describe("Regression testing", function () {
         });
 
         it("should provide a appropriately sized page rendering", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                }
-            }).then(function () {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html"
+            })).then(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
                     url: "differentpage.html",
                     width: 800,
@@ -223,12 +208,10 @@ describe("Regression testing", function () {
         });
 
         it("should use the specified width", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html",
-                    width: 42
-                }
-            }).then(function () {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html",
+                width: 42
+            })).then(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
                     url: "differentpage.html",
                     width: 42,
@@ -240,12 +223,10 @@ describe("Regression testing", function () {
         });
 
         it("should use the specified height", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html",
-                    height: 21
-                }
-            }).then(function () {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html",
+                height: 21
+            })).then(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
                     url: "differentpage.html",
                     width: 800,
@@ -259,11 +240,9 @@ describe("Regression testing", function () {
         it("should report a list of errors during rendering", function (done) {
             setUpRenderedImage(pageImage, ["oneUrl", "anotherUrl"]);
 
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                }
-            }).then(function (comparison) {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
                 expect(comparison).toEqual(jasmine.objectContaining({
                     renderErrors: ["oneUrl", "anotherUrl"],
                 }));
@@ -279,11 +258,9 @@ describe("Regression testing", function () {
         });
 
         it("should report the comparison", function (done) {
-            regression.compare({
-                testCase: {
-                    url: "differentpage.html"
-                }
-            }).then(function (comparison) {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
                 expect(comparison).toEqual({
                     status: "error",
                     testCase: {
