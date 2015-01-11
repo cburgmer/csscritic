@@ -183,29 +183,6 @@
     position: relative;
 }
 
-#csscritic_nicereporter .comparison .outerChangedImageContainer button {
-    vertical-align: top;
-    background-color: rgb(0, 192, 78);
-    border: 1px solid black;
-
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: -65px;
-    width: 50px;
-
-    padding: 0;
-}
-
-#csscritic_nicereporter .comparison .outerChangedImageContainer button span {
-    transform: rotate(-90deg);
-    display: block;
-}
-
-#csscritic_nicereporter .comparison .outerChangedImageContainer button:active span {
-    color: rgb(0, 64, 26);
-}
-
 #csscritic_nicereporter .comparison .imageContainer {
     position: relative;
     display: inline-block;
@@ -234,6 +211,48 @@
     left: 0;
     right: 0;
     bottom: 0;
+}
+
+/* Accept */
+
+#csscritic_nicereporter .comparison .outerChangedImageContainer button {
+    vertical-align: top;
+    border: 1px solid black;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -65px;
+    width: 50px;
+
+    padding: 0;
+
+    background-color: rgb(0, 192, 78);
+}
+#csscritic_nicereporter .accepted.comparison .outerChangedImageContainer button {
+    background-color: transparent;
+    font-size: 1.4em;
+}
+#csscritic_nicereporter .comparison .outerChangedImageContainer button:active {
+    background-color: rgb(36, 214, 108);
+}
+
+#csscritic_nicereporter .comparison .outerChangedImageContainer button span {
+    transform: rotate(-90deg);
+    display: block;
+}
+
+#csscritic_nicereporter .comparison .imageContainer {
+    opacity: 1;
+    max-height: 1000000px;
+}
+
+#csscritic_nicereporter .accepted.comparison .imageContainer {
+    opacity: 0;
+    max-height: 0;
+    border-width: 0;
+
+    transition: max-height 0.001s ease 1s, opacity 1s, border-width 0.001s ease 1s;
 }
 
 /* Tooltip for difference image */

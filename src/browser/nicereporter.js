@@ -325,7 +325,7 @@ csscriticLib.niceReporter = function (util) {
         imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
     };
 
-    var changedImageContainer = function (pageImage, acceptPage) {
+    var changedImageContainer = function (pageImage, acceptPage, container) {
         var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div class="outerChangedImageContainer">' +
                                                              '<div class="{{changedImageContainerClassName}}"></div>' +
@@ -337,14 +337,19 @@ csscriticLib.niceReporter = function (util) {
             acceptButton = outerChangedImageContainer.querySelector('button');
 
         changedImageContainer.appendChild(imageWrapper(pageImage));
-        acceptButton.onclick = acceptPage;
+        acceptButton.onclick = function () {
+            acceptPage();
+            acceptButton.setAttribute('disabled', 'disabled');
+            acceptButton.textContent = "✓";
+            container.classList.add('accepted');
+        };
 
         return outerChangedImageContainer;
     };
 
     var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, container) {
         addImageDiff(referenceImage, pageImage, container);
-        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
+        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, container));
     };
 
     var showComparisonWithRenderedPage = function (pageImage, container) {
@@ -355,7 +360,7 @@ csscriticLib.niceReporter = function (util) {
     };
 
     var showComparisonWithoutReference = function (pageImage, acceptPage, container) {
-        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
+        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, container));
     };
 
     var sameOriginWarning = 'Make sure the path lies within the ' +
