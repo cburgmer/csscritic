@@ -118,6 +118,40 @@
     color: #888;
 }
 
+#csscritic_nicereporter .comparison .parameters,
+#csscritic_nicereporter .comparison .parameters dt,
+#csscritic_nicereporter .comparison .parameters dd {
+    /* Reset */
+    display: inline-block;
+    margin: 0;
+}
+
+#csscritic_nicereporter .comparison .parameters {
+    margin-left: 1.5em;
+    color: #444;
+}
+
+#csscritic_nicereporter .comparison .parameters dt {
+    font-style: italic;
+}
+
+#csscritic_nicereporter .comparison .parameters dt::after {
+    content: ":"
+}
+
+#csscritic_nicereporter .comparison .parameters dd {
+    margin-left: 0.5em;
+    margin-right: 0.7em;
+}
+
+#csscritic_nicereporter .comparison .parameters dd::after {
+    content: ","
+}
+
+#csscritic_nicereporter .comparison .parameters dd:last-child::after {
+    content: ""
+}
+
 /* Images */
 
 #csscritic_nicereporter .running.comparison .imageContainer {

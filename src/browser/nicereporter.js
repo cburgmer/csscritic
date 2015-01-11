@@ -204,14 +204,44 @@ csscriticLib.niceReporter = function (util) {
         return wrapper;
     };
 
-    var addComparison = function (url, referenceImage, key) {
+    var serializeValue = function (value) {
+        if (typeof value === 'string') {
+            return "'" + value + "'";
+        }
+        return value;
+    };
+
+    var testCaseParameters = function (testCase) {
+        var parameters = util.excludeKey(testCase, 'url'),
+            keys = Object.keys(parameters);
+
+        if (!keys.length) {
+            return '';
+        }
+        keys.sort();
+
+        return '<dl class="parameters">' +
+            keys.map(function (key) {
+                return template('<dt>{{key}}</dt><dd>{{value}}</dd>', {
+                    key: key,
+                    value: serializeValue(parameters[key])
+                });
+            }).join('\n') +
+            '</dl>';
+    };
+
+    var addComparison = function (testCase, referenceImage, key) {
         var container = getOrCreateContainer(),
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
-                                             '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
+                                             '<h3 class="title">' +
+                                             '{{url}} ' +
+                                             '<a href="{{url}}">↗</a>' +
+                                             testCaseParameters(testCase) +
+                                             '</h3>' +
                                              '<div class="{{errorContainerClassName}}"></div>' +
                                              '<div><div class="{{imageContainerClassName}}"></div></div>' +
                                              '</section>', {
-                                                 url: url,
+                                                 url: testCase.url,
                                                  id: escapeId(key),
                                                  runningComparisonClassName: runningComparisonClassName,
                                                  errorContainerClassName: errorContainerClassName,
@@ -445,7 +475,7 @@ csscriticLib.niceReporter = function (util) {
                 var tickElement = addTickToProgressBar(key);
                 progressTickElements[key] = tickElement;
 
-                var comparisonElement = addComparison(comparison.testCase.url, comparison.referenceImage, key);
+                var comparisonElement = addComparison(comparison.testCase, comparison.referenceImage, key);
                 runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
