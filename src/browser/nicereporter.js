@@ -194,14 +194,31 @@ csscriticLib.niceReporter = function (util) {
         return key;
     };
 
-    var addComparison = function (url, key) {
+    var runningComparisonClassName = 'running',
+        imageContainerClassName = 'imageContainer';
+
+    var imageWrapper = function (image) {
+        var wrapper = elementFor('<div class="imageWrapper"></div>');
+        wrapper.appendChild(image);
+        return wrapper;
+    };
+
+    var addComparison = function (url, referenceImage, key) {
         var container = getOrCreateContainer(),
-            comparison = elementFor(template('<section class="comparison" id="{{id}}">' +
+            comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
                                              '<h3 class="title">{{url}} <a href="{{url}}">↗</a></h3>' +
+                                             '<div><div class="{{imageContainerClassName}}"></div></div>' +
                                              '</section>', {
                                                  url: url,
-                                                 id: escapeId(key)
-                                             }));
+                                                 id: escapeId(key),
+                                                 runningComparisonClassName: runningComparisonClassName,
+                                                 imageContainerClassName: imageContainerClassName
+                                             })),
+            imageContainer = comparison.querySelector('.' + imageContainerClassName);
+
+        if (referenceImage) {
+            imageContainer.appendChild(imageWrapper(referenceImage));
+        }
 
         container.appendChild(comparison);
 
@@ -269,26 +286,10 @@ csscriticLib.niceReporter = function (util) {
         return canvas;
     };
 
-    var imageWrapper = function (image) {
-        var wrapper = elementFor('<div class="imageWrapper"></div>');
-        wrapper.appendChild(image);
-        return wrapper;
-    };
+    var addImageDiff = function (image, imageForDiff, container) {
+        var imageContainer = container.querySelector('.' + imageContainerClassName);
 
-    var imageContainer = function (image, imageForDiff) {
-        var imageContainerClassName = 'imageContainer',
-            outerImageContainer = elementFor(template('<div><div class="{{imageContainerClassName}}"></div></div>', {
-                imageContainerClassName: imageContainerClassName
-            })),
-            imageContainer = outerImageContainer.querySelector('.' + imageContainerClassName);
-
-        imageContainer.appendChild(imageWrapper(image));
-
-        if (imageForDiff) {
-            imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
-        }
-
-        return outerImageContainer;
+        imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
     };
 
     var changedImageContainer = function (pageImage, acceptPage) {
@@ -309,16 +310,24 @@ csscriticLib.niceReporter = function (util) {
     };
 
     var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, container) {
-        container.appendChild(imageContainer(referenceImage, pageImage));
+        addImageDiff(referenceImage, pageImage, container);
         container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
     };
 
     var showComparisonWithRenderedPage = function (pageImage, container) {
-        container.appendChild(imageContainer(canvasForImage(pageImage)));
+        var imageContainer = container.querySelector('.' + imageContainerClassName);
+
+        imageContainer.innerHTML = '';
+        imageContainer.appendChild(imageWrapper(canvasForImage(pageImage)));
     };
 
     var showComparisonWithoutReference = function (pageImage, acceptPage, container) {
         container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage));
+    };
+
+    var updateComparisonStatus = function (status, container) {
+        container.classList.remove(runningComparisonClassName);
+        container.classList.add(status);
     };
 
     // browser warning
@@ -398,7 +407,7 @@ csscriticLib.niceReporter = function (util) {
                 var tickElement = addTickToProgressBar(key);
                 progressTickElements[key] = tickElement;
 
-                var comparisonElement = addComparison(comparison.testCase.url, key);
+                var comparisonElement = addComparison(comparison.testCase.url, comparison.referenceImage, key);
                 runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
@@ -423,7 +432,7 @@ csscriticLib.niceReporter = function (util) {
                     showComparisonWithRenderedPage(comparison.pageImage, entry);
                 }
 
-                entry.classList.add(comparison.status);
+                updateComparisonStatus(comparison.status, entry);
             },
             reportTestSuite: function (result) {
                 showTimeTaken(timeStarted ? Date.now() - timeStarted : 0);

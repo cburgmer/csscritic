@@ -98,7 +98,15 @@
     color: #888;
 }
 
-/* Diff image */
+/* Images */
+
+#csscritic_nicereporter .running.comparison .imageContainer {
+    opacity: 0.2;
+}
+
+#csscritic_nicereporter .comparison .imageContainer:empty {
+    display: none;
+}
 
 #csscritic_nicereporter .comparison .imageWrapper {
     /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
