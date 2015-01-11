@@ -25,7 +25,8 @@ describe("Workarounds", function () {
         csscritic = csscriticLib.main(
             regression,
             reporting,
-            util);
+            util,
+            domstorage);
     });
 
     afterEach(function () {

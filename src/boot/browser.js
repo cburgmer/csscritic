@@ -14,7 +14,8 @@ var csscritic;
     csscritic = csscriticLib.main(
         regression,
         reporting,
-        util);
+        util,
+        migrateToIndexedDbStorage);
 
     // Export convenience constructors
     var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),

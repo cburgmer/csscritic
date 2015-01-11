@@ -1,7 +1,7 @@
 describe("Main", function () {
     "use strict";
 
-    var csscritic, regression, reporting;
+    var csscritic, regression, reporting, storage;
 
     var util = csscriticLib.util();
 
@@ -11,6 +11,17 @@ describe("Main", function () {
         regression.compare.and.returnValue(testHelper.successfulPromise(comparison));
     };
 
+    var setUpReferenceImage = function (image, viewport) {
+        storage.readReferenceImage.and.returnValue(testHelper.successfulPromise({
+            image: image,
+            viewport: viewport
+        }));
+    };
+
+    var setUpReferenceImageMissing = function () {
+        storage.readReferenceImage.and.returnValue(testHelper.failedPromise());
+    };
+
     beforeEach(function () {
         reporting = jasmine.createSpyObj('reporting', ['doReportComparisonStarting', 'doReportComparison', 'doReportTestSuite']);
         reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromise());
@@ -18,11 +29,13 @@ describe("Main", function () {
         reporting.doReportTestSuite.and.returnValue(testHelper.successfulPromise());
 
         regression = jasmine.createSpyObj('regression', ['compare']);
+        storage = jasmine.createSpyObj('storage', ['readReferenceImage']);
 
         csscritic = csscriticLib.main(
             regression,
             reporting,
-            util);
+            util,
+            storage);
 
         reporter = {};
     });
@@ -33,6 +46,7 @@ describe("Main", function () {
         beforeEach(function () {
             comparison = "the_comparison";
             setUpComparison(comparison);
+            setUpReferenceImage('the image', 'the viewport');
         });
 
         it("should execute regression test", function (done) {
@@ -112,12 +126,33 @@ describe("Main", function () {
             csscritic.addReporter(reporter);
         });
 
-        it("should report a starting comparison", function () {
+        it("should report a starting comparison with reference image", function () {
+            setUpReferenceImage('the image', 'the viewport');
+
             csscritic.add("samplepage.html");
             csscritic.execute();
 
+            triggerDelayedPromise();
             expect(reporting.doReportComparisonStarting).toHaveBeenCalledWith([reporter], [{
-                url: "samplepage.html"
+                testCase: {
+                    url: "samplepage.html"
+                },
+                referenceImage: 'the image',
+                viewport: 'the viewport'
+            }]);
+        });
+
+        it("should report a starting comparison without reference image", function () {
+            setUpReferenceImageMissing();
+
+            csscritic.add("samplepage.html");
+            csscritic.execute();
+
+            triggerDelayedPromise();
+            expect(reporting.doReportComparisonStarting).toHaveBeenCalledWith([reporter], [{
+                testCase: {
+                    url: "samplepage.html"
+                }
             }]);
         });
 
@@ -151,6 +186,7 @@ describe("Main", function () {
             var defer = ayepromise.defer(),
                 callback = jasmine.createSpy('callback');
 
+            setUpReferenceImage('the image', 'the viewport');
             setUpComparison({
                 status: "success"
             });

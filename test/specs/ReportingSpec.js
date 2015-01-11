@@ -43,7 +43,9 @@ describe("Reporting", function () {
 
         it("should report a starting comparison", function () {
             reporting.doReportComparisonStarting([reporter], [{
-                url: "samplepage.html"
+                testCase: {
+                    url: "samplepage.html"
+                }
             }]);
 
             expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({

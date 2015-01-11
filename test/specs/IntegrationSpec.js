@@ -15,7 +15,8 @@ describe("Integration", function () {
         var csscritic = csscriticLib.main(
             regression,
             reporting,
-            util);
+            util,
+            domstorage);
 
         var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
             basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);

@@ -10,7 +10,8 @@
     var csscritic = csscriticLib.main(
         regression,
         reporting,
-        util);
+        util,
+        filestorage);
 
     // Export convenience constructors
     var signOffReporterUtil = csscriticLib.signOffReporterUtil(util, inlineresources, jsSHA),
