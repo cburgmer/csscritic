@@ -1,0 +1,3 @@
+src/cli/phantomjsbind.js
+test/ui/src/**/*.js
+test/fixtures/*.js

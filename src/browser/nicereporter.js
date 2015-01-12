@@ -4,7 +4,7 @@ csscriticLib.niceReporter = function (util) {
     var module = {};
 
     // our very own templating implementation
-    
+
     var escapeValue = function (value) {
         return value.toString()
             .replace(/&/g, '&amp;')
@@ -476,7 +476,7 @@ csscriticLib.niceReporter = function (util) {
                 updateStatusBar(totalCount, issueCount);
 
                 var key = comparisonKey(comparison.testCase);
-                
+
                 var tickElement = addTickToProgressBar(key);
                 progressTickElements[key] = tickElement;
 

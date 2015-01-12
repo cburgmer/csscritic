@@ -5,7 +5,10 @@
  *    <script src="csscritic.js"></script>
  * and you are good to go.
  */
+/*jslint evil: true */
 (function () {
+    "use strict";
+
     var cssDependencies = [
             'src/browser/basichtmlreporter.css',
             'src/browser/nicereporter.css'
