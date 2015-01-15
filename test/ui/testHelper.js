@@ -121,13 +121,10 @@ window.testHelper = (function () {
             comparison.referenceImage = mocks.image();
         }
 
-        if (status === 'failed' || status === 'referenceMissing') {
-            if (resizable !== false) {
-                comparison.resizePageImage = dummyFunc;
-            }
-            comparison.acceptPage = dummyFunc;
+        if (resizable !== false) {
+            comparison.resizePageImage = dummyFunc;
         }
-
+        comparison.acceptPage = dummyFunc;
         return comparison;
     };
 

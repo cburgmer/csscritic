@@ -44,7 +44,7 @@ csscriticLib.niceReporter = function (util) {
                                              '<header id="{{headerId}}">' +
                                              '<span id="{{timeTakenId}}"></span>' +
                                              '<ul id="{{progressBarId}}"></ul>' +
-                                             '<div>' +
+                                             '<div class="statusText">' +
                                              '<span id="{{statusTotalId}}">0</span> entries, ' +
                                              '<span id="{{statusIssueId}}">0</span> need some love' +
                                              '</div>' +
@@ -110,6 +110,15 @@ csscriticLib.niceReporter = function (util) {
         var header = findElementFor(headerId);
 
         header.classList.add(successful ? 'pass' : 'fail');
+    };
+
+    var showAcceptAllButtonIfNeccessary = function (acceptFuncs) {
+        var header = findElementFor(headerId),
+            button = elementFor('<button class="acceptAll">... accept all (I know what I\'m doing)</button>');
+
+        if (acceptFuncs.length > 2) {
+            header.appendChild(button);
+        }
     };
 
     // progress bar
@@ -462,6 +471,7 @@ csscriticLib.niceReporter = function (util) {
             issueCount = 0,
             progressTickElements = {},
             runningComparisonEntries = {},
+            acceptFunctions = [],
             timeStarted;
 
         return {
@@ -499,8 +509,10 @@ csscriticLib.niceReporter = function (util) {
 
                 if (comparison.status === 'failed') {
                     showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, entry);
+                    acceptFunctions.push(comparison.acceptPage);
                 } else if (comparison.status === 'referenceMissing') {
                     showComparisonWithoutReference(comparison.pageImage, comparison.acceptPage, entry);
+                    acceptFunctions.push(comparison.acceptPage);
                 } else if (comparison.status === 'passed') {
                     showComparisonWithRenderedPage(comparison.pageImage, entry);
                 } else if (comparison.status === 'error') {
@@ -516,6 +528,7 @@ csscriticLib.niceReporter = function (util) {
             reportTestSuite: function (result) {
                 showTimeTaken(timeStarted ? Date.now() - timeStarted : 0);
                 setOutcomeOnHeader(result.success);
+                showAcceptAllButtonIfNeccessary(acceptFunctions);
             }
         };
     };
