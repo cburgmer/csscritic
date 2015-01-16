@@ -19,6 +19,9 @@
     font-size: inherit;
     font-family: inherit;
 }
+#csscritic_nicereporter button[disabled] {
+    background-color: transparent;
+}
 #csscritic_nicereporter button:hover {
     background-color: rgb(36, 214, 108)
 }
@@ -251,7 +254,6 @@
     font-size: 0.7em;
 }
 #csscritic_nicereporter .accepted.comparison button {
-    background-color: transparent;
     font-size: 1.4em;
 }
 
