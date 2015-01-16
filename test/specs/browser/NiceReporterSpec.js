@@ -26,7 +26,7 @@ describe("Nice reporter", function () {
     var aPassedTest = function (testCase) {
         testCase = testCase || {
             url: "aPage.html"
-        }; 
+        };
         return {
             status: "passed",
             testCase: testCase,
@@ -158,6 +158,30 @@ describe("Nice reporter", function () {
         reporterContainer().find('.referenceMissing.comparison button').click();
 
         expect(acceptSpy).toHaveBeenCalled();
+    });
+
+    it("should allow the user to accept all comparisons", function () {
+        var firstAccept = jasmine.createSpy('firstAccept'),
+            secondAccept = jasmine.createSpy('secondAccept'),
+            thirdAccept = jasmine.createSpy('thirdAccept'),
+            firstFailingTest = aFailedTestWithAccept(firstAccept),
+            secondFailingTest = aFailedTestWithAccept(secondAccept),
+            aMissingReferenceTest = aMissingReferenceTestWithAccept(thirdAccept);
+
+        [firstFailingTest, secondFailingTest, aMissingReferenceTest].map(function (comparison) {
+            reporter.reportComparisonStarting(comparison);
+            reporter.reportComparison(comparison);
+        });
+
+        reporter.reportTestSuite({status: 'fail'});
+
+        // when
+        reporterContainer().find('.acceptAll').click();
+
+        // then
+        expect(firstAccept).toHaveBeenCalled();
+        expect(secondAccept).toHaveBeenCalled();
+        expect(thirdAccept).toHaveBeenCalled();
     });
 
     describe("Document title progress counter", function () {

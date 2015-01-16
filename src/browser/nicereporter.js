@@ -112,11 +112,20 @@ csscriticLib.niceReporter = function (util) {
         header.classList.add(successful ? 'pass' : 'fail');
     };
 
-    var showAcceptAllButtonIfNeccessary = function (acceptFuncs) {
+    var showAcceptAllButtonIfNeccessary = function (acceptableEntries) {
         var header = findElementFor(headerId),
             button = elementFor('<button class="acceptAll">... accept all (I know what I\'m doing)</button>');
 
-        if (acceptFuncs.length > 2) {
+        if (acceptableEntries.length > 2) {
+            button.onclick = function () {
+                acceptableEntries.forEach(function (acceptableEntry) {
+                    acceptableEntry.acceptPage();
+                    acceptComparison(acceptableEntry.entry);
+                });
+
+                button.setAttribute('disabled', 'disabled');
+            };
+
             header.appendChild(button);
         }
     };
@@ -334,6 +343,13 @@ csscriticLib.niceReporter = function (util) {
         imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
     };
 
+    var acceptComparison = function (container) {
+        var acceptButton = container.querySelector('button');
+        acceptButton.setAttribute('disabled', 'disabled');
+        acceptButton.textContent = "✓";
+        container.classList.add('accepted');
+    };
+
     var changedImageContainer = function (pageImage, acceptPage, container) {
         var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div class="outerChangedImageContainer">' +
@@ -348,9 +364,7 @@ csscriticLib.niceReporter = function (util) {
         changedImageContainer.appendChild(imageWrapper(pageImage));
         acceptButton.onclick = function () {
             acceptPage();
-            acceptButton.setAttribute('disabled', 'disabled');
-            acceptButton.textContent = "✓";
-            container.classList.add('accepted');
+            acceptComparison(container);
         };
 
         return outerChangedImageContainer;
@@ -471,7 +485,7 @@ csscriticLib.niceReporter = function (util) {
             issueCount = 0,
             progressTickElements = {},
             runningComparisonEntries = {},
-            acceptFunctions = [],
+            acceptableComparisons = [],
             timeStarted;
 
         return {
@@ -509,10 +523,10 @@ csscriticLib.niceReporter = function (util) {
 
                 if (comparison.status === 'failed') {
                     showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, entry);
-                    acceptFunctions.push(comparison.acceptPage);
+                    acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'referenceMissing') {
                     showComparisonWithoutReference(comparison.pageImage, comparison.acceptPage, entry);
-                    acceptFunctions.push(comparison.acceptPage);
+                    acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'passed') {
                     showComparisonWithRenderedPage(comparison.pageImage, entry);
                 } else if (comparison.status === 'error') {
@@ -526,9 +540,17 @@ csscriticLib.niceReporter = function (util) {
                 updateComparisonStatus(comparison.status, entry);
             },
             reportTestSuite: function (result) {
+                var acceptableEntries = acceptableComparisons.map(function (comparison) {
+                    var key = comparisonKey(comparison.testCase);
+                    return {
+                        acceptPage: comparison.acceptPage,
+                        entry: runningComparisonEntries[key]
+                    };
+                });
+
                 showTimeTaken(timeStarted ? Date.now() - timeStarted : 0);
                 setOutcomeOnHeader(result.success);
-                showAcceptAllButtonIfNeccessary(acceptFunctions);
+                showAcceptAllButtonIfNeccessary(acceptableEntries);
             }
         };
     };
