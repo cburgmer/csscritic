@@ -82,7 +82,7 @@ csscriticLib.phantomjsRenderer = function () {
     module.render = function (parameters) {
         return openPage(getFileUrl(parameters.url), parameters.width, parameters.height)
             .then(function (result) {
-                return waitFor(200)
+                return waitFor(400)
                     .then(function () {
                         return renderPage(result.page);
                     })
