@@ -490,21 +490,30 @@ csscriticLib.niceReporter = function (util, packageVersion) {
             acceptableComparisons = [],
             timeStarted;
 
+        var registerComparison = function (comparison) {
+            totalCount += 1;
+            if (!timeStarted) {
+                timeStarted = Date.now();
+            }
+
+            showBrowserWarningIfNeeded();
+            updateStatusInDocumentTitle(totalCount, doneCount);
+            updateStatusBar(totalCount, issueCount);
+
+            var key = comparisonKey(comparison.testCase);
+
+            var tickElement = addTickToProgressBar(key);
+            progressTickElements[key] = tickElement;
+        };
+
         return {
+            reportDeselectedComparison: function (comparison) {
+                registerComparison(comparison);
+            },
             reportComparisonStarting: function (comparison) {
-                totalCount += 1;
-                if (!timeStarted) {
-                    timeStarted = Date.now();
-                }
-
-                showBrowserWarningIfNeeded();
-                updateStatusInDocumentTitle(totalCount, doneCount);
-                updateStatusBar(totalCount, issueCount);
-
                 var key = comparisonKey(comparison.testCase);
 
-                var tickElement = addTickToProgressBar(key);
-                progressTickElements[key] = tickElement;
+                registerComparison(comparison);
 
                 var comparisonElement = addComparison(comparison.testCase, comparison.referenceImage, key);
                 runningComparisonEntries[key] = comparisonElement;
