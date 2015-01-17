@@ -76,8 +76,18 @@
     display: inline-block;
 }
 
+#csscritic_nicereporter .statusText .runAll {
+    display: block;
+    margin-top: 0.5em;
+    text-decoration: underline;
+}
+
 #csscritic_nicereporter .acceptAll {
-    margin-left: 10px;
+    display: none;
+    margin: -4px 0 -4px 1em; /* Make up for border and padding to fit into the flow */
+}
+#csscritic_nicereporter .acceptAll.active {
+    display: inline-block;
 }
 
 #csscritic_nicereporter .cssCriticVersion {
@@ -244,7 +254,7 @@
 
 /* Accept */
 
-#csscritic_nicereporter .comparison button {
+#csscritic_nicereporter .comparison .accept {
     vertical-align: top;
 
     position: absolute;
@@ -255,7 +265,7 @@
 
     font-size: 0.7rem;
 }
-#csscritic_nicereporter .accepted.comparison button {
+#csscritic_nicereporter .accepted.comparison .accept {
     font-size: 1.4rem;
 }
 

@@ -16,7 +16,7 @@ csscriticLib.niceReporter = function (util, packageVersion) {
 
     var template = function (templateStr, values) {
         return templateStr.replace(/\{\{(\w+)\}\}/g, function (_, param) {
-            var value = values[param] || '';
+            var value = values[param] !== undefined ? values[param] : '';
             return escapeValue(value);
         });
     };
@@ -32,8 +32,7 @@ csscriticLib.niceReporter = function (util, packageVersion) {
     var headerId = 'header',
         timeTakenId = 'timeTaken',
         progressBarId = 'progressBar',
-        statusTotalId = 'statusTotalCount',
-        statusIssueId = 'statusIssueCount';
+        statusTextId = 'statusText';
 
     var getOrCreateContainer = function () {
         var reporterId = "csscritic_nicereporter",
@@ -45,18 +44,14 @@ csscriticLib.niceReporter = function (util, packageVersion) {
                                              '<span class="cssCriticVersion">CSS Critic {{packageVersion}}</span>' +
                                              '<span id="{{timeTakenId}}"></span>' +
                                              '<ul id="{{progressBarId}}"></ul>' +
-                                             '<div class="statusText">' +
-                                             '<span id="{{statusTotalId}}">0</span> entries, ' +
-                                             '<span id="{{statusIssueId}}">0</span> need some love' +
-                                             '</div>' +
+                                             '<div id="{{statusTextId}}" class="statusText"></div>' +
                                              '</header>' +
                                              '</div>', {
                                                  reporterId: reporterId,
                                                  headerId: headerId,
                                                  timeTakenId: timeTakenId,
                                                  progressBarId: progressBarId,
-                                                 statusTotalId: statusTotalId,
-                                                 statusIssueId: statusIssueId,
+                                                 statusTextId: statusTextId,
                                                  packageVersion: packageVersion
                                              }));
 
@@ -112,24 +107,6 @@ csscriticLib.niceReporter = function (util, packageVersion) {
         var header = findElementFor(headerId);
 
         header.classList.add(successful ? 'pass' : 'fail');
-    };
-
-    var showAcceptAllButtonIfNeccessary = function (acceptableEntries) {
-        var header = findElementFor(headerId),
-            button = elementFor('<button class="acceptAll">... accept all (I know what I\'m doing)</button>');
-
-        if (acceptableEntries.length > 2) {
-            button.onclick = function () {
-                acceptableEntries.forEach(function (acceptableEntry) {
-                    acceptableEntry.acceptPage();
-                    acceptComparison(acceptableEntry.entry);
-                });
-
-                button.setAttribute('disabled', 'disabled');
-            };
-
-            header.appendChild(button);
-        }
     };
 
     // progress bar
@@ -193,11 +170,63 @@ csscriticLib.niceReporter = function (util, packageVersion) {
 
     // status bar
 
-    var updateStatusBar = function (totalCount, issueCount) {
-        var statusTotal = findElementFor(statusTotalId),
-            statusIssue = findElementFor(statusIssueId);
-        statusTotal.textContent = totalCount;
-        statusIssue.textContent = issueCount;
+    var statusTotalText = function (totalCount, selectedCount) {
+        var totalContent = '{{total}} entries, ';
+        if (selectedCount < totalCount) {
+            totalContent = '{{selected}} of ' + totalContent;
+        }
+        return template('<span>' +
+                        totalContent +
+                        '</span>', {
+            total: totalCount,
+            selected: selectedCount
+        });
+    };
+
+    var statusIssueText = function (issueCount) {
+        return template('<span>' +
+                        '{{issues}} need some love' +
+                        '</span>', {
+                            issues: issueCount
+                        });
+    };
+
+    var acceptAllClassName = 'acceptAll';
+
+    var acceptAllButton = function () {
+        return elementFor(template('<button class="{{acceptAllClassName}}">... accept all (I know what I\'m doing)</button>', {
+            acceptAllClassName: acceptAllClassName
+        }));
+    };
+
+    var showAcceptAllButtonIfNeccessary = function (acceptableEntries) {
+        var statusText = findElementFor(statusTextId),
+            button = statusText.querySelector('.' + acceptAllClassName);
+
+        if (acceptableEntries.length > 2) {
+            button.classList.add('active');
+            button.onclick = function () {
+                acceptableEntries.forEach(function (acceptableEntry) {
+                    acceptableEntry.acceptPage();
+                    acceptComparison(acceptableEntry.entry);
+                });
+
+                button.setAttribute('disabled', 'disabled');
+            };
+        }
+    };
+
+    var updateStatusBar = function (totalCount, selectedCount, issueCount) {
+        var runAll = elementFor('<a class="runAll" href="#">Run all</a>'),
+            statusText = findElementFor(statusTextId);
+
+        statusText.innerHTML = '';
+        statusText.appendChild(elementFor(statusTotalText(totalCount, selectedCount)));
+        statusText.appendChild(elementFor(statusIssueText(issueCount)));
+        statusText.appendChild(acceptAllButton());
+        if (totalCount > selectedCount) {
+            statusText.appendChild(runAll);
+        }
     };
 
     // comparisons
@@ -345,8 +374,10 @@ csscriticLib.niceReporter = function (util, packageVersion) {
         imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
     };
 
+    var acceptClassName = 'accept';
+
     var acceptComparison = function (container) {
-        var acceptButton = container.querySelector('button');
+        var acceptButton = container.querySelector('.' + acceptClassName);
         acceptButton.setAttribute('disabled', 'disabled');
         acceptButton.textContent = "✓";
         container.classList.add('accepted');
@@ -356,9 +387,10 @@ csscriticLib.niceReporter = function (util, packageVersion) {
         var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div class="outerChangedImageContainer">' +
                                                              '<div class="{{changedImageContainerClassName}}"></div>' +
-                                                             '<button><span>Accept</span></button>' +
+                                                             '<button class="{{acceptClassName}}"><span>Accept</span></button>' +
                                                              '</div>', {
-                                                                 changedImageContainerClassName: changedImageContainerClassName
+                                                                 changedImageContainerClassName: changedImageContainerClassName,
+                                                                 acceptClassName: acceptClassName
                                                              })),
             changedImageContainer = outerChangedImageContainer.querySelector('.' + changedImageContainerClassName),
             acceptButton = outerChangedImageContainer.querySelector('button');
@@ -483,6 +515,7 @@ csscriticLib.niceReporter = function (util, packageVersion) {
 
     module.NiceReporter = function () {
         var totalCount = 0,
+            selectedCount = 0,
             doneCount = 0,
             issueCount = 0,
             progressTickElements = {},
@@ -498,7 +531,7 @@ csscriticLib.niceReporter = function (util, packageVersion) {
 
             showBrowserWarningIfNeeded();
             updateStatusInDocumentTitle(totalCount, doneCount);
-            updateStatusBar(totalCount, issueCount);
+            updateStatusBar(totalCount, selectedCount, issueCount);
 
             var key = comparisonKey(comparison.testCase);
 
@@ -512,6 +545,7 @@ csscriticLib.niceReporter = function (util, packageVersion) {
             },
             reportComparisonStarting: function (comparison) {
                 var key = comparisonKey(comparison.testCase);
+                selectedCount += 1;
 
                 registerComparison(comparison);
 
@@ -529,7 +563,7 @@ csscriticLib.niceReporter = function (util, packageVersion) {
                 }
 
                 updateStatusInDocumentTitle(totalCount, doneCount);
-                updateStatusBar(totalCount, issueCount);
+                updateStatusBar(totalCount, selectedCount, issueCount);
                 markTickDone(comparison.status, tickElement);
 
                 if (comparison.status === 'failed') {
