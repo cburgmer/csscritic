@@ -39,7 +39,7 @@
 #csscritic_nicereporter .errorText:not(:empty)::before {
     content: "⚠";
     color: rgb(89, 17, 0);
-    font-size: 25px;
+    font-size: 1.2rem;
     padding-right: 5px;
     vertical-align: middle;
 }
@@ -94,9 +94,8 @@
 
 #csscritic_nicereporter #progressBar li {
     display: inline-block;
-    font-size: 1.8em;
-    line-height: 0.5em;
-    width: 0.5em;
+    font-size: 1.8rem;
+    width: 0.85rem;
     transition: color 1s;
 }
 
@@ -144,7 +143,7 @@
 
 #csscritic_nicereporter .comparison .title a {
     vertical-align: top;
-    font-size: 0.7em;
+    font-size: 0.8rem;
     line-height: 0.6em;
     color: #888;
 }
@@ -255,10 +254,10 @@
     right: -65px;
     width: 50px;
 
-    font-size: 0.7em;
+    font-size: 0.7rem;
 }
 #csscritic_nicereporter .accepted.comparison button {
-    font-size: 1.4em;
+    font-size: 1.4rem;
 }
 
 #csscritic_nicereporter .comparison button span {
@@ -296,7 +295,7 @@
     background-color: black;
     opacity: 0.55;
     color: white;
-    font-size: 0.9em;
+    font-size: 0.9rem;
     border-radius: 5px;
 
     content: "< Hover over reference image to highlight changes";
@@ -309,7 +308,7 @@
 
 #csscritic_nicereporter .browserWarning::before {
     content: "⚠";
-    font-size: 25px;
+    font-size: 1.2rem;
     padding-right: 5px;
     vertical-align: middle;
 }
@@ -325,7 +324,7 @@
 
     background-color: rgba(182, 39, 5, 0.85);
     color: white;
-    font-size: 120%;
+    font-size: 1.2rem;
     border: 2px solid black;
     padding: 20px;
 }
