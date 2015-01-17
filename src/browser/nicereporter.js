@@ -1,4 +1,4 @@
-csscriticLib.niceReporter = function (util) {
+csscriticLib.niceReporter = function (util, packageVersion) {
     "use strict";
 
     var module = {};
@@ -42,7 +42,7 @@ csscriticLib.niceReporter = function (util) {
         if (reportBody === null) {
             reportBody = elementFor(template('<div id="{{reporterId}}">' +
                                              '<header id="{{headerId}}">' +
-                                             '<span class="cssCriticVersion">CSS Critic 0.5.0</span>' +
+                                             '<span class="cssCriticVersion">CSS Critic {{packageVersion}}</span>' +
                                              '<span id="{{timeTakenId}}"></span>' +
                                              '<ul id="{{progressBarId}}"></ul>' +
                                              '<div class="statusText">' +
@@ -56,7 +56,8 @@ csscriticLib.niceReporter = function (util) {
                                                  timeTakenId: timeTakenId,
                                                  progressBarId: progressBarId,
                                                  statusTotalId: statusTotalId,
-                                                 statusIssueId: statusIssueId
+                                                 statusIssueId: statusIssueId,
+                                                 packageVersion: packageVersion
                                              }));
 
             document.getElementsByTagName("body")[0].appendChild(reportBody);

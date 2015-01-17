@@ -3,7 +3,8 @@ var csscritic;
 (function () {
     "use strict";
 
-    var util = csscriticLib.util(),
+    var packageVersion = csscriticLib.packageVersion || 'dev',
+        util = csscriticLib.util(),
         browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
         domStorage = csscriticLib.domstorage(util, localStorage),
         indexedDbStorage = csscriticLib.indexeddbstorage(util),
@@ -23,7 +24,7 @@ var csscritic;
 
     csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
 
-    var niceReporter = csscriticLib.niceReporter(util);
+    var niceReporter = csscriticLib.niceReporter(util, packageVersion);
 
     csscritic.NiceReporter = niceReporter.NiceReporter;
 }());

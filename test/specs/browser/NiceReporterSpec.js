@@ -83,7 +83,8 @@ describe("Nice reporter", function () {
     };
 
     beforeEach(function () {
-        reporter = csscriticLib.niceReporter(util).NiceReporter();
+        var packageVersion = '1.2.3';
+        reporter = csscriticLib.niceReporter(util, packageVersion).NiceReporter();
         jasmine.addMatchers(imagediffForJasmine2);
     });
 

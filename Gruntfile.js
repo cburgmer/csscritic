@@ -1,4 +1,4 @@
-/*global module:false*/
+/*global module:false, require: false*/
 module.exports = function (grunt) {
     "use strict";
 
@@ -6,7 +6,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         clean: {
             deps: ['build/dependencies/*.js'],
-            dist: ['build/*.js', 'dist/'],
+            dist: ['build/*.js', 'dist/', 'packageVersion.js'],
             all: ['build', 'test/ui/*.html.json', 'example/*.html.json']
         },
         jasmine: {
@@ -34,6 +34,12 @@ module.exports = function (grunt) {
             },
             smokeTestBundle: {
                 command: './node_modules/.bin/slimerjs test/smokeTest.js test/smokeTestBundled.html | grep "Smoke test successful"'
+            }
+        },
+        exportVersion: {
+            default: {
+                template: 'packageVersion.js.template',
+                target: 'packageVersion.js'
             }
         },
         concat: {
@@ -69,6 +75,7 @@ module.exports = function (grunt) {
                     'src/boot/scope.js',
                     'src/*.js',
                     'src/browser/*.js',
+                    'packageVersion.js',
                     'src/boot/browser.js',
                 ],
                 dest: 'build/<%= pkg.name %>.concat.js'
@@ -196,6 +203,23 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-umd');
 
+    grunt.registerMultiTask('exportVersion', 'Exports the version to a given file', function() {
+        var fs = require('fs'),
+            ejs = require('ejs'),
+            packageJson = require('./package.json');
+
+        var template = this.data.template,
+            target = this.data.target;
+
+        var packageName = packageJson.name,
+            packageVersion = packageJson.version;
+
+        var templateContent = fs.readFileSync(template, {encoding: 'utf8'}),
+            fileContent = ejs.render(templateContent, {'name': packageName, 'version': packageVersion});
+
+        fs.writeFileSync(target, fileContent);
+    });
+
     grunt.registerTask('dependencies', [
         'clean:deps',
         'browserify:inlineresources',
@@ -210,6 +234,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
+        'exportVersion',
         'concat',
         'umd',
         'cssmin',

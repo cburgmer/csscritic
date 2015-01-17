@@ -30,6 +30,7 @@
             'src/reporting.js',
             'src/regression.js',
             'src/main.js',
+            'packageVersion.js',
             'src/boot/browser.js'
         ];
 
