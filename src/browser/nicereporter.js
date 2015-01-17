@@ -42,6 +42,7 @@ csscriticLib.niceReporter = function (util) {
         if (reportBody === null) {
             reportBody = elementFor(template('<div id="{{reporterId}}">' +
                                              '<header id="{{headerId}}">' +
+                                             '<span class="cssCriticVersion">CSS Critic 0.5.0</span>' +
                                              '<span id="{{timeTakenId}}"></span>' +
                                              '<ul id="{{progressBarId}}"></ul>' +
                                              '<div class="statusText">' +

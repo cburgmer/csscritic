@@ -80,6 +80,10 @@
     margin-left: 10px;
 }
 
+#csscritic_nicereporter .cssCriticVersion {
+    font-size: 0.7rem;
+}
+
 /* Progress bar */
 
 #csscritic_nicereporter #progressBar {
