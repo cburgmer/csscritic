@@ -170,8 +170,16 @@ csscriticLib.niceReporter = function (util, packageVersion) {
 
     // status bar
 
+    var singularPlural = function (value, singularForm, pluralForm) {
+        if (value === 1) {
+            return singularForm;
+        } else {
+            return pluralForm;
+        }
+    };
+
     var statusTotalText = function (totalCount, selectedCount) {
-        var totalContent = '{{total}} entries, ';
+        var totalContent = '{{total}} ' + singularPlural(totalCount, 'entry', 'entries') + ', ';
         if (selectedCount < totalCount) {
             totalContent = '{{selected}} of ' + totalContent;
         }
@@ -184,8 +192,9 @@ csscriticLib.niceReporter = function (util, packageVersion) {
     };
 
     var statusIssueText = function (issueCount) {
+        var issueContent = '{{issues}} ' + singularPlural(issueCount, 'needs', 'need') + ' some love';
         return template('<span>' +
-                        '{{issues}} need some love' +
+                        issueContent +
                         '</span>', {
                             issues: issueCount
                         });
