@@ -16,19 +16,13 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
             return;
         }
 
-        return filterKeyValues[0].replace(filterRegex, '');
+        return decodeURIComponent(filterKeyValues[0].replace(filterRegex, ''));
     };
 
-    module.filterComparisons = function (comparisons) {
-        var selectedUrl = getSelectedUrl();
+    var selectedUrl = getSelectedUrl();
 
-        if (!selectedUrl) {
-            return comparisons;
-        }
-
-        return comparisons.filter(function (comparison) {
-            return comparison.testCase.url === selectedUrl;
-        });
+    module.isComparisonSelected = function (comparison) {
+        return !selectedUrl ||  comparison.testCase.url === selectedUrl;
     };
 
     module.setSelection = function (selection) {

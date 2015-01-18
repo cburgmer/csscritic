@@ -1,8 +1,6 @@
 describe("Url Query Filter", function () {
     "use strict";
 
-    var urlQueryFilter;
-
     var windowLocation;
 
     var setFilter = function (filter) {
@@ -22,53 +20,53 @@ describe("Url Query Filter", function () {
             search: ''
         };
 
-        urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
     });
 
     it("should change the browser's location to include the selection", function () {
+        var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
         urlQueryFilter.setSelection("the targeted test");
 
         expect(windowLocation.search).toEqual('?filter=the%20targeted%20test');
     });
 
-    it("should find a comparison by url", function () {
-        var comparison = aComparison('aTest');
-        setFilter('aTest');
+    describe("filtering", function () {
+        it("should find a comparison by URL", function () {
+            var comparison = aComparison('aTest');
+            setFilter('aTest');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
-        expect(urlQueryFilter.filterComparisons([comparison])).toEqual([comparison]);
-    });
+            expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(true);
+        });
 
-    it("should filter out a comparison if url does not match", function () {
-        var comparison = aComparison('aTest');
-        setFilter('someOtherTest');
+        it("should filter out a comparison if URL does not match", function () {
+            var comparison = aComparison('aTest');
+            setFilter('someOtherTest');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
-        expect(urlQueryFilter.filterComparisons([comparison])).toEqual([]);
-    });
+            expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(false);
+        });
 
-    it("should filter with multiple items", function () {
-        var matchingComparison = aComparison('the matching comparison');
-        setFilter('the matching comparison');
+        it("should handle encoded URI", function () {
+            var comparison = aComparison('a/Test.html');
+            setFilter('a%2FTest.html');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
-        expect(urlQueryFilter.filterComparisons([aComparison('nonMatching'),
-                                                 matchingComparison,
-                                                 aComparison('anotherNonMatching')]))
-            .toEqual([matchingComparison]);
-    });
+            expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(true);
+        });
 
-    it("should not filter if no query given", function () {
-        var firstComparison = aComparison('firstComparison'),
-            secondComparison = aComparison('secondComparison');
+        it("should not filter if no query given", function () {
+            var firstComparison = aComparison('firstComparison');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
-        expect(urlQueryFilter.filterComparisons([firstComparison, secondComparison]))
-            .toEqual([firstComparison, secondComparison]);
-    });
+            expect(urlQueryFilter.isComparisonSelected(firstComparison)).toBe(true);
+        });
 
-    it("should not filter if an empty filter is given", function () {
-        var firstComparison = aComparison('firstComparison'),
-            secondComparison = aComparison('secondComparison');
-        setFilter('');
+        it("should not filter if an empty filter is given", function () {
+            var firstComparison = aComparison('firstComparison');
+            setFilter('');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
-        expect(urlQueryFilter.filterComparisons([firstComparison, secondComparison]))
-            .toEqual([firstComparison, secondComparison]);
+            expect(urlQueryFilter.isComparisonSelected(firstComparison)).toBe(true);
+        });
     });
 });
