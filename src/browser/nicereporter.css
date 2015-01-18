@@ -118,7 +118,7 @@
     display: block;
 }
 
-#csscritic_nicereporter #progressBar .inprogress {
+#csscritic_nicereporter #progressBar .pending {
     color: grey;
 }
 #csscritic_nicereporter #progressBar .passed {

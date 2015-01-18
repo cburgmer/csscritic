@@ -149,6 +149,8 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
         };
     };
 
+    var progressBarPendingClassName = 'pending';
+
     var addTickToProgressBar = function (linkTarget) {
         var progressBar = findElementFor(progressBarId);
 
@@ -156,7 +158,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
             linkTarget: escapeId(linkTarget),
             title: linkTarget
         }));
-        tick.classList.add('inprogress');
+        tick.classList.add(progressBarPendingClassName);
         progressBar.appendChild(tick);
 
         // work around https://bugzilla.mozilla.org/show_bug.cgi?id=1005634
@@ -166,7 +168,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
     };
 
     var markTickDone = function (status, tickElement) {
-        tickElement.classList.remove('inprogress');
+        tickElement.classList.remove(progressBarPendingClassName);
         tickElement.classList.add(status);
     };
 
