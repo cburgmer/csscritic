@@ -10,6 +10,10 @@
         window.onload = function() {
             csscritic.addReporter(csscritic.NiceReporter());
             csscritic.add('test/ui/niceReporterPassedTest.html');
+            csscritic.add({
+                url: 'test/ui/niceReporterPassedTest.html',
+                hover: '.titleLink'
+            });
             csscritic.add('test/ui/niceReporterFailingTest.html');
             csscritic.add({
                 url: 'test/ui/niceReporterFailingTest.html',

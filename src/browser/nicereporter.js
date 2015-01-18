@@ -1,4 +1,4 @@
-csscriticLib.niceReporter = function (util, packageVersion) {
+csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
     "use strict";
 
     var module = {};
@@ -292,10 +292,11 @@ csscriticLib.niceReporter = function (util, packageVersion) {
 
     var addComparison = function (testCase, referenceImage, key) {
         var container = getOrCreateContainer(),
+            titleLinkClassName = 'titleLink',
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
                                              '<h3 class="title">' +
-                                             '{{url}} ' +
-                                             '<a href="{{url}}">↗</a>' +
+                                             '<a class="{{titleLinkClassName}}" href="#">{{url}}</a> ' +
+                                             '<a class="externalLink" href="{{url}}">↗</a>' +
                                              testCaseParameters(testCase) +
                                              '</h3>' +
                                              '<div class="{{errorContainerClassName}}"></div>' +
@@ -305,13 +306,18 @@ csscriticLib.niceReporter = function (util, packageVersion) {
                                                  id: escapeId(key),
                                                  runningComparisonClassName: runningComparisonClassName,
                                                  errorContainerClassName: errorContainerClassName,
-                                                 imageContainerClassName: imageContainerClassName
+                                                 imageContainerClassName: imageContainerClassName,
+                                                 titleLinkClassName: titleLinkClassName
                                              })),
-            imageContainer = comparison.querySelector('.' + imageContainerClassName);
+            imageContainer = comparison.querySelector('.' + imageContainerClassName),
+            titleLink = comparison.querySelector('.' + titleLinkClassName);
 
         if (referenceImage) {
             imageContainer.appendChild(imageWrapper(referenceImage));
         }
+        titleLink.onclick = function () {
+            selectionFilter.setSelection(testCase.url);
+        };
 
         container.appendChild(comparison);
 

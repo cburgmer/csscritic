@@ -150,11 +150,20 @@
     font-weight: normal;
 }
 
-#csscritic_nicereporter .comparison .title a {
+#csscritic_nicereporter .comparison .title .titleLink:hover {
+    text-decoration: underline;
+}
+
+#csscritic_nicereporter .comparison .title .externalLink {
     vertical-align: top;
     font-size: 0.8rem;
     line-height: 0.6em;
     color: #888;
+    display: inline-block;
+}
+#csscritic_nicereporter .comparison .title .externalLink:hover {
+    transform: scale(1.1);
+    transform-origin: bottom left;
 }
 
 #csscritic_nicereporter .comparison .parameters,

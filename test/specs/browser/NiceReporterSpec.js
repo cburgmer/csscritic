@@ -1,7 +1,7 @@
 describe("Nice reporter", function () {
     "use strict";
 
-    var reporter;
+    var reporter, selectionFilter;
 
     var util = csscriticLib.util();
 
@@ -84,7 +84,8 @@ describe("Nice reporter", function () {
 
     beforeEach(function () {
         var packageVersion = '1.2.3';
-        reporter = csscriticLib.niceReporter(util, packageVersion).NiceReporter();
+        selectionFilter = jasmine.createSpyObj('selectionFiler', ['setSelection']);
+        reporter = csscriticLib.niceReporter(util, selectionFilter, packageVersion).NiceReporter();
         jasmine.addMatchers(imagediffForJasmine2);
     });
 
@@ -115,7 +116,7 @@ describe("Nice reporter", function () {
         reporter.reportComparisonStarting(test);
         reporter.reportComparison(test);
 
-        expect(reporterContainer().find('.comparison .title a').attr('href')).toEqual('aPage.html');
+        expect(reporterContainer().find('.comparison .title .externalLink').attr('href')).toEqual('aPage.html');
     });
 
     it("should show a difference canvas on a failed comparison", function (done) {
@@ -183,6 +184,25 @@ describe("Nice reporter", function () {
         expect(firstAccept).toHaveBeenCalled();
         expect(secondAccept).toHaveBeenCalled();
         expect(thirdAccept).toHaveBeenCalled();
+    });
+
+    it("should select tests by url", function () {
+        var firstPassedTest = aPassedTest({url: "firstTest.html"}),
+            secondPassedTest = aPassedTest({url: "secondTest.html"});
+
+        reporter.reportComparisonStarting(firstPassedTest);
+        reporter.reportComparisonStarting(secondPassedTest);
+
+        reporter.reportComparison(firstPassedTest);
+        reporter.reportComparison(secondPassedTest);
+
+        reporter.reportTestSuite({status: "success"});
+
+        // when
+        reporterContainer().find('#secondTest\\.html .titleLink').first().click();
+
+        // then
+        expect(selectionFilter.setSelection).toHaveBeenCalledWith('secondTest.html');
     });
 
     describe("Document title progress counter", function () {

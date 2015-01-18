@@ -24,7 +24,7 @@ var csscritic;
 
     csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
 
-    var niceReporter = csscriticLib.niceReporter(util, packageVersion);
+    var niceReporter = csscriticLib.niceReporter(util, {}, packageVersion);
 
     csscritic.NiceReporter = niceReporter.NiceReporter;
 }());
