@@ -1,7 +1,7 @@
 describe("Main", function () {
     "use strict";
 
-    var csscritic, regression, reporting, storage;
+    var csscritic, regression, reporting, storage, selectionFilter;
 
     var util = csscriticLib.util();
 
@@ -30,12 +30,15 @@ describe("Main", function () {
 
         regression = jasmine.createSpyObj('regression', ['compare']);
         storage = jasmine.createSpyObj('storage', ['readReferenceImage']);
+        selectionFilter = jasmine.createSpyObj('selectionFilter', ['isComparisonSelected']);
+        selectionFilter.isComparisonSelected.and.returnValue(true);
 
         csscritic = csscriticLib.main(
             regression,
             reporting,
             util,
-            storage);
+            storage,
+            selectionFilter);
 
         reporter = {};
     });
@@ -143,7 +146,7 @@ describe("Main", function () {
                 },
                 referenceImage: 'the image',
                 viewport: 'the viewport'
-            });
+            }, true);
         });
 
         it("should report a starting comparison without reference image", function () {
@@ -157,7 +160,7 @@ describe("Main", function () {
                 testCase: {
                     url: "samplepage.html"
                 }
-            });
+            }, true);
         });
 
         it("should wait for reporting on starting comparison to finish", function () {
@@ -228,5 +231,104 @@ describe("Main", function () {
             expect(callback).toHaveBeenCalled();
         });
 
+    });
+
+    describe("Filtering", function () {
+        beforeEach(function () {
+            var comparison = "the_comparison";
+            setUpComparison(comparison);
+        });
+
+        it("should exclude a filtered comparison", function (done) {
+            setUpReferenceImageMissing();
+            selectionFilter.isComparisonSelected.and.returnValue(false);
+
+            csscritic.add({url: "somePage"});
+            csscritic.execute().then(function () {
+                expect(regression.compare).not.toHaveBeenCalled();
+
+                done();
+            });
+        });
+
+        it("should include a selected comparison", function (done) {
+            setUpReferenceImageMissing();
+            selectionFilter.isComparisonSelected.and.returnValue(true);
+
+            csscritic.add({url: "somePage"});
+            csscritic.execute().then(function () {
+                expect(regression.compare).toHaveBeenCalled();
+
+                done();
+            });
+        });
+
+        it("should report a selected comparison", function (done) {
+            var comparison = {url: "somePage"};
+            setUpReferenceImageMissing();
+            selectionFilter.isComparisonSelected.and.returnValue(true);
+
+            csscritic.add(comparison);
+            csscritic.execute().then(function () {
+                expect(reporting.doReportConfiguredComparison)
+                    .toHaveBeenCalledWith(jasmine.any(Object), {testCase: comparison}, true);
+
+                done();
+            });
+        });
+
+        it("should report a deselected comparison", function (done) {
+            var comparison = {url: "somePage"};
+            setUpReferenceImageMissing();
+            selectionFilter.isComparisonSelected.and.returnValue(false);
+
+            csscritic.add(comparison);
+            csscritic.execute().then(function () {
+                expect(reporting.doReportConfiguredComparison)
+                    .toHaveBeenCalledWith(jasmine.any(Object), {testCase: comparison}, false);
+
+                done();
+            });
+        });
+
+        it("should report a deselected comparison as compared", function (done) {
+            setUpReferenceImage('theimage', 'theviewport');
+            selectionFilter.isComparisonSelected.and.returnValue(true);
+
+            csscritic.add({url: "somePage"});
+            csscritic.execute().then(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalled();
+
+                done();
+            });
+        });
+
+        it("should not report a deselected comparison as compared", function (done) {
+            setUpReferenceImage('theimage', 'theviewport');
+            selectionFilter.isComparisonSelected.and.returnValue(false);
+
+            csscritic.add({url: "somePage"});
+            csscritic.execute().then(function () {
+                expect(reporting.doReportComparison).not.toHaveBeenCalled();
+
+                done();
+            });
+        });
+
+        it("should make filtering optional", function (done) {
+            var main = csscriticLib.main(
+                regression,
+                reporting,
+                util,
+                storage);
+
+            setUpReferenceImage('theimage', 'theviewport');
+
+            main.add({url: "somePage"});
+            main.execute().then(function () {
+                expect(reporting.doReportComparison).toHaveBeenCalled();
+                done();
+            });
+        });
     });
 });

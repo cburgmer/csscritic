@@ -40,10 +40,11 @@ csscriticLib.reporting = function (renderer, storage, util) {
         }
     };
 
-    module.doReportConfiguredComparison = function (reporters, configuredComparison) {
+    module.doReportConfiguredComparison = function (reporters, configuredComparison, isSelected) {
         return util.all(reporters.map(function (reporter) {
-            if (reporter.reportComparisonStarting) {
-                return reporter.reportComparisonStarting(configuredComparison);
+            var reportingFunc = isSelected ? reporter.reportComparisonStarting : reporter.reportDeselectedComparison;
+            if (reportingFunc) {
+                return reportingFunc(configuredComparison);
             }
         }));
     };

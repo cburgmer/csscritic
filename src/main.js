@@ -1,4 +1,4 @@
-csscriticLib.main = function (regression, reporting, util, storage) {
+csscriticLib.main = function (regression, reporting, util, storage, selectionFilter) {
     "use strict";
 
     var module = {};
@@ -42,9 +42,19 @@ csscriticLib.main = function (regression, reporting, util, storage) {
         }));
     };
 
-    var reportConfiguredComparisons = function (startingComparisons) {
-        return util.all(startingComparisons.map(function (startingComparison) {
-            return reporting.doReportConfiguredComparison(reporters, startingComparison);
+    var selectComparisons = function (configuredComparisons) {
+        return configuredComparisons.map(function (configuredComparison) {
+            return {
+                configuredComparison: configuredComparison,
+                selected: !selectionFilter || selectionFilter.isComparisonSelected(configuredComparison)
+            };
+        });
+    };
+
+    var reportConfiguredComparisons = function (comparisonSelection) {
+        return util.all(comparisonSelection.map(function (selection) {
+            var isSelected = selection.selected;
+            return reporting.doReportConfiguredComparison(reporters, selection.configuredComparison, isSelected);
         }));
     };
 
@@ -57,16 +67,22 @@ csscriticLib.main = function (regression, reporting, util, storage) {
     };
 
     module.execute = function () {
-        var startingComparisons, allPassed;
+        var comparisonSelection, allPassed;
 
         return fetchStartingComparisons(testCases)
             .then(function (startingComp) {
-                startingComparisons = startingComp;
+                comparisonSelection = selectComparisons(startingComp);
 
-                return reportConfiguredComparisons(startingComp);
+                return reportConfiguredComparisons(comparisonSelection);
             })
             .then(function () {
-                return util.all(startingComparisons.map(
+                var selectedComparisons = comparisonSelection.filter(function (selection) {
+                    return selection.selected;
+                }).map(function (selection) {
+                    return selection.configuredComparison;
+                });
+
+                return util.all(selectedComparisons.map(
                     executeTestCase
                 ));
             })

@@ -38,7 +38,7 @@ describe("Reporting", function () {
         var reporter;
 
         beforeEach(function () {
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting"]);
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting", "reportDeselectedComparison"]);
         });
 
         it("should report a starting comparison", function () {
@@ -46,7 +46,7 @@ describe("Reporting", function () {
                 testCase: {
                     url: "samplepage.html"
                 }
-            });
+            }, true);
 
             expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({
                 testCase: {
@@ -59,7 +59,7 @@ describe("Reporting", function () {
             var startingComparison = "blah",
                 emptyReporter = {};
 
-            reporting.doReportConfiguredComparison([emptyReporter], startingComparison);
+            reporting.doReportConfiguredComparison([emptyReporter], startingComparison, true);
         });
 
         it("should only fulfill once the reporter returned", function (done) {
@@ -80,13 +80,26 @@ describe("Reporting", function () {
                 return defer.promise;
             });
 
-            reporting.doReportConfiguredComparison([reporter], startingComparison).then(function () {
+            reporting.doReportConfiguredComparison([reporter], startingComparison, true).then(function () {
                 expect(reporterHasFinished).toBe(true);
 
                 done();
             });
         });
 
+        it("should report a deselected comparison", function () {
+            reporting.doReportConfiguredComparison([reporter], {
+                testCase: {
+                    url: "samplepage.html"
+                }
+            }, false);
+
+            expect(reporter.reportDeselectedComparison).toHaveBeenCalledWith({
+                testCase: {
+                    url: "samplepage.html"
+                }
+            });
+        });
     });
 
     describe("reportComparison", function () {
