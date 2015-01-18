@@ -23,8 +23,8 @@ describe("Main", function () {
     };
 
     beforeEach(function () {
-        reporting = jasmine.createSpyObj('reporting', ['doReportComparisonStarting', 'doReportComparison', 'doReportTestSuite']);
-        reporting.doReportComparisonStarting.and.returnValue(testHelper.successfulPromise());
+        reporting = jasmine.createSpyObj('reporting', ['doReportConfiguredComparison', 'doReportComparison', 'doReportTestSuite']);
+        reporting.doReportConfiguredComparison.and.returnValue(testHelper.successfulPromise());
         reporting.doReportComparison.and.returnValue(testHelper.successfulPromise());
         reporting.doReportTestSuite.and.returnValue(testHelper.successfulPromise());
 
@@ -137,13 +137,13 @@ describe("Main", function () {
             csscritic.execute();
 
             triggerDelayedPromise();
-            expect(reporting.doReportComparisonStarting).toHaveBeenCalledWith([reporter], [{
+            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith([reporter], {
                 testCase: {
                     url: "samplepage.html"
                 },
                 referenceImage: 'the image',
                 viewport: 'the viewport'
-            }]);
+            });
         });
 
         it("should report a starting comparison without reference image", function () {
@@ -153,18 +153,22 @@ describe("Main", function () {
             csscritic.execute();
 
             triggerDelayedPromise();
-            expect(reporting.doReportComparisonStarting).toHaveBeenCalledWith([reporter], [{
+            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith([reporter], {
                 testCase: {
                     url: "samplepage.html"
                 }
-            }]);
+            });
         });
 
         it("should wait for reporting on starting comparison to finish", function () {
             var defer = ayepromise.defer(),
                 callback = jasmine.createSpy('callback');
 
-            reporting.doReportComparisonStarting.and.returnValue(defer.promise);
+            setUpReferenceImageMissing();
+            setUpComparison({testCase: {url: "something"}});
+            csscritic.add("something");
+
+            reporting.doReportConfiguredComparison.and.returnValue(defer.promise);
             csscritic.execute().then(callback);
 
             triggerDelayedPromise();

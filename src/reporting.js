@@ -40,13 +40,11 @@ csscriticLib.reporting = function (renderer, storage, util) {
         }
     };
 
-    module.doReportComparisonStarting = function (reporters, startingComparisons) {
-        return util.all(startingComparisons.map(function (startingComparison) {
-            return util.all(reporters.map(function (reporter) {
-                if (reporter.reportComparisonStarting) {
-                    return reporter.reportComparisonStarting(startingComparison);
-                }
-            }));
+    module.doReportConfiguredComparison = function (reporters, configuredComparison) {
+        return util.all(reporters.map(function (reporter) {
+            if (reporter.reportComparisonStarting) {
+                return reporter.reportComparisonStarting(configuredComparison);
+            }
         }));
     };
 

@@ -34,7 +34,7 @@ describe("Reporting", function () {
         reporting = csscriticLib.reporting(rendererBackend, storageBackend, util);
     });
 
-    describe("reportComparisonStarting", function () {
+    describe("reportConfiguredComparison", function () {
         var reporter;
 
         beforeEach(function () {
@@ -42,11 +42,11 @@ describe("Reporting", function () {
         });
 
         it("should report a starting comparison", function () {
-            reporting.doReportComparisonStarting([reporter], [{
+            reporting.doReportConfiguredComparison([reporter], {
                 testCase: {
                     url: "samplepage.html"
                 }
-            }]);
+            });
 
             expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({
                 testCase: {
@@ -59,7 +59,7 @@ describe("Reporting", function () {
             var startingComparison = "blah",
                 emptyReporter = {};
 
-            reporting.doReportComparisonStarting([emptyReporter], [startingComparison]);
+            reporting.doReportConfiguredComparison([emptyReporter], startingComparison);
         });
 
         it("should only fulfill once the reporter returned", function (done) {
@@ -80,7 +80,7 @@ describe("Reporting", function () {
                 return defer.promise;
             });
 
-            reporting.doReportComparisonStarting([reporter], [startingComparison]).then(function () {
+            reporting.doReportConfiguredComparison([reporter], startingComparison).then(function () {
                 expect(reporterHasFinished).toBe(true);
 
                 done();
