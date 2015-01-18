@@ -26,6 +26,7 @@
             'src/browser/indexeddbstorage.js',
             'src/browser/migratetoindexeddbstorage.js',
             'src/browser/jobqueue.js',
+            'src/browser/urlQueryFilter.js',
             'src/util.js',
             'src/reporting.js',
             'src/regression.js',
