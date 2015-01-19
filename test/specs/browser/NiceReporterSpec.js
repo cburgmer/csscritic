@@ -175,7 +175,7 @@ describe("Nice reporter", function () {
             reporter.reportComparison(comparison);
         });
 
-        reporter.reportTestSuite({status: 'fail'});
+        reporter.reportTestSuite({success: false});
 
         // when
         reporterContainer().find('.acceptAll').click();
@@ -196,7 +196,7 @@ describe("Nice reporter", function () {
         reporter.reportComparison(firstPassedTest);
         reporter.reportComparison(secondPassedTest);
 
-        reporter.reportTestSuite({status: "success"});
+        reporter.reportTestSuite({success: true});
 
         // when
         reporterContainer().find('#secondTest\\.html .titleLink').first().click();
