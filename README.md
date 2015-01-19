@@ -37,6 +37,8 @@ CSS Critic checks your current layout constantly against a reference image you h
     csscritic.add({
         url: 'SOME_URL',     // link to the test case HTML document
         // Optionally:
+        width: number,       // the viewport width in pixel
+        height: number,      // the viewport height in pixel
         hover: 'A.SELECTOR', // element receiving an :hover effect
         active: 'A.SELECTOR' // element receiving an :active effect
     });
