@@ -10,13 +10,15 @@ var csscritic;
         indexedDbStorage = csscriticLib.indexeddbstorage(util),
         migrateToIndexedDbStorage = csscriticLib.migratetoindexeddbstorage(domStorage, indexedDbStorage),
         reporting = csscriticLib.reporting(browserRenderer, migrateToIndexedDbStorage, util),
-        regression = csscriticLib.regression(browserRenderer, util, imagediff);
+        regression = csscriticLib.regression(browserRenderer, util, imagediff),
+        queryFilter = csscriticLib.urlQueryFilter(window.location);
 
     csscritic = csscriticLib.main(
         regression,
         reporting,
         util,
-        migrateToIndexedDbStorage);
+        migrateToIndexedDbStorage,
+        queryFilter);
 
     // Export convenience constructors
     var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
@@ -24,7 +26,7 @@ var csscritic;
 
     csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
 
-    var niceReporter = csscriticLib.niceReporter(util, {}, packageVersion);
+    var niceReporter = csscriticLib.niceReporter(util, queryFilter, packageVersion);
 
     csscritic.NiceReporter = niceReporter.NiceReporter;
 }());

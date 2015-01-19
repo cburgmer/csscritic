@@ -230,7 +230,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
     };
 
     var updateStatusBar = function (totalCount, selectedCount, issueCount) {
-        var runAll = elementFor('<a class="runAll" href="#">Run all</a>'),
+        var runAll = elementFor('<a class="runAll" href="?">Run all</a>'),
             statusText = findElementFor(statusTextId);
 
         statusText.innerHTML = '';
@@ -297,7 +297,8 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
             titleLinkClassName = 'titleLink',
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
                                              '<h3 class="title">' +
-                                             '<a class="{{titleLinkClassName}}" href="#">{{url}}</a> ' +
+                                             // HACK show href although the underlying implementation is currently provided by the selectionFilter
+                                             '<a class="{{titleLinkClassName}}" href="?filter={{url}}">{{url}}</a> ' +
                                              '<a class="externalLink" href="{{url}}">↗</a>' +
                                              testCaseParameters(testCase) +
                                              '</h3>' +
@@ -317,8 +318,9 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
         if (referenceImage) {
             imageContainer.appendChild(imageWrapper(referenceImage));
         }
-        titleLink.onclick = function () {
+        titleLink.onclick = function (e) {
             selectionFilter.setSelection(testCase.url);
+            e.preventDefault();
         };
 
         container.appendChild(comparison);
