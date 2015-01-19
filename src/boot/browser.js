@@ -1,32 +1,39 @@
-var csscritic;
-
-(function () {
+/* exported csscritic */
+var csscritic = (function () {
     "use strict";
 
     var packageVersion = csscriticLib.packageVersion || 'dev',
-        util = csscriticLib.util(),
-        browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-        domStorage = csscriticLib.domstorage(util, localStorage),
+        util = csscriticLib.util();
+
+    var domStorage = csscriticLib.domstorage(util, localStorage),
         indexedDbStorage = csscriticLib.indexeddbstorage(util),
-        migrateToIndexedDbStorage = csscriticLib.migratetoindexeddbstorage(domStorage, indexedDbStorage),
+        migrateToIndexedDbStorage = csscriticLib.migratetoindexeddbstorage(domStorage, indexedDbStorage);
+
+    var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
         reporting = csscriticLib.reporting(browserRenderer, migrateToIndexedDbStorage, util),
         regression = csscriticLib.regression(browserRenderer, util, imagediff),
         queryFilter = csscriticLib.urlQueryFilter(window.location);
 
-    csscritic = csscriticLib.main(
+    var main = csscriticLib.main(
         regression,
         reporting,
         util,
         migrateToIndexedDbStorage,
-        queryFilter);
+        queryFilter
+    );
 
-    // Export convenience constructors
     var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
         basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
 
-    csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
-
     var niceReporter = csscriticLib.niceReporter(util, queryFilter, packageVersion);
 
-    csscritic.NiceReporter = niceReporter.NiceReporter;
+    return {
+        addReporter: main.addReporter,
+
+        add: main.add,
+        execute: main.execute,
+
+        BasicHTMLReporter: basicHTMLReporter.BasicHTMLReporter,
+        NiceReporter: niceReporter.NiceReporter
+    };
 }());
