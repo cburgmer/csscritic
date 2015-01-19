@@ -184,7 +184,6 @@ describe("Regression testing", function () {
                         url: "differentpage.html"
                     },
                     pageImage: pageImage,
-                    referenceImage: undefined,
                     renderErrors: [],
                     viewport: jasmine.any(Object)
                 });
@@ -261,12 +260,39 @@ describe("Regression testing", function () {
             regression.compare(testCaseWithMissingReferenceImage({
                 url: "differentpage.html"
             })).then(function (comparison) {
-                expect(comparison).toEqual({
+                expect(comparison).toEqual(jasmine.objectContaining({
                     status: "error",
                     testCase: {
                         url: "differentpage.html"
                     }
-                });
+                }));
+
+                done();
+            });
+        });
+
+        it("should report the default viewport", function (done) {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
+                expect(comparison).toEqual(jasmine.objectContaining({
+                    viewport: {
+                        width: 800,
+                        height: 100
+                    }
+                }));
+
+                done();
+            });
+        });
+
+        it("should report an empty render error list", function (done) {
+            regression.compare(testCaseWithMissingReferenceImage({
+                url: "differentpage.html"
+            })).then(function (comparison) {
+                expect(comparison).toEqual(jasmine.objectContaining({
+                    renderErrors: []
+                }));
 
                 done();
             });

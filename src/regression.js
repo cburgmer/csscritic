@@ -30,6 +30,22 @@ csscriticLib.regression = function (renderer, util, imagediff) {
         });
     };
 
+    var comparisonResult = function (textualStatus, viewport, renderErrors, pageImage, referenceImage) {
+        var result = {
+            status: textualStatus,
+            viewport: util.clone(viewport),
+            renderErrors: renderErrors
+        };
+
+        if (pageImage) {
+            result.pageImage = pageImage;
+        }
+        if (referenceImage) {
+            result.referenceImage = referenceImage;
+        }
+        return result;
+    };
+
     var loadPageAndCompare = function (testCase, viewport, referenceImage) {
         return renderer.render({
             url: testCase.url,
@@ -39,16 +55,10 @@ csscriticLib.regression = function (renderer, util, imagediff) {
             height: viewport.height
         }).then(function (renderResult) {
             return compareRenderingAndReference(renderResult.image, referenceImage).then(function (textualStatus) {
-                return {
-                    status: textualStatus,
-                    pageImage: renderResult.image,
-                    referenceImage: referenceImage,
-                    renderErrors: renderResult.errors,
-                    viewport: util.clone(viewport)
-                };
+                return comparisonResult(textualStatus, viewport, renderResult.errors, renderResult.image, referenceImage);
             });
         }, function () {
-            return {status: "error"};
+            return comparisonResult("error", viewport, []);
         }).then(function (comparison) {
             comparison.testCase = testCase;
             return comparison;
