@@ -28,10 +28,10 @@ var csscritic = (function () {
     var niceReporter = csscriticLib.niceReporter(util, queryFilter, packageVersion);
 
     return {
-        addReporter: main.addReporter,
-
         add: main.add,
         execute: main.execute,
+
+        addReporter: reporting.addReporter,
 
         BasicHTMLReporter: basicHTMLReporter.BasicHTMLReporter,
         NiceReporter: niceReporter.NiceReporter

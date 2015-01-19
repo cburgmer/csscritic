@@ -5,8 +5,6 @@ describe("Main", function () {
 
     var util = csscriticLib.util();
 
-    var reporter;
-
     var setUpComparison = function (comparison) {
         regression.compare.and.returnValue(testHelper.successfulPromise(comparison));
     };
@@ -39,8 +37,6 @@ describe("Main", function () {
             util,
             storage,
             selectionFilter);
-
-        reporter = {};
     });
 
     describe("adding & executing", function () {
@@ -83,10 +79,10 @@ describe("Main", function () {
 
         it("should report overall success in the test suite", function (done) {
             spyOn(util, 'hasTestSuitePassed').and.returnValue(true);
-            csscritic.addReporter(reporter);
+
             csscritic.add("samplepage.html");
             csscritic.execute().then(function () {
-                expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
+                expect(reporting.doReportTestSuite).toHaveBeenCalledWith(true);
 
                 done();
             });
@@ -106,10 +102,10 @@ describe("Main", function () {
 
         it("should report a failure in the test suite", function (done) {
             spyOn(util, 'hasTestSuitePassed').and.returnValue(false);
-            csscritic.addReporter(reporter);
+
             csscritic.add("samplepage.html");
             csscritic.execute().then(function () {
-                expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], false);
+                expect(reporting.doReportTestSuite).toHaveBeenCalledWith(false);
 
                 done();
             });
@@ -129,10 +125,6 @@ describe("Main", function () {
             jasmine.clock().uninstall();
         });
 
-        beforeEach(function () {
-            csscritic.addReporter(reporter);
-        });
-
         it("should report a starting comparison with reference image", function () {
             setUpReferenceImage('the image', 'the viewport');
 
@@ -140,7 +132,7 @@ describe("Main", function () {
             csscritic.execute();
 
             triggerDelayedPromise();
-            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith([reporter], {
+            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith({
                 testCase: {
                     url: "samplepage.html"
                 },
@@ -156,7 +148,7 @@ describe("Main", function () {
             csscritic.execute();
 
             triggerDelayedPromise();
-            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith([reporter], {
+            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith({
                 testCase: {
                     url: "samplepage.html"
                 }
@@ -185,7 +177,7 @@ describe("Main", function () {
 
         it("should call final report on empty test case list and report as successful", function (done) {
             csscritic.execute().then(function () {
-                expect(reporting.doReportTestSuite).toHaveBeenCalledWith([reporter], true);
+                expect(reporting.doReportTestSuite).toHaveBeenCalledWith(true);
 
                 done();
             });
@@ -271,7 +263,7 @@ describe("Main", function () {
             csscritic.add(comparison);
             csscritic.execute().then(function () {
                 expect(reporting.doReportConfiguredComparison)
-                    .toHaveBeenCalledWith(jasmine.any(Object), {testCase: comparison}, true);
+                    .toHaveBeenCalledWith({testCase: comparison}, true);
 
                 done();
             });
@@ -285,7 +277,7 @@ describe("Main", function () {
             csscritic.add(comparison);
             csscritic.execute().then(function () {
                 expect(reporting.doReportConfiguredComparison)
-                    .toHaveBeenCalledWith(jasmine.any(Object), {testCase: comparison}, false);
+                    .toHaveBeenCalledWith({testCase: comparison}, false);
 
                 done();
             });

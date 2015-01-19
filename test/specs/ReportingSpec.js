@@ -39,10 +39,11 @@ describe("Reporting", function () {
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting", "reportDeselectedComparison"]);
+            reporting.addReporter(reporter);
         });
 
         it("should report a starting comparison", function () {
-            reporting.doReportConfiguredComparison([reporter], {
+            reporting.doReportConfiguredComparison({
                 testCase: {
                     url: "samplepage.html"
                 }
@@ -56,10 +57,12 @@ describe("Reporting", function () {
         });
 
         it("should make method optional", function () {
-            var startingComparison = "blah",
-                emptyReporter = {};
+            var startingComparison = "blah";
 
-            reporting.doReportConfiguredComparison([emptyReporter], startingComparison, true);
+            var reporting = csscriticLib.reporting(rendererBackend, storageBackend, util);
+            reporting.addReporter({});
+
+            reporting.doReportConfiguredComparison(startingComparison, true);
         });
 
         it("should only fulfill once the reporter returned", function (done) {
@@ -80,7 +83,7 @@ describe("Reporting", function () {
                 return defer.promise;
             });
 
-            reporting.doReportConfiguredComparison([reporter], startingComparison, true).then(function () {
+            reporting.doReportConfiguredComparison(startingComparison, true).then(function () {
                 expect(reporterHasFinished).toBe(true);
 
                 done();
@@ -88,7 +91,7 @@ describe("Reporting", function () {
         });
 
         it("should report a deselected comparison", function () {
-            reporting.doReportConfiguredComparison([reporter], {
+            reporting.doReportConfiguredComparison({
                 testCase: {
                     url: "samplepage.html"
                 }
@@ -107,6 +110,8 @@ describe("Reporting", function () {
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
+            reporting.addReporter(reporter);
+
             comparison = {
                 viewport: viewport
             };
@@ -135,7 +140,7 @@ describe("Reporting", function () {
                 return defer.promise;
             });
 
-            reporting.doReportComparison([reporter], comparison).then(function () {
+            reporting.doReportComparison(comparison).then(function () {
                 expect(reporterHasFinished).toBe(true);
 
                 done();
@@ -143,7 +148,7 @@ describe("Reporting", function () {
         });
 
         it("should report a successful comparison", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "passed",
                 testCase: {
                     url: "differentpage.html"
@@ -169,7 +174,7 @@ describe("Reporting", function () {
         });
 
         it("should report a failing comparison", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "failed",
                 testCase: {
                     url: "differentpage.html"
@@ -186,7 +191,7 @@ describe("Reporting", function () {
         });
 
         it("should report a missing reference image", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html"
@@ -212,7 +217,7 @@ describe("Reporting", function () {
         });
 
         it("should report an error if the page does not exist", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "error",
                 testCase: {
                     url: "differentpage.html"
@@ -231,7 +236,7 @@ describe("Reporting", function () {
             var newpageImage = "newpageImage",
                 result;
 
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html"
@@ -261,7 +266,7 @@ describe("Reporting", function () {
         it("should pass the test case's additional parameters on resize", function (done) {
             setUpRenderedImage(pageImage);
 
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
@@ -283,7 +288,7 @@ describe("Reporting", function () {
         });
 
         it("should not pass resizing handle on a fixed height test case", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
@@ -301,7 +306,7 @@ describe("Reporting", function () {
         });
 
         it("should not pass resizing handle on a fixed width test case", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
@@ -319,7 +324,7 @@ describe("Reporting", function () {
         });
 
         it("should provide a method to accept the rendered page and store as new reference", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html"
@@ -336,7 +341,7 @@ describe("Reporting", function () {
         });
 
         it("should store the viewport's size on accept", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html"
@@ -353,7 +358,7 @@ describe("Reporting", function () {
         });
 
         it("should pass the test case's additional parameters on accept", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
@@ -377,7 +382,7 @@ describe("Reporting", function () {
         it("should store the viewport's updated size on accept", function (done) {
             setUpRenderedImage(pageImage);
 
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
@@ -404,7 +409,7 @@ describe("Reporting", function () {
         });
 
         it("should report errors during rendering", function () {
-            reporting.doReportComparison([reporter], {
+            reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
@@ -427,10 +432,11 @@ describe("Reporting", function () {
 
         beforeEach(function () {
             reporter = jasmine.createSpyObj("Reporter", ["reportTestSuite"]);
+            reporting.addReporter(reporter);
         });
 
         it("should call final report with success", function () {
-            reporting.doReportTestSuite([reporter], true);
+            reporting.doReportTestSuite(true);
 
             expect(reporter.reportTestSuite).toHaveBeenCalledWith({
                 success: true
@@ -438,7 +444,7 @@ describe("Reporting", function () {
         });
 
         it("should call final report with failure", function () {
-            reporting.doReportTestSuite([reporter], false);
+            reporting.doReportTestSuite(false);
 
             expect(reporter.reportTestSuite).toHaveBeenCalledWith({
                 success: false
@@ -467,7 +473,7 @@ describe("Reporting", function () {
                 return defer.promise;
             });
 
-            reporting.doReportTestSuite([reporter], true).then(function () {
+            reporting.doReportTestSuite(true).then(function () {
                 expect(reporterHasFinished).toBe(true);
 
                 done();

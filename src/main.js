@@ -3,13 +3,8 @@ csscriticLib.main = function (regression, reporting, util, storage, selectionFil
 
     var module = {};
 
-    var reporters = [],
-        testCases = [];
+    var testCases = [];
 
-
-    module.addReporter = function (reporter) {
-        reporters.push(reporter);
-    };
 
     var supportUrlAsOnlyTestCaseInput = function (testCase) {
         if (typeof testCase === 'string') {
@@ -54,13 +49,13 @@ csscriticLib.main = function (regression, reporting, util, storage, selectionFil
     var reportConfiguredComparisons = function (comparisonSelection) {
         return util.all(comparisonSelection.map(function (selection) {
             var isSelected = selection.selected;
-            return reporting.doReportConfiguredComparison(reporters, selection.configuredComparison, isSelected);
+            return reporting.doReportConfiguredComparison(selection.configuredComparison, isSelected);
         }));
     };
 
     var executeTestCase = function (startingComparison) {
         return regression.compare(startingComparison).then(function (comparison) {
-            return reporting.doReportComparison(reporters, comparison).then(function () {
+            return reporting.doReportComparison(comparison).then(function () {
                 return comparison;
             });
         });
@@ -90,7 +85,7 @@ csscriticLib.main = function (regression, reporting, util, storage, selectionFil
                 allPassed = util.hasTestSuitePassed(comparisons);
             })
             .then(function () {
-                return reporting.doReportTestSuite(reporters, allPassed);
+                return reporting.doReportTestSuite(allPassed);
             })
             .then(function () {
                 return allPassed;

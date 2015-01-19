@@ -3,6 +3,12 @@ csscriticLib.reporting = function (renderer, storage, util) {
 
     var module = {};
 
+    var reporters = [];
+
+    module.addReporter = function (reporter) {
+        reporters.push(reporter);
+    };
+
     var testCaseIsResizable = function (testCase) {
         return testCase.width === undefined && testCase.height === undefined;
     };
@@ -40,7 +46,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
         }
     };
 
-    module.doReportConfiguredComparison = function (reporters, configuredComparison, isSelected) {
+    module.doReportConfiguredComparison = function (configuredComparison, isSelected) {
         return util.all(reporters.map(function (reporter) {
             var reportingFunc = isSelected ? reporter.reportComparisonStarting : reporter.reportDeselectedComparison;
             if (reportingFunc) {
@@ -49,7 +55,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
         }));
     };
 
-    module.doReportComparison = function (reporters, comparison) {
+    module.doReportComparison = function (comparison) {
         var result = util.clone(comparison);
 
         attachPageAcceptHelpers(result);
@@ -61,7 +67,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
         }));
     };
 
-    module.doReportTestSuite = function (reporters, passed) {
+    module.doReportTestSuite = function (passed) {
         return util.all(reporters.map(function (reporter) {
             if (reporter.reportTestSuite) {
                 return reporter.reportTestSuite({success: passed});

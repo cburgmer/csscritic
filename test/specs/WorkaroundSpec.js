@@ -1,7 +1,7 @@
 describe("Workarounds", function () {
     "use strict";
 
-    var csscritic;
+    var main, reporting;
 
     var aOnceAutoAcceptingReporter = function () {
             var onceAutoAcceptingReporterCalled = false;
@@ -19,10 +19,11 @@ describe("Workarounds", function () {
         var util = csscriticLib.util(),
             browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
             domstorage = csscriticLib.domstorage(util, localStorage),
-            reporting = csscriticLib.reporting(browserRenderer, domstorage, util),
             regression = csscriticLib.regression(browserRenderer, util, imagediff);
 
-        csscritic = csscriticLib.main(
+        reporting = csscriticLib.reporting(browserRenderer, domstorage, util);
+
+        main = csscriticLib.main(
             regression,
             reporting,
             util,
@@ -35,13 +36,13 @@ describe("Workarounds", function () {
 
     ifNotInWebkitIt("should work around transparency making pages non-comparable", function (done) {
         // Create reference image first
-        csscritic.addReporter(aOnceAutoAcceptingReporter());
-        csscritic.add({url: testHelper.fixture("transparencyBug.html")});
-        csscritic.execute().then(function () {
+        reporting.addReporter(aOnceAutoAcceptingReporter());
+        main.add({url: testHelper.fixture("transparencyBug.html")});
+        main.execute().then(function () {
 
             // Now test against the reference
-            csscritic.add({url: testHelper.fixture("transparencyBug.html")});
-            csscritic.execute().then(function (passed) {
+            main.add({url: testHelper.fixture("transparencyBug.html")});
+            main.execute().then(function (passed) {
                 expect(passed).toBe(true);
 
                 done();

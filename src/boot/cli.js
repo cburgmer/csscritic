@@ -21,10 +21,10 @@
         terminalReporter = csscriticLib.terminalReporter(window.console);
 
     var csscritic = {
-        addReporter: main.addReporter,
-
         add: main.add,
         execute: main.execute,
+
+        addReporter: reporting.addReporter,
 
         HtmlFileReporter: htmlFileReporter.HtmlFileReporter,
         SignOffReporter: signOffReporter.SignOffReporter,

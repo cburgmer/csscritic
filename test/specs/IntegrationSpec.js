@@ -12,7 +12,7 @@ describe("Integration", function () {
             reporting = csscriticLib.reporting(browserRenderer, domstorage, util),
             regression = csscriticLib.regression(browserRenderer, util, imagediff);
 
-        var csscritic = csscriticLib.main(
+        var main = csscriticLib.main(
             regression,
             reporting,
             util,
@@ -21,9 +21,14 @@ describe("Integration", function () {
         var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
             basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
 
-        csscritic.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
+        return {
+            addReporter: reporting.addReporter,
 
-        return csscritic;
+            add: main.add,
+            execute: main.execute,
+
+            BasicHTMLReporter: basicHTMLReporter.BasicHTMLReporter
+        };
     };
 
     beforeEach(function () {
