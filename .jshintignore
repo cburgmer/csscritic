@@ -1,4 +1,4 @@
-src/cli/phantomjsbind.js
+src/cli/phantomjsBind.js
 test/ui/src/**/*.js
 test/fixtures/*.js
 packageVersion.js
