@@ -10,8 +10,8 @@
     "use strict";
 
     var cssDependencies = [
-            'src/browser/basichtmlreporter.css',
-            'src/browser/nicereporter.css'
+            'src/browser/basicHTMLReporter.css',
+            'src/browser/niceReporter.css'
         ],
         jsDependencies = [
             'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
