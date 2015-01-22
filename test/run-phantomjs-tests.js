@@ -23,15 +23,15 @@ function loadTests() {
 
     phantom.injectJs("./test/specs/shared/storagePluginSpecs.js");
 
-    phantom.injectJs("./test/specs/cli/FileStorageSpec.js");
-    phantom.injectJs("./test/specs/cli/PhantomJSRendererSpec.js");
-    phantom.injectJs("./test/specs/cli/HtmlFileReporterSpec.js");
-    phantom.injectJs("./test/specs/cli/TerminalReporterSpec.js");
-    phantom.injectJs("./test/specs/cli/SignOffReporterUtilSpec.js");
-    phantom.injectJs("./test/specs/cli/SignOffReporterSpec.js");
+    phantom.injectJs("./test/specs/cli/fileStorageSpec.js");
+    phantom.injectJs("./test/specs/cli/phantomjsRendererSpec.js");
+    phantom.injectJs("./test/specs/cli/htmlFileReporterSpec.js");
+    phantom.injectJs("./test/specs/cli/terminalReporterSpec.js");
+    phantom.injectJs("./test/specs/cli/signOffReporterUtilSpec.js");
+    phantom.injectJs("./test/specs/cli/signOffReporterSpec.js");
 
-    phantom.injectJs("./test/specs/RegressionSpec.js");
-    phantom.injectJs("./test/specs/ReportingSpec.js");
+    phantom.injectJs("./test/specs/regressionSpec.js");
+    phantom.injectJs("./test/specs/reportingSpec.js");
 }
 
 function startWebserver() {
@@ -68,4 +68,3 @@ startWebserver();
 
 // Provided by jasmineBootForPhantom.js
 executeJasmine();
-
