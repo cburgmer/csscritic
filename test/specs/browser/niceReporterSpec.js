@@ -84,7 +84,7 @@ describe("Nice reporter", function () {
 
     beforeEach(function () {
         var packageVersion = '1.2.3';
-        selectionFilter = jasmine.createSpyObj('selectionFiler', ['setSelection']);
+        selectionFilter = jasmine.createSpyObj('selectionFiler', ['setSelection', 'filterUrlFor']);
         reporter = csscriticLib.niceReporter(util, selectionFilter, packageVersion).NiceReporter();
         jasmine.addMatchers(imagediffForJasmine2);
     });
@@ -203,6 +203,28 @@ describe("Nice reporter", function () {
 
         // then
         expect(selectionFilter.setSelection).toHaveBeenCalledWith('secondTest.html');
+    });
+
+    it("should include test selection url", function () {
+        var aTest = aPassedTest({url: "aTest"});
+
+        selectionFilter.filterUrlFor.and.returnValue('the_filter_link');
+
+        reporter.reportComparisonStarting(aTest);
+        reporter.reportComparison(aTest);
+
+        expect(reporterContainer().find('.titleLink').attr('href')).toEqual('the_filter_link');
+    });
+
+    it("should fallback to hash when selection url is not provided", function () {
+        var aTest = aPassedTest({url: "aTest"});
+
+        selectionFilter.filterUrlFor = undefined;
+
+        reporter.reportComparisonStarting(aTest);
+        reporter.reportComparison(aTest);
+
+        expect(reporterContainer().find('.titleLink').attr('href')).toEqual('#');
     });
 
     describe("Document title progress counter", function () {

@@ -292,13 +292,22 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
             '</dl>';
     };
 
+    var installFallbackSelectionHandler = function (element, url) {
+        if (selectionFilter.setSelection) {
+            element.onclick = function (e) {
+                selectionFilter.setSelection(url);
+                e.preventDefault();
+            };
+        }
+    };
+
     var addComparison = function (testCase, referenceImage, key) {
         var container = getOrCreateContainer(),
             titleLinkClassName = 'titleLink',
+            filterUrl = selectionFilter.filterUrlFor ? selectionFilter.filterUrlFor(testCase.url) : '#',
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
                                              '<h3 class="title">' +
-                                             // HACK show href although the underlying implementation is currently provided by the selectionFilter
-                                             '<a class="{{titleLinkClassName}}" href="?filter={{url}}">{{url}}</a> ' +
+                                             '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{url}}</a> ' +
                                              '<a class="externalLink" href="{{url}}">↗</a>' +
                                              testCaseParameters(testCase) +
                                              '</h3>' +
@@ -306,6 +315,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
                                              '<div><div class="{{imageContainerClassName}}"></div></div>' +
                                              '</section>', {
                                                  url: testCase.url,
+                                                 filterUrl: filterUrl,
                                                  id: escapeId(key),
                                                  runningComparisonClassName: runningComparisonClassName,
                                                  errorContainerClassName: errorContainerClassName,
@@ -318,10 +328,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
         if (referenceImage) {
             imageContainer.appendChild(imageWrapper(referenceImage));
         }
-        titleLink.onclick = function (e) {
-            selectionFilter.setSelection(testCase.url);
-            e.preventDefault();
-        };
+        installFallbackSelectionHandler(titleLink, testCase.url);
 
         container.appendChild(comparison);
 

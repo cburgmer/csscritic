@@ -29,6 +29,11 @@ describe("Url Query Filter", function () {
         expect(windowLocation.search).toEqual('?filter=the%20targeted%20test');
     });
 
+    it("should provide a filter url", function () {
+        var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+        expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?filter=aUrl.html');
+    });
+
     describe("filtering", function () {
         it("should find a comparison by URL", function () {
             var comparison = aComparison('aTest');

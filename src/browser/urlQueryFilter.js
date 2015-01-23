@@ -21,12 +21,24 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
 
     var selectedUrl = getSelectedUrl();
 
+    // interface towards main.js
+
     module.isComparisonSelected = function (comparison) {
         return !selectedUrl ||  comparison.testCase.url === selectedUrl;
     };
 
+    // interface towards browser reporters
+
+    var buildFilterSearchPart = function (selection) {
+        return "?filter=" + encodeURIComponent(selection);
+    };
+
+    module.filterUrlFor = function (selection) {
+        return buildFilterSearchPart(selection);
+    };
+
     module.setSelection = function (selection) {
-        windowLocation.search = "?filter=" + encodeURIComponent(selection);
+        windowLocation.search = buildFilterSearchPart(selection);
     };
 
     return module;
