@@ -113,12 +113,27 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
 
     // progress bar
 
+    var fakeTargetClassName = 'fakeTarget';
+
+    var clearFakeActiveClass = function () {
+        var previousTargets = Array.prototype.slice.call(document.querySelectorAll('.' + fakeTargetClassName));
+        previousTargets.forEach(function (elem) {
+            elem.classList.remove(fakeTargetClassName);
+        });
+    };
+
+    var triggerFakeActiveClass = function (targetElement) {
+        targetElement.classList.add(fakeTargetClassName);
+    };
+
     var scrollTo = function (id) {
         var targetElement;
 
+        clearFakeActiveClass();
         if (id) {
             targetElement = document.getElementById(id);
             targetElement.scrollIntoView();
+            triggerFakeActiveClass(targetElement);
         } else {
             window.scrollTo(0, 0);
         }

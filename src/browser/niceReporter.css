@@ -149,6 +149,10 @@
 #csscritic_nicereporter .comparison .title {
     font-weight: normal;
 }
+#csscritic_nicereporter .comparison.fakeTarget .title,
+#csscritic_nicereporter .comparison:target .title {
+    font-weight: bold;
+}
 
 #csscritic_nicereporter .comparison .title .titleLink:hover {
     text-decoration: underline;
