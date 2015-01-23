@@ -84,7 +84,7 @@ describe("Nice reporter", function () {
 
     beforeEach(function () {
         var packageVersion = '1.2.3';
-        selectionFilter = jasmine.createSpyObj('selectionFiler', ['setSelection', 'filterUrlFor']);
+        selectionFilter = jasmine.createSpyObj('selectionFilter', ['setSelection', 'filterUrlFor', 'clearFilter', 'clearFilterUrl']);
         reporter = csscriticLib.niceReporter(util, selectionFilter, packageVersion).NiceReporter();
         jasmine.addMatchers(imagediffForJasmine2);
     });
@@ -186,45 +186,98 @@ describe("Nice reporter", function () {
         expect(thirdAccept).toHaveBeenCalled();
     });
 
-    it("should select tests by url", function () {
-        var firstPassedTest = aPassedTest({url: "firstTest.html"}),
-            secondPassedTest = aPassedTest({url: "secondTest.html"});
+    describe("selection", function () {
 
-        reporter.reportComparisonStarting(firstPassedTest);
-        reporter.reportComparisonStarting(secondPassedTest);
+        it("should select tests by url", function () {
+            var firstPassedTest = aPassedTest({url: "firstTest.html"}),
+                secondPassedTest = aPassedTest({url: "secondTest.html"});
 
-        reporter.reportComparison(firstPassedTest);
-        reporter.reportComparison(secondPassedTest);
+            reporter.reportComparisonStarting(firstPassedTest);
+            reporter.reportComparisonStarting(secondPassedTest);
 
-        reporter.reportTestSuite({success: true});
+            reporter.reportComparison(firstPassedTest);
+            reporter.reportComparison(secondPassedTest);
 
-        // when
-        reporterContainer().find('#secondTest\\.html .titleLink').first().click();
+            reporter.reportTestSuite({success: true});
 
-        // then
-        expect(selectionFilter.setSelection).toHaveBeenCalledWith('secondTest.html');
-    });
+            // when
+            reporterContainer().find('#secondTest\\.html .titleLink').first().click();
 
-    it("should include test selection url", function () {
-        var aTest = aPassedTest({url: "aTest"});
+            // then
+            expect(selectionFilter.setSelection).toHaveBeenCalledWith('secondTest.html');
+        });
 
-        selectionFilter.filterUrlFor.and.returnValue('the_filter_link');
+        it("should include test selection url", function () {
+            var aTest = aPassedTest({url: "aTest"});
 
-        reporter.reportComparisonStarting(aTest);
-        reporter.reportComparison(aTest);
+            selectionFilter.filterUrlFor.and.returnValue('the_filter_link');
 
-        expect(reporterContainer().find('.titleLink').attr('href')).toEqual('the_filter_link');
-    });
+            reporter.reportComparisonStarting(aTest);
+            reporter.reportComparison(aTest);
 
-    it("should fallback to hash when selection url is not provided", function () {
-        var aTest = aPassedTest({url: "aTest"});
+            expect(reporterContainer().find('.titleLink').attr('href')).toEqual('the_filter_link');
+        });
 
-        selectionFilter.filterUrlFor = undefined;
+        it("should fallback to hash when selection url is not provided", function () {
+            var aTest = aPassedTest({url: "aTest"});
 
-        reporter.reportComparisonStarting(aTest);
-        reporter.reportComparison(aTest);
+            selectionFilter.filterUrlFor = undefined;
 
-        expect(reporterContainer().find('.titleLink').attr('href')).toEqual('#');
+            reporter.reportComparisonStarting(aTest);
+            reporter.reportComparison(aTest);
+
+            expect(reporterContainer().find('.titleLink').attr('href')).toEqual('#');
+        });
+
+        it("should 'run all'", function () {
+            var firstPassedTest = aPassedTest({url: "firstTest.html"}),
+                secondPassedTest = aPassedTest({url: "secondTest.html"});
+
+            selectionFilter.clearFilterUrl.and.returnValue('the_clear_url');
+
+            reporter.reportDeselectedComparison(firstPassedTest);
+            reporter.reportComparisonStarting(secondPassedTest);
+
+            reporter.reportComparison(secondPassedTest);
+
+            reporter.reportTestSuite({success: true});
+
+            reporterContainer().find('.runAll').click();
+
+            expect(selectionFilter.clearFilter).toHaveBeenCalled();
+        });
+
+        it("should include 'run all' link", function () {
+            var firstPassedTest = aPassedTest({url: "firstTest.html"}),
+                secondPassedTest = aPassedTest({url: "secondTest.html"});
+
+            selectionFilter.clearFilterUrl.and.returnValue('the_clear_url');
+
+            reporter.reportDeselectedComparison(firstPassedTest);
+            reporter.reportComparisonStarting(secondPassedTest);
+
+            reporter.reportComparison(secondPassedTest);
+
+            reporter.reportTestSuite({success: true});
+
+            expect(reporterContainer().find('.runAll').attr('href')).toEqual('the_clear_url');
+        });
+
+        it("should fallback to hash on 'run all' link", function () {
+            var firstPassedTest = aPassedTest({url: "firstTest.html"}),
+                secondPassedTest = aPassedTest({url: "secondTest.html"});
+
+            selectionFilter.clearFilterUrl = undefined;
+
+            reporter.reportDeselectedComparison(firstPassedTest);
+            reporter.reportComparisonStarting(secondPassedTest);
+
+            reporter.reportComparison(secondPassedTest);
+
+            reporter.reportTestSuite({success: true});
+
+            expect(reporterContainer().find('.runAll').attr('href')).toEqual('#');
+        });
     });
 
     describe("Document title progress counter", function () {

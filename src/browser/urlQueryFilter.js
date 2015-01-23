@@ -59,25 +59,35 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
 
     // interface towards browser reporters
 
-    var buildFilterSearchPart = function (selection) {
+    var queryPart = function (selection) {
         var queryParams = existingQueryParams
                 .filter(function (pair) {
                     return pair.key !== filterParam;
                 });
-        queryParams.push({
-            key: filterParam,
-            value: encodeURIComponent(selection)
-        });
+        if (selection) {
+            queryParams.push({
+                key: filterParam,
+                value: encodeURIComponent(selection)
+            });
+        }
 
         return '?' + queryParams.map(serializeKeyValuePair).join('&');
     };
 
     module.filterUrlFor = function (selection) {
-        return buildFilterSearchPart(selection);
+        return queryPart(selection);
     };
 
     module.setSelection = function (selection) {
-        windowLocation.search = buildFilterSearchPart(selection);
+        windowLocation.search = queryPart(selection);
+    };
+
+    module.clearFilterUrl = function () {
+        return queryPart();
+    };
+
+    module.clearFilter = function () {
+        windowLocation.search = queryPart();
     };
 
     return module;

@@ -229,8 +229,20 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
         }
     };
 
+    var installFallbackClearSelectionHandler = function (element) {
+        if (selectionFilter.clearFilter) {
+            element.onclick = function (e) {
+                selectionFilter.clearFilter();
+                e.preventDefault();
+            };
+        }
+    };
+
     var updateStatusBar = function (totalCount, selectedCount, issueCount) {
-        var runAll = elementFor('<a class="runAll" href="?">Run all</a>'),
+        var runAllUrl = selectionFilter.clearFilterUrl ? selectionFilter.clearFilterUrl() : '#',
+            runAll = elementFor(template('<a class="runAll" href="{{url}}">Run all</a>', {
+                url: runAllUrl
+            })),
             statusText = findElementFor(statusTextId);
 
         statusText.innerHTML = '';
@@ -238,6 +250,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
         statusText.appendChild(elementFor(statusIssueText(issueCount)));
         statusText.appendChild(acceptAllButton());
         if (totalCount > selectedCount) {
+            installFallbackClearSelectionHandler(runAll);
             statusText.appendChild(runAll);
         }
     };
