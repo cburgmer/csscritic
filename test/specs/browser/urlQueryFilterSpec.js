@@ -34,6 +34,18 @@ describe("Url Query Filter", function () {
         expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?filter=aUrl.html');
     });
 
+    it("should respect existing parameters", function () {
+        windowLocation.search = '?some=other&val=ues';
+        var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+        expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?some=other&val=ues&filter=aUrl.html');
+    });
+
+    it("should respect existing filter parameter", function () {
+        windowLocation.search = '?some=other&filter=something&val=ues';
+        var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+        expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?some=other&val=ues&filter=aUrl.html');
+    });
+
     describe("filtering", function () {
         it("should find a comparison by URL", function () {
             var comparison = aComparison('aTest');
@@ -72,6 +84,17 @@ describe("Url Query Filter", function () {
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
             expect(urlQueryFilter.isComparisonSelected(firstComparison)).toBe(true);
+        });
+
+        it("should match last filter value", function () {
+            var firstComparison = aComparison('one'),
+                secondComparison = aComparison('two');
+            windowLocation.search = '?filter=one&filter=two';
+
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+
+            expect(urlQueryFilter.isComparisonSelected(firstComparison)).toBe(false);
+            expect(urlQueryFilter.isComparisonSelected(secondComparison)).toBe(true);
         });
     });
 });

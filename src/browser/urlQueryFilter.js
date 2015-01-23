@@ -3,23 +3,53 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
 
     var module = {};
 
-    var getSelectedUrl = function () {
-        var filterRegex = /^filter=/,
-            filterKeyValues = windowLocation.search
-                .replace(/^\?/, '')
-                .split('&')
-                .filter(function (keyValuePair) {
-                    return keyValuePair.match(filterRegex);
-                });
+    var filterParam = 'filter';
 
-        if (filterKeyValues.length === 0) {
-            return;
+    var parseUrlSearch = function (search) {
+        var paramString = search.replace(/^\?/, '');
+        if (!paramString) {
+            return [];
         }
+        return paramString
+            .split('&')
+            .map(function (keyValue) {
+                var equalsIdx = keyValue.indexOf('='),
+                    key, value;
 
-        return decodeURIComponent(filterKeyValues[0].replace(filterRegex, ''));
+                if (equalsIdx >= 0) {
+                    key = keyValue.substr(0, equalsIdx);
+                    value = keyValue.substr(equalsIdx + 1);
+                } else {
+                    key = keyValue;
+                }
+                return {
+                    key: key,
+                    value: value
+                };
+            });
     };
 
-    var selectedUrl = getSelectedUrl();
+    var serializeKeyValuePair = function (pair) {
+        if (pair.value) {
+            return pair.key + '=' + pair.value;
+        }
+        return pair.key;
+    };
+
+    var getSelectedUrl = function () {
+        var filterKeyValue = parseUrlSearch(windowLocation.search)
+                .filter(function (entryPair) {
+                    return entryPair.key === filterParam;
+                })
+                .pop();
+
+        if (filterKeyValue) {
+            return decodeURIComponent(filterKeyValue.value);
+        }
+    };
+
+    var selectedUrl = getSelectedUrl(),
+        existingQueryParams = parseUrlSearch(windowLocation.search);
 
     // interface towards main.js
 
@@ -30,7 +60,16 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
     // interface towards browser reporters
 
     var buildFilterSearchPart = function (selection) {
-        return "?filter=" + encodeURIComponent(selection);
+        var queryParams = existingQueryParams
+                .filter(function (pair) {
+                    return pair.key !== filterParam;
+                });
+        queryParams.push({
+            key: filterParam,
+            value: encodeURIComponent(selection)
+        });
+
+        return '?' + queryParams.map(serializeKeyValuePair).join('&');
     };
 
     module.filterUrlFor = function (selection) {
