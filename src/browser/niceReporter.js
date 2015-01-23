@@ -306,9 +306,9 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
     };
 
     var installFallbackSelectionHandler = function (element, url) {
-        if (selectionFilter.setSelection) {
+        if (selectionFilter.filterFor) {
             element.onclick = function (e) {
-                selectionFilter.setSelection(url);
+                selectionFilter.filterFor(url);
                 e.preventDefault();
             };
         }

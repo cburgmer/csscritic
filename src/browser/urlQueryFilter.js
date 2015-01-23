@@ -78,7 +78,7 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
         return queryPart(selection);
     };
 
-    module.setSelection = function (selection) {
+    module.filterFor = function (selection) {
         windowLocation.search = queryPart(selection);
     };
 

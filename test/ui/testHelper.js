@@ -224,7 +224,7 @@ window.testHelper = (function () {
     testHelper.constructNiceReporter = function () {
         var util = csscriticLib.util(),
             packageVersion = '0.1.42',
-            niceReporter = csscriticLib.niceReporter(util, {setSelection: function () {}}, packageVersion);
+            niceReporter = csscriticLib.niceReporter(util, {filterFor: function () {}}, packageVersion);
 
         return niceReporter.NiceReporter();
     };

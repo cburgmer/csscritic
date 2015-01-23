@@ -25,7 +25,7 @@ describe("Url Query Filter", function () {
     describe("selection", function () {
         it("should change the browser's location to include the selection", function () {
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
-            urlQueryFilter.setSelection("the targeted test");
+            urlQueryFilter.filterFor("the targeted test");
 
             expect(windowLocation.search).toEqual('?filter=the%20targeted%20test');
         });

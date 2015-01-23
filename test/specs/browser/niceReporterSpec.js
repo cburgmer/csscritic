@@ -84,7 +84,7 @@ describe("Nice reporter", function () {
 
     beforeEach(function () {
         var packageVersion = '1.2.3';
-        selectionFilter = jasmine.createSpyObj('selectionFilter', ['setSelection', 'filterUrlFor', 'clearFilter', 'clearFilterUrl']);
+        selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'clearFilter', 'clearFilterUrl']);
         reporter = csscriticLib.niceReporter(util, selectionFilter, packageVersion).NiceReporter();
         jasmine.addMatchers(imagediffForJasmine2);
     });
@@ -204,7 +204,7 @@ describe("Nice reporter", function () {
             reporterContainer().find('#secondTest\\.html .titleLink').first().click();
 
             // then
-            expect(selectionFilter.setSelection).toHaveBeenCalledWith('secondTest.html');
+            expect(selectionFilter.filterFor).toHaveBeenCalledWith('secondTest.html');
         });
 
         it("should include test selection url", function () {
