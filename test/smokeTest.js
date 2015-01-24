@@ -55,6 +55,7 @@ var loadPage = function (url) {
         console.error(message);
     };
     // Open page
+    page.viewportSize = {width: 400, height: 300};
     page.open(url, function (status) {
         if (status !== 'success') {
             defer.reject('Unable to load the address!');
@@ -78,6 +79,20 @@ var runAll = function () {
     document.querySelector('.runAll').click();
 };
 
+var jumpToLastComparison = function () {
+    var progressElements = document.querySelectorAll('#progressBar li a'),
+        lastElement = progressElements[progressElements.length - 1];
+    lastElement.click();
+};
+
+var jumpBackInHistory = function () {
+    window.history.back();
+};
+
+var getWindowScrollY = function () {
+    return window.scrollY;
+};
+
 var regressionTestToExecute = function (page) {
     return function () {
         return page.evaluate(function () {
@@ -87,23 +102,57 @@ var regressionTestToExecute = function (page) {
 };
 
 var assertEquals = function (value, expectedValue, manualMsg) {
+    var expectation = "Expecting " + manualMsg + " to equal '" + expectedValue + "'";
     if (value === expectedValue) {
-        console.log(manualMsg + ": '" + value + "' ✓");
-        return;
+        console.log(expectation + " ✓");
     } else {
-        throw new Error(manualMsg + ": '" + expectedValue + "' but found '" + value +"'");
+        throw new Error(expectation + " but found '" + value +"'");
+    }
+};
+
+var assertNotEquals = function (value, notExpectedValue, name) {
+    var expectation = "Expecting " + name + " not to equal '" + notExpectedValue + "': '" + value + "'";
+    if (value === notExpectedValue) {
+        throw new Error(expectation);
+    } else {
+        console.log(expectation + " ✓");
     }
 };
 
 
-var page;
+var pageUrl = 'file://' + fs.absolute(csscriticLoadingPage),
+    page;
 
-loadPage(fs.absolute(csscriticLoadingPage))
+loadPage(pageUrl)
     .then(function (thePage) {
         page = thePage;
 
         console.log("Waiting for regression test to finish executing");
         return waitFor(regressionTestToExecute(page));
+    })
+    .then(function () {
+        console.log("Jumping to last comparison");
+        page.evaluate(jumpToLastComparison);
+
+        return waitFor(function () {
+            return page.evaluate(getWindowScrollY) > 0;
+        });
+    })
+    .then(function () {
+        var scrollY = page.evaluate(getWindowScrollY);
+
+        assertNotEquals(scrollY, 0, "scrollY");
+        assertEquals(page.url, pageUrl, "page url");
+    })
+    .then(function () {
+        console.log("Jumping back");
+        page.evaluate(jumpBackInHistory);
+    })
+    .then(function () {
+        var scrollY = page.evaluate(getWindowScrollY);
+
+        assertEquals(scrollY, 0, "scrollY");
+        assertEquals(page.url, pageUrl, "page url");
     })
     .then(function () {
         console.log("Selecting first comparison");
@@ -114,7 +163,7 @@ loadPage(fs.absolute(csscriticLoadingPage))
     .then(function () {
         var comparisonCount = page.evaluate(getComparisonCount);
 
-        assertEquals(comparisonCount, 1, "Expecting amount of comparison(s)");
+        assertEquals(comparisonCount, 1, "number of comparisons");
     })
     .then(function () {
         console.log('Clicking "Run all"');
@@ -125,12 +174,13 @@ loadPage(fs.absolute(csscriticLoadingPage))
     .then(function () {
         var comparisonCount = page.evaluate(getComparisonCount);
 
-        assertEquals(comparisonCount, 2, "Expecting amount of comparison(s)");
+        assertEquals(comparisonCount, 2, "number of comparisons");
     })
     .then(function () {
         console.log('Smoke test successful');
         phantom.exit();
     }, function (err) {
         console.error(err);
+        page.render('smokeTestError.png');
         phantom.exit(1);
     });
