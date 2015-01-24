@@ -126,8 +126,8 @@ var regressionTestToExecute = function (page) {
     };
 };
 
-var assertEquals = function (value, expectedValue, manualMsg) {
-    var expectation = "Expecting " + manualMsg + " to equal '" + expectedValue + "'";
+var assertEquals = function (value, expectedValue, name) {
+    var expectation = "Expecting " + name + " to equal '" + expectedValue + "'";
     if (value === expectedValue) {
         console.log(expectation + " ✓");
     } else {
@@ -144,9 +144,19 @@ var assertNotEquals = function (value, notExpectedValue, name) {
     }
 };
 
+var assertMatches = function (value, regex, name) {
+    var expectation = "Expecting " + name + " to match " + regex + ": '" + value + "'";
+    if (regex.test(value)) {
+        console.log(expectation + " ✓");
+    } else {
+        throw new Error(expectation);
+    }
+};
 
-var runTestAgainst = function (pageUrl) {
-    var page;
+
+var runTestAgainst = function (pageUrl, options) {
+    var withNavigationFallback = options.withNavigationFallback,
+        page;
 
     console.log("Running test against " + pageUrl);
 
@@ -169,7 +179,11 @@ var runTestAgainst = function (pageUrl) {
             var scrollY = page.evaluate(getWindowScrollY);
 
             assertNotEquals(scrollY, 0, "scrollY");
-            assertEquals(page.url, pageUrl, "page url");
+            if (withNavigationFallback) {
+                assertEquals(page.url, pageUrl, "page url");
+            } else {
+                assertMatches(page.url, /#/, "page url");
+            }
         })
         .then(function () {
             console.log("Jumping back");
@@ -209,10 +223,13 @@ var runTestAgainst = function (pageUrl) {
         });
 };
 
-runTestAgainst('file://' + fs.absolute(csscriticLoadingPage))
+runTestAgainst('file://' + fs.absolute(csscriticLoadingPage), {withNavigationFallback: true})
     .then(function () {
         startWebserver(webserverPort);
-        return runTestAgainst('http://localhost:' + webserverPort + '/' + csscriticLoadingPage);
+        return runTestAgainst(
+            'http://localhost:' + webserverPort + '/' + csscriticLoadingPage,
+            {withNavigationFallback: false}
+        );
     })
     .then(function () {
         console.log('Smoke test successful');

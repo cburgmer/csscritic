@@ -85,7 +85,7 @@ describe("Nice reporter", function () {
     beforeEach(function () {
         var packageVersion = '1.2.3';
         selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'clearFilter', 'clearFilterUrl']);
-        var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback();
+        var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback({href: 'file://somepath'});
         reporter = csscriticLib.niceReporter(
             util,
             selectionFilter,

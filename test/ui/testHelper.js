@@ -224,7 +224,7 @@ window.testHelper = (function () {
     testHelper.constructNiceReporter = function () {
         var util = csscriticLib.util(),
             packageVersion = '0.1.42',
-            pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback(),
+            pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback({href: 'file://somepath'}),
             niceReporter = csscriticLib.niceReporter(util, {filterFor: function () {}}, pageNavigationHandlingFallback, packageVersion);
 
         return niceReporter.NiceReporter();
