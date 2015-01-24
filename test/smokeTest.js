@@ -27,7 +27,7 @@ var waitFor = function (truthyTest) {
         if (successful) {
             defer.resolve();
         } else if (iterationCount === maxPolls) {
-            defer.reject();
+            defer.reject(new Error("timed out waiting for condition to be true"));
         } else {
             iterationCount += 1;
             setTimeout(function () {
