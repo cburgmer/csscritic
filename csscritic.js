@@ -20,6 +20,7 @@
             'src/boot/scope.js',
             'src/browser/basicHTMLReporterUtil.js',
             'src/browser/basicHTMLReporter.js',
+            'src/browser/pageNavigationHandlingFallback.js',
             'src/browser/niceReporter.js',
             'src/browser/browserRenderer.js',
             'src/browser/domStorage.js',

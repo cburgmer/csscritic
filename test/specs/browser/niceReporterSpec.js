@@ -85,7 +85,13 @@ describe("Nice reporter", function () {
     beforeEach(function () {
         var packageVersion = '1.2.3';
         selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'clearFilter', 'clearFilterUrl']);
-        reporter = csscriticLib.niceReporter(util, selectionFilter, packageVersion).NiceReporter();
+        var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback();
+        reporter = csscriticLib.niceReporter(
+            util,
+            selectionFilter,
+            pageNavigationHandlingFallback,
+            packageVersion
+        ).NiceReporter();
         jasmine.addMatchers(imagediffForJasmine2);
     });
 

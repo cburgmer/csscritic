@@ -25,7 +25,8 @@ var csscritic = (function () {
     var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
         basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
 
-    var niceReporter = csscriticLib.niceReporter(util, queryFilter, packageVersion);
+    var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback(),
+        niceReporter = csscriticLib.niceReporter(util, queryFilter, pageNavigationHandlingFallback, packageVersion);
 
     return {
         add: main.add,

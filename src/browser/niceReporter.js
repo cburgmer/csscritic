@@ -1,4 +1,4 @@
-csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
+csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandlingFallback, packageVersion) {
     "use strict";
 
     var module = {};
@@ -113,57 +113,6 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
 
     // progress bar
 
-    var fakeTargetClassName = 'fakeTarget';
-
-    var clearFakeActiveClass = function () {
-        var previousTargets = Array.prototype.slice.call(document.querySelectorAll('.' + fakeTargetClassName));
-        previousTargets.forEach(function (elem) {
-            elem.classList.remove(fakeTargetClassName);
-        });
-    };
-
-    var triggerFakeActiveClass = function (targetElement) {
-        targetElement.classList.add(fakeTargetClassName);
-    };
-
-    var scrollTo = function (id) {
-        var targetElement;
-
-        clearFakeActiveClass();
-        if (id) {
-            targetElement = document.getElementById(id);
-            targetElement.scrollIntoView();
-            triggerFakeActiveClass(targetElement);
-        } else {
-            window.scrollTo(0, 0);
-        }
-    };
-
-    var globalNavigationHandlingInstalled = false;
-
-    var installGlobalNavigationHandling = function () {
-        if (!globalNavigationHandlingInstalled) {
-            globalNavigationHandlingInstalled = true;
-
-            window.onpopstate = function (e) {
-                scrollTo(e.state);
-            };
-        }
-    };
-
-    var installExplicitNavigationHandling = function (element) {
-        installGlobalNavigationHandling();
-
-        element.onclick = function (e) {
-            var targetLink = e.target.href,
-                targetId = targetLink.substr(targetLink.indexOf('#')+1);
-
-            scrollTo(targetId);
-            history.pushState(targetId, targetId);
-            e.preventDefault();
-        };
-    };
-
     var progressBarPendingClassName = 'pending';
 
     var addTickToProgressBar = function (linkTarget) {
@@ -176,8 +125,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, packageVersion) {
         tick.classList.add(progressBarPendingClassName);
         progressBar.appendChild(tick);
 
-        // work around https://bugzilla.mozilla.org/show_bug.cgi?id=1005634
-        installExplicitNavigationHandling(tick.querySelector('a'));
+        pageNavigationHandlingFallback.install(tick.querySelector('a'));
 
         return tick;
     };
