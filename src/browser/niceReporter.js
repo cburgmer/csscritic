@@ -115,12 +115,15 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
     var progressBarPendingClassName = 'pending';
 
-    var addTickToProgressBar = function (linkTarget) {
-        var progressBar = findElementFor(progressBarId);
+    var addTickToProgressBar = function (title, linkTarget) {
+        var progressBar = findElementFor(progressBarId),
+            clickableTickTemplate = '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
+            deactivatedTickTemplate = '<li><a title="{{title}}"></a></li>',
+            tickTemplate = linkTarget ? clickableTickTemplate : deactivatedTickTemplate;
 
-        var tick = elementFor(template('<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>', {
-            linkTarget: escapeId(linkTarget),
-            title: linkTarget
+        var tick = elementFor(template(tickTemplate, {
+            linkTarget: linkTarget ? escapeId(linkTarget) : '',
+            title: title
         }));
         tick.classList.add(progressBarPendingClassName);
         progressBar.appendChild(tick);
@@ -527,7 +530,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             acceptableComparisons = [],
             timeStarted;
 
-        var registerComparison = function (comparison) {
+        var registerComparison = function () {
             totalCount += 1;
             if (!timeStarted) {
                 timeStarted = Date.now();
@@ -536,22 +539,23 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             showBrowserWarningIfNeeded();
             updateStatusInDocumentTitle(totalCount, doneCount);
             updateStatusBar(totalCount, selectedCount, issueCount);
-
-            var key = comparisonKey(comparison.testCase);
-
-            var tickElement = addTickToProgressBar(key);
-            progressTickElements[key] = tickElement;
         };
 
         return {
             reportDeselectedComparison: function (comparison) {
-                registerComparison(comparison);
+                registerComparison();
+
+                var key = comparisonKey(comparison.testCase);
+                addTickToProgressBar(key);
             },
             reportComparisonStarting: function (comparison) {
                 var key = comparisonKey(comparison.testCase);
                 selectedCount += 1;
 
-                registerComparison(comparison);
+                registerComparison();
+
+                var tickElement = addTickToProgressBar(key, key);
+                progressTickElements[key] = tickElement;
 
                 var comparisonElement = addComparison(comparison.testCase, comparison.referenceImage, key);
                 runningComparisonEntries[key] = comparisonElement;
