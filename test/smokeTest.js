@@ -1,3 +1,4 @@
+/* jshint evil: true */
 "use strict";
 
 require.paths.push('../node_modules/ayepromise');
@@ -16,7 +17,40 @@ csscriticLoadingPage = system.args[1];
 
 
 
-var loadPageAndEvaluate = function (url, evaluateFunc) {
+var serializeFunctions = function (funcList) {
+    return '[' + funcList.map(function (f) { return '' + f; }) + ']';
+};
+
+var allOf = function (functions, arg) {
+
+    var executeFunc = function (serializedFunctions, param) {
+        // deserialize functions
+        var funcList = eval(serializedFunctions);
+
+        var workOnList = function () {
+            if (funcList.length === 0) {
+                return param;
+            }
+            var func = funcList.shift();
+            var ret = func(param);
+
+            return ret.then(function (newParam) {
+                return workOnList(funcList, newParam);
+            });
+        };
+
+        workOnList();
+    };
+
+    var serializedFunctions = serializeFunctions(functions);
+
+    return {
+        func: executeFunc,
+        params: [serializedFunctions, arg]
+    };
+};
+
+var loadPageAndEvaluate = function (url, evaluateList) {
     var page = require('webpage').create(),
         defer = ayepromise.defer(),
         initialNavigationFired = false;
@@ -45,10 +79,12 @@ var loadPageAndEvaluate = function (url, evaluateFunc) {
     };
     // Open page
     page.open(url, function (status) {
+        var evaluate = allOf(evaluateList);
+
         if (status !== 'success') {
             defer.reject('Unable to load the address!');
         } else {
-            page.evaluateAsync(evaluateFunc);
+            page.evaluate.apply(page, [evaluate.func].concat(evaluate.params));
 
             // "Watchdog", exit eventually & fail if above breaks
             window.setTimeout(function () {
@@ -60,68 +96,55 @@ var loadPageAndEvaluate = function (url, evaluateFunc) {
     return defer.promise;
 };
 
-var selectASingleTestCase = function () {
+var executeRegressionTest = function () {
     csscritic.addReporter(csscritic.NiceReporter());
     // Don't care about the examples
     csscritic.add('pageThatDoesNotExist');
     csscritic.add('yetAnotherPageThatDoesNotExist');
-    csscritic.execute().then(function () {
-        console.log("Selecting first comparison");
-        document.querySelector('#pageThatDoesNotExist .titleLink').click();
-    });
+    return csscritic.execute();
+};
+
+var selectASingleTestCase = function () {
+    console.log("Selecting first comparison");
+    document.querySelector('#pageThatDoesNotExist .titleLink').click();
 };
 
 var assertOneComparisonHasRun = function () {
-    csscritic.addReporter(csscritic.NiceReporter());
-    // Don't care about the examples
-    csscritic.add('pageThatDoesNotExist');
-    csscritic.add('yetAnotherPageThatDoesNotExist');
-    csscritic.execute().then(function () {
-        var comparisonCount = document.querySelectorAll('.comparison').length;
+    var comparisonCount = document.querySelectorAll('.comparison').length;
 
-        console.log("Found " + comparisonCount + " comparison(s)");
-        if (comparisonCount === 1) {
-            window.callPhantom();
-        }
-    });
+    console.log("Found " + comparisonCount + " comparison(s)");
+    if (comparisonCount === 1) {
+        window.callPhantom();
+    }
 };
 
 var runAll = function () {
-    csscritic.addReporter(csscritic.NiceReporter());
-    // Don't care about the examples
-    csscritic.add('pageThatDoesNotExist');
-    csscritic.add('yetAnotherPageThatDoesNotExist');
-    csscritic.execute().then(function () {
-        console.log('Clicking "Run all"');
-        document.querySelector('.runAll').click();
-    });
+    console.log('Clicking "Run all"');
+    document.querySelector('.runAll').click();
 };
 
 var assertTwoComparisonsHaveRun = function () {
-    csscritic.addReporter(csscritic.NiceReporter());
-    // Don't care about the examples
-    csscritic.add('pageThatDoesNotExist');
-    csscritic.add('yetAnotherPageThatDoesNotExist');
-    csscritic.execute().then(function () {
-        var comparisonCount = document.querySelectorAll('.comparison').length;
+    var comparisonCount = document.querySelectorAll('.comparison').length;
 
-        console.log("Found " + comparisonCount + " comparison(s)");
-        if (comparisonCount === 2) {
-            window.callPhantom();
-        }
-    });
+    console.log("Found " + comparisonCount + " comparison(s)");
+    if (comparisonCount === 2) {
+        window.callPhantom();
+    }
 };
 
-loadPageAndEvaluate(fs.absolute(csscriticLoadingPage), selectASingleTestCase)
-    .then(function (result) {
-        return loadPageAndEvaluate(result.url, assertOneComparisonHasRun);
-    })
-    .then(function (result) {
-        return loadPageAndEvaluate(result.url, runAll);
-    })
-    .then(function (result) {
-        return loadPageAndEvaluate(result.url, assertTwoComparisonsHaveRun);
-    })
+var reloadAnd = function () {
+    var funcs = Array.prototype.slice.call(arguments, 0);
+
+    return function (result) {
+        return loadPageAndEvaluate(result.url, [executeRegressionTest].concat(funcs));
+    };
+};
+
+
+loadPageAndEvaluate(fs.absolute(csscriticLoadingPage), [executeRegressionTest, selectASingleTestCase])
+    .then(reloadAnd(assertOneComparisonHasRun))
+    .then(reloadAnd(runAll))
+    .then(reloadAnd(assertTwoComparisonsHaveRun))
     .then(function () {
         console.log('Smoke test successful');
         phantom.exit();
