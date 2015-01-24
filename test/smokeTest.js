@@ -1,6 +1,8 @@
 /* jshint evil: true */
 "use strict";
 
+var webserverPort = 8000;
+
 require.paths.push('../node_modules/ayepromise');
 
 var fs = require("fs"),
@@ -67,6 +69,29 @@ var loadPage = function (url) {
     return defer.promise;
 };
 
+var startWebserver = function (port) {
+    var fs = require('fs'),
+        server = require('webserver').create();
+
+    var launched = server.listen(port, function(request, response) {
+        var localPath = '.' + request.url.replace(/\?.+$/, '');
+
+        if (fs.isReadable(localPath)) {
+            response.statusCode = 200;
+            response.write(fs.read(localPath));
+        } else {
+            response.statusCode = 404;
+            response.write("");
+        }
+        response.close();
+    });
+
+    if (!launched) {
+        console.log("Error: Unable to start internal web server on port", port);
+        phantom.exit(1);
+    }
+};
+
 var selectASingleTestCase = function () {
     document.querySelector('#pageThatDoesNotExist .titleLink').click();
 };
@@ -120,67 +145,79 @@ var assertNotEquals = function (value, notExpectedValue, name) {
 };
 
 
-var pageUrl = 'file://' + fs.absolute(csscriticLoadingPage),
-    page;
+var runTestAgainst = function (pageUrl) {
+    var page;
 
-loadPage(pageUrl)
-    .then(function (thePage) {
-        page = thePage;
+    console.log("Running test against " + pageUrl);
 
-        console.log("Waiting for regression test to finish executing");
-        return waitFor(regressionTestToExecute(page));
-    })
-    .then(function () {
-        console.log("Jumping to last comparison");
-        page.evaluate(jumpToLastComparison);
+    return loadPage(pageUrl)
+        .then(function (thePage) {
+            page = thePage;
 
-        return waitFor(function () {
-            return page.evaluate(getWindowScrollY) > 0;
+            console.log("Waiting for regression test to finish executing");
+            return waitFor(regressionTestToExecute(page));
+        })
+        .then(function () {
+            console.log("Jumping to last comparison");
+            page.evaluate(jumpToLastComparison);
+
+            return waitFor(function () {
+                return page.evaluate(getWindowScrollY) > 0;
+            });
+        })
+        .then(function () {
+            var scrollY = page.evaluate(getWindowScrollY);
+
+            assertNotEquals(scrollY, 0, "scrollY");
+            assertEquals(page.url, pageUrl, "page url");
+        })
+        .then(function () {
+            console.log("Jumping back");
+            page.evaluate(jumpBackInHistory);
+        })
+        .then(function () {
+            var scrollY = page.evaluate(getWindowScrollY);
+
+            assertEquals(scrollY, 0, "scrollY");
+            assertEquals(page.url, pageUrl, "page url");
+        })
+        .then(function () {
+            console.log("Selecting first comparison");
+
+            page.evaluate(selectASingleTestCase);
+            return waitFor(regressionTestToExecute(page));
+        })
+        .then(function () {
+            var comparisonCount = page.evaluate(getComparisonCount);
+
+            assertEquals(comparisonCount, 1, "number of comparisons");
+        })
+        .then(function () {
+            console.log('Clicking "Run all"');
+
+            page.evaluate(runAll);
+            return waitFor(regressionTestToExecute(page));
+        })
+        .then(function () {
+            var comparisonCount = page.evaluate(getComparisonCount);
+
+            assertEquals(comparisonCount, 2, "number of comparisons");
+        })
+        .then(null, function (e) {
+            page.render('smokeTestError.png');
+            throw e;
         });
-    })
-    .then(function () {
-        var scrollY = page.evaluate(getWindowScrollY);
+};
 
-        assertNotEquals(scrollY, 0, "scrollY");
-        assertEquals(page.url, pageUrl, "page url");
-    })
+runTestAgainst('file://' + fs.absolute(csscriticLoadingPage))
     .then(function () {
-        console.log("Jumping back");
-        page.evaluate(jumpBackInHistory);
-    })
-    .then(function () {
-        var scrollY = page.evaluate(getWindowScrollY);
-
-        assertEquals(scrollY, 0, "scrollY");
-        assertEquals(page.url, pageUrl, "page url");
-    })
-    .then(function () {
-        console.log("Selecting first comparison");
-
-        page.evaluate(selectASingleTestCase);
-        return waitFor(regressionTestToExecute(page));
-    })
-    .then(function () {
-        var comparisonCount = page.evaluate(getComparisonCount);
-
-        assertEquals(comparisonCount, 1, "number of comparisons");
-    })
-    .then(function () {
-        console.log('Clicking "Run all"');
-
-        page.evaluate(runAll);
-        return waitFor(regressionTestToExecute(page));
-    })
-    .then(function () {
-        var comparisonCount = page.evaluate(getComparisonCount);
-
-        assertEquals(comparisonCount, 2, "number of comparisons");
+        startWebserver(webserverPort);
+        return runTestAgainst('http://localhost:' + webserverPort + '/' + csscriticLoadingPage);
     })
     .then(function () {
         console.log('Smoke test successful');
         phantom.exit();
     }, function (err) {
         console.error(err);
-        page.render('smokeTestError.png');
         phantom.exit(1);
     });
