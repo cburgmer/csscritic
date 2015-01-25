@@ -1,69 +1,79 @@
 describe("Fallback Filter", function () {
     "use strict";
 
-    var fallbackFilter, backingFilter, windowLocation;
+    var fallbackFilter, windowLocation;
 
-    var setWindowLocation = function (href) {
-        windowLocation.href = href;
+    var aComparison = function (url) {
+        return {
+            testCase: {
+                url: url
+            }
+        };
     };
 
     beforeEach(function () {
-        backingFilter = jasmine.createSpyObj('backingFilter', [
-            'isComparisonSelected',
-            'filterUrlFor',
-            'clearFilterUrl'
-        ]);
+        windowLocation = jasmine.createSpyObj('window.location', ['reload']);
 
-        windowLocation = {
-            href: ''
-        };
-
-        fallbackFilter = csscriticLib.fallbackFilter(backingFilter, windowLocation);
+        fallbackFilter = csscriticLib.fallbackFilter(windowLocation);
     });
 
-    describe('HTTP URLs', function () {
-        beforeEach(function () {
-            setWindowLocation('http://something/something');
-        });
+    afterEach(function () {
+        sessionStorage.clear();
+    });
 
-        it("should route through to backing filter for a positive selection query", function () {
-            var theComparison = 'the_comparison';
-            backingFilter.isComparisonSelected.and.returnValue(true);
+    it("should return a dead URL for the filter URL", function () {
+        var theSelection = "the_selection";
 
-            var ret = fallbackFilter.isComparisonSelected(theComparison);
+        expect(fallbackFilter.filterUrlFor(theSelection)).toEqual('#');
+    });
 
-            expect(backingFilter.isComparisonSelected).toHaveBeenCalledWith(theComparison);
-            expect(ret).toBe(true);
-        });
+    it("should return a dead URL for the clear URL", function () {
+        expect(fallbackFilter.clearFilterUrl()).toEqual('#');
+    });
 
+    it("should store the selection in the sessionStorage", function () {
+        var theSelection = 'the_selection';
 
-        it("should route through to backing filter for a negative selection query", function () {
-            var theComparison = 'the_comparison';
-            backingFilter.isComparisonSelected.and.returnValue(false);
+        fallbackFilter.filterFor(theSelection);
 
-            var ret = fallbackFilter.isComparisonSelected(theComparison);
+        expect(sessionStorage.getItem('csscriticFallbackFilter')).toEqual(theSelection);
+    });
 
-            expect(ret).toBe(false);
-        });
+    it("should reload the runner on filter", function () {
+        var theSelection = 'the_selection';
 
-        it("should route through to backing filter for filter URL", function () {
-            var theSelection = "the_selection";
-            backingFilter.filterUrlFor.and.returnValue('the_url');
+        fallbackFilter.filterFor(theSelection);
 
-            var ret = fallbackFilter.filterUrlFor(theSelection);
+        expect(windowLocation.reload).toHaveBeenCalled();
+    });
 
-            expect(backingFilter.filterUrlFor).toHaveBeenCalledWith(theSelection);
-            expect(ret).toBe('the_url');
-        });
+    it("should clear the stored selection", function () {
+        sessionStorage.setItem('csscriticFallbackFilter', 'some_selection');
 
-        it("should route through to backing filter for clear URL", function () {
-            var theSelection = "the_selection";
-            backingFilter.clearFilterUrl.and.returnValue('the_url');
+        fallbackFilter.clearFilter();
 
-            var ret = fallbackFilter.clearFilterUrl(theSelection);
+        expect(sessionStorage.getItem('csscriticFallbackFilter')).toBe(null);
+    });
 
-            expect(backingFilter.clearFilterUrl).toHaveBeenCalledWith(theSelection);
-            expect(ret).toBe('the_url');
-        });
+    it("should reload the runner on clear", function () {
+        fallbackFilter.clearFilter();
+
+        expect(windowLocation.reload).toHaveBeenCalled();
+    });
+
+    it("should filter matching selection", function () {
+        sessionStorage.setItem('csscriticFallbackFilter', 'someUrl');
+
+        expect(fallbackFilter.isComparisonSelected(aComparison('someUrl'))).toBe(true);
+    });
+
+    it("should filter out a comparison if URL does not match", function () {
+        sessionStorage.setItem('csscriticFallbackFilter', 'someUrl');
+
+        expect(fallbackFilter.isComparisonSelected(aComparison('someNotMatchingUrl'))).toBe(false);
+    });
+
+    it("should not filter if no selection stored", function () {
+        expect(fallbackFilter.isComparisonSelected(aComparison('someUrl'))).toBe(true);
     });
 });
