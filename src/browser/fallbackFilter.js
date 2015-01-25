@@ -10,7 +10,7 @@ csscriticLib.fallbackFilter = function (windowLocation) {
         return !selectedUrl || comparison.testCase.url === selectedUrl;
     };
 
-    module.filterUrlFor = function (selection) {
+    module.filterUrlFor = function () {
         return '#';
     };
 

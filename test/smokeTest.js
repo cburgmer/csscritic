@@ -205,6 +205,11 @@ var runTestAgainst = function (pageUrl, options) {
             var comparisonCount = page.evaluate(getComparisonCount);
 
             assertEquals(comparisonCount, 1, "number of comparisons");
+            if (withNavigationFallback) {
+                assertEquals(page.url, pageUrl, "page url");
+            } else {
+                assertMatches(page.url, /\?filter/, "page url");
+            }
         })
         .then(function () {
             console.log('Clicking "Run all"');
@@ -216,6 +221,11 @@ var runTestAgainst = function (pageUrl, options) {
             var comparisonCount = page.evaluate(getComparisonCount);
 
             assertEquals(comparisonCount, 2, "number of comparisons");
+            if (withNavigationFallback) {
+                assertEquals(page.url, pageUrl, "page url");
+            } else {
+                assertMatches(page.url, /\?$/, "page url");
+            }
         })
         .then(null, function (e) {
             page.render('smokeTestError.png');
