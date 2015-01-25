@@ -78,16 +78,8 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
         return queryPart(selection);
     };
 
-    module.filterFor = function (selection) {
-        windowLocation.search = queryPart(selection);
-    };
-
     module.clearFilterUrl = function () {
         return queryPart();
-    };
-
-    module.clearFilter = function () {
-        windowLocation.search = queryPart();
     };
 
     return module;
