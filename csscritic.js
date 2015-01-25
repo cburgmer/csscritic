@@ -28,6 +28,7 @@
             'src/browser/migrateToIndexedDbStorage.js',
             'src/browser/jobQueue.js',
             'src/browser/urlQueryFilter.js',
+            'src/browser/fallbackFilter.js',
             'src/util.js',
             'src/reporting.js',
             'src/regression.js',
