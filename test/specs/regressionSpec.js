@@ -64,7 +64,7 @@ describe("Regression testing", function () {
             regression.compare(testCaseWithReferenceImage({
                 url: "differentpage.html"
             })).then(function () {
-                expect(imagediff.equal).toHaveBeenCalledWith(pageImage, referenceImage);
+                expect(imagediff.equal).toHaveBeenCalledWith(pageImage, referenceImage, 1);
 
                 done();
             });

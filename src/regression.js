@@ -3,6 +3,7 @@ csscriticLib.regression = function (renderer, util, imagediff) {
 
     var module = {};
 
+    var toleranceToWorkAroundFirefoxRenderingAFewPixelsIndeterministicallyOnLinux = 1;
 
     var workAroundFirefoxResourcesSporadicallyMissing = function (htmlImage, referenceImage) {
         if (referenceImage) {
@@ -22,7 +23,11 @@ csscriticLib.regression = function (renderer, util, imagediff) {
 
         return workAroundBrowserIssues(pageImage, referenceImage).then(function (adaptedHtmlImage) {
             if (referenceImage) {
-                isEqual = imagediff.equal(adaptedHtmlImage, referenceImage);
+                isEqual = imagediff.equal(
+                    adaptedHtmlImage,
+                    referenceImage,
+                    toleranceToWorkAroundFirefoxRenderingAFewPixelsIndeterministicallyOnLinux
+                );
                 return isEqual ? "passed" : "failed";
             } else {
                 return "referenceMissing";
