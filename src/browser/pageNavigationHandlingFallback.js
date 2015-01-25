@@ -1,7 +1,7 @@
 /* Work around https://bugzilla.mozilla.org/show_bug.cgi?id=1005634
  * Replaces anchors with inner page targets with a JavaScript navigation handling implementation.
  */
-csscriticLib.pageNavigationHandlingFallback = function (windowLocation) {
+csscriticLib.pageNavigationHandlingFallback = function () {
     "use strict";
 
     var module = {};
@@ -44,18 +44,7 @@ csscriticLib.pageNavigationHandlingFallback = function (windowLocation) {
         }
     };
 
-    var startsWith = function (str, prefix) {
-        return str.substr(0, prefix.length) === prefix;
-    };
-
-    var needsFallback = function () {
-        return startsWith(windowLocation.href, 'file://');
-    };
-
     module.install = function (element) {
-        if (!needsFallback()) {
-            return;
-        }
         installGlobalNavigationHandling();
 
         element.onclick = function (e) {

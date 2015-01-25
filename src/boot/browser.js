@@ -2,9 +2,14 @@
 var csscritic = (function () {
     "use strict";
 
+    var startsWith = function (str, prefix) {
+        // PhantomJS has no startsWith
+        return str.substr(0, prefix.length) === prefix;
+    };
+
     // Work around https://bugzilla.mozilla.org/show_bug.cgi?id=1005634
     var needsFallback = function () {
-        return window.location.href.startsWith('file://');
+        return startsWith(window.location.href, 'file://');
     };
 
     var packageVersion = csscriticLib.packageVersion || 'dev',
@@ -34,7 +39,12 @@ var csscritic = (function () {
         basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
 
     var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback(window.location),
-        niceReporter = csscriticLib.niceReporter(util, filter, pageNavigationHandlingFallback, packageVersion);
+        niceReporter = csscriticLib.niceReporter(
+            util,
+            filter,
+            needsFallback() ? pageNavigationHandlingFallback : undefined,
+            packageVersion
+        );
 
     return {
         add: main.add,

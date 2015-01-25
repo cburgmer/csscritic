@@ -128,7 +128,9 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         tick.classList.add(progressBarPendingClassName);
         progressBar.appendChild(tick);
 
-        pageNavigationHandlingFallback.install(tick.querySelector('a'));
+        if (pageNavigationHandlingFallback) {
+            pageNavigationHandlingFallback.install(tick.querySelector('a'));
+        }
 
         return tick;
     };
