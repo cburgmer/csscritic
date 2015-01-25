@@ -16,13 +16,13 @@
      testHelper.setUp();
 
      testHelper.comparisonP('referenceMissing', {url: 'firstPage'}).then(function (test) {
-         reporter.reportComparisonStarting(test);
+         reporter.reportSelectedComparison(test);
          reporter.reportComparison(test);
          testHelper.comparisonP('referenceMissing', {url: 'secondPage'}).then(function (test) {
-             reporter.reportComparisonStarting(test);
+             reporter.reportSelectedComparison(test);
              reporter.reportComparison(test);
              testHelper.comparisonP('referenceMissing', {url: 'yetAnotherPage'}).then(function (test) {
-                 reporter.reportComparisonStarting(test);
+                 reporter.reportSelectedComparison(test);
                  reporter.reportComparison(test);
                  reporter.reportTestSuite(testHelper.failingTestSuite());
              });

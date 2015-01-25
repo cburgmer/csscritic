@@ -548,7 +548,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                 var key = comparisonKey(comparison.testCase);
                 addTickToProgressBar(key);
             },
-            reportComparisonStarting: function (comparison) {
+            reportSelectedComparison: function (comparison) {
                 var key = comparisonKey(comparison.testCase);
                 selectedCount += 1;
 

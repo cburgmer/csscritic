@@ -38,7 +38,11 @@ describe("Reporting", function () {
         var reporter;
 
         beforeEach(function () {
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparisonStarting", "reportDeselectedComparison"]);
+            reporter = jasmine.createSpyObj("Reporter", [
+                "reportComparisonStarting",
+                "reportSelectedComparison",
+                "reportDeselectedComparison"
+            ]);
             reporting.addReporter(reporter);
         });
 
@@ -49,7 +53,26 @@ describe("Reporting", function () {
                 }
             }, true);
 
-            expect(reporter.reportComparisonStarting).toHaveBeenCalledWith({
+            expect(reporter.reportSelectedComparison).toHaveBeenCalledWith({
+                testCase: {
+                    url: "samplepage.html"
+                }
+            });
+        });
+
+        it("should report a starting comparison using the old interface", function () {
+            var legacyReporter = jasmine.createSpyObj("Reporter", [
+                "reportComparisonStarting"
+            ]);
+            reporting.addReporter(legacyReporter);
+
+            reporting.doReportConfiguredComparison({
+                testCase: {
+                    url: "samplepage.html"
+                }
+            }, true);
+
+            expect(legacyReporter.reportComparisonStarting).toHaveBeenCalledWith({
                 testCase: {
                     url: "samplepage.html"
                 }
@@ -71,7 +94,7 @@ describe("Reporting", function () {
                 reporterHasStarted = false,
                 reporterHasFinished = false;
 
-            reporter.reportComparisonStarting.and.callFake(function () {
+            reporter.reportSelectedComparison.and.callFake(function () {
                 delayCall(function () {
                     expect(reporterHasStarted).toBe(true);
 

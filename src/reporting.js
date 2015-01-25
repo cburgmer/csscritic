@@ -46,9 +46,22 @@ csscriticLib.reporting = function (renderer, storage, util) {
         }
     };
 
+    var reportingMethod = function (reporter, isSelected) {
+        if (isSelected) {
+            if (reporter.reportSelectedComparison) {
+                return reporter.reportSelectedComparison;
+            } else {
+                // legacy method name
+                return reporter.reportComparisonStarting;
+            }
+        } else {
+            return reporter.reportDeselectedComparison;
+        }
+    };
+
     module.doReportConfiguredComparison = function (configuredComparison, isSelected) {
         return util.all(reporters.map(function (reporter) {
-            var reportingFunc = isSelected ? reporter.reportComparisonStarting : reporter.reportDeselectedComparison;
+            var reportingFunc = reportingMethod(reporter, isSelected);
             if (reportingFunc) {
                 return reportingFunc(configuredComparison);
             }

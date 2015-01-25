@@ -16,7 +16,7 @@
         testHelper.setUp();
 
         testHelper.comparisonWithLargerPageImage().then(function (test) {
-            reporter.reportComparisonStarting(test);
+            reporter.reportSelectedComparison(test);
             reporter.reportComparison(test);
             reporter.reportTestSuite(testHelper.failingTestSuite());
         });

@@ -33,7 +33,7 @@
         testHelper.setUp();
 
         testHelper.comparisonP('passed').then(function (test) {
-            reporter.reportComparisonStarting(test);
+            reporter.reportSelectedComparison(test);
             reporter.reportComparison(test);
             reporter.reportTestSuite(testHelper.passingTestSuite());
 

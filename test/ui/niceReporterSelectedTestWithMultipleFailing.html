@@ -20,9 +20,9 @@
                 testHelper.comparisonP('failed', {url: 'thirdTest.html'}).then(function (thirdTest) {
                     testHelper.comparisonP('failed', {url: 'forthTest.html'}).then(function (forthTest) {
                         reporter.reportDeselectedComparison(firstTest);
-                        reporter.reportComparisonStarting(secondTest);
-                        reporter.reportComparisonStarting(thirdTest);
-                        reporter.reportComparisonStarting(forthTest);
+                        reporter.reportSelectedComparison(secondTest);
+                        reporter.reportSelectedComparison(thirdTest);
+                        reporter.reportSelectedComparison(forthTest);
                         reporter.reportComparison(secondTest);
                         reporter.reportComparison(thirdTest);
                         reporter.reportComparison(forthTest);

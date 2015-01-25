@@ -101,7 +101,7 @@ describe("Nice reporter", function () {
 
     it("should link to comparison in progress bar", function () {
         var test = aPassedTest();
-        reporter.reportComparisonStarting(test);
+        reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
         expect(reporterContainer().find('#progressBar a').attr('href')).toEqual('#aPage.html');
@@ -110,7 +110,7 @@ describe("Nice reporter", function () {
 
     it("should link to comparison in progress bar with extended test case", function () {
         var test = aPassedTest({url: 'aTest.html', width: 42});
-        reporter.reportComparisonStarting(test);
+        reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
         expect(reporterContainer().find('#progressBar a').attr('href')).toEqual('#aTest.html,width=42');
@@ -119,7 +119,7 @@ describe("Nice reporter", function () {
 
     it("should link to the test case's href", function () {
         var test = aPassedTest();
-        reporter.reportComparisonStarting(test);
+        reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
         expect(reporterContainer().find('.comparison .title .externalLink').attr('href')).toEqual('aPage.html');
@@ -130,7 +130,7 @@ describe("Nice reporter", function () {
             testHelper.loadImageFromUrl(testHelper.fixture("green.png"), function (pageImage) {
                 testHelper.loadImageFromUrl(testHelper.fixture("redWithLetter.png"), function (referenceImage) {
                     var test = aFailedTest(pageImage, referenceImage);
-                    reporter.reportComparisonStarting(test);
+                    reporter.reportSelectedComparison(test);
                     reporter.reportComparison(test);
 
                     expect(reporterContainer().find('canvas').get(0)).toImageDiffEqual(expectedDiffImage);
@@ -146,7 +146,7 @@ describe("Nice reporter", function () {
 
         spyOn(imagediff, 'diff').and.returnValue(imageData());
 
-        reporter.reportComparisonStarting(test);
+        reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
         reporterContainer().find('.failed.comparison button').click();
@@ -160,7 +160,7 @@ describe("Nice reporter", function () {
 
         spyOn(imagediff, 'diff').and.returnValue(imageData());
 
-        reporter.reportComparisonStarting(test);
+        reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
         reporterContainer().find('.referenceMissing.comparison button').click();
@@ -177,7 +177,7 @@ describe("Nice reporter", function () {
             aMissingReferenceTest = aMissingReferenceTestWithAccept(thirdAccept);
 
         [firstFailingTest, secondFailingTest, aMissingReferenceTest].map(function (comparison) {
-            reporter.reportComparisonStarting(comparison);
+            reporter.reportSelectedComparison(comparison);
             reporter.reportComparison(comparison);
         });
 
@@ -198,8 +198,8 @@ describe("Nice reporter", function () {
             var firstPassedTest = aPassedTest({url: "firstTest.html"}),
                 secondPassedTest = aPassedTest({url: "secondTest.html"});
 
-            reporter.reportComparisonStarting(firstPassedTest);
-            reporter.reportComparisonStarting(secondPassedTest);
+            reporter.reportSelectedComparison(firstPassedTest);
+            reporter.reportSelectedComparison(secondPassedTest);
 
             reporter.reportComparison(firstPassedTest);
             reporter.reportComparison(secondPassedTest);
@@ -218,7 +218,7 @@ describe("Nice reporter", function () {
 
             selectionFilter.filterUrlFor.and.returnValue('the_filter_link');
 
-            reporter.reportComparisonStarting(aTest);
+            reporter.reportSelectedComparison(aTest);
             reporter.reportComparison(aTest);
 
             expect(reporterContainer().find('.titleLink').attr('href')).toEqual('the_filter_link');
@@ -229,7 +229,7 @@ describe("Nice reporter", function () {
 
             selectionFilter.filterUrlFor = undefined;
 
-            reporter.reportComparisonStarting(aTest);
+            reporter.reportSelectedComparison(aTest);
             reporter.reportComparison(aTest);
 
             expect(reporterContainer().find('.titleLink').attr('href')).toEqual('#');
@@ -242,7 +242,7 @@ describe("Nice reporter", function () {
             selectionFilter.clearFilterUrl.and.returnValue('the_clear_url');
 
             reporter.reportDeselectedComparison(firstPassedTest);
-            reporter.reportComparisonStarting(secondPassedTest);
+            reporter.reportSelectedComparison(secondPassedTest);
 
             reporter.reportComparison(secondPassedTest);
 
@@ -260,7 +260,7 @@ describe("Nice reporter", function () {
             selectionFilter.clearFilterUrl.and.returnValue('the_clear_url');
 
             reporter.reportDeselectedComparison(firstPassedTest);
-            reporter.reportComparisonStarting(secondPassedTest);
+            reporter.reportSelectedComparison(secondPassedTest);
 
             reporter.reportComparison(secondPassedTest);
 
@@ -276,7 +276,7 @@ describe("Nice reporter", function () {
             selectionFilter.clearFilterUrl = undefined;
 
             reporter.reportDeselectedComparison(firstPassedTest);
-            reporter.reportComparisonStarting(secondPassedTest);
+            reporter.reportSelectedComparison(secondPassedTest);
 
             reporter.reportComparison(secondPassedTest);
 
@@ -290,7 +290,7 @@ describe("Nice reporter", function () {
         it("should show a pending comparison", function () {
             document.title = "a test title";
 
-            reporter.reportComparisonStarting(aPassedTest());
+            reporter.reportSelectedComparison(aPassedTest());
 
             expect(document.title).toEqual("(0/1) a test title");
         });
@@ -298,8 +298,8 @@ describe("Nice reporter", function () {
         it("should show two pending comparisons", function () {
             document.title = "a test title";
 
-            reporter.reportComparisonStarting(aPassedTest());
-            reporter.reportComparisonStarting(aFailedTest());
+            reporter.reportSelectedComparison(aPassedTest());
+            reporter.reportSelectedComparison(aFailedTest());
 
             expect(document.title).toEqual("(0/2) a test title");
         });
@@ -308,8 +308,8 @@ describe("Nice reporter", function () {
             var passedTest = aPassedTest();
             document.title = "a test title";
 
-            reporter.reportComparisonStarting(passedTest);
-            reporter.reportComparisonStarting(aFailedTest());
+            reporter.reportSelectedComparison(passedTest);
+            reporter.reportSelectedComparison(aFailedTest());
 
             reporter.reportComparison(passedTest);
 
@@ -321,8 +321,8 @@ describe("Nice reporter", function () {
                 failedTest = aFailedTest(anImage, anImage);
             document.title = "a test title";
 
-            reporter.reportComparisonStarting(passedTest);
-            reporter.reportComparisonStarting(failedTest);
+            reporter.reportSelectedComparison(passedTest);
+            reporter.reportSelectedComparison(failedTest);
 
             reporter.reportComparison(passedTest);
             reporter.reportComparison(failedTest);
@@ -353,7 +353,7 @@ describe("Nice reporter", function () {
         it("should show a warning if the browser is not supported", function (done) {
             fakeCanvas.toDataURL.and.throwError(new Error('poof'));
 
-            reporter.reportComparisonStarting(aPassedTest());
+            reporter.reportSelectedComparison(aPassedTest());
 
             setTimeout(function () {
                 expect($(".browserWarning")).toExist();
@@ -363,7 +363,7 @@ describe("Nice reporter", function () {
         });
 
         ifNotInPhantomIt("should not show a warning if the browser is supported", function (done) {
-            reporter.reportComparisonStarting(aPassedTest());
+            reporter.reportSelectedComparison(aPassedTest());
 
             setTimeout(function () {
                 expect($(".browserWarning")).not.toExist();
