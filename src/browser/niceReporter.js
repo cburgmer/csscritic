@@ -163,10 +163,13 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         });
     };
 
-    var statusIssueText = function (issueCount) {
-        var issueContent = '{{issues}} ' + singularPlural(issueCount, 'needs', 'need') + ' some love';
+    var statusIssueText = function (issueCount, selectedCount, doneCount) {
+        var issueContent = '{{issues}} ' + singularPlural(issueCount, 'needs', 'need') + ' some love',
+            doneContent = 'all good',
+            doneWithoutErrors = selectedCount === doneCount && issueCount === 0,
+            content = doneWithoutErrors ? doneContent : issueContent;
         return template('<span>' +
-                        issueContent +
+                        content +
                         '</span>', {
                             issues: issueCount
                         });
@@ -206,7 +209,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         }
     };
 
-    var updateStatusBar = function (totalCount, selectedCount, issueCount) {
+    var updateStatusBar = function (totalCount, selectedCount, issueCount, doneCount) {
         var runAllUrl = selectionFilter.clearFilterUrl ? selectionFilter.clearFilterUrl() : '#',
             runAll = elementFor(template('<a class="runAll" href="{{url}}">Run all</a>', {
                 url: runAllUrl
@@ -215,7 +218,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
         statusText.innerHTML = '';
         statusText.appendChild(elementFor(statusTotalText(totalCount, selectedCount)));
-        statusText.appendChild(elementFor(statusIssueText(issueCount)));
+        statusText.appendChild(elementFor(statusIssueText(issueCount, selectedCount, doneCount)));
         statusText.appendChild(acceptAllButton());
         if (totalCount > selectedCount) {
             installFallbackClearSelectionHandler(runAll);
@@ -573,7 +576,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                 }
 
                 updateStatusInDocumentTitle(totalCount, doneCount);
-                updateStatusBar(totalCount, selectedCount, issueCount);
+                updateStatusBar(totalCount, selectedCount, issueCount, doneCount);
                 markTickDone(comparison.status, tickElement);
 
                 if (comparison.status === 'failed') {
