@@ -78,25 +78,23 @@ describe("Nice reporter", function () {
         return canvas.getContext("2d").createImageData(1, 1);
     };
 
-    var reporterContainer = function () {
-        return $('.cssCriticNiceReporter');
-    };
+    var $fixture;
 
     beforeEach(function () {
         var packageVersion = '1.2.3';
         selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'clearFilter', 'clearFilterUrl']);
         var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback({href: 'file://somepath'});
+
+        $fixture = setFixtures();
+
         reporter = csscriticLib.niceReporter(
             util,
             selectionFilter,
             pageNavigationHandlingFallback,
             packageVersion
-        ).NiceReporter();
-        jasmine.addMatchers(imagediffForJasmine2);
-    });
+        ).NiceReporter($fixture.get(0));
 
-    afterEach(function () {
-        reporterContainer().remove();
+        jasmine.addMatchers(imagediffForJasmine2);
     });
 
     it("should link to comparison in progress bar", function () {
@@ -104,8 +102,8 @@ describe("Nice reporter", function () {
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
-        expect(reporterContainer().find('#progressBar a').attr('href')).toEqual('#aPage.html');
-        expect(reporterContainer().find('section').attr('id')).toEqual('aPage.html');
+        expect($fixture.find('#progressBar a').attr('href')).toEqual('#aPage.html');
+        expect($fixture.find('section').attr('id')).toEqual('aPage.html');
     });
 
     it("should link to comparison in progress bar with extended test case", function () {
@@ -113,8 +111,8 @@ describe("Nice reporter", function () {
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
-        expect(reporterContainer().find('#progressBar a').attr('href')).toEqual('#aTest.html,width=42');
-        expect(reporterContainer().find('section').attr('id')).toEqual('aTest.html,width=42');
+        expect($fixture.find('#progressBar a').attr('href')).toEqual('#aTest.html,width=42');
+        expect($fixture.find('section').attr('id')).toEqual('aTest.html,width=42');
     });
 
     it("should link to the test case's href", function () {
@@ -122,7 +120,7 @@ describe("Nice reporter", function () {
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
-        expect(reporterContainer().find('.comparison .title .externalLink').attr('href')).toEqual('aPage.html');
+        expect($fixture.find('.comparison .title .externalLink').attr('href')).toEqual('aPage.html');
     });
 
     it("should show a difference canvas on a failed comparison", function (done) {
@@ -133,7 +131,7 @@ describe("Nice reporter", function () {
                     reporter.reportSelectedComparison(test);
                     reporter.reportComparison(test);
 
-                    expect(reporterContainer().find('canvas').get(0)).toImageDiffEqual(expectedDiffImage);
+                    expect($fixture.find('canvas').get(0)).toImageDiffEqual(expectedDiffImage);
                     done();
                 });
             });
@@ -149,7 +147,7 @@ describe("Nice reporter", function () {
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
-        reporterContainer().find('.failed.comparison button').click();
+        $fixture.find('.failed.comparison button').click();
 
         expect(acceptSpy).toHaveBeenCalled();
     });
@@ -163,7 +161,7 @@ describe("Nice reporter", function () {
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
-        reporterContainer().find('.referenceMissing.comparison button').click();
+        $fixture.find('.referenceMissing.comparison button').click();
 
         expect(acceptSpy).toHaveBeenCalled();
     });
@@ -184,7 +182,7 @@ describe("Nice reporter", function () {
         reporter.reportTestSuite({success: false});
 
         // when
-        reporterContainer().find('.acceptAll').click();
+        $fixture.find('.acceptAll').click();
 
         // then
         expect(firstAccept).toHaveBeenCalled();
@@ -207,7 +205,7 @@ describe("Nice reporter", function () {
             reporter.reportTestSuite({success: true});
 
             // when
-            reporterContainer().find('#secondTest\\.html .titleLink').first().click();
+            $fixture.find('#secondTest\\.html .titleLink').first().click();
 
             // then
             expect(selectionFilter.filterFor).toHaveBeenCalledWith('secondTest.html');
@@ -221,7 +219,7 @@ describe("Nice reporter", function () {
             reporter.reportSelectedComparison(aTest);
             reporter.reportComparison(aTest);
 
-            expect(reporterContainer().find('.titleLink').attr('href')).toEqual('the_filter_link');
+            expect($fixture.find('.titleLink').attr('href')).toEqual('the_filter_link');
         });
 
         it("should fallback to hash when selection url is not provided", function () {
@@ -232,7 +230,7 @@ describe("Nice reporter", function () {
             reporter.reportSelectedComparison(aTest);
             reporter.reportComparison(aTest);
 
-            expect(reporterContainer().find('.titleLink').attr('href')).toEqual('#');
+            expect($fixture.find('.titleLink').attr('href')).toEqual('#');
         });
 
         it("should 'run all'", function () {
@@ -248,7 +246,7 @@ describe("Nice reporter", function () {
 
             reporter.reportTestSuite({success: true});
 
-            reporterContainer().find('.runAll').click();
+            $fixture.find('.runAll').click();
 
             expect(selectionFilter.clearFilter).toHaveBeenCalled();
         });
@@ -266,7 +264,7 @@ describe("Nice reporter", function () {
 
             reporter.reportTestSuite({success: true});
 
-            expect(reporterContainer().find('.runAll').attr('href')).toEqual('the_clear_url');
+            expect($fixture.find('.runAll').attr('href')).toEqual('the_clear_url');
         });
 
         it("should fallback to hash on 'run all' link", function () {
@@ -282,7 +280,7 @@ describe("Nice reporter", function () {
 
             reporter.reportTestSuite({success: true});
 
-            expect(reporterContainer().find('.runAll').attr('href')).toEqual('#');
+            expect($fixture.find('.runAll').attr('href')).toEqual('#');
         });
     });
 

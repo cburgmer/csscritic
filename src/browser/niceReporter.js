@@ -34,27 +34,33 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         progressBarId = 'progressBar',
         statusTextId = 'statusText';
 
-    var createContainer = function () {
-        var reportBody = elementFor(template('<div class="cssCriticNiceReporter">' +
-                                             '<header id="{{headerId}}">' +
-                                             '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
-                                             'CSS Critic {{packageVersion}}' +
-                                             '</a>' +
-                                             '<span id="{{timeTakenId}}"></span>' +
-                                             '<ul id="{{progressBarId}}"></ul>' +
-                                             '<div id="{{statusTextId}}" class="statusText"></div>' +
-                                             '</header>' +
-                                             '</div>', {
-                                                 headerId: headerId,
-                                                 timeTakenId: timeTakenId,
-                                                 progressBarId: progressBarId,
-                                                 statusTextId: statusTextId,
-                                                 packageVersion: packageVersion
-                                             }));
+    var createContainer = function (parentContainer) {
+        var reportBody = elementFor('<div class="cssCriticNiceReporter"></div>');
 
-        document.getElementsByTagName("body")[0].appendChild(reportBody);
+        showHeader(reportBody);
+
+        parentContainer.appendChild(reportBody);
 
         return reportBody;
+    };
+
+    var showHeader = function (container) {
+        var header = elementFor(template('<header id="{{headerId}}">' +
+                                         '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
+                                         'CSS Critic {{packageVersion}}' +
+                                         '</a>' +
+                                         '<span id="{{timeTakenId}}"></span>' +
+                                         '<ul id="{{progressBarId}}"></ul>' +
+                                         '<div id="{{statusTextId}}" class="statusText"></div>' +
+                                         '</header>', {
+                                             headerId: headerId,
+                                             timeTakenId: timeTakenId,
+                                             progressBarId: progressBarId,
+                                             statusTextId: statusTextId,
+                                             packageVersion: packageVersion
+                                         }));
+
+        container.appendChild(header);
     };
 
     var findElementIn = function (container, elementId) {
@@ -517,7 +523,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
     // the reporter
 
-    module.NiceReporter = function () {
+    module.NiceReporter = function (outerContainer) {
         var totalCount = 0,
             selectedCount = 0,
             doneCount = 0,
@@ -529,7 +535,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
         var container = function () {
             if (!containerElement) {
-                containerElement = createContainer();
+                containerElement = createContainer(outerContainer || document.body);
             }
             return containerElement;
         };
