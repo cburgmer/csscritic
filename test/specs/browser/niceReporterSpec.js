@@ -79,7 +79,7 @@ describe("Nice reporter", function () {
     };
 
     var reporterContainer = function () {
-        return $('#csscritic_nicereporter');
+        return $('.cssCriticNiceReporter');
     };
 
     beforeEach(function () {

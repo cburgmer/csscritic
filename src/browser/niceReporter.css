@@ -1,16 +1,16 @@
 /* Colors from http://paletton.com/#uid=7091K0kxazMlKS-qBIEv5mP-lbb */
 
-#csscritic_nicereporter {
+.cssCriticNiceReporter {
     font-family: sans-serif;
     font-size: 16px;
 }
 
-#csscritic_nicereporter a {
+.cssCriticNiceReporter a {
     text-decoration: none;
     color: inherit;
 }
 
-#csscritic_nicereporter button {
+.cssCriticNiceReporter button {
     padding: 2px 10px;
     border: 1px solid black;
     background-color: rgb(0, 192, 78);
@@ -19,24 +19,24 @@
     font-size: inherit;
     font-family: inherit;
 }
-#csscritic_nicereporter button[disabled] {
+.cssCriticNiceReporter button[disabled] {
     background-color: transparent;
 }
-#csscritic_nicereporter button:hover {
+.cssCriticNiceReporter button:hover {
     background-color: rgb(36, 214, 108)
 }
-#csscritic_nicereporter button:not([disabled]):active {
+.cssCriticNiceReporter button:not([disabled]):active {
     background-color: rgb(76, 236, 141)
 }
 
 /* Error messages */
 
-#csscritic_nicereporter .errorText {
+.cssCriticNiceReporter .errorText {
     color: rgb(89, 17, 0);
     margin-bottom: 1em;
 }
 
-#csscritic_nicereporter .errorText:not(:empty)::before {
+.cssCriticNiceReporter .errorText:not(:empty)::before {
     content: "⚠";
     color: rgb(89, 17, 0);
     font-size: 1.2rem;
@@ -44,71 +44,71 @@
     vertical-align: middle;
 }
 
-#csscritic_nicereporter .errorText ul {
+.cssCriticNiceReporter .errorText ul {
     margin: 0.2em 0;
 }
 
-#csscritic_nicereporter .errorText a {
+.cssCriticNiceReporter .errorText a {
     text-decoration: underline;
 }
 
 /* Header */
 
-#csscritic_nicereporter #header {
+.cssCriticNiceReporter #header {
     padding: 15px;
     transition: background-color 1s;
 }
 
-#csscritic_nicereporter #header.pass {
+.cssCriticNiceReporter #header.pass {
     background-color: rgb(0, 192, 78);
 }
 
-#csscritic_nicereporter #header.fail {
+.cssCriticNiceReporter #header.fail {
     background-color: rgb(255, 49, 0);
 }
 
-#csscritic_nicereporter #timeTaken {
+.cssCriticNiceReporter #timeTaken {
     float: right;
     padding: 0.5em 0 0 1em;
 }
 
-#csscritic_nicereporter .statusText {
+.cssCriticNiceReporter .statusText {
     display: inline-block;
 }
 
-#csscritic_nicereporter .statusText .runAll {
+.cssCriticNiceReporter .statusText .runAll {
     display: block;
     margin-top: 0.5em;
     text-decoration: underline;
 }
 
-#csscritic_nicereporter .acceptAll {
+.cssCriticNiceReporter .acceptAll {
     display: none;
     margin: -4px 0 -4px 1em; /* Make up for border and padding to fit into the flow */
 }
-#csscritic_nicereporter .acceptAll.active {
+.cssCriticNiceReporter .acceptAll.active {
     display: inline-block;
 }
 
-#csscritic_nicereporter .cssCriticVersion {
+.cssCriticNiceReporter .cssCriticVersion {
     font-size: 0.7rem;
 }
 
 /* Progress bar */
 
-#csscritic_nicereporter #progressBar {
+.cssCriticNiceReporter #progressBar {
     margin: 0.4em 0;
     list-style: none;
     padding: 0;
 }
 
-#csscritic_nicereporter #progressBar li {
+.cssCriticNiceReporter #progressBar li {
     display: inline-block;
     margin-right: -0.4rem;
     transition: color 1s;
 }
 
-#csscritic_nicereporter #progressBar a {
+.cssCriticNiceReporter #progressBar a {
     width: 0;
     height: 0;
     border-width: 0.63rem;
@@ -118,143 +118,143 @@
     display: block;
 }
 
-#csscritic_nicereporter #progressBar .pending {
+.cssCriticNiceReporter #progressBar .pending {
     color: grey;
 }
-#csscritic_nicereporter #progressBar .passed {
+.cssCriticNiceReporter #progressBar .passed {
     color: rgb(4, 131, 55);
 }
-#csscritic_nicereporter #progressBar .failed {
+.cssCriticNiceReporter #progressBar .failed {
     color: rgb(182, 39, 5);
 }
-#csscritic_nicereporter #progressBar .error {
+.cssCriticNiceReporter #progressBar .error {
     color: rgb(89, 17, 0);
 }
-#csscritic_nicereporter #progressBar .referenceMissing {
+.cssCriticNiceReporter #progressBar .referenceMissing {
     color: rgb(255, 255, 0);
 }
 
-#csscritic_nicereporter #progressBar a:focus {
+.cssCriticNiceReporter #progressBar a:focus {
     outline: none;
 }
 
 /* Comparison */
 
-#csscritic_nicereporter .comparison {
+.cssCriticNiceReporter .comparison {
     background-color: rgb(245, 245, 245);
     padding: 15px;
     margin: 4px 0;
 }
 
-#csscritic_nicereporter .comparison .title {
+.cssCriticNiceReporter .comparison .title {
     font-weight: normal;
 }
-#csscritic_nicereporter .comparison.fakeTarget .title,
-#csscritic_nicereporter .comparison:target .title {
+.cssCriticNiceReporter .comparison.fakeTarget .title,
+.cssCriticNiceReporter .comparison:target .title {
     font-weight: bold;
 }
 
-#csscritic_nicereporter .comparison .title .titleLink:hover {
+.cssCriticNiceReporter .comparison .title .titleLink:hover {
     text-decoration: underline;
 }
 
-#csscritic_nicereporter .comparison .title .externalLink {
+.cssCriticNiceReporter .comparison .title .externalLink {
     vertical-align: top;
     font-size: 0.8rem;
     line-height: 0.6em;
     color: #888;
     display: inline-block;
 }
-#csscritic_nicereporter .comparison .title .externalLink:hover {
+.cssCriticNiceReporter .comparison .title .externalLink:hover {
     transform: scale(1.1);
     transform-origin: bottom left;
 }
 
-#csscritic_nicereporter .comparison .parameters,
-#csscritic_nicereporter .comparison .parameters dt,
-#csscritic_nicereporter .comparison .parameters dd {
+.cssCriticNiceReporter .comparison .parameters,
+.cssCriticNiceReporter .comparison .parameters dt,
+.cssCriticNiceReporter .comparison .parameters dd {
     /* Reset */
     display: inline-block;
     margin: 0;
 }
 
-#csscritic_nicereporter .comparison .parameters {
+.cssCriticNiceReporter .comparison .parameters {
     margin-left: 1.5em;
     color: #444;
 }
 
-#csscritic_nicereporter .comparison .parameters dt {
+.cssCriticNiceReporter .comparison .parameters dt {
     font-style: italic;
 }
 
-#csscritic_nicereporter .comparison .parameters dt::after {
+.cssCriticNiceReporter .comparison .parameters dt::after {
     content: ":"
 }
 
-#csscritic_nicereporter .comparison .parameters dd {
+.cssCriticNiceReporter .comparison .parameters dd {
     margin-left: 0.5em;
     margin-right: 0.7em;
 }
 
-#csscritic_nicereporter .comparison .parameters dd::after {
+.cssCriticNiceReporter .comparison .parameters dd::after {
     content: ","
 }
 
-#csscritic_nicereporter .comparison .parameters dd:last-child::after {
+.cssCriticNiceReporter .comparison .parameters dd:last-child::after {
     content: ""
 }
 
 /* Images */
 
-#csscritic_nicereporter .running.comparison .imageContainer {
+.cssCriticNiceReporter .running.comparison .imageContainer {
     opacity: 0.2;
 }
 
-#csscritic_nicereporter .comparison .imageContainer:empty {
+.cssCriticNiceReporter .comparison .imageContainer:empty {
     display: none;
 }
 
-#csscritic_nicereporter .comparison .imageWrapper {
+.cssCriticNiceReporter .comparison .imageWrapper {
     /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
 }
 
-#csscritic_nicereporter .comparison img,
-#csscritic_nicereporter .comparison canvas {
+.cssCriticNiceReporter .comparison img,
+.cssCriticNiceReporter .comparison canvas {
     display: block;
 }
 
-#csscritic_nicereporter .comparison .imageContainer,
-#csscritic_nicereporter .comparison .changedImageContainer {
+.cssCriticNiceReporter .comparison .imageContainer,
+.cssCriticNiceReporter .comparison .changedImageContainer {
     border: 1px solid black;
 }
 
-#csscritic_nicereporter .comparison .outerChangedImageContainer {
+.cssCriticNiceReporter .comparison .outerChangedImageContainer {
     margin-top: 4px;
     display: inline-block;
     position: relative;
 }
 
-#csscritic_nicereporter .comparison .imageContainer {
+.cssCriticNiceReporter .comparison .imageContainer {
     position: relative;
     display: inline-block;
 }
 
-#csscritic_nicereporter .comparison .imageContainer .diff {
+.cssCriticNiceReporter .comparison .imageContainer .diff {
     /* display:none solution that transitions on hover - using max-{height|width} to work around issue with canvas needing CSS help to render in our own UI tests */
     max-height: 0;
     max-width: 0;
     opacity: 0;
 }
 
-#csscritic_nicereporter .failed.comparison .imageContainer:hover .diff {
+.cssCriticNiceReporter .failed.comparison .imageContainer:hover .diff {
     max-height: none;
     max-width: none;
     opacity: 1;
     transition: opacity 1s;
 }
 
-#csscritic_nicereporter .failed.comparison .imageContainer:hover .imageWrapper {
+.cssCriticNiceReporter .failed.comparison .imageContainer:hover .imageWrapper {
     opacity: 0.5;
     transition: opacity 1s;
     /* Display underneath transparent diff, while having the imageContainer's height auto adapt */
@@ -267,7 +267,7 @@
 
 /* Accept */
 
-#csscritic_nicereporter .comparison .accept {
+.cssCriticNiceReporter .comparison .accept {
     vertical-align: top;
 
     position: absolute;
@@ -278,21 +278,21 @@
 
     font-size: 0.7rem;
 }
-#csscritic_nicereporter .accepted.comparison .accept {
+.cssCriticNiceReporter .accepted.comparison .accept {
     font-size: 1.4rem;
 }
 
-#csscritic_nicereporter .comparison button span {
+.cssCriticNiceReporter .comparison button span {
     transform: rotate(-90deg);
     display: block;
 }
 
-#csscritic_nicereporter .comparison .imageContainer {
+.cssCriticNiceReporter .comparison .imageContainer {
     opacity: 1;
     max-height: 1000000px;
 }
 
-#csscritic_nicereporter .accepted.comparison .imageContainer {
+.cssCriticNiceReporter .accepted.comparison .imageContainer {
     opacity: 0;
     max-height: 0;
     border-width: 0;
@@ -301,10 +301,10 @@
 }
 
 /* Tooltip for difference image */
-#csscritic_nicereporter .failed.comparison:hover .imageContainer {
+.cssCriticNiceReporter .failed.comparison:hover .imageContainer {
     position: relative;
 }
-#csscritic_nicereporter .failed.comparison:hover .imageContainer::after {
+.cssCriticNiceReporter .failed.comparison:hover .imageContainer::after {
     position: absolute;
     top: 0;
     right: 0;
@@ -322,20 +322,20 @@
 
     content: "< Hover over reference image to highlight changes";
 }
-#csscritic_nicereporter .failed.comparison .imageContainer:hover::after {
+.cssCriticNiceReporter .failed.comparison .imageContainer:hover::after {
     display: none;
 }
 
 /* Warning for Chrome + Safari */
 
-#csscritic_nicereporter .browserWarning::before {
+.cssCriticNiceReporter .browserWarning::before {
     content: "⚠";
     font-size: 1.2rem;
     padding-right: 5px;
     vertical-align: middle;
 }
 
-#csscritic_nicereporter .browserWarning {
+.cssCriticNiceReporter .browserWarning {
     position: fixed;
     top: 0;
     left: 0;

@@ -34,12 +34,8 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         progressBarId = 'progressBar',
         statusTextId = 'statusText';
 
-    var getOrCreateContainer = function () {
-        var reporterId = "csscritic_nicereporter",
-            reportBody = document.getElementById(reporterId);
-
-        if (reportBody === null) {
-            reportBody = elementFor(template('<div id="{{reporterId}}">' +
+    var createContainer = function () {
+        var reportBody = elementFor(template('<div class="cssCriticNiceReporter">' +
                                              '<header id="{{headerId}}">' +
                                              '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
                                              'CSS Critic {{packageVersion}}' +
@@ -49,7 +45,6 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                                              '<div id="{{statusTextId}}" class="statusText"></div>' +
                                              '</header>' +
                                              '</div>', {
-                                                 reporterId: reporterId,
                                                  headerId: headerId,
                                                  timeTakenId: timeTakenId,
                                                  progressBarId: progressBarId,
@@ -57,14 +52,12 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                                                  packageVersion: packageVersion
                                              }));
 
-            document.getElementsByTagName("body")[0].appendChild(reportBody);
-        }
+        document.getElementsByTagName("body")[0].appendChild(reportBody);
 
         return reportBody;
     };
 
-    var findElementFor = function (elementId) {
-        var container = getOrCreateContainer();
+    var findElementIn = function (container, elementId) {
         return container.querySelector('#' + elementId);
     };
 
@@ -100,13 +93,13 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         return seconds + '.' + padNumber(milliSeconds, 3);
     };
 
-    var showTimeTaken = function (timeTakenInMillis) {
-        var timeTaken = findElementFor(timeTakenId);
+    var showTimeTaken = function (container, timeTakenInMillis) {
+        var timeTaken = findElementIn(container, timeTakenId);
         timeTaken.textContent = "finished in " + renderMilliseconds(timeTakenInMillis) + "s";
     };
 
-    var setOutcomeOnHeader = function (successful) {
-        var header = findElementFor(headerId);
+    var setOutcomeOnHeader = function (container, successful) {
+        var header = findElementIn(container, headerId);
 
         header.classList.add(successful ? 'pass' : 'fail');
     };
@@ -115,8 +108,8 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
     var progressBarPendingClassName = 'pending';
 
-    var addTickToProgressBar = function (title, linkTarget) {
-        var progressBar = findElementFor(progressBarId),
+    var addTickToProgressBar = function (container, title, linkTarget) {
+        var progressBar = findElementIn(container, progressBarId),
             clickableTickTemplate = '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
             deactivatedTickTemplate = '<li><a title="{{title}}"></a></li>',
             tickTemplate = linkTarget ? clickableTickTemplate : deactivatedTickTemplate;
@@ -183,8 +176,8 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         }));
     };
 
-    var showAcceptAllButtonIfNeccessary = function (acceptableEntries) {
-        var statusText = findElementFor(statusTextId),
+    var showAcceptAllButtonIfNeccessary = function (container, acceptableEntries) {
+        var statusText = findElementIn(container, statusTextId),
             button = statusText.querySelector('.' + acceptAllClassName);
 
         if (acceptableEntries.length > 2) {
@@ -209,12 +202,12 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         }
     };
 
-    var updateStatusBar = function (totalCount, selectedCount, issueCount, doneCount) {
+    var updateStatusBar = function (container, totalCount, selectedCount, issueCount, doneCount) {
         var runAllUrl = selectionFilter.clearFilterUrl ? selectionFilter.clearFilterUrl() : '#',
             runAll = elementFor(template('<a class="runAll" href="{{url}}">Run all</a>', {
                 url: runAllUrl
             })),
-            statusText = findElementFor(statusTextId);
+            statusText = findElementIn(container, statusTextId);
 
         statusText.innerHTML = '';
         statusText.appendChild(elementFor(statusTotalText(totalCount, selectedCount)));
@@ -285,9 +278,8 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         }
     };
 
-    var addComparison = function (testCase, referenceImage, key) {
-        var container = getOrCreateContainer(),
-            titleLinkClassName = 'titleLink',
+    var addComparison = function (container, testCase, referenceImage, key) {
+        var titleLinkClassName = 'titleLink',
             filterUrl = selectionFilter.filterUrlFor ? selectionFilter.filterUrlFor(testCase.url) : '#',
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
                                              '<h3 class="title">' +
@@ -501,7 +493,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
     var browserIssueChecked = false;
 
-    var showBrowserWarningIfNeeded = function () {
+    var showBrowserWarningIfNeeded = function (container) {
         if (browserIssueChecked) {
             return;
         }
@@ -512,7 +504,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                 return;
             }
 
-            getOrCreateContainer().appendChild(elementFor(
+            container.appendChild(elementFor(
                 '<div class="browserWarning">' +
                     'Your browser is currently not supported, ' +
                     'as it does not support reading rendered HTML from the canvas ' +
@@ -533,7 +525,14 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             progressTickElements = {},
             runningComparisonEntries = {},
             acceptableComparisons = [],
-            timeStarted;
+            containerElement, timeStarted;
+
+        var container = function () {
+            if (!containerElement) {
+                containerElement = createContainer();
+            }
+            return containerElement;
+        };
 
         var registerComparison = function () {
             totalCount += 1;
@@ -541,9 +540,9 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                 timeStarted = Date.now();
             }
 
-            showBrowserWarningIfNeeded();
+            showBrowserWarningIfNeeded(container());
             updateStatusInDocumentTitle(totalCount, doneCount);
-            updateStatusBar(totalCount, selectedCount, issueCount);
+            updateStatusBar(container(), totalCount, selectedCount, issueCount);
         };
 
         return {
@@ -551,7 +550,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                 registerComparison();
 
                 var key = comparisonKey(comparison.testCase);
-                addTickToProgressBar(key);
+                addTickToProgressBar(container(), key);
             },
             reportSelectedComparison: function (comparison) {
                 var key = comparisonKey(comparison.testCase);
@@ -559,10 +558,13 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
                 registerComparison();
 
-                var tickElement = addTickToProgressBar(key, key);
+                var tickElement = addTickToProgressBar(container(), key, key);
                 progressTickElements[key] = tickElement;
 
-                var comparisonElement = addComparison(comparison.testCase, comparison.referenceImage, key);
+                var comparisonElement = addComparison(container(),
+                                                      comparison.testCase,
+                                                      comparison.referenceImage,
+                                                      key);
                 runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
@@ -576,19 +578,26 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                 }
 
                 updateStatusInDocumentTitle(totalCount, doneCount);
-                updateStatusBar(totalCount, selectedCount, issueCount, doneCount);
+                updateStatusBar(container(), totalCount, selectedCount, issueCount, doneCount);
                 markTickDone(comparison.status, tickElement);
 
                 if (comparison.status === 'failed') {
-                    showComparisonWithDiff(comparison.pageImage, comparison.referenceImage, comparison.acceptPage, entry);
+                    showComparisonWithDiff(comparison.pageImage,
+                                           comparison.referenceImage,
+                                           comparison.acceptPage,
+                                           entry);
                     acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'referenceMissing') {
-                    showComparisonWithoutReference(comparison.pageImage, comparison.acceptPage, entry);
+                    showComparisonWithoutReference(comparison.pageImage,
+                                                   comparison.acceptPage,
+                                                   entry);
                     acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'passed') {
-                    showComparisonWithRenderedPage(comparison.pageImage, entry);
+                    showComparisonWithRenderedPage(comparison.pageImage,
+                                                   entry);
                 } else if (comparison.status === 'error') {
-                    showComparisonWithError(comparison.testCase.url, entry);
+                    showComparisonWithError(comparison.testCase.url,
+                                            entry);
                 }
 
                 if (comparison.renderErrors.length > 0) {
@@ -606,9 +615,9 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                     };
                 });
 
-                showTimeTaken(timeStarted ? Date.now() - timeStarted : 0);
-                setOutcomeOnHeader(result.success);
-                showAcceptAllButtonIfNeccessary(acceptableEntries);
+                showTimeTaken(container(), timeStarted ? Date.now() - timeStarted : 0);
+                setOutcomeOnHeader(container(), result.success);
+                showAcceptAllButtonIfNeccessary(container(), acceptableEntries);
             }
         };
     };
