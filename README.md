@@ -5,11 +5,11 @@ A lightweight framework for regression testing of Cascading Style Sheets.
 
 What?
 -----
-One picture says more than 1000 words:
+One picture might say more than 1000 words:
 
-<img src="http://cburgmer.github.io/csscritic-examples/testsuite_in_action.png" alt="CSS Critic testing the TodoMVC app">
+<img src="http://cburgmer.github.io/csscritic-examples/nicereporter_in_action.png" alt="CSS Critic testing the TodoMVC app">
 
-Need more than 1000 words? [Watch the screencast](http://youtu.be/AqQ2bNPtF60) or checkout [CSS Critic Examples](https://github.com/cburgmer/csscritic-examples) for a hands-on experience with example applications that have their UI tested. Fast forward to [see it in action testing the TodoMVC application](http://cburgmer.github.io/csscritic-examples/angularjs/).
+For background information [watch the screencast](http://youtu.be/AqQ2bNPtF60) or checkout [some examples](https://github.com/cburgmer/csscritic-examples) for a hands-on experience with an application that has its UI tested. Fast forward to [see it in action testing the TodoMVC application](http://cburgmer.github.io/csscritic-examples/angularjs/).
 
 Why?
 ----
