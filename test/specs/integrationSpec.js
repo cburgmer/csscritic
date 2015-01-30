@@ -1,7 +1,8 @@
 describe("Integration", function () {
     "use strict";
 
-    var theReferenceImageUri;
+    var windowLocation = {search: ''},
+        theReferenceImageUri;
 
     var util = csscriticLib.util(),
         csscritic;
@@ -10,16 +11,17 @@ describe("Integration", function () {
         var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
             domstorage = csscriticLib.domstorage(util, localStorage),
             reporting = csscriticLib.reporting(browserRenderer, domstorage, util),
-            regression = csscriticLib.regression(browserRenderer, util, imagediff);
+            regression = csscriticLib.regression(browserRenderer, util, imagediff),
+            urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
         var main = csscriticLib.main(
             regression,
             reporting,
             util,
-            domstorage);
+            domstorage,
+            urlQueryFilter);
 
-        var basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
-            basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
+        var niceReporter = csscriticLib.niceReporter(util, urlQueryFilter, csscriticLib.pageNavigationHandlingFallback(), 'dev');
 
         return {
             addReporter: reporting.addReporter,
@@ -27,12 +29,22 @@ describe("Integration", function () {
             add: main.add,
             execute: main.execute,
 
-            BasicHTMLReporter: basicHTMLReporter.BasicHTMLReporter
+            NiceReporter: niceReporter.NiceReporter
         };
     };
 
     beforeEach(function () {
         csscritic = aCssCriticInstance();
+    });
+
+    var originalTitle;
+
+    beforeEach(function () {
+        originalTitle = document.title;
+    });
+
+    afterEach(function () {
+        document.title = originalTitle;
     });
 
     beforeEach(function () {
@@ -52,17 +64,17 @@ describe("Integration", function () {
 
     afterEach(function () {
         localStorage.clear();
-        $("#csscritic_basichtmlreporter").remove();
+        $(".cssCriticNiceReporter").remove();
     });
 
     ifNotInPhantomIt("should complete in any browser", function (done) {
         var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
-        csscritic.addReporter(csscritic.BasicHTMLReporter());
+        csscritic.addReporter(csscritic.NiceReporter());
         csscritic.add(testPageUrl);
         csscritic.execute().then(function (passed) {
             expect(passed).toBe(false);
-            expect($("#csscritic_basichtmlreporter .referenceMissing.comparison")).toExist();
+            expect($(".cssCriticNiceReporter .referenceMissing.comparison")).toExist();
 
             done();
         });
@@ -134,16 +146,16 @@ describe("Integration", function () {
             referenceImageUri: theReferenceImageUri
         }));
 
-        csscritic.addReporter(csscritic.BasicHTMLReporter());
+        csscritic.addReporter(csscritic.NiceReporter());
         csscritic.add(testPageUrl);
         csscritic.execute().then(function () {
-            expect($("#csscritic_basichtmlreporter .failed.comparison")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .pageUrl").text()).toEqual(testPageUrl);
-            expect($("#csscritic_basichtmlreporter .comparison .loadErrors")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .loadErrors").text()).toContain("background_image_does_not_exist.jpg");
-            expect($("#csscritic_basichtmlreporter .comparison .differenceCanvasSection canvas")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .currentPageSection img")).toExist();
-            expect($("#csscritic_basichtmlreporter .comparison .referenceSection img")).toExist();
+            expect($(".cssCriticNiceReporter .failed.comparison")).toExist();
+            expect($(".cssCriticNiceReporter .comparison .titleLink").text()).toEqual(testPageUrl);
+            expect($(".cssCriticNiceReporter .comparison .errorText")).toExist();
+            expect($(".cssCriticNiceReporter .comparison .errorText").text()).toContain("background_image_does_not_exist.jpg");
+            expect($(".cssCriticNiceReporter .comparison .imageContainer img")).toExist();
+            expect($(".cssCriticNiceReporter .comparison .imageContainer canvas")).toExist();
+            expect($(".cssCriticNiceReporter .comparison .changedImageContainer canvas")).toExist();
 
             done();
         });
