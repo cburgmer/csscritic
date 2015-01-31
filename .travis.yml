@@ -5,11 +5,3 @@ env:
   - DISPLAY=:99.0
 before_script:
   - "sh -e /etc/init.d/xvfb start"
-deploy:
-  provider: npm
-  email: christoph.burgmer@gmail.com
-  api_key:
-    secure: EYvx4Q9/rT/AI+v1qDGLKzgkhYili1wDnnxAhijRQ5d2dgFLdZly96ZI70mhykq4EuXoLUKOfZgxES3vu4if1wNgLqh2ngJArrUppDEy53KLiIsdGFsXIG0t5Xa80RgFD7pYx5nb+ZaMyKXoIPVRp5F0t68s+6SOJhC8ZzmJTPs=
-  on:
-    tags: true
-    repo: cburgmer/csscritic
