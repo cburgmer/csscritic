@@ -1,7 +1,11 @@
 CSS Critic
 ==========
 
-A lightweight framework for regression testing of Cascading Style Sheets.
+<a href="https://www.npmjs.org/package/csscritic">
+    <img src="https://badge.fury.io/js/csscritic.svg"
+        align="right" alt="NPM version" height="18">
+</a>
+A lightweight tool for regression testing of Cascading Style Sheets.
 
 What?
 -----
@@ -51,11 +55,11 @@ CSS Critic checks your current layout constantly against a reference image you h
 
 *What do I do if my test fails?*
 
-1. Have a look at the diff image and visually check what has changed.
+1. Have a look at the diff image and visually inspect what has changed.
 
 2. If the change is an unwanted one fix your CSS,
 
-3. If deliberate generate a new reference image.
+3. If deliberate accept the change (generating a new reference image).
 
 Developing CSS Critic
 ---------------------
