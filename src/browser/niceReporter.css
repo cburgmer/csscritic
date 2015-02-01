@@ -138,6 +138,18 @@
     outline: none;
 }
 
+.cssCriticNiceReporter .progressBar .hasRenderErrors {
+    position: relative;
+}
+.cssCriticNiceReporter .progressBar .hasRenderErrors a::after {
+    content: '!';
+    color: black;
+    line-height: 1.26rem;
+    text-align: center;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+}
+
 /* Comparison */
 
 .cssCriticNiceReporter .comparison {

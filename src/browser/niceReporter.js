@@ -134,9 +134,12 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         return tick;
     };
 
-    var markTickDone = function (status, tickElement) {
+    var markTickDone = function (status, renderErrorCount, tickElement) {
         tickElement.classList.remove(progressBarPendingClassName);
         tickElement.classList.add(status);
+        if (renderErrorCount > 0) {
+            tickElement.classList.add('hasRenderErrors');
+        }
     };
 
     // status bar
@@ -585,7 +588,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
                 updateStatusInDocumentTitle(totalCount, doneCount);
                 updateStatusBar(container(), totalCount, selectedCount, issueCount, doneCount);
-                markTickDone(comparison.status, tickElement);
+                markTickDone(comparison.status, comparison.renderErrors.length, tickElement);
 
                 if (comparison.status === 'failed') {
                     showComparisonWithDiff(comparison.pageImage,
