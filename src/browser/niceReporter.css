@@ -12,7 +12,8 @@
 
 .cssCriticNiceReporter button {
     padding: 2px 10px;
-    border: 1px solid black;
+    border-radius: 3px;
+    border: none;
     background-color: rgb(0, 192, 78);
 
     /* Reset */
@@ -20,7 +21,7 @@
     font-family: inherit;
 }
 .cssCriticNiceReporter button[disabled] {
-    background-color: transparent;
+    background-color: #ddd;
 }
 .cssCriticNiceReporter button:hover {
     background-color: rgb(36, 214, 108)
