@@ -35,9 +35,10 @@ csscriticLib.regression = function (renderer, util, imagediff) {
         });
     };
 
-    var comparisonResult = function (textualStatus, viewport, renderErrors, pageImage, referenceImage) {
+    var comparisonResult = function (textualStatus, testCase, viewport, renderErrors, pageImage, referenceImage) {
         var result = {
             status: textualStatus,
+            testCase: testCase,
             viewport: util.clone(viewport),
             renderErrors: renderErrors
         };
@@ -60,13 +61,18 @@ csscriticLib.regression = function (renderer, util, imagediff) {
             height: viewport.height
         }).then(function (renderResult) {
             return compareRenderingAndReference(renderResult.image, referenceImage).then(function (textualStatus) {
-                return comparisonResult(textualStatus, viewport, renderResult.errors, renderResult.image, referenceImage);
+                return comparisonResult(textualStatus,
+                                        testCase,
+                                        viewport,
+                                        renderResult.errors,
+                                        renderResult.image,
+                                        referenceImage);
             });
         }, function () {
-            return comparisonResult("error", viewport, []);
-        }).then(function (comparison) {
-            comparison.testCase = testCase;
-            return comparison;
+            return comparisonResult("error",
+                                    testCase,
+                                    viewport,
+                                    []);
         });
     };
 
