@@ -92,6 +92,8 @@ var startWebserver = function (port) {
     }
 };
 
+// user actions
+
 var selectASingleTestCase = function () {
     document.querySelector('#pageThatDoesNotExist .titleLink').click();
 };
@@ -105,7 +107,7 @@ var runAll = function () {
 };
 
 var jumpToLastComparison = function () {
-    var progressElements = document.querySelectorAll('#progressBar li a'),
+    var progressElements = document.querySelectorAll('.progressBar li a'),
         lastElement = progressElements[progressElements.length - 1];
     lastElement.click();
 };
@@ -118,13 +120,16 @@ var getWindowScrollY = function () {
     return window.scrollY;
 };
 
+
 var regressionTestToExecute = function (page) {
     return function () {
         return page.evaluate(function () {
-            return document.querySelector('#header.fail');
+            return document.querySelector('.header.fail');
         });
     };
 };
+
+// poor man's asserts
 
 var assertEquals = function (value, expectedValue, name) {
     var expectation = "Expecting " + name + " to equal '" + expectedValue + "'";

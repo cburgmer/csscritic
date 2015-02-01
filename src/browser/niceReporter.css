@@ -54,20 +54,20 @@
 
 /* Header */
 
-.cssCriticNiceReporter #header {
+.cssCriticNiceReporter .header {
     padding: 15px;
     transition: background-color 1s;
 }
 
-.cssCriticNiceReporter #header.pass {
+.cssCriticNiceReporter .header.pass {
     background-color: rgb(0, 192, 78);
 }
 
-.cssCriticNiceReporter #header.fail {
+.cssCriticNiceReporter .header.fail {
     background-color: rgb(255, 49, 0);
 }
 
-.cssCriticNiceReporter #timeTaken {
+.cssCriticNiceReporter .timeTaken {
     float: right;
     padding: 0.5em 0 0 1em;
 }
@@ -96,19 +96,19 @@
 
 /* Progress bar */
 
-.cssCriticNiceReporter #progressBar {
+.cssCriticNiceReporter .progressBar {
     margin: 0.4em 0;
     list-style: none;
     padding: 0;
 }
 
-.cssCriticNiceReporter #progressBar li {
+.cssCriticNiceReporter .progressBar li {
     display: inline-block;
     margin-right: -0.4rem;
     transition: color 1s;
 }
 
-.cssCriticNiceReporter #progressBar a {
+.cssCriticNiceReporter .progressBar a {
     width: 0;
     height: 0;
     border-width: 0.63rem;
@@ -118,23 +118,23 @@
     display: block;
 }
 
-.cssCriticNiceReporter #progressBar .pending {
+.cssCriticNiceReporter .progressBar .pending {
     color: grey;
 }
-.cssCriticNiceReporter #progressBar .passed {
+.cssCriticNiceReporter .progressBar .passed {
     color: rgb(4, 131, 55);
 }
-.cssCriticNiceReporter #progressBar .failed {
+.cssCriticNiceReporter .progressBar .failed {
     color: rgb(182, 39, 5);
 }
-.cssCriticNiceReporter #progressBar .error {
+.cssCriticNiceReporter .progressBar .error {
     color: rgb(89, 17, 0);
 }
-.cssCriticNiceReporter #progressBar .referenceMissing {
+.cssCriticNiceReporter .progressBar .referenceMissing {
     color: rgb(255, 255, 0);
 }
 
-.cssCriticNiceReporter #progressBar a:focus {
+.cssCriticNiceReporter .progressBar a:focus {
     outline: none;
 }
 

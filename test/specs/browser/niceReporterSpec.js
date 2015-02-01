@@ -102,7 +102,7 @@ describe("Nice reporter", function () {
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
-        expect($fixture.find('#progressBar a').attr('href')).toEqual('#aPage.html');
+        expect($fixture.find('.progressBar a').attr('href')).toEqual('#aPage.html');
         expect($fixture.find('section').attr('id')).toEqual('aPage.html');
     });
 
@@ -111,7 +111,7 @@ describe("Nice reporter", function () {
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
-        expect($fixture.find('#progressBar a').attr('href')).toEqual('#aTest.html,width=42');
+        expect($fixture.find('.progressBar a').attr('href')).toEqual('#aTest.html,width=42');
         expect($fixture.find('section').attr('id')).toEqual('aTest.html,width=42');
     });
 

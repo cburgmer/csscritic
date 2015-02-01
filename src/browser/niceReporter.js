@@ -27,12 +27,20 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         return tmp.firstChild;
     };
 
-    // stuff
+    var findElementIn = function (container, elementClassName) {
+        return container.querySelector('.' + elementClassName);
+    };
 
-    var headerId = 'header',
-        timeTakenId = 'timeTaken',
-        progressBarId = 'progressBar',
-        statusTextId = 'statusText';
+    var escapeId = function (id) {
+        return id.replace(' ', '_', 'g');
+    };
+
+    // container
+
+    var headerClassName = 'header',
+        timeTakenClassName = 'timeTaken',
+        progressBarClassName = 'progressBar',
+        statusTextClassName = 'statusText';
 
     var createContainer = function (parentContainer) {
         var reportBody = elementFor('<div class="cssCriticNiceReporter"></div>');
@@ -45,30 +53,22 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     };
 
     var showHeader = function (container) {
-        var header = elementFor(template('<header id="{{headerId}}">' +
+        var header = elementFor(template('<header class="{{headerClassName}}">' +
                                          '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
                                          'CSS Critic {{packageVersion}}' +
                                          '</a>' +
-                                         '<span id="{{timeTakenId}}"></span>' +
-                                         '<ul id="{{progressBarId}}"></ul>' +
-                                         '<div id="{{statusTextId}}" class="statusText"></div>' +
+                                         '<span class="{{timeTakenClassName}}"></span>' +
+                                         '<ul class="{{progressBarClassName}}"></ul>' +
+                                         '<div class="{{statusTextClassName}}" class="statusText"></div>' +
                                          '</header>', {
-                                             headerId: headerId,
-                                             timeTakenId: timeTakenId,
-                                             progressBarId: progressBarId,
-                                             statusTextId: statusTextId,
+                                             headerClassName: headerClassName,
+                                             timeTakenClassName: timeTakenClassName,
+                                             progressBarClassName: progressBarClassName,
+                                             statusTextClassName: statusTextClassName,
                                              packageVersion: packageVersion
                                          }));
 
         container.appendChild(header);
-    };
-
-    var findElementIn = function (container, elementId) {
-        return container.querySelector('#' + elementId);
-    };
-
-    var escapeId = function (id) {
-        return id.replace(' ', '_', 'g');
     };
 
     // document title
@@ -100,12 +100,12 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     };
 
     var showTimeTaken = function (container, timeTakenInMillis) {
-        var timeTaken = findElementIn(container, timeTakenId);
+        var timeTaken = findElementIn(container, timeTakenClassName);
         timeTaken.textContent = "finished in " + renderMilliseconds(timeTakenInMillis) + "s";
     };
 
     var setOutcomeOnHeader = function (container, successful) {
-        var header = findElementIn(container, headerId);
+        var header = findElementIn(container, headerClassName);
 
         header.classList.add(successful ? 'pass' : 'fail');
     };
@@ -115,7 +115,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     var progressBarPendingClassName = 'pending';
 
     var addTickToProgressBar = function (container, title, linkTarget) {
-        var progressBar = findElementIn(container, progressBarId),
+        var progressBar = findElementIn(container, progressBarClassName),
             clickableTickTemplate = '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
             deactivatedTickTemplate = '<li><a title="{{title}}"></a></li>',
             tickTemplate = linkTarget ? clickableTickTemplate : deactivatedTickTemplate;
@@ -183,7 +183,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     };
 
     var showAcceptAllButtonIfNeccessary = function (container, acceptableEntries) {
-        var statusText = findElementIn(container, statusTextId),
+        var statusText = findElementIn(container, statusTextClassName),
             button = statusText.querySelector('.' + acceptAllClassName);
 
         if (acceptableEntries.length > 2) {
@@ -213,7 +213,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             runAll = elementFor(template('<a class="runAll" href="{{url}}">Run all</a>', {
                 url: runAllUrl
             })),
-            statusText = findElementIn(container, statusTextId);
+            statusText = findElementIn(container, statusTextClassName);
 
         statusText.innerHTML = '';
         statusText.appendChild(elementFor(statusTotalText(totalCount, selectedCount)));
