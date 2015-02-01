@@ -333,7 +333,7 @@
     font-size: 0.9rem;
     border-radius: 5px;
 
-    content: "< Hover over reference image to highlight changes";
+    content: "< Hover over the reference image to highlight changes";
 }
 .cssCriticNiceReporter .failed.comparison .imageContainer:hover::after {
     display: none;
