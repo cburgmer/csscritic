@@ -1,4 +1,4 @@
-csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandlingFallback, packageVersion) {
+csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandlingFallback, rasterizeHTML, packageVersion) {
     "use strict";
 
     var module = {};
@@ -475,29 +475,19 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
     // browser warning
 
-    var supportsReadingHtmlFromCanvas = function (callback) {
-        var canvas = document.createElement("canvas"),
-            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><foreignObject></foreignObject></svg>',
-            image = new Image();
-
-        image.onload = function () {
-            var context = canvas.getContext("2d");
+    var supportsReadingHtmlFromCanvas = function () {
+        return rasterizeHTML.drawHTML('<b></b>').then(function (result) {
+            var canvas = document.createElement("canvas"),
+                context = canvas.getContext("2d");
             try {
-                context.drawImage(image, 0, 0);
+                context.drawImage(result.image, 0, 0);
                 // This will fail in Chrome & Safari
                 canvas.toDataURL("image/png");
+                return true;
             } catch (e) {
-                callback(false);
-                return;
+                return false;
             }
-            callback(true);
-        };
-        if (!window.URL || !window.URL.createObjectURL || (navigator.userAgent.indexOf('WebKit') >= 0 && navigator.userAgent.indexOf('Chrome') <= 0)) {
-            // PhantomJS & Safari
-            image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-        } else {
-            image.src = window.URL.createObjectURL(new Blob([svg], {"type": "image/svg+xml;charset=utf-8"}));
-        }
+        });
     };
 
     var browserIssueChecked = false;
@@ -508,7 +498,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         }
         browserIssueChecked = true;
 
-        supportsReadingHtmlFromCanvas(function (supported) {
+        supportsReadingHtmlFromCanvas().then(function (supported) {
             if (supported) {
                 return;
             }

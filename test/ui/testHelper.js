@@ -221,11 +221,26 @@ window.testHelper = (function () {
         return basicHTMLReporter.BasicHTMLReporter();
     };
 
-    testHelper.constructNiceReporter = function () {
+    testHelper.constructNiceReporter = function (hasTaintedCanvasBug) {
         var util = csscriticLib.util(),
             packageVersion = '0.1.42',
             pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback({href: 'file://somepath'}),
-            niceReporter = csscriticLib.niceReporter(util, {filterFor: function () {}}, pageNavigationHandlingFallback, packageVersion);
+            mockPromise = function (result) {
+                return {then: function (callback) {
+                    callback(result);
+                    return mockPromise(result);
+                }};
+            },
+            mockRasterizeHTML = {
+                drawHTML: function () {
+                    return mockPromise(!hasTaintedCanvasBug);
+                }
+            },
+            niceReporter = csscriticLib.niceReporter(util,
+                                                     {filterFor: function () {}},
+                                                     pageNavigationHandlingFallback,
+                                                     mockRasterizeHTML,
+                                                     packageVersion);
 
         return niceReporter.NiceReporter();
     };

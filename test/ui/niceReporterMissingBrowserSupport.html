@@ -11,11 +11,10 @@
 <body>
     <script src="testHelper.js"></script>
     <script>
-        var reporter = testHelper.constructNiceReporter();
+     var hasTaintedCanvasBug = true,
+         reporter = testHelper.constructNiceReporter(hasTaintedCanvasBug);
 
         testHelper.setUp();
-
-        testHelper.mockTaintedCanvas();
 
         testHelper.comparisonP('referenceMissing').then(function (test) {
             reporter.reportSelectedComparison(test);

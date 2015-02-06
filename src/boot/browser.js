@@ -43,6 +43,7 @@ var csscritic = (function () {
             util,
             filter,
             needsFallback() ? pageNavigationHandlingFallback : undefined,
+            rasterizeHTML,
             packageVersion
         );
 

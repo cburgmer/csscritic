@@ -91,6 +91,7 @@ describe("Nice reporter", function () {
             util,
             selectionFilter,
             pageNavigationHandlingFallback,
+            rasterizeHTML,
             packageVersion
         ).NiceReporter($fixture.get(0));
 
@@ -353,21 +354,24 @@ describe("Nice reporter", function () {
 
             reporter.reportSelectedComparison(aPassedTest());
 
-            setTimeout(function () {
+            testHelper.waitsFor(function () {
+                return $(".browserWarning").length > 0;
+            }).then(function () {
                 expect($(".browserWarning")).toExist();
-
                 done();
-            }, 100);
+            });
         });
 
         ifNotInPhantomIt("should not show a warning if the browser is supported", function (done) {
             reporter.reportSelectedComparison(aPassedTest());
 
-            setTimeout(function () {
+            // Wait for the opposite until timeout
+            testHelper.waitsFor(function () {
+                return $(".browserWarning").length > 0;
+            }).then(null, function () {
                 expect($(".browserWarning")).not.toExist();
-
                 done();
-            }, 100);
+            });
         });
     });
 });

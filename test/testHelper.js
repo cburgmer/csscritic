@@ -129,5 +129,34 @@ window.testHelper = (function () {
         };
     };
 
+    var doWait = function (predicate, timeout, callback) {
+        var checkIntervalLengh = 100;
+
+        if (predicate()) {
+            callback(true);
+        } else if (timeout > 0) {
+            setTimeout(function () {
+                doWait(predicate, timeout - checkIntervalLengh, callback);
+            }, checkIntervalLengh);
+        } else {
+            callback(false);
+        }
+    };
+
+    module.waitsFor = function (predicate) {
+        var timeout = 2000,
+            defer = ayepromise.defer();
+
+        doWait(predicate, timeout, function (predicateResovled) {
+            if (predicateResovled) {
+                defer.resolve();
+            } else {
+                defer.reject();
+            }
+        });
+
+        return defer.promise;
+    };
+
     return module;
 }());

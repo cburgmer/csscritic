@@ -21,7 +21,11 @@ describe("Integration", function () {
             domstorage,
             urlQueryFilter);
 
-        var niceReporter = csscriticLib.niceReporter(util, urlQueryFilter, csscriticLib.pageNavigationHandlingFallback(), 'dev');
+        var niceReporter = csscriticLib.niceReporter(util,
+                                                     urlQueryFilter,
+                                                     csscriticLib.pageNavigationHandlingFallback(),
+                                                     rasterizeHTML,
+                                                     'dev');
 
         return {
             addReporter: reporting.addReporter,
