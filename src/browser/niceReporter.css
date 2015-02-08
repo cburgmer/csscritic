@@ -112,9 +112,7 @@
 .cssCriticNiceReporter .progressBar a {
     width: 0;
     height: 0;
-    border-width: 0.63rem;
-    border-style: solid;
-    border-color: inherit;
+    border: 0.63rem solid;
     border-radius: 50%;
     display: block;
 }
