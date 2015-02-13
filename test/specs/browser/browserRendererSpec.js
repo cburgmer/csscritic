@@ -46,6 +46,10 @@ describe("Browser renderer", function () {
             }));
         };
 
+        var setUpRasterizeHtmlToFail = function () {
+            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.failedPromise());
+        };
+
         ifNotInPhantomIt("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
             var theUrl = "the url",
                 theHtml = "some html";
@@ -77,7 +81,7 @@ describe("Browser renderer", function () {
         });
 
         ifNotInPhantomIt("should call the error handler if a page could not be rendered", function (done) {
-            spyOn(rasterizeHTML, "drawHTML").and.returnValue(testHelper.failedPromise());
+            setUpRasterizeHtmlToFail();
 
             browserRenderer.render({
                 url: testHelper.fixture("pageUnderTest.html"),

@@ -22,6 +22,8 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
 
     var logErrorToConsole = function (e) {
         console.error(e);
+
+        throw e;
     };
 
     var doRenderHtml = function (parameters) {
