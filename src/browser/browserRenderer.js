@@ -20,6 +20,10 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
         });
     };
 
+    var logErrorToConsole = function (e) {
+        console.error(e);
+    };
+
     var doRenderHtml = function (parameters) {
         var drawOptions = {
                 cache: 'repeated',
@@ -44,7 +48,7 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
                 image: result.image,
                 errors: renderErrors
             };
-        });
+        }, logErrorToConsole);
     };
 
     var enqueueRenderHtmlJob = function (parameters) {
