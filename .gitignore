@@ -9,3 +9,4 @@
 /dist/
 /packageVersion.js
 /.vagrant
+/.tern-port
