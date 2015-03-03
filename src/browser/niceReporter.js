@@ -260,7 +260,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     };
 
     var testCaseParameters = function (testCase) {
-        var parameters = util.excludeKey(testCase, 'url'),
+        var parameters = util.excludeKey(util.excludeKey(testCase, 'url'), 'desc'),
             keys = Object.keys(parameters);
 
         if (!keys.length) {
@@ -292,7 +292,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             filterUrl = selectionFilter.filterUrlFor ? selectionFilter.filterUrlFor(testCase.url) : '#',
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
                                              '<h3 class="title">' +
-                                             '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{url}}</a> ' +
+                                             '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{title}}</a> ' +
                                              '<a class="externalLink" href="{{url}}">↗</a>' +
                                              testCaseParameters(testCase) +
                                              '</h3>' +
@@ -300,6 +300,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                                              '<div><div class="{{imageContainerClassName}}"></div></div>' +
                                              '</section>', {
                                                  url: testCase.url,
+                                                 title: testCase.desc ? testCase.desc : testCase.url,
                                                  filterUrl: filterUrl,
                                                  id: escapeId(key),
                                                  runningComparisonClassName: runningComparisonClassName,
