@@ -8,9 +8,10 @@
 
     <script>
         window.onload = function() {
-            csscritic.addReporter(csscritic.NiceReporter());
-            csscritic.add('pageUnderTest.html');
-            csscritic.execute();
+            csscritic
+                .addReporter(csscritic.NiceReporter())
+                .add('pageUnderTest.html')
+                .execute();
         };
     </script>
 </head>

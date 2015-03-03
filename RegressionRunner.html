@@ -8,97 +8,98 @@
 
     <script>
         window.onload = function() {
-            csscritic.addReporter(csscritic.NiceReporter());
-            csscritic.add('test/ui/niceReporterPassedTest.html');
-            csscritic.add({
-                url: 'test/ui/niceReporterPassedTest.html',
-                hover: '.titleLink'
-            });
-            csscritic.add('test/ui/niceReporterFailingTest.html');
-            csscritic.add({
-                url: 'test/ui/niceReporterFailingTest.html',
-                hover: '.failed.comparison .imageContainer'
-            });
-            csscritic.add({
-                url: 'test/ui/niceReporterFailingTest.html',
-                hover: '.failed.comparison'
-            });
-            csscritic.add('test/ui/niceReporterFailingTestAccepted.html');
-            csscritic.add({
-                url: 'test/ui/niceReporterFailingTestWithGrowingContent.html',
-                hover: '.failed.comparison .imageContainer'
-            });
-            csscritic.add('test/ui/niceReporterMissingReference.html');
-            csscritic.add({
-                url: 'test/ui/niceReporterMissingReference.html',
-                hover: '.accept'
-            });
-            csscritic.add({
-                url: 'test/ui/niceReporterMissingReference.html',
-                active: '.accept'
-            });
-            csscritic.add('test/ui/niceReporterMissingReferenceAccepted.html');
-            csscritic.add('test/ui/niceReporterBrokenUrl.html');
-            csscritic.add('test/ui/niceReporterTestWithASingleParameter.html');
-            csscritic.add('test/ui/niceReporterTestWithMultipleParameters.html');
-            csscritic.add('test/ui/niceReporterTwoTests.html');
-            csscritic.add('test/ui/niceReporterStartingTest.html');
-            csscritic.add('test/ui/niceReporterStartingTestNoReference.html');
-            csscritic.add('test/ui/niceReporterOngoingRun.html');
-            csscritic.add('test/ui/niceReporterMissingBrowserSupport.html');
-            csscritic.add('test/ui/niceReporterPassedTestMissingResources.html');
-            csscritic.add('test/ui/niceReporterFailingTestMissingResources.html');
-            csscritic.add('test/ui/niceReporterMissingReferenceMissingResources.html');
-            csscritic.add('test/ui/niceReporterMultipleMissingReference.html');
-            csscritic.add('test/ui/niceReporterMultipleMissingReferencesAccepted.html');
-            csscritic.add('test/ui/niceReporterSelectedTest.html');
-            csscritic.add('test/ui/niceReporterSelectedTestWithMultipleFailing.html');
-            csscritic.add('test/ui/niceReporterProgressBarTarget.html');
-            csscritic.add('test/ui/failingTest.html');
-            csscritic.add({
-                url: 'test/ui/failingTest.html',
-                hover: '.failed.comparison'
-            });
-            csscritic.add({
-                url: 'test/ui/failingTest.html',
-                hover: '.updateHint button'
-            });
-            csscritic.add({
-                url: 'test/ui/failingNonResizableTest.html',
-                hover: '.comparison'
-            });
-            csscritic.add('test/ui/missingReference.html');
-            csscritic.add({
-                url: 'test/ui/missingReference.html',
-                hover: '.saveHint button'
-            });
-            csscritic.add({
-                url: 'test/ui/missingReference.html',
-                active: '.saveHint button',
-                hover: '.saveHint button'
-            });
-            csscritic.add({
-                url: 'test/ui/missingReferenceNonResizable.html',
-                hover: '.comparison'
-            });
-            csscritic.add('test/ui/passedTest.html');
-            csscritic.add('test/ui/missingPage.html');
-            csscritic.add('test/ui/failingTestMissingResources.html');
-            csscritic.add('test/ui/missingReferenceMissingResources.html');
-            csscritic.add('test/ui/passedTestMissingResources.html');
-            csscritic.add('test/ui/missingBrowserSupport.html');
-            csscritic.add('test/ui/durationCount.html');
-            csscritic.add('test/ui/startingTest.html');
-            csscritic.add('test/ui/previewTooltip.html');
-            csscritic.add('test/ui/testWithASingleParameter.html');
-            csscritic.add('test/ui/testWithMultipleParameters.html');
-            csscritic.add({
-                url: 'test/ui/statusBreakAround.html',
-                width: 550
-            });
-            csscritic.add('test/ui/twoTests.html');
-            csscritic.execute();
-        };
+            csscritic
+                .addReporter(csscritic.NiceReporter())
+                .add('test/ui/niceReporterPassedTest.html')
+                .add({
+                    url: 'test/ui/niceReporterPassedTest.html',
+                    hover: '.titleLink'
+                })
+                .add('test/ui/niceReporterFailingTest.html')
+                .add({
+                    url: 'test/ui/niceReporterFailingTest.html',
+                    hover: '.failed.comparison .imageContainer'
+                })
+                .add({
+                    url: 'test/ui/niceReporterFailingTest.html',
+                    hover: '.failed.comparison'
+                })
+                .add('test/ui/niceReporterFailingTestAccepted.html')
+                .add({
+                    url: 'test/ui/niceReporterFailingTestWithGrowingContent.html',
+                    hover: '.failed.comparison .imageContainer'
+                })
+                .add('test/ui/niceReporterMissingReference.html')
+                .add({
+                    url: 'test/ui/niceReporterMissingReference.html',
+                    hover: '.accept'
+                })
+                .add({
+                    url: 'test/ui/niceReporterMissingReference.html',
+                    active: '.accept'
+                })
+                .add('test/ui/niceReporterMissingReferenceAccepted.html')
+                .add('test/ui/niceReporterBrokenUrl.html')
+                .add('test/ui/niceReporterTestWithASingleParameter.html')
+                .add('test/ui/niceReporterTestWithMultipleParameters.html')
+                .add('test/ui/niceReporterTwoTests.html')
+                .add('test/ui/niceReporterStartingTest.html')
+                .add('test/ui/niceReporterStartingTestNoReference.html')
+                .add('test/ui/niceReporterOngoingRun.html')
+                .add('test/ui/niceReporterMissingBrowserSupport.html')
+                .add('test/ui/niceReporterPassedTestMissingResources.html')
+                .add('test/ui/niceReporterFailingTestMissingResources.html')
+                .add('test/ui/niceReporterMissingReferenceMissingResources.html')
+                .add('test/ui/niceReporterMultipleMissingReference.html')
+                .add('test/ui/niceReporterMultipleMissingReferencesAccepted.html')
+                .add('test/ui/niceReporterSelectedTest.html')
+                .add('test/ui/niceReporterSelectedTestWithMultipleFailing.html')
+                .add('test/ui/niceReporterProgressBarTarget.html')
+                .add('test/ui/failingTest.html')
+                .add({
+                    url: 'test/ui/failingTest.html',
+                    hover: '.failed.comparison'
+                })
+                .add({
+                    url: 'test/ui/failingTest.html',
+                    hover: '.updateHint button'
+                })
+                .add({
+                    url: 'test/ui/failingNonResizableTest.html',
+                    hover: '.comparison'
+                })
+                .add('test/ui/missingReference.html')
+                .add({
+                    url: 'test/ui/missingReference.html',
+                    hover: '.saveHint button'
+                })
+                .add({
+                    url: 'test/ui/missingReference.html',
+                    active: '.saveHint button',
+                    hover: '.saveHint button'
+                })
+                .add({
+                    url: 'test/ui/missingReferenceNonResizable.html',
+                    hover: '.comparison'
+                })
+                .add('test/ui/passedTest.html')
+                .add('test/ui/missingPage.html')
+                .add('test/ui/failingTestMissingResources.html')
+                .add('test/ui/missingReferenceMissingResources.html')
+                .add('test/ui/passedTestMissingResources.html')
+                .add('test/ui/missingBrowserSupport.html')
+                .add('test/ui/durationCount.html')
+                .add('test/ui/startingTest.html')
+                .add('test/ui/previewTooltip.html')
+                .add('test/ui/testWithASingleParameter.html')
+                .add('test/ui/testWithMultipleParameters.html')
+                .add({
+                    url: 'test/ui/statusBreakAround.html',
+                    width: 550
+                })
+                .add('test/ui/twoTests.html')
+                .execute();
+        }
     </script>
 </head>
 <body>

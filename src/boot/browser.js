@@ -2,6 +2,13 @@
 var csscritic = (function () {
     "use strict";
 
+    var installCallChain = function (func, self) {
+        return function chainableProxy() {
+            func.apply(null, arguments);
+            return self;
+        };
+    };
+
     var startsWith = function (str, prefix) {
         // PhantomJS has no startsWith
         return str.substr(0, prefix.length) === prefix;
@@ -47,13 +54,16 @@ var csscritic = (function () {
             packageVersion
         );
 
-    return {
-        add: main.add,
-        execute: main.execute,
 
-        addReporter: reporting.addReporter,
+    var self = {};
 
-        BasicHTMLReporter: basicHTMLReporter.BasicHTMLReporter,
-        NiceReporter: niceReporter.NiceReporter
-    };
+    self.add = installCallChain(main.add, self);
+    self.execute = main.execute;
+
+    self.addReporter = installCallChain(reporting.addReporter, self);
+
+    self.BasicHTMLReporter = basicHTMLReporter.BasicHTMLReporter;
+    self.NiceReporter = niceReporter.NiceReporter;
+
+    return self;
 }());
