@@ -228,6 +228,15 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         }
     };
 
+    // component headline
+
+    var addComponentHeading = function (container, headline) {
+        var headlineElement = elementFor(template('<h2>{{headline}}</h2>', {
+            headline: headline
+        }));
+        container.appendChild(headlineElement);
+    };
+
     // comparisons
 
     var comparisonKey = function (testCase) {
@@ -260,7 +269,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     };
 
     var testCaseParameters = function (testCase) {
-        var parameters = util.excludeKey(util.excludeKey(testCase, 'url'), 'desc'),
+        var parameters = util.excludeKey(util.excludeKey(util.excludeKey(testCase, 'url'), 'desc'), 'component'),
             keys = Object.keys(parameters);
 
         if (!keys.length) {
@@ -525,7 +534,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             progressTickElements = {},
             runningComparisonEntries = {},
             acceptableComparisons = [],
-            containerElement, timeStarted;
+            containerElement, timeStarted, lastComponentLabel;
 
         var container = function () {
             if (!containerElement) {
@@ -555,6 +564,11 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             reportSelectedComparison: function (comparison) {
                 var key = comparisonKey(comparison.testCase);
                 selectedCount += 1;
+
+                if (comparison.testCase.component && comparison.testCase.component !== lastComponentLabel) {
+                    lastComponentLabel = comparison.testCase.component;
+                    addComponentHeading(container(), comparison.testCase.component);
+                }
 
                 registerComparison();
 
