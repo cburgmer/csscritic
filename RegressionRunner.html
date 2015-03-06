@@ -10,11 +10,14 @@
         window.onload = function() {
             csscritic
                 .addReporter(csscritic.NiceReporter())
+                .component('Passing test')
                 .add('test/ui/niceReporterPassedTest.html')
                 .add({
                     url: 'test/ui/niceReporterPassedTest.html',
                     hover: '.titleLink'
                 })
+
+                .component('Failing test')
                 .add('test/ui/niceReporterFailingTest.html')
                 .add({
                     url: 'test/ui/niceReporterFailingTest.html',
@@ -29,6 +32,8 @@
                     url: 'test/ui/niceReporterFailingTestWithGrowingContent.html',
                     hover: '.failed.comparison .imageContainer'
                 })
+
+                .component('Missing reference')
                 .add('test/ui/niceReporterMissingReference.html')
                 .add({
                     url: 'test/ui/niceReporterMissingReference.html',
@@ -39,25 +44,43 @@
                     active: '.accept'
                 })
                 .add('test/ui/niceReporterMissingReferenceAccepted.html')
-                .add('test/ui/niceReporterPassedTestWithDescription.html')
+
+                .component('Broken test')
                 .add('test/ui/niceReporterBrokenUrl.html')
+
+                .component('Additional parameters')
+                .add('test/ui/niceReporterPassedTestWithDescription.html')
                 .add('test/ui/niceReporterTestWithASingleParameter.html')
                 .add('test/ui/niceReporterTestWithMultipleParameters.html')
-                .add('test/ui/niceReporterTwoTests.html')
+
+                .component('Starting run')
                 .add('test/ui/niceReporterStartingTest.html')
                 .add('test/ui/niceReporterStartingTestNoReference.html')
                 .add('test/ui/niceReporterOngoingRun.html')
-                .add('test/ui/niceReporterMissingBrowserSupport.html')
+
+                .component('Missing resources')
                 .add('test/ui/niceReporterPassedTestMissingResources.html')
                 .add('test/ui/niceReporterFailingTestMissingResources.html')
                 .add('test/ui/niceReporterMissingReferenceMissingResources.html')
+
+                .component('Accept all')
                 .add('test/ui/niceReporterMultipleMissingReference.html')
                 .add('test/ui/niceReporterMultipleMissingReferencesAccepted.html')
+
+                .component('Selection')
                 .add('test/ui/niceReporterSelectedTest.html')
                 .add('test/ui/niceReporterSelectedTestWithMultipleFailing.html')
+
+                .component('Component')
                 .add('test/ui/niceReporterComponentHeadline.html')
                 .add('test/ui/niceReporterComponentHeadlineMultiple.html')
+
+                .component('Other')
+                .add('test/ui/niceReporterTwoTests.html')
+                .add('test/ui/niceReporterMissingBrowserSupport.html')
                 .add('test/ui/niceReporterProgressBarTarget.html')
+
+                .component('BasicHTMLReporter')
                 .add('test/ui/failingTest.html')
                 .add({
                     url: 'test/ui/failingTest.html',
