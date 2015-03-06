@@ -112,18 +112,16 @@ module.exports = function (grunt) {
             },
             allinone: {
                 src: 'build/<%= pkg.name %>.umd.js',
-                dest: 'build/<%= pkg.name %>.allinone.js',
+                dest: 'dist/<%= pkg.name %>.allinone.js',
                 options: {
                     browserifyOptions: {
-                        standalone: 'csscritic'
+                        standalone: 'csscritic',
+                        debug: true
                     },
-                    transform: ['cssify']
-                }
-            }
-        },
-        uglify: {
-            allinone: {
-                options: {
+                    transform: ['cssify'],
+                    plugin: [
+                        ['minifyify', {map: '<%= pkg.name %>.allinone.js.map', output: 'dist/<%= pkg.name %>.allinone.js.map'}]
+                    ],
                     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
                         '* <%= pkg.homepage %>\n' +
@@ -138,9 +136,6 @@ module.exports = function (grunt) {
                         ' * css-font-face-src (BSD License),\n' +
                         ' * inlineresources (MIT License),\n' +
                         ' * rasterizeHTML.js (MIT License) */\n'
-                },
-                files: {
-                    'dist/<%= pkg.name %>.allinone.js': ['build/<%= pkg.name %>.allinone.js']
                 }
             }
         },
@@ -199,7 +194,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-csslint');
@@ -244,8 +238,7 @@ module.exports = function (grunt) {
         'concat',
         'umd',
         'cssmin',
-        'browserify:allinone',
-        'uglify'
+        'browserify:allinone'
     ]);
 
     grunt.registerTask('default', [
