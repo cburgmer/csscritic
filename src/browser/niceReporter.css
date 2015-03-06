@@ -5,6 +5,11 @@
     font-size: 16px;
 }
 
+.cssCriticNiceReporter h2 {
+    font-weight: normal;
+    margin: 1.2em 0 0.8em;
+}
+
 .cssCriticNiceReporter a {
     text-decoration: none;
     color: inherit;
