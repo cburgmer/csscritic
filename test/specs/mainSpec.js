@@ -110,6 +110,85 @@ describe("Main", function () {
                 done();
             });
         });
+
+        it("should augment the test case with the component's label for a test short specification form", function (done) {
+            setUpComparison("the_comparison");
+
+            csscritic.component('the component');
+            csscritic.add("test_case");
+            csscritic.execute().then(function () {
+                expect(regression.compare).toHaveBeenCalledWith(jasmine.objectContaining({
+                    testCase: {
+                        url: "test_case",
+                        component: 'the component'
+                    }
+                }));
+
+                done();
+            });
+        });
+
+        it("should augment the test case with the component's label for a test long specification form", function (done) {
+            setUpComparison("the_comparison");
+
+            csscritic.component('the component');
+            csscritic.add({
+                url: "test_case"
+            });
+            csscritic.execute().then(function () {
+                expect(regression.compare).toHaveBeenCalledWith(jasmine.objectContaining({
+                    testCase: {
+                        url: "test_case",
+                        component: 'the component'
+                    }
+                }));
+
+                done();
+            });
+        });
+
+        it("should augment the test case with the latest component's label", function (done) {
+            setUpComparison("the_comparison");
+
+            csscritic.component('the component');
+            csscritic.add({
+                url: "test_case"
+            });
+            csscritic.component('another component');
+            csscritic.add({
+                url: "another_test_case"
+            });
+            csscritic.execute().then(function () {
+                expect(regression.compare).toHaveBeenCalledWith(jasmine.objectContaining({
+                    testCase: {
+                        url: "another_test_case",
+                        component: 'another component'
+                    }
+                }));
+
+                done();
+            });
+        });
+
+        it("should not replace existing component's label", function (done) {
+            setUpComparison("the_comparison");
+
+            csscritic.component('the component');
+            csscritic.add({
+                url: "test_case",
+                component: 'pre-existing component'
+            });
+            csscritic.execute().then(function () {
+                expect(regression.compare).toHaveBeenCalledWith(jasmine.objectContaining({
+                    testCase: {
+                        url: "test_case",
+                        component: 'pre-existing component'
+                    }
+                }));
+
+                done();
+            });
+        });
     });
 
     describe("Reporting", function () {

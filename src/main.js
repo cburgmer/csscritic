@@ -3,7 +3,13 @@ csscriticLib.main = function (regression, reporting, util, storage, selectionFil
 
     var module = {};
 
-    var testCases = [];
+    var testCases = [],
+        currentComponentLabel;
+
+
+    module.component = function (componentLabel) {
+        currentComponentLabel = componentLabel;
+    };
 
 
     var supportUrlAsOnlyTestCaseInput = function (testCase) {
@@ -16,8 +22,15 @@ csscriticLib.main = function (regression, reporting, util, storage, selectionFil
     };
 
     module.add = function (testCase) {
-        testCases.push(supportUrlAsOnlyTestCaseInput(testCase));
+        var augmentedTestCase = util.clone(supportUrlAsOnlyTestCaseInput(testCase));
+
+        if (currentComponentLabel && augmentedTestCase.component === undefined) {
+            augmentedTestCase.component = currentComponentLabel;
+        }
+
+        testCases.push(augmentedTestCase);
     };
+
 
     var fetchStartingComparisons = function (testCases) {
         return util.all(testCases.map(function (testCase) {

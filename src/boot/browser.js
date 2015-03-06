@@ -58,6 +58,7 @@ var csscritic = (function () {
     var self = {};
 
     self.add = installCallChain(main.add, self);
+    self.component = installCallChain(main.component, self);
     self.execute = main.execute;
 
     self.addReporter = installCallChain(reporting.addReporter, self);
