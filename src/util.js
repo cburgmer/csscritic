@@ -128,11 +128,13 @@ csscriticLib.util = function () {
 
     };
 
-    module.excludeKey = function (theMap, excludedKey) {
-        var newMap = {};
+    // excludeKeys(theMap, excludeKey...)
+    module.excludeKeys = function (theMap) {
+        var excludeKeys = Array.prototype.slice.call(arguments, 1),
+            newMap = {};
 
         Object.keys(theMap).forEach(function (key) {
-            if (key !== excludedKey) {
+            if (excludeKeys.indexOf(key) === -1) {
                 newMap[key] = theMap[key];
             }
         });

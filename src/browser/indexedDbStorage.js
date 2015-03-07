@@ -23,7 +23,7 @@ csscriticLib.indexeddbstorage = function (util) {
     };
 
     var buildKey = function (testCase) {
-        var testCaseParameters = util.excludeKey(testCase, 'url'),
+        var testCaseParameters = util.excludeKeys(testCase, 'url'),
             serializedParameters = util.serializeMap(testCaseParameters),
             key = testCase.url;
 
@@ -74,12 +74,12 @@ csscriticLib.indexeddbstorage = function (util) {
 
             request.onsuccess = function () {
                 db.close();
-                
+
                 if (request.result === undefined || request.result.reference === undefined || request.result.reference.imageUri === undefined) {
                     defer.reject();
                     return;
                 }
-                
+
                 var dataObj = request.result.reference;
 
                 util.getImageForUrl(dataObj.imageUri).then(function (img) {

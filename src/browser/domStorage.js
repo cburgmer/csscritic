@@ -4,7 +4,7 @@ csscriticLib.domstorage = function (util, localStorage) {
     var module = {};
 
     var buildKey = function (testCase) {
-        var testCaseParameters = util.excludeKey(testCase, 'url'),
+        var testCaseParameters = util.excludeKeys(testCase, 'url'),
             serializedParameters = util.serializeMap(testCaseParameters),
             key = testCase.url;
 

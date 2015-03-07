@@ -190,9 +190,9 @@ describe("Utility", function () {
         });
     });
 
-    describe("excludeKey", function () {
+    describe("excludeKeys", function () {
         it("should exclude a given key", function () {
-            var result = util.excludeKey({
+            var result = util.excludeKeys({
                 theKey: 'theValue',
                 anotherKey: 'anotherValue'
             }, 'theKey');
@@ -202,8 +202,20 @@ describe("Utility", function () {
             });
         });
 
+        it("should exclude multiple keys", function () {
+            var result = util.excludeKeys({
+                firstKey: 'a value',
+                secondKey: 'another value',
+                andAnotherKey: 'yet another value'
+            }, 'firstKey', 'secondKey');
+
+            expect(result).toEqual({
+                andAnotherKey: 'yet another value'
+            });
+        });
+
         it("should return an empty map if no key left", function () {
-            var result = util.excludeKey({
+            var result = util.excludeKeys({
                 theKey: 'theValue'
             }, 'theKey');
 
@@ -211,7 +223,7 @@ describe("Utility", function () {
         });
 
         it("should return unchanged copy if key is not found", function () {
-            var result = util.excludeKey({
+            var result = util.excludeKeys({
                 theKey: 'theValue'
             }, 'anotherKey');
 

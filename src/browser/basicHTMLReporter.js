@@ -289,7 +289,7 @@ csscriticLib.basicHTMLReporter = function (util, reporterUtil, document) {
     };
 
     var testCaseParameters = function (comparison) {
-        var parameters = util.excludeKey(comparison.testCase, 'url'),
+        var parameters = util.excludeKeys(comparison.testCase, 'url'),
             keys = Object.keys(parameters);
 
         if (!keys.length) {

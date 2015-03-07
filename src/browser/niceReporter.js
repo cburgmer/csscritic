@@ -240,7 +240,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     // comparisons
 
     var comparisonKey = function (testCase) {
-        var testCaseParameters = util.excludeKey(testCase, 'url'),
+        var testCaseParameters = util.excludeKeys(testCase, 'url'),
             serializedParameters = util.serializeMap(testCaseParameters),
             key = testCase.url;
 
@@ -269,7 +269,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     };
 
     var testCaseParameters = function (testCase) {
-        var parameters = util.excludeKey(util.excludeKey(util.excludeKey(testCase, 'url'), 'desc'), 'component'),
+        var parameters = util.excludeKeys(testCase, 'url', 'desc', 'component'),
             keys = Object.keys(parameters);
 
         if (!keys.length) {
