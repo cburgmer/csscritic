@@ -53,17 +53,9 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
         }, logErrorToConsole);
     };
 
-    var enqueueRenderHtmlJob = function (parameters) {
-        // Execute render jobs one after another to stabilise rendering (especially JS execution).
-        // Also provides a more fluid response. Performance seems not to be affected.
-        return getOrCreateJobQueue().execute(function () {
-            return doRenderHtml(parameters);
-        });
-    };
-
     var renderHtmlFromBlob = function (blob, parameters) {
         return util.loadBlobAsText(blob).then(function (content) {
-            return enqueueRenderHtmlJob({
+            return doRenderHtml({
                 html: content,
                 baseUrl: parameters.url,
                 width: parameters.width,
@@ -89,10 +81,14 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
     };
 
     module.render = function (parameters) {
-        return util.loadAsBlob(parameters.url)
-            .then(function (blob) {
-                return loadImageFromBlob(blob, parameters);
-            });
+        // Execute render jobs one after another to stabilise rendering (especially JS execution).
+        // Also provides a more fluid response. Performance seems not to be affected.
+        return getOrCreateJobQueue().execute(function () {
+            return util.loadAsBlob(parameters.url)
+                .then(function (blob) {
+                    return loadImageFromBlob(blob, parameters);
+                });
+        });
     };
 
     return module;
