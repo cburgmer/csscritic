@@ -326,11 +326,11 @@
     transition: max-height 0.001s ease 1s, opacity 1s, border-width 0.001s ease 1s;
 }
 
-/* Tooltip for difference image */
-.cssCriticNiceReporter .failed.comparison:hover .imageContainer {
+/* Shared tooltip styles */
+.cssCriticNiceReporter .comparison .imageContainer {
     position: relative;
 }
-.cssCriticNiceReporter .failed.comparison:hover .imageContainer::after {
+.cssCriticNiceReporter .comparison:hover .imageContainer::after {
     position: absolute;
     top: 0;
     right: 0;
@@ -345,11 +345,19 @@
     color: white;
     font-size: 0.9rem;
     border-radius: 5px;
+}
 
+/* Tooltip for difference image */
+.cssCriticNiceReporter .failed.comparison:hover .imageContainer::after {
     content: "< Hover over the reference image to highlight changes";
 }
 .cssCriticNiceReporter .failed.comparison .imageContainer:hover::after {
     display: none;
+}
+
+/* Tooltip for real view */
+.cssCriticNiceReporter .passed.comparison .imageContainer:not(.realView):hover::after {
+    content: "< Double click the image to expose the DOM of the underlying page";
 }
 
 /* Warning for Chrome + Safari */
