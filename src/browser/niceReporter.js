@@ -449,6 +449,8 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         imageContainer.addEventListener('dblclick', function () {
             imageContainer.innerHTML = '';
             imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
+
+            imageContainer.classList.add('realView');
         }, false);
     };
 

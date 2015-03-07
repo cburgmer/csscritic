@@ -283,7 +283,12 @@
 
 .cssCriticNiceReporter .comparison iframe {
     border: none;
+    display: block;
     background: transparent;
+}
+
+.cssCriticNiceReporter .comparison .realView {
+    border-style: dashed;
 }
 
 /* Accept */
