@@ -432,11 +432,24 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, container));
     };
 
-    var showComparisonWithRenderedPage = function (pageImage, container) {
+    var pageAsIframe = function (pageImage, testCaseUrl) {
+        var iframe = document.createElement('iframe');
+        iframe.width = pageImage.width;
+        iframe.height = pageImage.height;
+        iframe.src = testCaseUrl;
+        return iframe;
+    };
+
+    var showComparisonWithRenderedPage = function (pageImage, testCaseUrl, container) {
         var imageContainer = container.querySelector('.' + imageContainerClassName);
 
         imageContainer.innerHTML = '';
         imageContainer.appendChild(imageWrapper(canvasForImage(pageImage)));
+
+        imageContainer.addEventListener('dblclick', function () {
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
+        }, false);
     };
 
     var showComparisonWithoutReference = function (pageImage, acceptPage, container) {
@@ -608,6 +621,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                     acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'passed') {
                     showComparisonWithRenderedPage(comparison.pageImage,
+                                                   comparison.testCase.url,
                                                    entry);
                 } else if (comparison.status === 'error') {
                     showComparisonWithError(comparison.testCase.url,

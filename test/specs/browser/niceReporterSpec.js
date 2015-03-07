@@ -191,6 +191,24 @@ describe("Nice reporter", function () {
         expect(thirdAccept).toHaveBeenCalled();
     });
 
+    ifNotInPhantomIt("should load the page in an iframe on double click", function () {
+        var test = aPassedTest();
+
+        reporter.reportSelectedComparison(test);
+        reporter.reportComparison(test);
+
+        // when
+        var event = new MouseEvent('dblclick');
+        $fixture.find('.imageContainer')[0].dispatchEvent(event);
+
+        // then
+        var $iframe = $fixture.find('.imageContainer iframe');
+        expect($iframe.length).toBe(1);
+        expect($iframe[0].width).toBe('' + anImage.width);
+        expect($iframe[0].height).toBe('' + anImage.height);
+        expect($iframe[0].src).toMatch(test.testCase.url);
+    });
+
     describe("selection", function () {
 
         it("should select tests by url", function () {

@@ -281,6 +281,11 @@
     bottom: 0;
 }
 
+.cssCriticNiceReporter .comparison iframe {
+    border: none;
+    background: transparent;
+}
+
 /* Accept */
 
 .cssCriticNiceReporter .comparison .accept {
