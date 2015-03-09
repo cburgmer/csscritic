@@ -11,6 +11,15 @@ describe("Fallback Filter", function () {
         };
     };
 
+    var aComparisonWithDescription = function (description, component) {
+        return {
+            testCase: {
+                desc: description,
+                component: component
+            }
+        };
+    };
+
     beforeEach(function () {
         windowLocation = jasmine.createSpyObj('window.location', ['reload']);
 
@@ -31,6 +40,18 @@ describe("Fallback Filter", function () {
         fallbackFilter.filterFor({url: 'the_selection'});
 
         expect(windowLocation.reload).toHaveBeenCalled();
+    });
+
+    it("should filter by desc if given", function () {
+        fallbackFilter.filterFor({desc: 'a description'});
+
+        expect(sessionStorage.getItem('csscriticFallbackFilter')).toEqual('a description');
+    });
+
+    it("should filter by desc and component if given", function () {
+        fallbackFilter.filterFor({desc: 'a description', component: 'some component'});
+
+        expect(sessionStorage.getItem('csscriticFallbackFilter')).toEqual('some component a description');
     });
 
     it("should clear the stored selection", function () {
@@ -61,5 +82,17 @@ describe("Fallback Filter", function () {
 
     it("should not filter if no selection stored", function () {
         expect(fallbackFilter.isComparisonSelected(aComparison('someUrl'))).toBe(true);
+    });
+
+    it("should filter selection matching by description", function () {
+        sessionStorage.setItem('csscriticFallbackFilter', 'some description');
+
+        expect(fallbackFilter.isComparisonSelected(aComparisonWithDescription('some description'))).toBe(true);
+    });
+
+    it("should filter selection matching by description and component", function () {
+        sessionStorage.setItem('csscriticFallbackFilter', 'some component some description');
+
+        expect(fallbackFilter.isComparisonSelected(aComparisonWithDescription('some description', 'some component'))).toBe(true);
     });
 });

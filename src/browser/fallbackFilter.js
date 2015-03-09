@@ -5,13 +5,33 @@ csscriticLib.fallbackFilter = function (windowLocation) {
 
     var storageKey = 'csscriticFallbackFilter';
 
+    var fullDescription = function (testCase) {
+        return testCase.component ? testCase.component + ' ' + testCase.desc : testCase.desc;
+    };
+
     module.isComparisonSelected = function (comparison) {
-        var selectedUrl = sessionStorage.getItem(storageKey);
-        return !selectedUrl || comparison.testCase.url === selectedUrl;
+        var filter = sessionStorage.getItem(storageKey);
+
+        if (!filter) {
+            return true;
+        }
+
+        if (comparison.testCase.desc && fullDescription(comparison.testCase) === filter) {
+            return true;
+        }
+
+        return !filter || comparison.testCase.url === filter;
     };
 
     module.filterFor = function (testCase) {
-        sessionStorage.setItem(storageKey, testCase.url);
+        var filter;
+
+        if (testCase.desc) {
+            filter = fullDescription(testCase);
+        } else {
+            filter = testCase.url;
+        }
+        sessionStorage.setItem(storageKey, filter);
 
         windowLocation.reload();
     };
