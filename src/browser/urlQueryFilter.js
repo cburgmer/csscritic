@@ -36,7 +36,7 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
         return pair.key;
     };
 
-    var getSelectedUrl = function () {
+    var getFilterValue = function () {
         var filterKeyValue = parseUrlSearch(windowLocation.search)
                 .filter(function (entryPair) {
                     return entryPair.key === filterParam;
@@ -48,13 +48,24 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
         }
     };
 
-    var selectedUrl = getSelectedUrl(),
+    var fullDescription = function (testCase) {
+        return testCase.component ? testCase.component + ' ' + testCase.desc : testCase.desc;
+    };
+
+    var filter = getFilterValue(),
         existingQueryParams = parseUrlSearch(windowLocation.search);
 
     // interface towards main.js
 
     module.isComparisonSelected = function (comparison) {
-        return !selectedUrl ||  comparison.testCase.url === selectedUrl;
+        if (!filter) {
+            return true;
+        }
+
+        if (comparison.testCase.desc) {
+            return fullDescription(comparison.testCase) === filter;
+        }
+        return comparison.testCase.url === filter;
     };
 
     // interface towards browser reporters
@@ -74,8 +85,11 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
         return '?' + queryParams.map(serializeKeyValuePair).join('&');
     };
 
-    module.filterUrlFor = function (selection) {
-        return queryPart(selection);
+    module.filterUrlFor = function (testCase) {
+        if (testCase.desc) {
+            return queryPart(fullDescription(testCase));
+        }
+        return queryPart(testCase.url);
     };
 
     module.clearFilterUrl = function () {

@@ -15,6 +15,15 @@ describe("Url Query Filter", function () {
         };
     };
 
+    var aComparisonWithDescription = function (description, component) {
+        return {
+            testCase: {
+                desc: description,
+                component: component
+            }
+        };
+    };
+
     beforeEach(function () {
         windowLocation = {
             search: ''
@@ -25,25 +34,35 @@ describe("Url Query Filter", function () {
     describe("selection", function () {
         it("should provide a filter url", function () {
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
-            expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?filter=aUrl.html');
+            expect(urlQueryFilter.filterUrlFor({url: 'aUrl.html'})).toEqual('?filter=aUrl.html');
         });
 
         it("should respect existing parameters", function () {
             windowLocation.search = '?some=other&val=ues';
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
-            expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?some=other&val=ues&filter=aUrl.html');
+            expect(urlQueryFilter.filterUrlFor({url: 'aUrl.html'})).toEqual('?some=other&val=ues&filter=aUrl.html');
         });
 
         it("should respect existing filter parameter", function () {
             windowLocation.search = '?some=other&filter=something&val=ues';
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
-            expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?some=other&val=ues&filter=aUrl.html');
+            expect(urlQueryFilter.filterUrlFor({url: 'aUrl.html'})).toEqual('?some=other&val=ues&filter=aUrl.html');
         });
 
         it("should deal with duplicate filter parameter", function () {
             windowLocation.search = '?some=other&filter=something&val=ues&filter=someMore';
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
-            expect(urlQueryFilter.filterUrlFor('aUrl.html')).toEqual('?some=other&val=ues&filter=aUrl.html');
+            expect(urlQueryFilter.filterUrlFor({url: 'aUrl.html'})).toEqual('?some=other&val=ues&filter=aUrl.html');
+        });
+
+        it("should provide a filter url for description if available", function () {
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+            expect(urlQueryFilter.filterUrlFor({desc: 'a description'})).toEqual('?filter=a%20description');
+        });
+
+        it("should provide a filter url for description and component if available", function () {
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+            expect(urlQueryFilter.filterUrlFor({component: 'the component', desc: 'a description'})).toEqual('?filter=the%20component%20a%20description');
         });
     });
 
@@ -119,6 +138,22 @@ describe("Url Query Filter", function () {
 
             expect(urlQueryFilter.isComparisonSelected(firstComparison)).toBe(false);
             expect(urlQueryFilter.isComparisonSelected(secondComparison)).toBe(true);
+        });
+
+        it("should match for a description", function () {
+            var comparison = aComparisonWithDescription('a description');
+            setFilter('a%20description');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+
+            expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(true);
+        });
+
+        it("should match for a description and component", function () {
+            var comparison = aComparisonWithDescription('a description', 'the component');
+            setFilter('the%20component%20a%20description');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+
+            expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(true);
         });
     });
 });
