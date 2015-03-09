@@ -227,7 +227,7 @@ describe("Nice reporter", function () {
             $fixture.find('#secondTest\\.html .titleLink').first().click();
 
             // then
-            expect(selectionFilter.filterFor).toHaveBeenCalledWith('secondTest.html');
+            expect(selectionFilter.filterFor).toHaveBeenCalledWith({url: 'secondTest.html'});
         });
 
         it("should include test selection url", function () {

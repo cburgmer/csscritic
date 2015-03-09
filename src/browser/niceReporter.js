@@ -289,10 +289,10 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             '</dl>';
     };
 
-    var installFallbackSelectionHandler = function (element, url) {
+    var installFallbackSelectionHandler = function (element, testCase) {
         if (selectionFilter.filterFor) {
             element.onclick = function (e) {
-                selectionFilter.filterFor(url);
+                selectionFilter.filterFor(testCase);
                 e.preventDefault();
             };
         }
@@ -325,7 +325,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         if (referenceImage) {
             imageContainer.appendChild(imageWrapper(referenceImage));
         }
-        installFallbackSelectionHandler(titleLink, testCase.url);
+        installFallbackSelectionHandler(titleLink, testCase);
 
         container.appendChild(comparison);
 

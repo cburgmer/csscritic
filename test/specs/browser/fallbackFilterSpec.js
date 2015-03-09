@@ -21,28 +21,14 @@ describe("Fallback Filter", function () {
         sessionStorage.clear();
     });
 
-    it("should return a dead URL for the filter URL", function () {
-        var theSelection = "the_selection";
-
-        expect(fallbackFilter.filterUrlFor(theSelection)).toEqual('#');
-    });
-
-    it("should return a dead URL for the clear URL", function () {
-        expect(fallbackFilter.clearFilterUrl()).toEqual('#');
-    });
-
     it("should store the selection in the sessionStorage", function () {
-        var theSelection = 'the_selection';
+        fallbackFilter.filterFor({url: 'the_selection'});
 
-        fallbackFilter.filterFor(theSelection);
-
-        expect(sessionStorage.getItem('csscriticFallbackFilter')).toEqual(theSelection);
+        expect(sessionStorage.getItem('csscriticFallbackFilter')).toEqual('the_selection');
     });
 
     it("should reload the runner on filter", function () {
-        var theSelection = 'the_selection';
-
-        fallbackFilter.filterFor(theSelection);
+        fallbackFilter.filterFor({url: 'the_selection'});
 
         expect(windowLocation.reload).toHaveBeenCalled();
     });

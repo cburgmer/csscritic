@@ -10,18 +10,10 @@ csscriticLib.fallbackFilter = function (windowLocation) {
         return !selectedUrl || comparison.testCase.url === selectedUrl;
     };
 
-    module.filterUrlFor = function () {
-        return '#';
-    };
-
-    module.filterFor = function (selection) {
-        sessionStorage.setItem(storageKey, selection);
+    module.filterFor = function (testCase) {
+        sessionStorage.setItem(storageKey, testCase.url);
 
         windowLocation.reload();
-    };
-
-    module.clearFilterUrl = function () {
-        return '#';
     };
 
     module.clearFilter = function () {
