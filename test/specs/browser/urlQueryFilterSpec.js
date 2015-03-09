@@ -31,7 +31,7 @@ describe("Url Query Filter", function () {
 
     });
 
-    describe("selection", function () {
+    describe("selection by test case", function () {
         it("should provide a filter url", function () {
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
             expect(urlQueryFilter.filterUrlFor({url: 'aUrl.html'})).toEqual('?filter=aUrl.html');
@@ -63,6 +63,13 @@ describe("Url Query Filter", function () {
         it("should provide a filter url for description and component if available", function () {
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
             expect(urlQueryFilter.filterUrlFor({component: 'the component', desc: 'a description'})).toEqual('?filter=the%20component%20a%20description');
+        });
+    });
+
+    describe("selection by component", function () {
+        it("should provide a filter url", function () {
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+            expect(urlQueryFilter.filterUrlForComponent('the component')).toEqual('?filter=the%20component');
         });
     });
 
@@ -151,6 +158,27 @@ describe("Url Query Filter", function () {
         it("should match for a description and component", function () {
             var comparison = aComparisonWithDescription('a description', 'the component');
             setFilter('the%20component%20a%20description');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+
+            expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(true);
+        });
+
+        it("should match for component only", function () {
+            var comparison = aComparisonWithDescription('a description', 'the component');
+            setFilter('the%20component');
+            var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
+
+            expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(true);
+        });
+
+        it("should match by url if no description is given", function () {
+            var comparison = {
+                testCase: {
+                    url: 'the_url',
+                    component: 'something'
+                }
+            };
+            setFilter('the_url');
             var urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
             expect(urlQueryFilter.isComparisonSelected(comparison)).toBe(true);

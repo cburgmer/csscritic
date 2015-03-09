@@ -82,7 +82,7 @@ describe("Nice reporter", function () {
 
     beforeEach(function () {
         var packageVersion = '1.2.3';
-        selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'clearFilter', 'clearFilterUrl']);
+        selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'filterUrlForComponent', 'clearFilter', 'clearFilterUrl']);
         var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback({href: 'file://somepath'});
 
         $fixture = setFixtures();
@@ -250,6 +250,16 @@ describe("Nice reporter", function () {
             reporter.reportComparison(aTest);
 
             expect($fixture.find('.titleLink').attr('href')).toEqual('#');
+        });
+
+        it("should link from the component headline", function () {
+            var aTest = aPassedTest({desc: 'a description', component: 'some component'});
+            selectionFilter.filterUrlForComponent.and.returnValue('the_component_filter_link');
+
+            reporter.reportSelectedComparison(aTest);
+            reporter.reportComparison(aTest);
+
+            expect($fixture.find('.componentLabel a').attr('href')).toEqual('the_component_filter_link');
         });
 
         it("should 'run all'", function () {

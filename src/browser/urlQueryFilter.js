@@ -62,8 +62,11 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
             return true;
         }
 
-        if (comparison.testCase.desc) {
-            return fullDescription(comparison.testCase) === filter;
+        if (comparison.testCase.desc && fullDescription(comparison.testCase) === filter) {
+            return true;
+        }
+        if (comparison.testCase.component && comparison.testCase.component === filter) {
+            return true;
         }
         return comparison.testCase.url === filter;
     };
@@ -83,6 +86,10 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
         }
 
         return '?' + queryParams.map(serializeKeyValuePair).join('&');
+    };
+
+    module.filterUrlForComponent = function (componentLabel) {
+        return queryPart(componentLabel);
     };
 
     module.filterUrlFor = function (testCase) {

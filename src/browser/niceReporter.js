@@ -231,9 +231,11 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     // component headline
 
     var addComponentHeading = function (container, headline) {
-        var headlineElement = elementFor(template('<h2>{{headline}}</h2>', {
-            headline: headline
-        }));
+        var filterUrl = selectionFilter.filterUrlForComponent ? selectionFilter.filterUrlForComponent(headline) : '#',
+            headlineElement = elementFor(template('<h2 class="componentLabel"><a href="{{filterUrl}}">{{headline}}</a></h2>', {
+                headline: headline,
+                filterUrl: filterUrl
+            }));
         container.appendChild(headlineElement);
     };
 
