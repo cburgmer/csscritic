@@ -17,7 +17,7 @@ For background information [watch the screencast](http://youtu.be/AqQ2bNPtF60) o
 
 Why?
 ----
-Your web stack should be fully testable - even your UI including CSS. CSS Critic can shine here. For example let it supervise changes to your project's styleguide so you know things are looking good.
+Your web stack should be fully testable - even your UI including CSS. CSS Critic can shine here. For example, let it supervise changes to your project's styleguide so you know things are looking good. CSS Critic should be a tool that's simple enough for a designer on a single project to use out-of-the-box.
 
 Install
 -------
