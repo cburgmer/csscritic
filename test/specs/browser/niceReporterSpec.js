@@ -98,22 +98,48 @@ describe("Nice reporter", function () {
         jasmine.addMatchers(imagediffForJasmine2);
     });
 
-    it("should link to comparison in progress bar", function () {
-        var test = aPassedTest();
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
+    describe("progress bar", function () {
+        it("should link to comparison in progress bar", function () {
+            var test = aPassedTest();
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
 
-        expect($fixture.find('.progressBar a').attr('href')).toEqual('#aPage.html');
-        expect($fixture.find('section').attr('id')).toEqual('aPage.html');
-    });
+            expect($fixture.find('.progressBar a').attr('href')).toEqual('#aPage.html');
+            expect($fixture.find('section').attr('id')).toEqual('aPage.html');
+        });
 
-    it("should link to comparison in progress bar with extended test case", function () {
-        var test = aPassedTest({url: 'aTest.html', width: 42});
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
+        it("should link to comparison in progress bar with extended test case", function () {
+            var test = aPassedTest({url: 'aTest.html', width: 42});
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
 
-        expect($fixture.find('.progressBar a').attr('href')).toEqual('#aTest.html,width=42');
-        expect($fixture.find('section').attr('id')).toEqual('aTest.html,width=42');
+            expect($fixture.find('.progressBar a').attr('href')).toEqual('#aTest.html,width=42');
+            expect($fixture.find('section').attr('id')).toEqual('aTest.html,width=42');
+        });
+
+        it("should expose a title for each blip", function () {
+            var test = aPassedTest({url: 'aTest.html', width: 42});
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            expect($fixture.find('.progressBar a').attr('title')).toEqual('aTest.html,width=42');
+        });
+
+        it("should expose a title for each blip with the description if present", function () {
+            var test = aPassedTest({url: 'aTest.html', width: 42, desc: 'the description'});
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            expect($fixture.find('.progressBar a').attr('title')).toEqual('the description');
+        });
+
+        it("should expose a title for each blip with the full description if present", function () {
+            var test = aPassedTest({url: 'aTest.html', width: 42, desc: 'the description', component: 'something'});
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            expect($fixture.find('.progressBar a').attr('title')).toEqual('something the description');
+        });
     });
 
     it("should link to the test case's href", function () {

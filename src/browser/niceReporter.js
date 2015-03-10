@@ -114,7 +114,17 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
     var progressBarPendingClassName = 'pending';
 
-    var addTickToProgressBar = function (container, title, linkTarget) {
+    var testDescription = function (testCase) {
+        var component;
+        if (testCase.desc) {
+            component = testCase.component ? testCase.component + ' ' : '';
+            return component + testCase.desc;
+        } else {
+            return comparisonKey(testCase);
+        }
+    };
+
+    var addTickToProgressBar = function (container, testCase, linkTarget) {
         var progressBar = findElementIn(container, progressBarClassName),
             clickableTickTemplate = '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
             deactivatedTickTemplate = '<li><a title="{{title}}"></a></li>',
@@ -122,7 +132,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
         var tick = elementFor(template(tickTemplate, {
             linkTarget: linkTarget ? escapeId(linkTarget) : '',
-            title: title
+            title: testDescription(testCase)
         }));
         tick.classList.add(progressBarPendingClassName);
         progressBar.appendChild(tick);
@@ -586,8 +596,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
             reportDeselectedComparison: function (comparison) {
                 registerComparison();
 
-                var key = comparisonKey(comparison.testCase);
-                addTickToProgressBar(container(), key);
+                addTickToProgressBar(container(), comparison.testCase);
             },
             reportSelectedComparison: function (comparison) {
                 var key = comparisonKey(comparison.testCase);
@@ -600,7 +609,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
                 registerComparison();
 
-                var tickElement = addTickToProgressBar(container(), key, key);
+                var tickElement = addTickToProgressBar(container(), comparison.testCase, key);
                 progressTickElements[key] = tickElement;
 
                 var comparisonElement = addComparison(container(),
