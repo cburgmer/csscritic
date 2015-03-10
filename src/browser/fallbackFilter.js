@@ -19,6 +19,9 @@ csscriticLib.fallbackFilter = function (windowLocation) {
         if (comparison.testCase.desc && fullDescription(comparison.testCase) === filter) {
             return true;
         }
+        if (comparison.testCase.component && comparison.testCase.component === filter) {
+            return true;
+        }
 
         return !filter || comparison.testCase.url === filter;
     };
@@ -32,6 +35,12 @@ csscriticLib.fallbackFilter = function (windowLocation) {
             filter = testCase.url;
         }
         sessionStorage.setItem(storageKey, filter);
+
+        windowLocation.reload();
+    };
+
+    module.filterForComponent = function (componentLabel) {
+        sessionStorage.setItem(storageKey, componentLabel);
 
         windowLocation.reload();
     };

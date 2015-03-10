@@ -230,12 +230,23 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
 
     // component headline
 
-    var addComponentHeading = function (container, headline) {
-        var filterUrl = selectionFilter.filterUrlForComponent ? selectionFilter.filterUrlForComponent(headline) : '#',
+    var installFallbackComponentSelectionHandler = function (element, componentLabel) {
+        if (selectionFilter.filterForComponent) {
+            element.onclick = function (e) {
+                selectionFilter.filterForComponent(componentLabel);
+                e.preventDefault();
+            };
+        }
+    };
+
+    var addComponentHeading = function (container, componentLabel) {
+        var filterUrl = selectionFilter.filterUrlForComponent ? selectionFilter.filterUrlForComponent(componentLabel) : '#',
             headlineElement = elementFor(template('<h2 class="componentLabel"><a href="{{filterUrl}}">{{headline}}</a></h2>', {
-                headline: headline,
+                headline: componentLabel,
                 filterUrl: filterUrl
             }));
+
+        installFallbackComponentSelectionHandler(headlineElement, componentLabel);
         container.appendChild(headlineElement);
     };
 

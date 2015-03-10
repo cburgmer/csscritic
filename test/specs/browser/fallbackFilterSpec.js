@@ -54,6 +54,16 @@ describe("Fallback Filter", function () {
         expect(sessionStorage.getItem('csscriticFallbackFilter')).toEqual('some component a description');
     });
 
+    it("should filter for component only", function () {
+        fallbackFilter.filterForComponent('the component');
+        expect(sessionStorage.getItem('csscriticFallbackFilter')).toEqual('the component');
+    });
+
+    it("should reload when filtering for component only", function () {
+        fallbackFilter.filterForComponent('the component');
+        expect(windowLocation.reload).toHaveBeenCalled();
+    });
+
     it("should clear the stored selection", function () {
         sessionStorage.setItem('csscriticFallbackFilter', 'some_selection');
 
@@ -92,6 +102,12 @@ describe("Fallback Filter", function () {
 
     it("should filter selection matching by description and component", function () {
         sessionStorage.setItem('csscriticFallbackFilter', 'some component some description');
+
+        expect(fallbackFilter.isComparisonSelected(aComparisonWithDescription('some description', 'some component'))).toBe(true);
+    });
+
+    it("should filter selection matching component only", function () {
+        sessionStorage.setItem('csscriticFallbackFilter', 'some component');
 
         expect(fallbackFilter.isComparisonSelected(aComparisonWithDescription('some description', 'some component'))).toBe(true);
     });

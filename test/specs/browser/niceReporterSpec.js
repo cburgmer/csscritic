@@ -82,7 +82,7 @@ describe("Nice reporter", function () {
 
     beforeEach(function () {
         var packageVersion = '1.2.3';
-        selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'filterUrlForComponent', 'clearFilter', 'clearFilterUrl']);
+        selectionFilter = jasmine.createSpyObj('selectionFilter', ['filterFor', 'filterUrlFor', 'filterForComponent', 'filterUrlForComponent', 'clearFilter', 'clearFilterUrl']);
         var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback({href: 'file://somepath'});
 
         $fixture = setFixtures();
@@ -211,7 +211,7 @@ describe("Nice reporter", function () {
 
     describe("selection", function () {
 
-        it("should select tests by url", function () {
+        it("should select tests by url (fallback)", function () {
             var firstPassedTest = aPassedTest({url: "firstTest.html"}),
                 secondPassedTest = aPassedTest({url: "secondTest.html"});
 
@@ -260,6 +260,27 @@ describe("Nice reporter", function () {
             reporter.reportComparison(aTest);
 
             expect($fixture.find('.componentLabel a').attr('href')).toEqual('the_component_filter_link');
+        });
+
+        it("should fallback to hash when component selection url is not provided", function () {
+            var aTest = aPassedTest({desc: 'a description', component: 'some component'});
+            selectionFilter.filterUrlForComponent = undefined;
+
+            reporter.reportSelectedComparison(aTest);
+            reporter.reportComparison(aTest);
+
+            expect($fixture.find('.componentLabel a').attr('href')).toEqual('#');
+        });
+
+        it("should filter by component headline (fallback)", function () {
+            var aTest = aPassedTest({desc: 'a description', component: 'some component'});
+
+            reporter.reportSelectedComparison(aTest);
+            reporter.reportComparison(aTest);
+
+            $fixture.find('.componentLabel a').click();
+
+            expect(selectionFilter.filterForComponent).toHaveBeenCalled();
         });
 
         it("should 'run all'", function () {
