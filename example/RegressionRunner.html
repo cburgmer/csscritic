@@ -10,7 +10,11 @@
         window.onload = function() {
             csscritic
                 .addReporter(csscritic.NiceReporter())
-                .add('pageUnderTest.html')
+                .component('Example test')
+                .add({
+                    url: 'pageUnderTest.html',
+                    desc: 'should look good'
+                })
                 .execute();
         };
     </script>

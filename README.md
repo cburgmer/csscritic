@@ -41,12 +41,12 @@ CSS Critic checks your current layout constantly against a reference image you h
     csscritic.add({
         url: 'SOME_URL',     // link to the test case HTML document
         // Optionally:
+        desc: 'some text',   // a description of the test case
         width: number,       // the viewport width in pixel
         height: number,      // the viewport height in pixel
         hover: 'A.SELECTOR', // element receiving an :hover effect
         active: 'A.SELECTOR' // element receiving an :active effect
     });
-    csscritic.execute();
     ```
 
 3. Open the RegressionRunner.html in Firefox for the first time and save the resulting image as future reference.
@@ -72,7 +72,7 @@ For tests install Node.js and run
 Limitations
 -----------
 
-- Currently works in Firefox only.
+- Currently works in Firefox and Chrome only.
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files. All files referenced need to be inside the same directory as the `RegressionRunner.html` or in ones below.
 - Because of the way the HTML is rendered to the canvas inside the browser form inputs and certain more esoteric pages might fail to render correctly. Do file an issue if you see something odd.
 
