@@ -460,6 +460,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         iframe.width = pageImage.width;
         iframe.height = pageImage.height;
         iframe.src = testCaseUrl;
+        iframe.scrolling = "no";
         return iframe;
     };
 
