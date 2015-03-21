@@ -77,6 +77,10 @@ describe('Migrate to IndexedDB storage', function () {
         return defer.promise;
     };
 
+    beforeEach(function () {
+        jasmine.addMatchers(imagediffForJasmine2);
+    });
+
     afterEach(function (done) {
         localStorage.clear();
 
@@ -91,9 +95,19 @@ describe('Migrate to IndexedDB storage', function () {
     });
 
     describe('ongoing migration', function () {
+        var imageUri, image;
+
+        beforeEach(function (done) {
+            imageUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=";
+            testHelper.loadImageFromUrl(imageUri, function (theImage) {
+                image = theImage;
+
+                done();
+            });
+        });
+
         ifNotInPhantomIt("should transfer referenceImage from localStorage to indexedDB", function (done) {
             var storage = constructStorage(util),
-                imageUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=",
                 testCaseUrl = "somePage.html";
 
             storeReferenceImageToDomStorage(testCaseUrl, JSON.stringify({
@@ -109,13 +123,16 @@ describe('Migrate to IndexedDB storage', function () {
             }).then(function (jsonResult) {
                 var result = JSON.parse(jsonResult);
 
-                expect(result.referenceImageUri).toEqual(imageUri);
                 expect(result.viewport).toEqual({
                     width: 12,
                     height: 34
                 });
 
-                done();
+                testHelper.loadImageFromUrl(result.referenceImageUri, function (referenceImage) {
+                    expect(referenceImage).toImageDiffEqual(image);
+
+                    done();
+                });
             });
         });
     });
