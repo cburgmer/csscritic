@@ -238,6 +238,10 @@
 .cssCriticNiceReporter .comparison .imageWrapper {
     /* Provides a background image that indicates transparency in the shown image, similar to e.g. the one in GIMP */
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAKUlEQVQ4jWNYt27df2Lwo0ePiMIMowaOGjgsDSRWIbEWjxo4auCwNBAAenk4PB4atggAAAAASUVORK5CYII=') -5px -5px repeat;
+    /* Disable selection of text following the image on double click of the imageContainer */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 .cssCriticNiceReporter .comparison img,
