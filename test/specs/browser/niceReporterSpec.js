@@ -418,6 +418,14 @@ describe("Nice reporter", function () {
 
             expect(document.title).toEqual("(2/2) a test title");
         });
+
+        it("should show an empty setup", function () {
+            document.title = "a test title";
+
+            reporter.reportTestSuite({success: false});
+
+            expect(document.title).toEqual("(0/0) a test title");
+        });
     });
 
     describe("Browser compatibility warning", function () {

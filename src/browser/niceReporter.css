@@ -103,6 +103,16 @@
     padding: 0;
 }
 
+.cssCriticNiceReporter .progressBar:empty::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border: 0.63rem solid;
+    border-radius: 50%;
+    display: inline-block;
+    opacity: 0.15;
+}
+
 .cssCriticNiceReporter .progressBar li {
     display: inline-block;
     margin-right: -0.4rem;

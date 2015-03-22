@@ -178,8 +178,16 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
     var statusIssueText = function (issueCount, selectedCount, doneCount) {
         var issueContent = '{{issues}} ' + singularPlural(issueCount, 'needs', 'need') + ' some love',
             doneContent = 'all good',
+            noTestsContent = "nothing here yet",
             doneWithoutErrors = selectedCount === doneCount && issueCount === 0,
-            content = doneWithoutErrors ? doneContent : issueContent;
+            content;
+        if (selectedCount === 0) {
+            content = noTestsContent;
+        } else if (doneWithoutErrors) {
+            content = doneContent;
+        } else {
+            content = issueContent;
+        }
         return template('<span>' +
                         content +
                         '</span>', {
@@ -667,6 +675,9 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                         entry: runningComparisonEntries[key]
                     };
                 });
+
+                updateStatusInDocumentTitle(totalCount, doneCount);
+                updateStatusBar(container(), totalCount, selectedCount, issueCount, doneCount);
 
                 showTimeTaken(container(), timeStarted ? Date.now() - timeStarted : 0);
                 setOutcomeOnHeader(container(), result.success);
