@@ -190,9 +190,10 @@ csscriticLib.util = function () {
         var nonPassingTestCases = comparisons.filter(function (comparison) {
                 return comparison.status !== "passed";
             }),
-            allPassed = nonPassingTestCases.length === 0;
+            allPassed = nonPassingTestCases.length === 0,
+            hasValidTestSetup = comparisons.length > 0;
 
-        return allPassed;
+        return hasValidTestSetup && allPassed;
     };
 
     module.all = function (functionReturnValues) {

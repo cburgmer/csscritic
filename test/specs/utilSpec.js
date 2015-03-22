@@ -295,9 +295,9 @@ describe("Utility", function () {
             expect(passed).toBe(false);
         });
 
-        it("should return true on an empty list of comparisons", function () {
+        it("should return false on an empty list of test cases", function () {
             var passed = util.hasTestSuitePassed([]);
-            expect(passed).toBe(true);
+            expect(passed).toBe(false);
         });
 
         it("should return false on a comparison that is not passed", function () {

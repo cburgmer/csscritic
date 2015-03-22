@@ -254,9 +254,9 @@ describe("Main", function () {
             expect(callback).toHaveBeenCalled();
         });
 
-        it("should call final report on empty test case list and report as successful", function (done) {
+        it("should call final report on empty test case list and report as failed", function (done) {
             csscritic.execute().then(function () {
-                expect(reporting.doReportTestSuite).toHaveBeenCalledWith(true);
+                expect(reporting.doReportTestSuite).toHaveBeenCalledWith(false);
 
                 done();
             });
