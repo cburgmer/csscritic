@@ -29,12 +29,6 @@ module.exports = function (grunt) {
                 command: 'phantomjs test/run-phantomjs-tests.js'
             },
             // Use grep to fail the build as slimerjs does not understand exitcodes
-            smokeTestLoaderBasicHTMLReporter: {
-                command: './node_modules/.bin/slimerjs test/smokeTestWithBasicHTMLReporter.js test/smokeTestLoader.html | grep "Smoke test successful"'
-            },
-            smokeTestBundleBasicHTMLReporter: {
-                command: './node_modules/.bin/slimerjs test/smokeTestWithBasicHTMLReporter.js test/smokeTestBundled.html | grep "Smoke test successful"'
-            },
             smokeTestLoader: {
                 command: './node_modules/.bin/slimerjs test/smokeTest.js test/smokeTestLoader.html | grep "Smoke test successful"'
             },
@@ -247,8 +241,6 @@ module.exports = function (grunt) {
         'build',
         'shell:smokeTestLoader',
         'shell:smokeTestBundle',
-        'shell:smokeTestLoaderBasicHTMLReporter',
-        'shell:smokeTestBundleBasicHTMLReporter',
         'regex-check'
     ]);
 

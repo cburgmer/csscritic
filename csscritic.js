@@ -10,7 +10,6 @@
     "use strict";
 
     var cssDependencies = [
-            'src/browser/basicHTMLReporter.css',
             'src/browser/niceReporter.css'
         ],
         jsDependencies = [
@@ -18,8 +17,6 @@
             'node_modules/imagediff/imagediff.js',
             'node_modules/ayepromise/ayepromise.js',
             'src/boot/scope.js',
-            'src/browser/basicHTMLReporterUtil.js',
-            'src/browser/basicHTMLReporter.js',
             'src/browser/pageNavigationHandlingFallback.js',
             'src/browser/niceReporter.js',
             'src/browser/browserRenderer.js',
