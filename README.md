@@ -74,7 +74,7 @@ Limitations
 
 - Currently works in Firefox and Chrome only.
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files. All files referenced need to be inside the same directory as the `RegressionRunner.html` or in ones below.
-- Because of the way the HTML is rendered to the canvas inside the browser form inputs and certain more esoteric pages might fail to render correctly. Do file an issue if you see something odd.
+- Because of the way the HTML is rendered internally certain limitations apply, see [the documentation of the render backend](https://github.com/cburgmer/rasterizeHTML.js/wiki/Limitations).
 
 For more information see the [FAQ](https://github.com/cburgmer/csscritic/wiki/FAQ) and [API](https://github.com/cburgmer/csscritic/wiki/API).
 
