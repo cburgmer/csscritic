@@ -48,12 +48,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
 
     var reportingMethod = function (reporter, isSelected) {
         if (isSelected) {
-            if (reporter.reportSelectedComparison) {
-                return reporter.reportSelectedComparison;
-            } else {
-                // legacy method name
-                return reporter.reportComparisonStarting;
-            }
+            return reporter.reportSelectedComparison;
         } else {
             return reporter.reportDeselectedComparison;
         }

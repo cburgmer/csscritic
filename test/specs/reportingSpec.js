@@ -60,25 +60,6 @@ describe("Reporting", function () {
             });
         });
 
-        it("should report a starting comparison using the old interface", function () {
-            var legacyReporter = jasmine.createSpyObj("Reporter", [
-                "reportComparisonStarting"
-            ]);
-            reporting.addReporter(legacyReporter);
-
-            reporting.doReportConfiguredComparison({
-                testCase: {
-                    url: "samplepage.html"
-                }
-            }, true);
-
-            expect(legacyReporter.reportComparisonStarting).toHaveBeenCalledWith({
-                testCase: {
-                    url: "samplepage.html"
-                }
-            });
-        });
-
         it("should make method optional", function () {
             var startingComparison = "blah";
 
