@@ -171,50 +171,6 @@
                     url: 'test/ui/niceReporterNoTests.html'
                 })
 
-                .component('BasicHTMLReporter')
-                .add('test/ui/failingTest.html')
-                .add({
-                    url: 'test/ui/failingTest.html',
-                    hover: '.failed.comparison'
-                })
-                .add({
-                    url: 'test/ui/failingTest.html',
-                    hover: '.updateHint button'
-                })
-                .add({
-                    url: 'test/ui/failingNonResizableTest.html',
-                    hover: '.comparison'
-                })
-                .add('test/ui/missingReference.html')
-                .add({
-                    url: 'test/ui/missingReference.html',
-                    hover: '.saveHint button'
-                })
-                .add({
-                    url: 'test/ui/missingReference.html',
-                    active: '.saveHint button',
-                    hover: '.saveHint button'
-                })
-                .add({
-                    url: 'test/ui/missingReferenceNonResizable.html',
-                    hover: '.comparison'
-                })
-                .add('test/ui/passedTest.html')
-                .add('test/ui/missingPage.html')
-                .add('test/ui/failingTestMissingResources.html')
-                .add('test/ui/missingReferenceMissingResources.html')
-                .add('test/ui/passedTestMissingResources.html')
-                .add('test/ui/missingBrowserSupport.html')
-                .add('test/ui/durationCount.html')
-                .add('test/ui/startingTest.html')
-                .add('test/ui/previewTooltip.html')
-                .add('test/ui/testWithASingleParameter.html')
-                .add('test/ui/testWithMultipleParameters.html')
-                .add({
-                    url: 'test/ui/statusBreakAround.html',
-                    width: 550
-                })
-                .add('test/ui/twoTests.html')
                 .execute();
         }
     </script>
