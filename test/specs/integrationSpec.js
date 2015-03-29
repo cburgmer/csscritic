@@ -9,8 +9,8 @@ describe("Integration", function () {
 
     var aCssCriticInstance = function () {
         var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-            domstorage = csscriticLib.domstorage(util, localStorage),
-            reporting = csscriticLib.reporting(browserRenderer, domstorage, util),
+            storage = csscriticLib.indexeddbstorage(util),
+            reporting = csscriticLib.reporting(browserRenderer, storage, util),
             regression = csscriticLib.regression(browserRenderer, util, imagediff),
             urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
@@ -18,7 +18,7 @@ describe("Integration", function () {
             regression,
             reporting,
             util,
-            domstorage,
+            storage,
             urlQueryFilter);
 
         var niceReporter = csscriticLib.niceReporter(util,
@@ -35,6 +35,53 @@ describe("Integration", function () {
 
             NiceReporter: niceReporter.NiceReporter
         };
+    };
+
+    var getDb = function () {
+        var defer = ayepromise.defer();
+
+        var request = indexedDB.open('csscritic', 1);
+        request.onsuccess = function (event) {
+            var db = event.target.result;
+            defer.resolve(db);
+        };
+        request.onupgradeneeded = function(event) {
+            var db = event.target.result;
+            db.createObjectStore('references', { keyPath: "testCase" });
+        };
+        return defer.promise;
+    };
+
+    var storeReferenceImage = function (key, data) {
+        var defer = ayepromise.defer();
+        getDb().then(function (db) {
+            var request = db.transaction(['references'], 'readwrite')
+                    .objectStore('references')
+                    .add({testCase: key, reference: data});
+
+            request.onsuccess = function () {
+                db.close();
+                defer.resolve();
+            };
+        });
+        return defer.promise;
+    };
+
+    var readReferenceImage = function (key) {
+        var defer = ayepromise.defer();
+
+        getDb().then(function (db) {
+            var request = db.transaction(['references'])
+                    .objectStore('references')
+                    .get(key);
+
+            request.onsuccess = function () {
+                db.close();
+                // TODO stop using JSON string as interface in test
+                defer.resolve(request.result.reference);
+            };
+        });
+        return defer.promise;
     };
 
     beforeEach(function () {
@@ -66,9 +113,11 @@ describe("Integration", function () {
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC8+QHYzUrJwyGFmgAAAABJRU5ErkJggg==";
     });
 
-    afterEach(function () {
-        localStorage.clear();
+    afterEach(function (done) {
         $(".cssCriticNiceReporter").remove();
+
+        var request = indexedDB.deleteDatabase('csscritic');
+        request.onsuccess = done;
     });
 
     ifNotInPhantomIt("should complete in any browser", function (done) {
@@ -90,10 +139,10 @@ describe("Integration", function () {
         util.getImageForUrl(testImageUrl).then(function (image) {
             var theReferenceImageUri = util.getDataURIForImage(image);
 
-            localStorage.setItem(testImageUrl, JSON.stringify({
-                referenceImageUri: theReferenceImageUri
-            }));
-
+            return storeReferenceImage(testImageUrl, {
+                imageUri: theReferenceImageUri
+            });
+        }).then(function () {
             csscritic.add(testImageUrl);
             csscritic.execute().then(function (passed) {
                 expect(passed).toBe(true);
@@ -106,17 +155,16 @@ describe("Integration", function () {
     ifNotInWebkitIt("should compare a page with its reference image and return true if similar", function (done) {
         var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
-        localStorage.setItem(testPageUrl, JSON.stringify({
-            referenceImageUri: theReferenceImageUri
-        }));
+        storeReferenceImage(testPageUrl, {
+            imageUri: theReferenceImageUri
+        }).then(function () {
+            csscritic.add(testPageUrl);
+            csscritic.execute().then(function (passed) {
+                expect(passed).toBe(true);
 
-        csscritic.add(testPageUrl);
-        csscritic.execute().then(function (passed) {
-            expect(passed).toBe(true);
-
-            done();
+                done();
+            });
         });
-
     });
 
     ifNotInWebkitIt("should store a reference when a result is accepted", function (done) {
@@ -130,15 +178,13 @@ describe("Integration", function () {
             expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object));
 
             reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(330, 151).then(function () {
-                var referenceObjString, referenceObj;
-
                 reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-                referenceObjString = localStorage.getItem(testPageUrl);
-                referenceObj = JSON.parse(referenceObjString);
-                expect(referenceObj.referenceImageUri).toEqual(theReferenceImageUri);
+                readReferenceImage(testPageUrl).then(function (referenceObj) {
+                    expect(referenceObj.imageUri).toEqual(theReferenceImageUri);
 
-                done();
+                    done();
+                });
             });
         });
     });
@@ -146,22 +192,22 @@ describe("Integration", function () {
     ifNotInWebkitIt("should properly report a failing comparison", function (done) {
         var testPageUrl = testHelper.fixture("brokenPage.html");
 
-        localStorage.setItem(testPageUrl, JSON.stringify({
-            referenceImageUri: theReferenceImageUri
-        }));
+        storeReferenceImage(testPageUrl, {
+            imageUri: theReferenceImageUri
+        }).then(function () {
+            csscritic.addReporter(csscritic.NiceReporter());
+            csscritic.add(testPageUrl);
+            csscritic.execute().then(function () {
+                expect($(".cssCriticNiceReporter .failed.comparison")).toExist();
+                expect($(".cssCriticNiceReporter .comparison .titleLink").text()).toEqual(testPageUrl);
+                expect($(".cssCriticNiceReporter .comparison .errorText")).toExist();
+                expect($(".cssCriticNiceReporter .comparison .errorText").text()).toContain("background_image_does_not_exist.jpg");
+                expect($(".cssCriticNiceReporter .comparison .imageContainer img")).toExist();
+                expect($(".cssCriticNiceReporter .comparison .imageContainer canvas")).toExist();
+                expect($(".cssCriticNiceReporter .comparison .changedImageContainer canvas")).toExist();
 
-        csscritic.addReporter(csscritic.NiceReporter());
-        csscritic.add(testPageUrl);
-        csscritic.execute().then(function () {
-            expect($(".cssCriticNiceReporter .failed.comparison")).toExist();
-            expect($(".cssCriticNiceReporter .comparison .titleLink").text()).toEqual(testPageUrl);
-            expect($(".cssCriticNiceReporter .comparison .errorText")).toExist();
-            expect($(".cssCriticNiceReporter .comparison .errorText").text()).toContain("background_image_does_not_exist.jpg");
-            expect($(".cssCriticNiceReporter .comparison .imageContainer img")).toExist();
-            expect($(".cssCriticNiceReporter .comparison .imageContainer canvas")).toExist();
-            expect($(".cssCriticNiceReporter .comparison .changedImageContainer canvas")).toExist();
-
-            done();
+                done();
+            });
         });
     });
 
@@ -191,5 +237,4 @@ describe("Integration", function () {
             });
         });
     });
-
 });
