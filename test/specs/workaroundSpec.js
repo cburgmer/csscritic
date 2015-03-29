@@ -18,16 +18,16 @@ describe("Workarounds", function () {
     beforeEach(function () {
         var util = csscriticLib.util(),
             browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-            domstorage = csscriticLib.domstorage(util, localStorage),
+            storage = csscriticLib.indexeddbstorage(util),
             regression = csscriticLib.regression(browserRenderer, util, imagediff);
 
-        reporting = csscriticLib.reporting(browserRenderer, domstorage, util);
+        reporting = csscriticLib.reporting(browserRenderer, storage, util);
 
         main = csscriticLib.main(
             regression,
             reporting,
             util,
-            domstorage);
+            storage);
     });
 
     afterEach(function () {
