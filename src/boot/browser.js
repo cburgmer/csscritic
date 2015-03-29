@@ -22,12 +22,10 @@ var csscritic = (function () {
     var packageVersion = csscriticLib.packageVersion || 'dev',
         util = csscriticLib.util();
 
-    var domStorage = csscriticLib.domstorage(util, localStorage),
-        indexedDbStorage = csscriticLib.indexeddbstorage(util),
-        migrateToIndexedDbStorage = csscriticLib.migratetoindexeddbstorage(domStorage, indexedDbStorage);
+    var indexedDbStorage = csscriticLib.indexeddbstorage(util);
 
     var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-        reporting = csscriticLib.reporting(browserRenderer, migrateToIndexedDbStorage, util),
+        reporting = csscriticLib.reporting(browserRenderer, indexedDbStorage, util),
         regression = csscriticLib.regression(browserRenderer, util, imagediff),
         queryFilter = csscriticLib.urlQueryFilter(window.location),
         fallbackFilter = csscriticLib.fallbackFilter(window.location);
@@ -38,7 +36,7 @@ var csscritic = (function () {
         regression,
         reporting,
         util,
-        migrateToIndexedDbStorage,
+        indexedDbStorage,
         filter
     );
 
