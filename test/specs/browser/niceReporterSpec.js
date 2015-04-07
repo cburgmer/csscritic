@@ -78,6 +78,13 @@ describe("Nice reporter", function () {
         return canvas.getContext("2d").createImageData(1, 1);
     };
 
+    var fakeWindow, scrollEventListener;
+
+    var scrollTo = function (scrollY) {
+        fakeWindow.scrollY = scrollY;
+        scrollEventListener();
+    };
+
     var $fixture;
 
     beforeEach(function () {
@@ -87,7 +94,17 @@ describe("Nice reporter", function () {
 
         $fixture = setFixtures();
 
+        fakeWindow = {
+            scrollY: 0,
+            addEventListener: function (event, handler) {
+                if (event === 'scroll') {
+                    scrollEventListener = handler;
+                }
+            }
+        };
+
         reporter = csscriticLib.niceReporter(
+            fakeWindow,
             util,
             selectionFilter,
             pageNavigationHandlingFallback,
@@ -425,6 +442,80 @@ describe("Nice reporter", function () {
             reporter.reportTestSuite({success: false});
 
             expect(document.title).toEqual("(0/0) a test title");
+        });
+    });
+
+    describe("Fixed header", function () {
+        it("should fix header on scroll", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(42);
+
+            var header = $fixture.find('header')[0];
+
+            expect(header.style.position).toBe('fixed');
+            expect(header.style.top).not.toBe('');
+            expect(header.style.left).not.toBe('');
+            expect(header.style.right).not.toBe('');
+        });
+
+        it("should reset header on scroll back", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(100);
+            scrollTo(0);
+
+            var header = $fixture.find('header')[0];
+
+            expect(header.style.position).toBe('');
+            expect(header.style.top).toBe('');
+            expect(header.style.left).toBe('');
+            expect(header.style.right).toBe('');
+        });
+
+        it("should not fix header initially", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            expect($fixture.find('header')[0].style.position).toBe('');
+        });
+
+        it("should place a pseudo header as height placeholder", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(42);
+
+            var header = $fixture.find('header')[0];
+            expect(header.previousElementSibling).not.toBe(null);
+            expect(header.previousElementSibling.style.height).not.toBe('');
+        });
+
+        it("should remove pseudo header on scroll back", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(100);
+            scrollTo(0);
+
+            var header = $fixture.find('header')[0];
+            expect(header.previousElementSibling).toBe(null);
+        });
+
+        it("should set a className", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(42);
+
+            var header = $fixture.find('header')[0];
+            expect(header.classList.contains('scrolling')).toBe(true);
+        });
+
+        it("should remove className on scroll back", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(100);
+            scrollTo(0);
+
+            var header = $fixture.find('header')[0];
+            expect(header.classList.contains('scrolling')).toBe(false);
         });
     });
 

@@ -42,6 +42,7 @@ var csscritic = (function () {
 
     var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback(window.location),
         niceReporter = csscriticLib.niceReporter(
+            window,
             util,
             filter,
             needsFallback() ? pageNavigationHandlingFallback : undefined,

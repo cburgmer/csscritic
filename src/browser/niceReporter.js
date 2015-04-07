@@ -1,4 +1,4 @@
-csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandlingFallback, rasterizeHTML, packageVersion) {
+csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigationHandlingFallback, rasterizeHTML, packageVersion) {
     "use strict";
 
     var module = {};

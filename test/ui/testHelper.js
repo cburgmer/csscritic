@@ -236,7 +236,8 @@ window.testHelper = (function () {
                     return mockPromise(!hasTaintedCanvasBug);
                 }
             },
-            niceReporter = csscriticLib.niceReporter(util,
+            niceReporter = csscriticLib.niceReporter({addEventListener: function () {}},
+                                                     util,
                                                      {filterFor: function () {}},
                                                      pageNavigationHandlingFallback,
                                                      mockRasterizeHTML,

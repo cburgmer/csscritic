@@ -21,7 +21,8 @@ describe("Integration", function () {
             storage,
             urlQueryFilter);
 
-        var niceReporter = csscriticLib.niceReporter(util,
+        var niceReporter = csscriticLib.niceReporter(window,
+                                                     util,
                                                      urlQueryFilter,
                                                      csscriticLib.pageNavigationHandlingFallback(),
                                                      rasterizeHTML,
