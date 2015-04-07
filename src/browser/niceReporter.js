@@ -52,6 +52,63 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
         return reportBody;
     };
 
+    var elementDimensions = function (element) {
+        var initialPosition = element.getBoundingClientRect(),
+            scrollOffsetTop = document.body.scrollTop || document.documentElement.scrollTop,
+            scrollOffsetLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+
+        return {
+            top: initialPosition.top + scrollOffsetTop,
+            left: initialPosition.left + scrollOffsetLeft,
+            right: initialPosition.right - initialPosition.width + scrollOffsetLeft,
+            height: initialPosition.height
+        };
+    };
+
+    var px = function (value) {
+        return value + 'px';
+    };
+
+    var makeElementFixedOnScroll = function (element) {
+        var scrollingClass = 'scrolling',
+            isScrolling = false,
+            pseudoInlineElement = document.createElement('div'),
+            dimensions;
+
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 0) {
+                if (! isScrolling) {
+                    isScrolling = true;
+
+                    dimensions = elementDimensions(element);
+
+                    element.classList.add(scrollingClass);
+
+                    element.style.position = 'fixed';
+                    element.style.top = px(dimensions.top);
+                    element.style.left = px(dimensions.left);
+                    element.style.right = px(dimensions.right);
+
+                    pseudoInlineElement.style.height = px(dimensions.height);
+                    element.parentElement.insertBefore(pseudoInlineElement, element);
+                }
+            } else {
+                if (isScrolling) {
+                    isScrolling = false;
+
+                    element.classList.remove(scrollingClass);
+
+                    element.style.position = '';
+                    element.style.top = '';
+                    element.style.left = '';
+                    element.style.right = '';
+
+                    element.parentElement.removeChild(pseudoInlineElement);
+                }
+            }
+        });
+    };
+
     var showHeader = function (container) {
         var header = elementFor(template('<header class="{{headerClassName}}">' +
                                          '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
@@ -68,6 +125,7 @@ csscriticLib.niceReporter = function (util, selectionFilter, pageNavigationHandl
                                              packageVersion: packageVersion
                                          }));
 
+        makeElementFixedOnScroll(header);
         container.appendChild(header);
     };
 
