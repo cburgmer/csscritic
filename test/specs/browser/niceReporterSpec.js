@@ -122,7 +122,7 @@ describe("Nice reporter", function () {
             reporter.reportComparison(test);
 
             expect($fixture.find('.progressBar a').attr('href')).toEqual('#aPage.html');
-            expect($fixture.find('section').attr('id')).toEqual('aPage.html');
+            expect($fixture.find('.fixedHeaderAnchorTarget').attr('id')).toEqual('aPage.html');
         });
 
         it("should link to comparison in progress bar with extended test case", function () {
@@ -131,7 +131,7 @@ describe("Nice reporter", function () {
             reporter.reportComparison(test);
 
             expect($fixture.find('.progressBar a').attr('href')).toEqual('#aTest.html,width=42');
-            expect($fixture.find('section').attr('id')).toEqual('aTest.html,width=42');
+            expect($fixture.find('.fixedHeaderAnchorTarget').attr('id')).toEqual('aTest.html,width=42');
         });
 
         it("should expose a title for each blip", function () {
@@ -282,7 +282,7 @@ describe("Nice reporter", function () {
             reporter.reportTestSuite({success: true});
 
             // when
-            $fixture.find('#secondTest\\.html .titleLink').first().click();
+            $fixture.find('#secondTest\\.html').parent().find('.titleLink').click();
 
             // then
             expect(selectionFilter.filterFor).toHaveBeenCalledWith({url: 'secondTest.html'});

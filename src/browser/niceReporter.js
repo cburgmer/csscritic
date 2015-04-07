@@ -388,7 +388,8 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     var addComparison = function (container, testCase, referenceImage, key) {
         var titleLinkClassName = 'titleLink',
             filterUrl = selectionFilter.filterUrlFor ? selectionFilter.filterUrlFor(testCase) : '#',
-            comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}" id="{{id}}">' +
+            comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}">' +
+                                             '<span class="fixedHeaderAnchorTarget" id="{{id}}"></span>' +
                                              '<h3 class="title">' +
                                              '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{title}}</a> ' +
                                              '<a class="externalLink" href="{{url}}">↗</a>' +

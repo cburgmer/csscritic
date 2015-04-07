@@ -95,7 +95,7 @@ var startWebserver = function (port) {
 // user actions
 
 var selectASingleTestCase = function () {
-    document.querySelector('#pageThatDoesNotExist\\,component\\=some_component .titleLink').click();
+    document.querySelector('#pageThatDoesNotExist\\,component\\=some_component').parentElement.querySelector('.titleLink').click();
 };
 
 var getComparisonCount = function () {
