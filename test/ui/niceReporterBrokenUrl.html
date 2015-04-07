@@ -15,10 +15,11 @@
 
         testHelper.setUp();
 
-        var test = testHelper.comparison('error');
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
-        reporter.reportTestSuite(testHelper.failingTestSuite());
+        testHelper.comparisonP('error').then(function (test) {
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+            reporter.reportTestSuite(testHelper.failingTestSuite());
+        });
     </script>
 </body>
 </html>

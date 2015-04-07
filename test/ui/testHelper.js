@@ -71,26 +71,18 @@ window.testHelper = (function () {
 
         var defer = cheapPromise();
 
-        pageImage.onload = function() {
-            defer.resolve(aComparison(status, testCase, pageImage, renderErrors || [], resizable));
-        };
-        return defer.promise;
-    };
-
-    testHelper.comparison = function (status, testCase, renderErrors, resizable) {
-        var mocks = setUpMocks(),
-            pageImage;
-
-        testCase = testCase || {};
-        testCase.url = testCase.url || "aPage.html";
+        var comparison = aComparison(status, testCase, pageImage, renderErrors || [], resizable);
 
         if (status === 'error') {
-            pageImage = null;
+            setTimeout(function () {
+                defer.resolve(comparison);
+            }, 1);
         } else {
-            pageImage = mocks.image();
+            pageImage.onload = function() {
+                defer.resolve(comparison);
+            };
         }
-
-        return aComparison(status, testCase, pageImage, renderErrors || [], resizable);
+        return defer.promise;
     };
 
     testHelper.comparisonWithLargerPageImage = function () {
@@ -137,52 +129,11 @@ window.testHelper = (function () {
         };
     };
 
-    testHelper.increasePageImageSizeToShowTransparentBackground = function () {
-        var elements = document.getElementsByClassName("currentPageResizableCanvas");
-        Array.prototype.forEach.call(elements, function (elem) {
-            elem.style.setProperty("width", "120px");
-            elem.style.setProperty("height", "110px");
-        });
-    };
-
-    testHelper.clickAcceptButtonToShowTick = function () {
-        var elements = document.getElementsByTagName("button");
-        Array.prototype.forEach.call(elements, function (elem) {
-            elem.onclick();
-        });
-    };
-
-    testHelper.triggerTooltip = function () {
-        var comparison = document.querySelector(".comparison"),
-            event = {
-                pageX: 95,
-                pageY: 25
-            };
-        comparison.onmouseover(event);
-    };
-
-    testHelper.mockTaintedCanvas = function () {
-        CanvasRenderingContext2D.prototype.getImageData = function () {
-            throw new Error();
-        };
-        HTMLCanvasElement.prototype.toDataURL = function () {
-            throw new Error();
-        };
-    };
-
     var mockCanvasReadSupport = function () {
         // Overwrite method to pass in PhantomJS
         CanvasRenderingContext2D.prototype.getImageData = function () {};
 
         HTMLCanvasElement.prototype.toDataURL = function () {};
-    };
-
-    testHelper.mockDateWith = function (date) {
-        window.Date = {
-            now: function () {
-                return date;
-            }
-        };
     };
 
     var mockDateAutoIncreasing = function () {
@@ -211,14 +162,6 @@ window.testHelper = (function () {
         mockImagediff();
         mockCanvasReadSupport();
         mockDateAutoIncreasing();
-    };
-
-    testHelper.constructBasicHTMLReporter = function () {
-        var util = csscriticLib.util(),
-            basicHTMLReporterUtil = csscriticLib.basicHTMLReporterUtil(),
-            basicHTMLReporter = csscriticLib.basicHTMLReporter(util, basicHTMLReporterUtil, window.document);
-
-        return basicHTMLReporter.BasicHTMLReporter();
     };
 
     testHelper.constructNiceReporter = function (hasTaintedCanvasBug) {
