@@ -304,6 +304,30 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         }
     };
 
+    // toc
+
+    var getOrCreateToc = function (container) {
+        var tocClassName = 'tocParent',
+            toc = container.querySelector('.' + tocClassName);
+
+        if (!toc) {
+            toc = elementFor(template('<div class="{{className}}"><ul class="toc"></ul></div>', {
+                className: tocClassName
+            }));
+            container.querySelector('.' + headerClassName).appendChild(toc);
+        }
+        return toc.querySelector('ul');
+    };
+
+    var addTocEntry = function (container, componentLabel) {
+        var toc = getOrCreateToc(container),
+            entry = elementFor(template('<li class="tocEntry">{{headline}}</li>', {
+                headline: componentLabel
+            }));
+
+        toc.appendChild(entry);
+    };
+
     // component headline
 
     var installFallbackComponentSelectionHandler = function (element, componentLabel) {
@@ -673,6 +697,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                 if (comparison.testCase.component && comparison.testCase.component !== lastComponentLabel) {
                     lastComponentLabel = comparison.testCase.component;
                     addComponentHeading(container(), comparison.testCase.component);
+                    addTocEntry(container(), comparison.testCase.component);
                 }
 
                 registerComparison();

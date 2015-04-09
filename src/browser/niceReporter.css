@@ -188,6 +188,28 @@
     text-decoration: underline;
 }
 
+
+/* TOC */
+
+.cssCriticNiceReporter .toc {
+    display: inline-block;
+    list-style: none;
+
+    padding: 3px;
+    margin: 1rem -3px 0;
+    font-size: 0.9rem;
+
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.cssCriticNiceReporter .tocEntry {
+    display: inline-block;
+    margin-right: 0.8rem;
+}
+.cssCriticNiceReporter .tocEntry:last-child {
+    margin-right: 0;
+}
+
 /* Comparison */
 
 .cssCriticNiceReporter .comparison {
