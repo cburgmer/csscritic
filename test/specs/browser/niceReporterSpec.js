@@ -134,6 +134,23 @@ describe("Nice reporter", function () {
             expect($fixture.find('.fixedHeaderAnchorTarget').attr('id')).toEqual('aTest.html,width=42');
         });
 
+        it("should link to comparison in progress bar and escape ids", function () {
+            var test = aPassedTest({url: 'aTest.html', description: 'a description'});
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            expect($fixture.find('.progressBar a').attr('href')).toEqual('#aTest.html,description=a_description');
+            expect($fixture.find('.fixedHeaderAnchorTarget').attr('id')).toEqual('aTest.html,description=a_description');
+        });
+
+        it("should escape ids with multiple matches", function () {
+            var test = aPassedTest({url: 'aTest.html', description: 'a description with more whitespace'});
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            expect($fixture.find('.progressBar a').attr('href')).toEqual('#aTest.html,description=a_description_with_more_whitespace');
+        });
+
         it("should expose a title for each blip", function () {
             var test = aPassedTest({url: 'aTest.html', width: 42});
             reporter.reportSelectedComparison(test);

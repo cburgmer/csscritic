@@ -32,7 +32,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var escapeId = function (id) {
-        return id.replace(' ', '_', 'g');
+        return id.replace(/ /g, '_');
     };
 
     // container
