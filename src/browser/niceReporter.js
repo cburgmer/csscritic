@@ -420,7 +420,6 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         var titleLinkClassName = 'titleLink',
             filterUrl = selectionFilter.filterUrlFor ? selectionFilter.filterUrlFor(testCase) : '#',
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}">' +
-                                             '<span class="fixedHeaderAnchorTarget" id="{{id}}"></span>' +
                                              '<h3 class="title">' +
                                              '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{title}}</a> ' +
                                              '<a class="externalLink" href="{{url}}">↗</a>' +
@@ -432,12 +431,14 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                                  url: testCase.url,
                                                  title: testCase.desc ? testCase.desc : testCase.url,
                                                  filterUrl: filterUrl,
-                                                 id: escapeId(key),
                                                  runningComparisonClassName: runningComparisonClassName,
                                                  errorContainerClassName: errorContainerClassName,
                                                  imageContainerClassName: imageContainerClassName,
                                                  titleLinkClassName: titleLinkClassName
                                              })),
+            anchorTarget = elementFor(template('<span class="fixedHeaderAnchorTarget" id="{{id}}"></span>', {
+                id: escapeId(key)
+            })),
             imageContainer = comparison.querySelector('.' + imageContainerClassName),
             titleLink = comparison.querySelector('.' + titleLinkClassName);
 
@@ -446,6 +447,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         }
         installFallbackSelectionHandler(titleLink, testCase);
 
+        container.appendChild(anchorTarget);
         container.appendChild(comparison);
 
         return comparison;
