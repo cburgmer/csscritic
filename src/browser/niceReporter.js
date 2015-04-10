@@ -111,10 +111,10 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
 
     var showHeader = function (container) {
         var header = elementFor(template('<header class="{{headerClassName}}">' +
+                                         '<span class="{{timeTakenClassName}}"></span>' +
                                          '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
                                          'CSS Critic {{packageVersion}}' +
                                          '</a>' +
-                                         '<span class="{{timeTakenClassName}}"></span>' +
                                          '<ul class="{{progressBarClassName}}"></ul>' +
                                          '<div class="{{statusTextClassName}}" class="statusText"></div>' +
                                          '</header>', {

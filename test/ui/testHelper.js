@@ -164,6 +164,22 @@ window.testHelper = (function () {
         mockDateAutoIncreasing();
     };
 
+    var scrollEventListener;
+
+    var fakeWindow = {
+        scrollY: 0,
+        addEventListener: function (event, handler) {
+            if (event === 'scroll') {
+                scrollEventListener = handler;
+            }
+        }
+    };
+
+    testHelper.scrollTo = function (scrollY) {
+        fakeWindow.scrollY = scrollY;
+        scrollEventListener();
+    };
+
     testHelper.constructNiceReporter = function (hasTaintedCanvasBug) {
         var util = csscriticLib.util(),
             packageVersion = '0.1.42',
@@ -179,7 +195,7 @@ window.testHelper = (function () {
                     return mockPromise(!hasTaintedCanvasBug);
                 }
             },
-            niceReporter = csscriticLib.niceReporter({addEventListener: function () {}},
+            niceReporter = csscriticLib.niceReporter(fakeWindow,
                                                      util,
                                                      {filterFor: function () {}},
                                                      pageNavigationHandlingFallback,
