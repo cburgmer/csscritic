@@ -304,7 +304,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         }
     };
 
-    // toc
+    // ToC
 
     var getOrCreateToc = function (container) {
         var tocClassName = 'tocParent',
@@ -327,6 +327,10 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                             linkTarget: escapeId(linkTarget),
                                             headline: componentLabel
                                         }));
+
+        if (pageNavigationHandlingFallback) {
+            pageNavigationHandlingFallback.install(entry.querySelector('a'));
+        }
 
         toc.appendChild(entry);
     };
