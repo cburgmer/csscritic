@@ -319,11 +319,14 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return toc.querySelector('ul');
     };
 
-    var addTocEntry = function (container, componentLabel) {
+    var addTocEntry = function (container, componentLabel, linkTarget) {
         var toc = getOrCreateToc(container),
-            entry = elementFor(template('<li class="tocEntry">{{headline}}</li>', {
-                headline: componentLabel
-            }));
+            entry = elementFor(template('<li class="tocEntry">' +
+                                        '<a href="#{{linkTarget}}">{{headline}}</a>' +
+                                        '</li>', {
+                                            linkTarget: escapeId(linkTarget),
+                                            headline: componentLabel
+                                        }));
 
         toc.appendChild(entry);
     };
@@ -697,7 +700,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                 if (comparison.testCase.component && comparison.testCase.component !== lastComponentLabel) {
                     lastComponentLabel = comparison.testCase.component;
                     addComponentHeading(container(), comparison.testCase.component);
-                    addTocEntry(container(), comparison.testCase.component);
+                    addTocEntry(container(), comparison.testCase.component, key);
                 }
 
                 registerComparison();

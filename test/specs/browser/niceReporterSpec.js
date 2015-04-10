@@ -519,6 +519,26 @@ describe("Nice reporter", function () {
         });
     });
 
+    describe("TOC", function () {
+        it("should show a ToC", function () {
+            var aTest = aPassedTest({desc: 'a description', component: 'some component'});
+
+            reporter.reportSelectedComparison(aTest);
+            reporter.reportComparison(aTest);
+
+            expect($fixture.find('.toc')).toExist();
+        });
+
+        it("should link to selected component", function () {
+            var aTest = aPassedTest({url: 'targetUrl.html', desc: 'a description', component: 'some component'});
+
+            reporter.reportSelectedComparison(aTest);
+            reporter.reportComparison(aTest);
+
+            expect($fixture.find('.tocEntry a').attr('href')).toEqual('#targetUrl.html,component=some_component,desc=a_description');
+        });
+    });
+
     describe("Browser compatibility warning", function () {
         var fakeCanvas;
 
