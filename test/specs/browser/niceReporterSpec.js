@@ -534,6 +534,35 @@ describe("Nice reporter", function () {
             var header = $fixture.find('header')[0];
             expect(header.classList.contains('scrolling')).toBe(false);
         });
+
+        it("should switch to small header after given threshold", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(51);
+
+            var header = $fixture.find('header')[0];
+            expect(header.classList.contains('small')).toBe(true);
+        });
+
+        it("should switch back to large header below given threshold", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(200);
+            scrollTo(50);
+
+            var header = $fixture.find('header')[0];
+            expect(header.classList.contains('small')).toBe(false);
+        });
+
+        it("should switch back to large header on scroll back", function () {
+            reporter.reportSelectedComparison(aPassedTest());
+
+            scrollTo(200);
+            scrollTo(0);
+
+            var header = $fixture.find('header')[0];
+            expect(header.classList.contains('small')).toBe(false);
+        });
     });
 
     describe("TOC", function () {

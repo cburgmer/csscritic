@@ -69,14 +69,12 @@
     margin-top: -8px;
     margin-bottom: -8px;
     border-top: 8px solid white;
-
-    padding: 10px 8px;
 }
 
 /* http://stackoverflow.com/questions/13036142/anchor-links-to-start-below-the-header-which-is-fixed-at-the-top */
 .cssCriticNiceReporter .fixedHeaderAnchorTarget {
-    height: 160px;
-    margin-top: -160px;
+    height: 130px;
+    margin-top: -130px;
     display: block;
     visibility: hidden;
 }
@@ -119,9 +117,14 @@
     font-size: 0.7rem;
 }
 
-.cssCriticNiceReporter .header.scrolling .timeTaken,
-.cssCriticNiceReporter .header.scrolling .cssCriticVersion,
-.cssCriticNiceReporter .header.scrolling .statusText {
+.cssCriticNiceReporter .header.small {
+    padding: 10px 8px;
+    opacity: 0.85;
+}
+
+.cssCriticNiceReporter .header.small .timeTaken,
+.cssCriticNiceReporter .header.small .cssCriticVersion,
+.cssCriticNiceReporter .header.small .statusText {
     display: none;
 }
 
@@ -213,7 +216,7 @@
     background: rgba(255, 255, 255, 0.3);
 }
 
-.cssCriticNiceReporter .header.scrolling .toc {
+.cssCriticNiceReporter .header.small .toc {
     margin-top: 0.5rem;
 }
 

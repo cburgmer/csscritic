@@ -71,7 +71,10 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
 
     var makeElementFixedOnScroll = function (element) {
         var scrollingClass = 'scrolling',
+            smallClass = 'small',
+            smallScrollThreshold = 50,
             isScrolling = false,
+            isSmall = false,
             pseudoInlineElement = document.createElement('div'),
             dimensions;
 
@@ -92,11 +95,19 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                     pseudoInlineElement.style.height = px(dimensions.height);
                     element.parentElement.insertBefore(pseudoInlineElement, element);
                 }
+                if (! isSmall && window.scrollY > smallScrollThreshold) {
+                    isSmall = true;
+                    element.classList.add(smallClass);
+                } else if (isSmall && window.scrollY <= smallScrollThreshold) {
+                    isSmall = false;
+                    element.classList.remove(smallClass);
+                }
             } else {
                 if (isScrolling) {
                     isScrolling = false;
 
                     element.classList.remove(scrollingClass);
+                    element.classList.remove(smallClass);
 
                     element.style.position = '';
                     element.style.top = '';
