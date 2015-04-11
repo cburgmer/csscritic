@@ -406,9 +406,7 @@
 }
 
 /* Shared tooltip styles */
-.cssCriticNiceReporter .comparison .imageContainer {
-    position: relative;
-}
+
 .cssCriticNiceReporter .comparison:hover .imageContainer::after {
     position: absolute;
     top: 0;
