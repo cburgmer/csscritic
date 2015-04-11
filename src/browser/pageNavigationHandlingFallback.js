@@ -48,7 +48,7 @@ csscriticLib.pageNavigationHandlingFallback = function () {
         installGlobalNavigationHandling();
 
         element.onclick = function (e) {
-            var targetLink = e.target.href,
+            var targetLink = decodeURIComponent(e.target.href),
                 targetId = targetLink.substr(targetLink.indexOf('#')+1);
 
             scrollTo(targetId);
