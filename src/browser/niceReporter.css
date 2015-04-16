@@ -57,7 +57,10 @@
 
 .cssCriticNiceReporter .header {
     padding: 15px;
-    transition: background-color 1s;
+    opacity: 1;
+    transition-property: background-color, opacity;
+    transition-duration: 1s, 0s;
+    transition-delay: 0s, 0s;
 }
 
 .cssCriticNiceReporter .header.scrolling {
@@ -119,6 +122,8 @@
 
 .cssCriticNiceReporter .header.small:not(:hover) {
     opacity: 0.85;
+    transition-duration: 1s, 1s;
+    transition-delay: 0s, 1s;
 }
 
 .cssCriticNiceReporter .header .optional {
