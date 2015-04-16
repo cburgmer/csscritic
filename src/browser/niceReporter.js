@@ -40,7 +40,8 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     var headerClassName = 'header',
         timeTakenClassName = 'timeTaken',
         progressBarClassName = 'progressBar',
-        statusTextClassName = 'statusText';
+        statusTextClassName = 'statusText',
+        headerOptionalClassName = 'optional';
 
     var createContainer = function (parentContainer) {
         var reportBody = elementFor('<div class="cssCriticNiceReporter"></div>');
@@ -127,11 +128,14 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                          'CSS Critic {{packageVersion}}' +
                                          '</a>' +
                                          '<ul class="{{progressBarClassName}}"></ul>' +
+                                         '<div class="{{headerOptionalClassName}}">' +
                                          '<div class="{{statusTextClassName}}" class="statusText"></div>' +
+                                         '</div>' +
                                          '</header>', {
                                              headerClassName: headerClassName,
                                              timeTakenClassName: timeTakenClassName,
                                              progressBarClassName: progressBarClassName,
+                                             headerOptionalClassName: headerOptionalClassName,
                                              statusTextClassName: statusTextClassName,
                                              packageVersion: packageVersion
                                          }));
@@ -325,7 +329,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
             toc = elementFor(template('<div class="{{className}}"><ul class="toc"></ul></div>', {
                 className: tocClassName
             }));
-            container.querySelector('.' + headerClassName).appendChild(toc);
+            container.querySelector('.' + headerOptionalClassName).appendChild(toc);
         }
         return toc.querySelector('ul');
     };

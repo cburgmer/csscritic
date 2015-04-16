@@ -121,8 +121,19 @@
     opacity: 0.85;
 }
 
-.cssCriticNiceReporter .header.small:not(:hover) .timeTaken,
-.cssCriticNiceReporter .header.small:not(:hover) .statusText {
+.cssCriticNiceReporter .header .optional {
+    max-height: 200px;
+    transition: max-height 1s;
+    margin: 0 -3px;
+    padding: 0 3px;
+}
+.cssCriticNiceReporter .header.small .optional {
+    overflow: hidden;
+}
+.cssCriticNiceReporter .header.small:not(:hover) .optional {
+    max-height: 0;
+}
+.cssCriticNiceReporter .header.small:not(:hover) .timeTaken {
     display: none;
 }
 
@@ -213,10 +224,6 @@
     font-size: 0.9rem;
 
     background: rgba(255, 255, 255, 0.3);
-}
-
-.cssCriticNiceReporter .header.small:not(:hover) .toc {
-    display: none;
 }
 
 .cssCriticNiceReporter .tocEntry {
