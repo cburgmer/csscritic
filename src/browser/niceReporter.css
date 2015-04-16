@@ -117,14 +117,14 @@
     font-size: 0.7rem;
 }
 
-.cssCriticNiceReporter .header.small {
+.cssCriticNiceReporter .header.small:not(:hover) {
     padding: 10px 8px;
     opacity: 0.85;
 }
 
-.cssCriticNiceReporter .header.small .timeTaken,
-.cssCriticNiceReporter .header.small .cssCriticVersion,
-.cssCriticNiceReporter .header.small .statusText {
+.cssCriticNiceReporter .header.small:not(:hover) .timeTaken,
+.cssCriticNiceReporter .header.small:not(:hover) .cssCriticVersion,
+.cssCriticNiceReporter .header.small:not(:hover) .statusText {
     display: none;
 }
 
@@ -216,8 +216,8 @@
     background: rgba(255, 255, 255, 0.3);
 }
 
-.cssCriticNiceReporter .header.small .toc {
-    margin-top: 0.5rem;
+.cssCriticNiceReporter .header.small:not(:hover) .toc {
+    display: none;
 }
 
 .cssCriticNiceReporter .tocEntry {
