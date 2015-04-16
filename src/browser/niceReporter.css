@@ -93,7 +93,7 @@
 }
 
 .cssCriticNiceReporter .statusText {
-    margin-top: 0.45rem;
+    margin-top: 0.55rem;
     display: inline-block;
 }
 
@@ -113,17 +113,15 @@
 
 .cssCriticNiceReporter .cssCriticVersion {
     display: block;
-    margin: 0.25rem 0 0.45rem;
+    margin: 0 0 0.3rem;
     font-size: 0.7rem;
 }
 
 .cssCriticNiceReporter .header.small:not(:hover) {
-    padding: 10px 8px;
     opacity: 0.85;
 }
 
 .cssCriticNiceReporter .header.small:not(:hover) .timeTaken,
-.cssCriticNiceReporter .header.small:not(:hover) .cssCriticVersion,
 .cssCriticNiceReporter .header.small:not(:hover) .statusText {
     display: none;
 }
