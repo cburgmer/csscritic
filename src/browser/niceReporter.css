@@ -148,6 +148,7 @@
 
 .cssCriticNiceReporter .progressBar li {
     display: inline-block;
+    vertical-align: top;
     margin-right: -0.4rem;
     transition: color 1s;
 }
