@@ -132,8 +132,10 @@
     margin: 0 -3px;
     padding: 0 3px;
 }
-.cssCriticNiceReporter .header.small .optional {
+.cssCriticNiceReporter .header .optional {
     overflow: hidden;
+    padding-bottom: 4px;
+    margin-bottom: -4px;
 }
 .cssCriticNiceReporter .header.small:not(:hover) .optional {
     max-height: 0;
