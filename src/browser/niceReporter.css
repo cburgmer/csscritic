@@ -123,12 +123,12 @@
 .cssCriticNiceReporter .header.small:not(:hover) {
     opacity: 0.85;
     transition-duration: 1s, 1s;
-    transition-delay: 0s, 1s;
+    transition-delay: 0s, 0.5s;
 }
 
 .cssCriticNiceReporter .header .optional {
     max-height: 200px;
-    transition: max-height 1s;
+    transition: max-height 0.2s;
     margin: 0 -3px;
     padding: 0 3px;
 }
