@@ -316,6 +316,21 @@ describe("Nice reporter", function () {
         expect($iframe.attr('scrolling')).toBe('no');
     });
 
+    it("should switch back to screenshot on second click", function () {
+        var test = aPassedTest();
+
+        reporter.reportSelectedComparison(test);
+        reporter.reportComparison(test);
+
+        // when
+        $fixture.find('.toggleView').click();
+        $fixture.find('.toggleView').click();
+
+        // then
+        expect($fixture.find('.pageImageContainer iframe')).not.toExist();
+        expect($fixture.find('.pageImageContainer .imageWrapper canvas')).toExist();
+    });
+
     describe("selection", function () {
 
         it("should select tests by url (fallback)", function () {

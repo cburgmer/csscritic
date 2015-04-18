@@ -560,6 +560,19 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return button;
     };
 
+    var showPageImage = function (pageImage, testCaseUrl, realView, imageContainer, container) {
+        imageContainer.innerHTML = '';
+        if (realView) {
+            imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
+
+            container.classList.add('realView');
+        } else {
+            imageContainer.appendChild(imageWrapper(pageImage));
+
+            container.classList.remove('realView');
+        }
+    };
+
     var pageImageContainer = function (pageImage, acceptPage, testCaseUrl, container) {
         var pageImageContainerClassName = 'pageImageContainer',
             outerPageImageContainer = elementFor(template('<div class="outerPageImageContainer">' +
@@ -570,11 +583,13 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                                               toggleViewClassName: toggleViewClassName
                                                           })),
             pageImageContainer = outerPageImageContainer.querySelector('.' + pageImageContainerClassName),
-            toggleButton = outerPageImageContainer.querySelector('.' + toggleViewClassName);
+            toggleButton = outerPageImageContainer.querySelector('.' + toggleViewClassName),
+            showRealView = false;
 
-        pageImageContainer.appendChild(imageWrapper(pageImage));
+        showPageImage(pageImage, testCaseUrl, showRealView, pageImageContainer, container);
         toggleButton.onclick = function () {
-            toggleImageContainerToRealView(pageImage, testCaseUrl, pageImageContainer, container);
+            showRealView = !showRealView;
+            showPageImage(pageImage, testCaseUrl, showRealView, pageImageContainer, container);
         };
 
         if (acceptPage) {
@@ -596,13 +611,6 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         iframe.src = testCaseUrl;
         iframe.scrolling = "no";
         return iframe;
-    };
-
-    var toggleImageContainerToRealView = function (pageImage, testCaseUrl, imageContainer, container) {
-        imageContainer.innerHTML = '';
-        imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
-
-        container.classList.add('realView');
     };
 
     var showComparisonWithoutReference = function (pageImage, acceptPage, testCaseUrl, container) {
