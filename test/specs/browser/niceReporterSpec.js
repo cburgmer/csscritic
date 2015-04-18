@@ -251,7 +251,7 @@ describe("Nice reporter", function () {
         expect(thirdAccept).toHaveBeenCalled();
     });
 
-    ifNotInPhantomIt("should load the page in an iframe for a passing test when clicking on toggle view", function () {
+    it("should load the page in an iframe for a passing test when clicking on toggle view", function () {
         var test = aPassedTest();
 
         reporter.reportSelectedComparison(test);
@@ -261,14 +261,14 @@ describe("Nice reporter", function () {
         $fixture.find('.toggleView').click();
 
         // then
-        var $iframe = $fixture.find('.changedImageContainer iframe');
+        var $iframe = $fixture.find('.pageImageContainer iframe');
         expect($iframe.length).toBe(1);
         expect($iframe[0].width).toBe('' + anImage.width);
         expect($iframe[0].height).toBe('' + anImage.height);
         expect($iframe[0].src).toMatch(test.testCase.url);
     });
 
-    ifNotInPhantomIt("should load the page in an iframe for a failing test when clicking on toggle view", function () {
+    it("should load the page in an iframe for a failing test when clicking on toggle view", function () {
         var test = aFailedTest(anImage, anImage);
 
         reporter.reportSelectedComparison(test);
@@ -278,14 +278,14 @@ describe("Nice reporter", function () {
         $fixture.find('.toggleView').click();
 
         // then
-        var $iframe = $fixture.find('.changedImageContainer iframe');
+        var $iframe = $fixture.find('.pageImageContainer iframe');
         expect($iframe.length).toBe(1);
         expect($iframe[0].width).toBe('' + anImage.width);
         expect($iframe[0].height).toBe('' + anImage.height);
         expect($iframe[0].src).toMatch(test.testCase.url);
     });
 
-    ifNotInPhantomIt("should load the page in an iframe for missing reference when clicking on toggle view", function () {
+    it("should load the page in an iframe for missing reference when clicking on toggle view", function () {
         var test = aMissingReferenceTestWithAccept();
 
         reporter.reportSelectedComparison(test);
@@ -295,14 +295,14 @@ describe("Nice reporter", function () {
         $fixture.find('.toggleView').click();
 
         // then
-        var $iframe = $fixture.find('.changedImageContainer iframe');
+        var $iframe = $fixture.find('.pageImageContainer iframe');
         expect($iframe.length).toBe(1);
         expect($iframe[0].width).toBe('' + anImage.width);
         expect($iframe[0].height).toBe('' + anImage.height);
         expect($iframe[0].src).toMatch(test.testCase.url);
     });
 
-    ifNotInPhantomIt("should hide scrollbars so the exact breakpoint is triggered", function () {
+    it("should hide scrollbars so the exact breakpoint is triggered", function () {
         var test = aPassedTest();
 
         reporter.reportSelectedComparison(test);
@@ -312,7 +312,7 @@ describe("Nice reporter", function () {
         $fixture.find('.toggleView').click();
 
         // then
-        var $iframe = $fixture.find('.changedImageContainer iframe');
+        var $iframe = $fixture.find('.pageImageContainer iframe');
         expect($iframe.attr('scrolling')).toBe('no');
     });
 
