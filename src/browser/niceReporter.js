@@ -584,17 +584,33 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                                           })),
             pageImageContainer = outerPageImageContainer.querySelector('.' + pageImageContainerClassName),
             toggleButton = outerPageImageContainer.querySelector('.' + toggleViewClassName),
-            showRealView = false;
+            showRealView = false,
+            accepted = false,
+            acceptButtonElement;
+
+        if (acceptPage) {
+            acceptButtonElement = acceptButton(function () {
+                accepted = true;
+                acceptPage();
+            }, container);
+
+            outerPageImageContainer.appendChild(acceptButtonElement);
+        }
 
         showPageImage(pageImage, testCaseUrl, showRealView, pageImageContainer, container);
+
         toggleButton.onclick = function () {
             showRealView = !showRealView;
             showPageImage(pageImage, testCaseUrl, showRealView, pageImageContainer, container);
-        };
 
-        if (acceptPage) {
-            outerPageImageContainer.appendChild(acceptButton(acceptPage, container));
-        }
+            if (acceptPage) {
+                if (showRealView) {
+                    acceptButtonElement.setAttribute('disabled', 'disabled');
+                } else if (!accepted) {
+                    acceptButtonElement.removeAttribute('disabled');
+                }
+            }
+        };
 
         return outerPageImageContainer;
     };

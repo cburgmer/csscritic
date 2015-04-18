@@ -44,6 +44,7 @@ describe("Nice reporter", function () {
             },
             pageImage: pageImage,
             referenceImage: referenceImage,
+            acceptPage: function () {},
             renderErrors: []
         };
     };
@@ -251,84 +252,130 @@ describe("Nice reporter", function () {
         expect(thirdAccept).toHaveBeenCalled();
     });
 
-    it("should load the page in an iframe for a passing test when clicking on toggle view", function () {
-        var test = aPassedTest();
+    describe("real view", function () {
 
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
+        it("should load the page in an iframe for a passing test when clicking on toggle view", function () {
+            var test = aPassedTest();
 
-        // when
-        $fixture.find('.toggleView').click();
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
 
-        // then
-        var $iframe = $fixture.find('.pageImageContainer iframe');
-        expect($iframe.length).toBe(1);
-        expect($iframe[0].width).toBe('' + anImage.width);
-        expect($iframe[0].height).toBe('' + anImage.height);
-        expect($iframe[0].src).toMatch(test.testCase.url);
-    });
+            // when
+            $fixture.find('.toggleView').click();
 
-    it("should load the page in an iframe for a failing test when clicking on toggle view", function () {
-        var test = aFailedTest(anImage, anImage);
+            // then
+            var $iframe = $fixture.find('.pageImageContainer iframe');
+            expect($iframe.length).toBe(1);
+            expect($iframe[0].width).toBe('' + anImage.width);
+            expect($iframe[0].height).toBe('' + anImage.height);
+            expect($iframe[0].src).toMatch(test.testCase.url);
+        });
 
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
+        it("should load the page in an iframe for a failing test when clicking on toggle view", function () {
+            var test = aFailedTest(anImage, anImage);
 
-        // when
-        $fixture.find('.toggleView').click();
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
 
-        // then
-        var $iframe = $fixture.find('.pageImageContainer iframe');
-        expect($iframe.length).toBe(1);
-        expect($iframe[0].width).toBe('' + anImage.width);
-        expect($iframe[0].height).toBe('' + anImage.height);
-        expect($iframe[0].src).toMatch(test.testCase.url);
-    });
+            // when
+            $fixture.find('.toggleView').click();
 
-    it("should load the page in an iframe for missing reference when clicking on toggle view", function () {
-        var test = aMissingReferenceTestWithAccept();
+            // then
+            var $iframe = $fixture.find('.pageImageContainer iframe');
+            expect($iframe.length).toBe(1);
+            expect($iframe[0].width).toBe('' + anImage.width);
+            expect($iframe[0].height).toBe('' + anImage.height);
+            expect($iframe[0].src).toMatch(test.testCase.url);
+        });
 
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
+        it("should load the page in an iframe for missing reference when clicking on toggle view", function () {
+            var test = aMissingReferenceTestWithAccept();
 
-        // when
-        $fixture.find('.toggleView').click();
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
 
-        // then
-        var $iframe = $fixture.find('.pageImageContainer iframe');
-        expect($iframe.length).toBe(1);
-        expect($iframe[0].width).toBe('' + anImage.width);
-        expect($iframe[0].height).toBe('' + anImage.height);
-        expect($iframe[0].src).toMatch(test.testCase.url);
-    });
+            // when
+            $fixture.find('.toggleView').click();
 
-    it("should hide scrollbars so the exact breakpoint is triggered", function () {
-        var test = aPassedTest();
+            // then
+            var $iframe = $fixture.find('.pageImageContainer iframe');
+            expect($iframe.length).toBe(1);
+            expect($iframe[0].width).toBe('' + anImage.width);
+            expect($iframe[0].height).toBe('' + anImage.height);
+            expect($iframe[0].src).toMatch(test.testCase.url);
+        });
 
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
+        it("should hide scrollbars so the exact breakpoint is triggered", function () {
+            var test = aPassedTest();
 
-        // when
-        $fixture.find('.toggleView').click();
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
 
-        // then
-        var $iframe = $fixture.find('.pageImageContainer iframe');
-        expect($iframe.attr('scrolling')).toBe('no');
-    });
+            // when
+            $fixture.find('.toggleView').click();
 
-    it("should switch back to screenshot on second click", function () {
-        var test = aPassedTest();
+            // then
+            var $iframe = $fixture.find('.pageImageContainer iframe');
+            expect($iframe.attr('scrolling')).toBe('no');
+        });
 
-        reporter.reportSelectedComparison(test);
-        reporter.reportComparison(test);
+        it("should switch back to screenshot on second click", function () {
+            var test = aPassedTest();
 
-        // when
-        $fixture.find('.toggleView').click();
-        $fixture.find('.toggleView').click();
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
 
-        // then
-        expect($fixture.find('.pageImageContainer iframe')).not.toExist();
-        expect($fixture.find('.pageImageContainer .imageWrapper canvas')).toExist();
+            // when
+            $fixture.find('.toggleView').click();
+            $fixture.find('.toggleView').click();
+
+            // then
+            expect($fixture.find('.pageImageContainer iframe')).not.toExist();
+            expect($fixture.find('.pageImageContainer .imageWrapper canvas')).toExist();
+        });
+
+        it("should deactivate the accept button when clicking on toggle view", function () {
+            var test = aFailedTest(anImage, anImage);
+
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            // when
+            $fixture.find('.toggleView').click();
+
+            // then
+            expect($fixture.find('.outerPageImageContainer .accept').prop('disabled')).toBe(true);
+        });
+
+        it("should re-activate the accept button when toggling back", function () {
+            var test = aFailedTest(anImage, anImage);
+
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            // when
+            $fixture.find('.toggleView').click();
+            $fixture.find('.toggleView').click();
+
+            // then
+            expect($fixture.find('.outerPageImageContainer .accept').prop('disabled')).toBe(false);
+        });
+
+        it("should not re-activate the accept button when toggling back if already accepted", function () {
+            var test = aFailedTest(anImage, anImage);
+
+            reporter.reportSelectedComparison(test);
+            reporter.reportComparison(test);
+
+            // when
+            $fixture.find('.accept').click();
+
+            $fixture.find('.toggleView').click();
+            $fixture.find('.toggleView').click();
+
+            // then
+            expect($fixture.find('.outerPageImageContainer .accept').prop('disabled')).toBe(true);
+        });
     });
 
     describe("selection", function () {
