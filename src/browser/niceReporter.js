@@ -560,33 +560,33 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return button;
     };
 
-    var changedImageContainer = function (pageImage, acceptPage, testCaseUrl, container) {
-        var changedImageContainerClassName = 'changedImageContainer',
-            outerChangedImageContainer = elementFor(template('<div class="outerChangedImageContainer">' +
-                                                             '<div class="{{changedImageContainerClassName}}"></div>' +
-                                                             '<button class="{{toggleViewClassName}}"><span>Toggle view</span></button>' +
-                                                             '</div>', {
-                                                                 changedImageContainerClassName: changedImageContainerClassName,
-                                                                 toggleViewClassName: toggleViewClassName
-                                                             })),
-            changedImageContainer = outerChangedImageContainer.querySelector('.' + changedImageContainerClassName),
-            toggleButton = outerChangedImageContainer.querySelector('.' + toggleViewClassName);
+    var pageImageContainer = function (pageImage, acceptPage, testCaseUrl, container) {
+        var pageImageContainerClassName = 'pageImageContainer',
+            outerPageImageContainer = elementFor(template('<div class="outerPageImageContainer">' +
+                                                          '<div class="{{pageImageContainerClassName}}"></div>' +
+                                                          '<button class="{{toggleViewClassName}}"><span>Toggle view</span></button>' +
+                                                          '</div>', {
+                                                              pageImageContainerClassName: pageImageContainerClassName,
+                                                              toggleViewClassName: toggleViewClassName
+                                                          })),
+            pageImageContainer = outerPageImageContainer.querySelector('.' + pageImageContainerClassName),
+            toggleButton = outerPageImageContainer.querySelector('.' + toggleViewClassName);
 
-        changedImageContainer.appendChild(imageWrapper(pageImage));
+        pageImageContainer.appendChild(imageWrapper(pageImage));
         toggleButton.onclick = function () {
-            toggleImageContainerToRealView(pageImage, testCaseUrl, changedImageContainer);
+            toggleImageContainerToRealView(pageImage, testCaseUrl, pageImageContainer);
         };
 
         if (acceptPage) {
-            outerChangedImageContainer.appendChild(acceptButton(acceptPage, container));
+            outerPageImageContainer.appendChild(acceptButton(acceptPage, container));
         }
 
-        return outerChangedImageContainer;
+        return outerPageImageContainer;
     };
 
     var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, testCaseUrl, container) {
         addImageDiff(referenceImage, pageImage, container);
-        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
+        container.appendChild(pageImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
     };
 
     var pageAsIframe = function (pageImage, testCaseUrl) {
@@ -605,14 +605,8 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         imageContainer.classList.add('realView');
     };
 
-    var showComparisonWithRenderedPage = function (pageImage, testCaseUrl, container) {
-        var outerChangedImgContainer = changedImageContainer(canvasForImage(pageImage), undefined, testCaseUrl, container);
-
-        container.appendChild(outerChangedImgContainer);
-    };
-
     var showComparisonWithoutReference = function (pageImage, acceptPage, testCaseUrl, container) {
-        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
+        container.appendChild(pageImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
     };
 
     var sameOriginWarning = 'Make sure the path lies within the ' +
@@ -781,7 +775,8 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                                    entry);
                     acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'passed') {
-                    showComparisonWithRenderedPage(comparison.pageImage,
+                    showComparisonWithoutReference(comparison.pageImage,
+                                                   undefined,
                                                    comparison.testCase.url,
                                                    entry);
                 } else if (comparison.status === 'error') {

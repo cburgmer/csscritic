@@ -333,11 +333,11 @@
 }
 
 .cssCriticNiceReporter .comparison .imageContainer,
-.cssCriticNiceReporter .comparison .changedImageContainer {
+.cssCriticNiceReporter .comparison .pageImageContainer {
     border: 1px solid black;
 }
 
-.cssCriticNiceReporter .comparison .outerChangedImageContainer {
+.cssCriticNiceReporter .comparison .outerPageImageContainer {
     position: relative;
     display: inline-block;
 }
