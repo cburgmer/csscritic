@@ -339,8 +339,8 @@
 
 .cssCriticNiceReporter .comparison .outerChangedImageContainer {
     margin-top: 4px;
-    display: inline-block;
     position: relative;
+    display: inline-block;
 }
 
 .cssCriticNiceReporter .comparison .imageContainer {
@@ -385,11 +385,26 @@
 
 /* Accept */
 
-.cssCriticNiceReporter .comparison .accept {
+.cssCriticNiceReporter .comparison .toggleView {
     vertical-align: top;
 
     position: absolute;
     top: 0;
+    height: 50px;
+    right: -65px;
+    width: 50px;
+
+    font-size: 0.7rem;
+    background-color: transparent;
+    color: grey;
+    border: 1px solid currentColor;
+}
+
+.cssCriticNiceReporter .comparison .accept {
+    vertical-align: top;
+
+    position: absolute;
+    top: 58px;
     bottom: 0;
     right: -65px;
     width: 50px;

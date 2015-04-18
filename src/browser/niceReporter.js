@@ -441,7 +441,9 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                              testCaseParameters(testCase) +
                                              '</h3>' +
                                              '<div class="{{errorContainerClassName}}"></div>' +
-                                             '<div><div class="{{imageContainerClassName}}"></div></div>' +
+                                             '<div>' +
+                                             '<div class="{{imageContainerClassName}}"></div>' +
+                                             '</div>' +
                                              '</section>', {
                                                  url: testCase.url,
                                                  title: testCase.desc ? testCase.desc : testCase.url,
@@ -535,7 +537,8 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
     };
 
-    var acceptClassName = 'accept';
+    var toggleViewClassName = 'toggleView',
+        acceptClassName = 'accept';
 
     var acceptComparison = function (container) {
         var acceptButton = container.querySelector('.' + acceptClassName);
@@ -544,19 +547,25 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         container.classList.add('accepted');
     };
 
-    var changedImageContainer = function (pageImage, acceptPage, container) {
+    var changedImageContainer = function (pageImage, acceptPage, testCaseUrl, container) {
         var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div class="outerChangedImageContainer">' +
                                                              '<div class="{{changedImageContainerClassName}}"></div>' +
+                                                             '<button class="{{toggleViewClassName}}"><span>Toggle view</span></button>' +
                                                              '<button class="{{acceptClassName}}"><span>Accept</span></button>' +
                                                              '</div>', {
                                                                  changedImageContainerClassName: changedImageContainerClassName,
+                                                                 toggleViewClassName: toggleViewClassName,
                                                                  acceptClassName: acceptClassName
                                                              })),
             changedImageContainer = outerChangedImageContainer.querySelector('.' + changedImageContainerClassName),
-            acceptButton = outerChangedImageContainer.querySelector('button');
+            toggleButton = outerChangedImageContainer.querySelector('.' + toggleViewClassName),
+            acceptButton = outerChangedImageContainer.querySelector('.' + acceptClassName);
 
         changedImageContainer.appendChild(imageWrapper(pageImage));
+        toggleButton.onclick = function () {
+            toggleImageContainerToRealView(pageImage, testCaseUrl, changedImageContainer);
+        };
         acceptButton.onclick = function () {
             acceptPage();
             acceptComparison(container);
@@ -565,9 +574,9 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return outerChangedImageContainer;
     };
 
-    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, container) {
+    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, testCaseUrl, container) {
         addImageDiff(referenceImage, pageImage, container);
-        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, container));
+        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
     };
 
     var pageAsIframe = function (pageImage, testCaseUrl) {
@@ -579,6 +588,13 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return iframe;
     };
 
+    var toggleImageContainerToRealView = function (pageImage, testCaseUrl, imageContainer) {
+        imageContainer.innerHTML = '';
+        imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
+
+        imageContainer.classList.add('realView');
+    };
+
     var showComparisonWithRenderedPage = function (pageImage, testCaseUrl, container) {
         var imageContainer = container.querySelector('.' + imageContainerClassName);
 
@@ -586,15 +602,12 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         imageContainer.appendChild(imageWrapper(canvasForImage(pageImage)));
 
         imageContainer.addEventListener('dblclick', function () {
-            imageContainer.innerHTML = '';
-            imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
-
-            imageContainer.classList.add('realView');
+            toggleImageContainerToRealView(pageImage, testCaseUrl, imageContainer);
         }, false);
     };
 
-    var showComparisonWithoutReference = function (pageImage, acceptPage, container) {
-        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, container));
+    var showComparisonWithoutReference = function (pageImage, acceptPage, testCaseUrl, container) {
+        container.appendChild(changedImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
     };
 
     var sameOriginWarning = 'Make sure the path lies within the ' +
@@ -753,11 +766,13 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                     showComparisonWithDiff(comparison.pageImage,
                                            comparison.referenceImage,
                                            comparison.acceptPage,
+                                           comparison.testCase.url,
                                            entry);
                     acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'referenceMissing') {
                     showComparisonWithoutReference(comparison.pageImage,
                                                    comparison.acceptPage,
+                                                   comparison.testCase.url,
                                                    entry);
                     acceptableComparisons.push(comparison);
                 } else if (comparison.status === 'passed') {
