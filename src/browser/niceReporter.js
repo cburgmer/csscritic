@@ -547,29 +547,39 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         container.classList.add('accepted');
     };
 
+    var acceptButton = function (acceptPage, container) {
+        var button = elementFor(template('<button class="{{acceptClassName}}">' +
+                                         '<span>Accept</span>' +
+                                         '</button>', {
+                                             acceptClassName: acceptClassName
+                                         }));
+        button.onclick = function () {
+            acceptPage();
+            acceptComparison(container);
+        };
+        return button;
+    };
+
     var changedImageContainer = function (pageImage, acceptPage, testCaseUrl, container) {
         var changedImageContainerClassName = 'changedImageContainer',
             outerChangedImageContainer = elementFor(template('<div class="outerChangedImageContainer">' +
                                                              '<div class="{{changedImageContainerClassName}}"></div>' +
                                                              '<button class="{{toggleViewClassName}}"><span>Toggle view</span></button>' +
-                                                             '<button class="{{acceptClassName}}"><span>Accept</span></button>' +
                                                              '</div>', {
                                                                  changedImageContainerClassName: changedImageContainerClassName,
-                                                                 toggleViewClassName: toggleViewClassName,
-                                                                 acceptClassName: acceptClassName
+                                                                 toggleViewClassName: toggleViewClassName
                                                              })),
             changedImageContainer = outerChangedImageContainer.querySelector('.' + changedImageContainerClassName),
-            toggleButton = outerChangedImageContainer.querySelector('.' + toggleViewClassName),
-            acceptButton = outerChangedImageContainer.querySelector('.' + acceptClassName);
+            toggleButton = outerChangedImageContainer.querySelector('.' + toggleViewClassName);
 
         changedImageContainer.appendChild(imageWrapper(pageImage));
         toggleButton.onclick = function () {
             toggleImageContainerToRealView(pageImage, testCaseUrl, changedImageContainer);
         };
-        acceptButton.onclick = function () {
-            acceptPage();
-            acceptComparison(container);
-        };
+
+        if (acceptPage) {
+            outerChangedImageContainer.appendChild(acceptButton(acceptPage, container));
+        }
 
         return outerChangedImageContainer;
     };
@@ -596,13 +606,13 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var showComparisonWithRenderedPage = function (pageImage, testCaseUrl, container) {
-        var imageContainer = container.querySelector('.' + imageContainerClassName);
+        var outerChangedImgContainer = changedImageContainer(canvasForImage(pageImage), undefined, testCaseUrl, container),
+            changedImgContainer = outerChangedImgContainer.firstChild;
 
-        imageContainer.innerHTML = '';
-        imageContainer.appendChild(imageWrapper(canvasForImage(pageImage)));
+        container.appendChild(outerChangedImgContainer);
 
-        imageContainer.addEventListener('dblclick', function () {
-            toggleImageContainerToRealView(pageImage, testCaseUrl, imageContainer);
+        changedImgContainer.addEventListener('dblclick', function () {
+            toggleImageContainerToRealView(pageImage, testCaseUrl, changedImgContainer);
         }, false);
     };
 

@@ -292,7 +292,7 @@
 }
 
 .cssCriticNiceReporter .comparison .parameters dt::after {
-    content: ":"
+    content: ":";
 }
 
 .cssCriticNiceReporter .comparison .parameters dd {
@@ -301,11 +301,11 @@
 }
 
 .cssCriticNiceReporter .comparison .parameters dd::after {
-    content: ","
+    content: ",";
 }
 
 .cssCriticNiceReporter .comparison .parameters dd:last-child::after {
-    content: ""
+    content: "";
 }
 
 /* Images */
@@ -338,7 +338,6 @@
 }
 
 .cssCriticNiceReporter .comparison .outerChangedImageContainer {
-    margin-top: 4px;
     position: relative;
     display: inline-block;
 }
@@ -353,6 +352,14 @@
     max-height: 0;
     max-width: 0;
     opacity: 0;
+}
+
+.cssCriticNiceReporter .passed.comparison .imageContainer {
+    display: none;
+}
+
+.cssCriticNiceReporter .failed.comparison .imageContainer {
+    margin-bottom: 4px;
 }
 
 .cssCriticNiceReporter .failed.comparison .imageContainer:hover .diff {

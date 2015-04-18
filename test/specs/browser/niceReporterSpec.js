@@ -259,10 +259,10 @@ describe("Nice reporter", function () {
 
         // when
         var event = new MouseEvent('dblclick');
-        $fixture.find('.imageContainer')[0].dispatchEvent(event);
+        $fixture.find('.changedImageContainer')[0].dispatchEvent(event);
 
         // then
-        var $iframe = $fixture.find('.imageContainer iframe');
+        var $iframe = $fixture.find('.changedImageContainer iframe');
         expect($iframe.length).toBe(1);
         expect($iframe[0].width).toBe('' + anImage.width);
         expect($iframe[0].height).toBe('' + anImage.height);
@@ -311,10 +311,10 @@ describe("Nice reporter", function () {
 
         // when
         var event = new MouseEvent('dblclick');
-        $fixture.find('.imageContainer')[0].dispatchEvent(event);
+        $fixture.find('.changedImageContainer')[0].dispatchEvent(event);
 
         // then
-        var $iframe = $fixture.find('.imageContainer iframe');
+        var $iframe = $fixture.find('.changedImageContainer iframe');
         expect($iframe.attr('scrolling')).toBe('no');
     });
 
