@@ -606,14 +606,9 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var showComparisonWithRenderedPage = function (pageImage, testCaseUrl, container) {
-        var outerChangedImgContainer = changedImageContainer(canvasForImage(pageImage), undefined, testCaseUrl, container),
-            changedImgContainer = outerChangedImgContainer.firstChild;
+        var outerChangedImgContainer = changedImageContainer(canvasForImage(pageImage), undefined, testCaseUrl, container);
 
         container.appendChild(outerChangedImgContainer);
-
-        changedImgContainer.addEventListener('dblclick', function () {
-            toggleImageContainerToRealView(pageImage, testCaseUrl, changedImgContainer);
-        }, false);
     };
 
     var showComparisonWithoutReference = function (pageImage, acceptPage, testCaseUrl, container) {

@@ -251,15 +251,14 @@ describe("Nice reporter", function () {
         expect(thirdAccept).toHaveBeenCalled();
     });
 
-    ifNotInPhantomIt("should load the page in an iframe on double click", function () {
+    ifNotInPhantomIt("should load the page in an iframe for a passing test when clicking on toggle view", function () {
         var test = aPassedTest();
 
         reporter.reportSelectedComparison(test);
         reporter.reportComparison(test);
 
         // when
-        var event = new MouseEvent('dblclick');
-        $fixture.find('.changedImageContainer')[0].dispatchEvent(event);
+        $fixture.find('.toggleView').click();
 
         // then
         var $iframe = $fixture.find('.changedImageContainer iframe');
@@ -310,8 +309,7 @@ describe("Nice reporter", function () {
         reporter.reportComparison(test);
 
         // when
-        var event = new MouseEvent('dblclick');
-        $fixture.find('.changedImageContainer')[0].dispatchEvent(event);
+        $fixture.find('.toggleView').click();
 
         // then
         var $iframe = $fixture.find('.changedImageContainer iframe');

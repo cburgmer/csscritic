@@ -467,10 +467,6 @@
     display: none;
 }
 
-/* Tooltip for real view */
-.cssCriticNiceReporter .passed.comparison .imageContainer:not(.realView):hover::after {
-    content: "< Double click the image to expose the DOM of the underlying page";
-}
 
 /* Warning for Chrome + Safari */
 

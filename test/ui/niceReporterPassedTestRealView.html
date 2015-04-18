@@ -20,8 +20,7 @@
             reporter.reportComparison(test);
             reporter.reportTestSuite(testHelper.passingTestSuite());
 
-            var event = new MouseEvent('dblclick');
-            document.querySelector('.changedImageContainer').dispatchEvent(event);
+            document.querySelector('.toggleView').click();
         });
     </script>
 </body>
