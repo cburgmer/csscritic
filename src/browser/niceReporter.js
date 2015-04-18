@@ -574,7 +574,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
 
         pageImageContainer.appendChild(imageWrapper(pageImage));
         toggleButton.onclick = function () {
-            toggleImageContainerToRealView(pageImage, testCaseUrl, pageImageContainer);
+            toggleImageContainerToRealView(pageImage, testCaseUrl, pageImageContainer, container);
         };
 
         if (acceptPage) {
@@ -598,11 +598,11 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return iframe;
     };
 
-    var toggleImageContainerToRealView = function (pageImage, testCaseUrl, imageContainer) {
+    var toggleImageContainerToRealView = function (pageImage, testCaseUrl, imageContainer, container) {
         imageContainer.innerHTML = '';
         imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
 
-        imageContainer.classList.add('realView');
+        container.classList.add('realView');
     };
 
     var showComparisonWithoutReference = function (pageImage, acceptPage, testCaseUrl, container) {

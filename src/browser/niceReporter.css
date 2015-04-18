@@ -386,11 +386,9 @@
     background: transparent;
 }
 
-.cssCriticNiceReporter .comparison .realView {
+.cssCriticNiceReporter .comparison.realView .pageImageContainer {
     border-style: dashed;
 }
-
-/* Accept */
 
 .cssCriticNiceReporter .comparison .toggleView {
     vertical-align: top;
@@ -406,6 +404,12 @@
     color: grey;
     border: 1px solid currentColor;
 }
+.cssCriticNiceReporter .comparison.realView .toggleView {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Accept */
+
 
 .cssCriticNiceReporter .comparison .accept {
     vertical-align: top;
