@@ -577,7 +577,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         var pageImageContainerClassName = 'pageImageContainer',
             outerPageImageContainer = elementFor(template('<div class="outerPageImageContainer">' +
                                                           '<div class="{{pageImageContainerClassName}}"></div>' +
-                                                          '<button class="{{toggleViewClassName}}"><span>Toggle view</span></button>' +
+                                                          '<button class="{{toggleViewClassName}}" title="Toggle DOM view"></button>' +
                                                           '</div>', {
                                                               pageImageContainerClassName: pageImageContainerClassName,
                                                               toggleViewClassName: toggleViewClassName

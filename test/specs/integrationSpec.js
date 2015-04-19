@@ -213,7 +213,7 @@ describe("Integration", function () {
                 expect($(".cssCriticNiceReporter .comparison .errorText").text()).toContain("background_image_does_not_exist.jpg");
                 expect($(".cssCriticNiceReporter .comparison .imageContainer img")).toExist();
                 expect($(".cssCriticNiceReporter .comparison .imageContainer canvas")).toExist();
-                expect($(".cssCriticNiceReporter .comparison .changedImageContainer canvas")).toExist();
+                expect($(".cssCriticNiceReporter .comparison .pageImageContainer canvas")).toExist();
 
                 done();
             });
