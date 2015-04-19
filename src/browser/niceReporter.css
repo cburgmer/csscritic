@@ -314,11 +314,11 @@
 
 /* Images */
 
-.cssCriticNiceReporter .running.comparison .imageContainer {
+.cssCriticNiceReporter .running.comparison .referenceImageContainer {
     opacity: 0.2;
 }
 
-.cssCriticNiceReporter .comparison .imageContainer:empty {
+.cssCriticNiceReporter .comparison .referenceImageContainer:empty {
     display: none;
 }
 
@@ -336,7 +336,7 @@
     display: block;
 }
 
-.cssCriticNiceReporter .comparison .imageContainer,
+.cssCriticNiceReporter .comparison .referenceImageContainer,
 .cssCriticNiceReporter .comparison .pageImageContainer {
     border: 1px solid black;
 }
@@ -346,34 +346,34 @@
     display: inline-block;
 }
 
-.cssCriticNiceReporter .comparison .imageContainer {
+.cssCriticNiceReporter .comparison .referenceImageContainer {
     position: relative;
     display: inline-block;
 }
 
-.cssCriticNiceReporter .comparison .imageContainer .diff {
+.cssCriticNiceReporter .comparison .referenceImageContainer .diff {
     /* display:none solution that transitions on hover - using max-{height|width} to work around issue with canvas needing CSS help to render in our own UI tests */
     max-height: 0;
     max-width: 0;
     opacity: 0;
 }
 
-.cssCriticNiceReporter .passed.comparison .imageContainer {
+.cssCriticNiceReporter .passed.comparison .referenceImageContainer {
     display: none;
 }
 
-.cssCriticNiceReporter .failed.comparison .imageContainer {
+.cssCriticNiceReporter .failed.comparison .referenceImageContainer {
     margin-bottom: 4px;
 }
 
-.cssCriticNiceReporter .failed.comparison .imageContainer:hover .diff {
+.cssCriticNiceReporter .failed.comparison .referenceImageContainer:hover .diff {
     max-height: none;
     max-width: none;
     opacity: 1;
     transition: opacity 1s;
 }
 
-.cssCriticNiceReporter .failed.comparison .imageContainer:hover .imageWrapper {
+.cssCriticNiceReporter .failed.comparison .referenceImageContainer:hover .imageWrapper {
     opacity: 0.5;
     transition: opacity 1s;
     /* Display underneath transparent diff, while having the imageContainer's height auto adapt */
@@ -440,12 +440,12 @@
     display: block;
 }
 
-.cssCriticNiceReporter .comparison .imageContainer {
+.cssCriticNiceReporter .comparison .referenceImageContainer {
     opacity: 1;
     max-height: 1000000px;
 }
 
-.cssCriticNiceReporter .accepted.comparison .imageContainer {
+.cssCriticNiceReporter .accepted.comparison .referenceImageContainer {
     opacity: 0;
     max-height: 0;
     border-width: 0;
@@ -455,7 +455,7 @@
 
 /* Shared tooltip styles */
 
-.cssCriticNiceReporter .comparison:hover .imageContainer::after {
+.cssCriticNiceReporter .comparison:hover .referenceImageContainer::after {
     position: absolute;
     top: 0;
     right: 0;
@@ -473,10 +473,10 @@
 }
 
 /* Tooltip for difference image */
-.cssCriticNiceReporter .failed.comparison:hover .imageContainer::after {
+.cssCriticNiceReporter .failed.comparison:hover .referenceImageContainer::after {
     content: "< Hover over the reference image to highlight changes";
 }
-.cssCriticNiceReporter .failed.comparison .imageContainer:hover::after {
+.cssCriticNiceReporter .failed.comparison .referenceImageContainer:hover::after {
     display: none;
 }
 

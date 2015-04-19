@@ -387,7 +387,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var runningComparisonClassName = 'running',
-        imageContainerClassName = 'imageContainer',
+        referenceImageContainerClassName = 'referenceImageContainer',
         errorContainerClassName = 'errorText';
 
     var imageWrapper = function (image) {
@@ -442,7 +442,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                              '</h3>' +
                                              '<div class="{{errorContainerClassName}}"></div>' +
                                              '<div>' +
-                                             '<div class="{{imageContainerClassName}}"></div>' +
+                                             '<div class="{{referenceImageContainerClassName}}"></div>' +
                                              '</div>' +
                                              '</section>', {
                                                  url: testCase.url,
@@ -450,17 +450,17 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                                                  filterUrl: filterUrl,
                                                  runningComparisonClassName: runningComparisonClassName,
                                                  errorContainerClassName: errorContainerClassName,
-                                                 imageContainerClassName: imageContainerClassName,
+                                                 referenceImageContainerClassName: referenceImageContainerClassName,
                                                  titleLinkClassName: titleLinkClassName
                                              })),
             anchorTarget = elementFor(template('<span class="fixedHeaderAnchorTarget" id="{{id}}"></span>', {
                 id: escapeId(key)
             })),
-            imageContainer = comparison.querySelector('.' + imageContainerClassName),
+            referenceImageContainer = comparison.querySelector('.' + referenceImageContainerClassName),
             titleLink = comparison.querySelector('.' + titleLinkClassName);
 
         if (referenceImage) {
-            imageContainer.appendChild(imageWrapper(referenceImage));
+            referenceImageContainer.appendChild(imageWrapper(referenceImage));
         }
         installFallbackSelectionHandler(titleLink, testCase);
 
@@ -532,9 +532,9 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var addImageDiff = function (image, imageForDiff, container) {
-        var imageContainer = container.querySelector('.' + imageContainerClassName);
+        var referenceImageContainer = container.querySelector('.' + referenceImageContainerClassName);
 
-        imageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
+        referenceImageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
     };
 
     var toggleViewClassName = 'toggleView',
