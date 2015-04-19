@@ -437,7 +437,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
             comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}">' +
                                              '<h3 class="title">' +
                                              '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{title}}</a> ' +
-                                             '<a class="externalLink" href="{{url}}">↗</a>' +
+                                             '<a class="externalLink" href="{{url}}"></a>' +
                                              testCaseParameters(testCase) +
                                              '</h3>' +
                                              '<div class="{{errorContainerClassName}}"></div>' +

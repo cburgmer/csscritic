@@ -38,11 +38,15 @@
 }
 
 .cssCriticNiceReporter .errorText:not(:empty)::before {
-    content: "⚠";
-    color: rgb(89, 17, 0);
-    font-size: 1.2rem;
-    padding-right: 5px;
-    vertical-align: middle;
+    content: " ";
+    margin-right: 5px;
+    margin-top: -0.3rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    vertical-align: top;
+    display: inline-block;
+    /* http://fontawesome.io/license/, SIL OFL 1.1 */
+    background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik04OTYgMTI4cTIwOSAwIDM4NS41IDEwM3QyNzkuNSAyNzkuNSAxMDMgMzg1LjUtMTAzIDM4NS41LTI3OS41IDI3OS41LTM4NS41IDEwMy0zODUuNS0xMDMtMjc5LjUtMjc5LjUtMTAzLTM4NS41IDEwMy0zODUuNSAyNzkuNS0yNzkuNSAzODUuNS0xMDN6bTEyOCAxMjQ3di0xOTBxMC0xNC05LTIzLjV0LTIyLTkuNWgtMTkycS0xMyAwLTIzIDEwdC0xMCAyM3YxOTBxMCAxMyAxMCAyM3QyMyAxMGgxOTJxMTMgMCAyMi05LjV0OS0yMy41em0tMi0zNDRsMTgtNjIxcTAtMTItMTAtMTgtMTAtOC0yNC04aC0yMjBxLTE0IDAtMjQgOC0xMCA2LTEwIDE4bDE3IDYyMXEwIDEwIDEwIDE3LjV0MjQgNy41aDE4NXExNCAwIDIzLjUtNy41dDEwLjUtMTcuNXoiLz48L3N2Zz4K") no-repeat center center / 90% transparent;
 }
 
 .cssCriticNiceReporter .errorText ul {
@@ -201,12 +205,11 @@
     position: relative;
 }
 .cssCriticNiceReporter .progressBar .hasRenderErrors a::after {
-    content: '!';
-    color: black;
-    line-height: 1.26rem;
-    text-align: center;
+    content: ' ';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
+    /* http://fontawesome.io/license/, SIL OFL 1.1 */
+    background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMDg4IDEyNDh2MjI0cTAgMjYtMTkgNDV0LTQ1IDE5aC0yNTZxLTI2IDAtNDUtMTl0LTE5LTQ1di0yMjRxMC0yNiAxOS00NXQ0NS0xOWgyNTZxMjYgMCA0NSAxOXQxOSA0NXptMzAtMTA1NmwtMjggNzY4cS0xIDI2LTIwLjUgNDV0LTQ1LjUgMTloLTI1NnEtMjYgMC00NS41LTE5dC0yMC41LTQ1bC0yOC03NjhxLTEtMjYgMTcuNS00NXQ0NC41LTE5aDMyMHEyNiAwIDQ0LjUgMTl0MTcuNSA0NXoiLz48L3N2Zz4K") no-repeat center center / 70% transparent;
 }
 
 /* Component label */
@@ -218,7 +221,6 @@
 .cssCriticNiceReporter .componentLabel:hover {
     text-decoration: underline;
 }
-
 
 /* TOC */
 
@@ -264,14 +266,16 @@
 
 .cssCriticNiceReporter .comparison .title .externalLink {
     vertical-align: top;
-    font-size: 0.8rem;
-    line-height: 0.6em;
-    color: #888;
     display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-left: 0.2rem;
+    /* http://fontawesome.io/license/, SIL OFL 1.1 */
+    background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNDA4IDkyOHYzMjBxMCAxMTktODQuNSAyMDMuNXQtMjAzLjUgODQuNWgtODMycS0xMTkgMC0yMDMuNS04NC41dC04NC41LTIwMy41di04MzJxMC0xMTkgODQuNS0yMDMuNXQyMDMuNS04NC41aDcwNHExNCAwIDIzIDl0OSAyM3Y2NHEwIDE0LTkgMjN0LTIzIDloLTcwNHEtNjYgMC0xMTMgNDd0LTQ3IDExM3Y4MzJxMCA2NiA0NyAxMTN0MTEzIDQ3aDgzMnE2NiAwIDExMy00N3Q0Ny0xMTN2LTMyMHEwLTE0IDktMjN0MjMtOWg2NHExNCAwIDIzIDl0OSAyM3ptMzg0LTg2NHY1MTJxMCAyNi0xOSA0NXQtNDUgMTktNDUtMTlsLTE3Ni0xNzYtNjUyIDY1MnEtMTAgMTAtMjMgMTB0LTIzLTEwbC0xMTQtMTE0cS0xMC0xMC0xMC0yM3QxMC0yM2w2NTItNjUyLTE3Ni0xNzZxLTE5LTE5LTE5LTQ1dDE5LTQ1IDQ1LTE5aDUxMnEyNiAwIDQ1IDE5dDE5IDQ1eiIvPjwvc3ZnPgo=") no-repeat center center / 90% transparent;
+    opacity: 0.3;
 }
 .cssCriticNiceReporter .comparison .title .externalLink:hover {
-    transform: scale(1.1);
-    transform-origin: bottom left;
+    opacity: 0.5;
 }
 
 .cssCriticNiceReporter .comparison .parameters,
