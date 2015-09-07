@@ -21,14 +21,31 @@ csscriticLib.main = function (regression, reporting, util, storage, selectionFil
         return testCase;
     };
 
-    module.add = function (testCase) {
-        var augmentedTestCase = util.clone(supportUrlAsOnlyTestCaseInput(testCase));
-
-        if (currentComponentLabel && augmentedTestCase.component === undefined) {
-            augmentedTestCase.component = currentComponentLabel;
+    var getFirstArrayProp = function(obj) {
+      for (var arrayKey in obj) {
+        if (obj[arrayKey] instanceof Array){
+          return arrayKey;
         }
+      }
+      return null;
+    }
 
-        testCases.push(augmentedTestCase);
+    module.add = function _add_recurs(testCase) {
+        var augmentedTestCase;
+        var arrayKey = getFirstArrayProp(testCase);
+        if (arrayKey) {
+          augmentedTestCase = util.clone(supportUrlAsOnlyTestCaseInput(testCase));
+          testCase[arrayKey].forEach(function(value){
+            augmentedTestCase[arrayKey] = value;
+            _add_recurs(augmentedTestCase);
+          });
+        } else {
+          augmentedTestCase = util.clone(supportUrlAsOnlyTestCaseInput(testCase));
+          if (currentComponentLabel && augmentedTestCase.component === undefined) {
+              augmentedTestCase.component = currentComponentLabel;
+          }
+          testCases.push(augmentedTestCase);
+        }
     };
 
 
