@@ -28,7 +28,7 @@ csscriticLib.main = function (regression, reporting, util, storage, selectionFil
         }
       }
       return null;
-    }
+    };
 
     module.add = function _add_recurs(testCase) {
         var augmentedTestCase;
