@@ -642,7 +642,6 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     var showComparisonWithError = function (url, container) {
         var errorMsg = elementFor(template('<span>' +
                                            'The page "{{url}}" could not be rendered. ' +
-                                           sameOriginWarning +
                                            '</span>', {
                                                url: url
                                            })),

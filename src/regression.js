@@ -68,11 +68,15 @@ csscriticLib.regression = function (renderer, util, imagediff) {
                                         renderResult.image,
                                         referenceImage);
             });
-        }, function () {
+        }, function (e) {
+            var errors = [];
+            if (e) {
+                errors.push(e.message);
+            }
             return comparisonResult("error",
                                     testCase,
                                     viewport,
-                                    []);
+                                    errors);
         });
     };
 

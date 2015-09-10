@@ -15,7 +15,7 @@
 
         testHelper.setUp();
 
-        testHelper.comparisonP('error').then(function (test) {
+        testHelper.comparisonP('error', {}, ['Your HTML looks broken']).then(function (test) {
             reporter.reportSelectedComparison(test);
             reporter.reportComparison(test);
             reporter.reportTestSuite(testHelper.failingTestSuite());

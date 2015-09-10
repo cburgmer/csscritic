@@ -74,12 +74,12 @@ csscriticLib.util = function () {
             if (xhr.status === 200 || xhr.status === 0) {
                 defer.resolve(xhr.response);
             } else {
-                defer.reject();
+                defer.reject(new Error(xhr.statusText));
             }
         };
 
-        xhr.onerror = function () {
-            defer.reject();
+        xhr.onerror = function (e) {
+            defer.reject(e);
         };
 
         try {
@@ -87,7 +87,7 @@ csscriticLib.util = function () {
             xhr.responseType = 'blob';
             xhr.send();
         } catch (e) {
-            defer.reject();
+            defer.reject(e);
         }
 
         return defer.promise;

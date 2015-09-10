@@ -141,7 +141,8 @@ describe("Utility", function () {
         });
 
         it("should call error callback on fail", function (done) {
-            util.loadAsBlob(testHelper.fixture("non_existing_url.html")).then(null, function () {
+            util.loadAsBlob(testHelper.fixture("non_existing_url.html")).then(null, function (e) {
+                expect(e).toBeTruthy();
                 done();
             });
         });

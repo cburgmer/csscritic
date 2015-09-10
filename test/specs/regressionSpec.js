@@ -252,8 +252,11 @@ describe("Regression testing", function () {
     });
 
     describe("on error", function () {
+        var error;
+
         beforeEach(function () {
-            rendererBackend.render.and.returnValue(testHelper.failedPromise());
+            error = new Error('some message');
+            rendererBackend.render.and.returnValue(testHelper.failedPromise(error));
         });
 
         it("should report the comparison", function (done) {
@@ -286,12 +289,12 @@ describe("Regression testing", function () {
             });
         });
 
-        it("should report an empty render error list", function (done) {
+        it("should report the error", function (done) {
             regression.compare(testCaseWithMissingReferenceImage({
                 url: "differentpage.html"
             })).then(function (comparison) {
                 expect(comparison).toEqual(jasmine.objectContaining({
-                    renderErrors: []
+                    renderErrors: ['some message']
                 }));
 
                 done();

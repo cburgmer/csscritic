@@ -85,9 +85,9 @@ window.testHelper = (function () {
         return defer.promise;
     };
 
-    module.failedPromise = function () {
+    module.failedPromise = function (e) {
         var defer = ayepromise.defer();
-        defer.reject();
+        defer.reject(e);
         return defer.promise;
     };
 
