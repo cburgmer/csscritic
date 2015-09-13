@@ -88,12 +88,16 @@ describe("Regression testing", function () {
             regression.compare(testCaseWithReferenceImage({
                 url: 'samplepage.html',
                 hover: '.a.selector',
-                active: '.another.selector'
+                active: '.another.selector',
+                focus: '#some',
+                target: 'section'
             })).then(function () {
                 expect(rendererBackend.render).toHaveBeenCalledWith({
                     url: "samplepage.html",
                     hover: '.a.selector',
                     active: '.another.selector',
+                    focus: '#some',
+                    target: 'section',
                     width: 98,
                     height: 76
                 });

@@ -28,20 +28,19 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
 
     var doRenderHtml = function (parameters) {
         var drawOptions = {
-                cache: 'repeated',
-                cacheBucket: cache,
-                width: parameters.width,
-                height: parameters.height,
-                executeJs: true,
-                executeJsTimeout: 50,
-                baseUrl: parameters.baseUrl
-            };
-        if (parameters.hover) {
-            drawOptions.hover = parameters.hover;
-        }
-        if (parameters.active) {
-            drawOptions.active = parameters.active;
-        }
+            cache: 'repeated',
+            cacheBucket: cache,
+            width: parameters.width,
+            height: parameters.height,
+            executeJs: true,
+            executeJsTimeout: 50,
+            baseUrl: parameters.baseUrl
+        };
+        ['hover', 'active', 'focus', 'target'].forEach(function (key) {
+            if (parameters[key]) {
+                drawOptions[key] = parameters[key];
+            }
+        });
 
         return rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
             var renderErrors = extractErrorMessages(result.errors);
@@ -61,7 +60,9 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
                 width: parameters.width,
                 height: parameters.height,
                 hover: parameters.hover,
-                active: parameters.active
+                active: parameters.active,
+                focus: parameters.focus,
+                target: parameters.target
             });
         });
     };

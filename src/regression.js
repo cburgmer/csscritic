@@ -57,6 +57,8 @@ csscriticLib.regression = function (renderer, util, imagediff) {
             url: testCase.url,
             hover: testCase.hover,
             active: testCase.active,
+            focus: testCase.focus,
+            target: testCase.target,
             width: viewport.width,
             height: viewport.height
         }).then(function (renderResult) {

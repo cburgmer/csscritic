@@ -126,18 +126,24 @@ describe("Browser renderer", function () {
             });
         });
 
-        ifNotInPhantomIt("should render with active effect", function (done) {
+        ifNotInPhantomIt("should render with active/focus/target effect", function (done) {
             setUpRasterizeHtmlToBeSuccessful();
 
             browserRenderer.render({
                 url: testHelper.fixture("pageUnderTest.html"),
                 width: 42,
                 height: 7,
-                active: ".someSelector"
+                active: ".someSelector",
+                focus: '#other',
+                target: 'img'
             }).then(function () {
                 expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
                     jasmine.any(String),
-                    jasmine.objectContaining({active: ".someSelector"})
+                    jasmine.objectContaining({
+                        active: ".someSelector",
+                        focus: '#other',
+                        target: 'img'
+                    })
                 );
                 done();
             });
