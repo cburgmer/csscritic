@@ -23,7 +23,7 @@
     "imagediff": "~1.0.7",
     "inlineresources": "~0.1.0",
     "jssha": "1.5.0",
-    "rasterizehtml": "~1.1.0"
+    "rasterizehtml": "~1.2.0"
   },
   "devDependencies": {
     "cssify": "~0.7.0",
