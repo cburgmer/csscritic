@@ -1,5 +1,4 @@
-CSS Critic
-==========
+# CSS Critic
 
 <a href="https://www.npmjs.org/package/csscritic">
     <img src="https://badge.fury.io/js/csscritic.svg"
@@ -7,27 +6,29 @@ CSS Critic
 </a>
 A lightweight tool for regression testing of Cascading Style Sheets.
 
-What?
------
+## What?
+
 One picture might say more than 1000 words:
 
 <img src="http://cburgmer.github.io/csscritic-examples/nicereporter_in_action.png" alt="CSS Critic testing the TodoMVC app">
 
 For background information [watch the screencast](http://youtu.be/AqQ2bNPtF60) or if you feel like playing around have a look at the [runnable instance](http://runnable.com/VXJo7YUrGNMz4gnD/csscritic-1-2-0-in-action). This [example project](https://github.com/cburgmer/csscritic-examples) helps you get started with your own setup.
 
-Why?
-----
+## Why?
+
 Your web stack should be fully testable. CSS Critic closes the gap in front end testing and makes HTML & CSS testable - no more broken UI. For example, make it supervise changes to your project's responsive styleguide so you know things are looking good.
 
-Install
--------
+## How is it different to the other tools out there?
+
+We believe that your UI will change often enough that a lightweight process on managing changes (near instant feedback, anyone?) is more important than a heavy-weight one which could offer tighter control. Also CSS Critic aims at bridging the gap between user experience (UX) people and (UI) developers. You probably won't find any easier way of sharing your UI tests than as the simple web page that CSS Critic basically is. And don't feel put down by the "CSS" bit, you may throw anything at it that can be converted into a simple image.
+
+## How to install?
 
     $ npm install csscritic
 
 See `node_modules/csscritic/example/RegressionRunner.html` for an example on how to take it from there.
 
-How it works
-------------
+## How does it work?
 
 CSS Critic checks your current layout constantly against a reference image you have provided in the past. If your layout breaks (or simply changes - CSS Critic can't tell) your tests fail.
 
@@ -61,16 +62,15 @@ CSS Critic checks your current layout constantly against a reference image you h
 
 3. If deliberate accept the change (generating a new reference image).
 
-Developing CSS Critic
----------------------
+## Developing CSS Critic
+
 For tests install Node.js and run
 
     $ ./go
 
 [![Build Status](https://travis-ci.org/cburgmer/csscritic.svg?branch=master)](https://travis-ci.org/cburgmer/csscritic)
 
-Limitations
------------
+## Limitations
 
 - Currently works in Firefox and Chrome only.
 - [Same-origin restrictions](https://developer.mozilla.org/en-US/docs/Same_origin_policy_for_JavaScript) apply when sourcing files. All files referenced need to be inside the same directory as the `RegressionRunner.html` or in ones below.
