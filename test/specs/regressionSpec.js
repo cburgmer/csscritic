@@ -259,7 +259,7 @@ describe("Regression testing", function () {
         var error;
 
         beforeEach(function () {
-            error = new Error('some message');
+            error = {message: 'some message', originalError: new Error('original error')};
             rendererBackend.render.and.returnValue(testHelper.failedPromise(error));
         });
 
@@ -298,7 +298,7 @@ describe("Regression testing", function () {
                 url: "differentpage.html"
             })).then(function (comparison) {
                 expect(comparison).toEqual(jasmine.objectContaining({
-                    renderErrors: ['some message']
+                    renderErrors: ['some message: original error']
                 }));
 
                 done();

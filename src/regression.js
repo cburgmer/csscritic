@@ -52,6 +52,14 @@ csscriticLib.regression = function (renderer, util, imagediff) {
         return result;
     };
 
+    var extractErrorMessage = function (e) {
+        if (e.originalError && e.originalError.message) {
+            return e.message +': ' + e.originalError.message;
+        }
+
+        return e.message;
+    };
+
     var loadPageAndCompare = function (testCase, viewport, referenceImage) {
         return renderer.render({
             url: testCase.url,
@@ -73,7 +81,7 @@ csscriticLib.regression = function (renderer, util, imagediff) {
         }, function (e) {
             var errors = [];
             if (e) {
-                errors.push(e.message);
+                errors.push(extractErrorMessage(e));
             }
             return comparisonResult("error",
                                     testCase,
