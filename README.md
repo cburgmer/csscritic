@@ -40,13 +40,15 @@ CSS Critic checks your current layout constantly against a reference image you h
 
     ```js
     csscritic.add({
-        url: 'SOME_URL',     // link to the test case HTML document
+        url: 'SOME_URL',      // link to the test case HTML document
         // Optionally:
-        desc: 'some text',   // a description of the test case
-        width: number,       // the viewport width in pixel
-        height: number,      // the viewport height in pixel
-        hover: 'A.SELECTOR', // element receiving an :hover effect
-        active: 'A.SELECTOR' // element receiving an :active effect
+        desc: 'some text',    // a description of the test case
+        width: number,        // the viewport width in pixel
+        height: number,       // the viewport height in pixel
+        hover: 'A.SELECTOR',  // or ...
+        active: 'A.SELECTOR', // or ...
+        focus: 'A.SELECTOR',  // or ...
+        target: 'A.SELECTOR'  // match elements receiving activation of corresponding pseudo-class
     });
     ```
 
