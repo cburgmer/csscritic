@@ -384,6 +384,13 @@
     bottom: 0;
 }
 
+.cssCriticNiceReporter .referenceMissing.comparison .referenceImageContainer,
+.cssCriticNiceReporter .referenceMissing.comparison .pageImageContainer,
+.cssCriticNiceReporter .failed.comparison .referenceImageContainer,
+.cssCriticNiceReporter .failed.comparison .pageImageContainer {
+    margin-left: 65px;
+}
+
 .cssCriticNiceReporter .comparison iframe {
     border: none;
     display: block;
@@ -424,9 +431,9 @@
     vertical-align: top;
 
     position: absolute;
-    top: 48px;
+    top: 0;
     bottom: 0;
-    right: -65px;
+    left: 0;
     width: 50px;
 
     font-size: 0.7rem;
