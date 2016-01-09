@@ -18,7 +18,6 @@
         "setFixtures": true,
         "readFixtures": true,
         "inlineresources": true,
-        "jsSHA": true,
         "ayepromise": true,
         "imagediff": true,
         "imagediffForJasmine2": true,

@@ -3,7 +3,6 @@
     "globals": {
         "rasterizeHTML": true,
         "inlineresources": true,
-        "jsSHA": true,
         "imagediff": true,
         "ayepromise": true,
         "phantom": true,
