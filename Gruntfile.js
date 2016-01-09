@@ -12,7 +12,7 @@ module.exports = function (grunt) {
         jasmine: {
             src: 'csscritic.js',
             options: {
-                specs: ['test/specs/shared/*.js', 'test/specs/*.js', 'test/specs/browser/*.js'],
+                specs: ['test/specs/shared/*.js', 'test/specs/*.js', 'test/specs/reporter/*.js'],
                 helpers: [
                     'test/helpers.js',
                     'node_modules/jquery/dist/jquery.js',
@@ -42,11 +42,11 @@ module.exports = function (grunt) {
         concat: {
             one: {
                 src: [
-                    'src/boot/scope.js',
-                    'src/*.js',
-                    'src/browser/*.js',
+                    'src/scope.js',
+                    'src/!(init|scope).js',
+                    'src/reporter/*.js',
                     'packageVersion.js',
-                    'src/boot/browser.js',
+                    'src/init.js',
                 ],
                 dest: 'build/<%= pkg.name %>.concat.js'
             }
@@ -106,7 +106,7 @@ module.exports = function (grunt) {
         cssmin: {
             dist: {
                 files: {
-                    'build/<%= pkg.name %>.concat.css': ['src/browser/*.css']
+                    'build/<%= pkg.name %>.concat.css': ['src/*/*.css']
                 }
             }
         },
