@@ -25,9 +25,6 @@ module.exports = function (grunt) {
             }
         },
         shell: {
-            runPhantomTests: {
-                command: 'phantomjs test/run-phantomjs-tests.js'
-            },
             // Use grep to fail the build as slimerjs does not understand exitcodes
             smokeTestLoader: {
                 command: './node_modules/.bin/slimerjs test/smokeTest.js test/smokeTestLoader.html | grep "Smoke test successful"'
@@ -43,33 +40,6 @@ module.exports = function (grunt) {
             }
         },
         concat: {
-            phantomjs: {
-                options: {
-                    banner: '/*! PhantomJS regression runner for <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-                        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-                        '* <%= pkg.homepage %>\n' +
-                        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>, Copyright (c) 2012 ThoughtWorks, Inc.;' +
-                        ' Licensed <%= pkg.license %> */' +
-                        '\n/* Integrated dependencies:\n' +
-                        ' * jsSHA.js (BSD License),\n' +
-                        ' * ayepromise (BSD License & WTFPL),\n' +
-                        ' * imagediff.js (MIT License),\n' +
-                        ' * url (MIT License),\n' +
-                        ' * CSSOM (MIT License),\n' +
-                        ' * inlineresources (MIT License) */\n\n'
-                },
-                src: [
-                    'node_modules/jssha/src/sha.js',
-                    'node_modules/imagediff/imagediff.js',
-                    'node_modules/ayepromise/ayepromise.js',
-                    'build/dependencies/inlineresources.js',
-                    'src/boot/scope.js',
-                    'src/cli/*.js',
-                    'src/*.js',
-                    'src/boot/cli.js'
-                ],
-                dest: 'dist/<%= pkg.name %>-phantom.js'
-            },
             one: {
                 src: [
                     'src/boot/scope.js',
@@ -141,7 +111,7 @@ module.exports = function (grunt) {
             }
         },
         csslint: {
-            basichtmlreporter: {
+            css: {
                 src: 'src/**/*.css',
                 options: {
                     "ids": false,
@@ -222,8 +192,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'jshint',
         'csslint',
-        'jasmine',
-        'shell:runPhantomTests'
+        'jasmine'
     ]);
 
     grunt.registerTask('build', [
