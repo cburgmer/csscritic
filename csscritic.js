@@ -13,9 +13,6 @@
             'src/browser/niceReporter.css'
         ],
         jsDependencies = [
-            'node_modules/rasterizehtml/dist/rasterizeHTML.allinone.js',
-            'node_modules/imagediff/imagediff.js',
-            'node_modules/ayepromise/ayepromise.js',
             'src/boot/scope.js',
             'src/browser/pageNavigationHandlingFallback.js',
             'src/browser/niceReporter.js',
@@ -30,6 +27,11 @@
             'src/main.js',
             'packageVersion.js',
             'src/boot/browser.js'
+        ],
+        externalJsDependencies = [
+            'rasterizehtml/dist/rasterizeHTML.allinone.js',
+            'imagediff/imagediff.js',
+            'ayepromise/ayepromise.js'
         ];
 
     var getCurrentScript = function () {
@@ -54,10 +56,20 @@
         document.write('<script src="' + path + '"></script>');
     };
 
+    var loadExternalJsDependency = function (basePath, path) {
+        loadJsDependency(basePath + '../../node_modules/' + path);
+        // Fallback to npm <3
+        loadJsDependency(basePath + 'node_modules/' + path);
+    };
+
     var basePath = getBasePath();
 
     cssDependencies.forEach(function (path) {
         loadCssDependency(basePath + path);
+    });
+
+    externalJsDependencies.forEach(function (path) {
+        loadExternalJsDependency(basePath, path);
     });
 
     jsDependencies.forEach(function (path) {
