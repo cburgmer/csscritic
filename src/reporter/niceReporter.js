@@ -43,16 +43,6 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         statusTextClassName = 'statusText',
         headerOptionalClassName = 'optional';
 
-    var createContainer = function (parentContainer) {
-        var reportBody = elementFor('<div class="cssCriticNiceReporter"></div>');
-
-        showHeader(reportBody);
-
-        parentContainer.appendChild(reportBody);
-
-        return reportBody;
-    };
-
     var elementDimensions = function (element) {
         var initialPosition = element.getBoundingClientRect(),
             scrollOffsetTop = document.body.scrollTop || document.documentElement.scrollTop,
@@ -144,6 +134,16 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         container.appendChild(header);
     };
 
+    var createContainer = function (parentContainer) {
+        var reportBody = elementFor('<div class="cssCriticNiceReporter"></div>');
+
+        showHeader(reportBody);
+
+        parentContainer.appendChild(reportBody);
+
+        return reportBody;
+    };
+
     // document title
 
     var originalTitle;
@@ -181,142 +181,6 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         var header = findElementIn(container, headerClassName);
 
         header.classList.add(successful ? 'pass' : 'fail');
-    };
-
-    // progress bar
-
-    var progressBarPendingClassName = 'pending';
-
-    var testDescription = function (testCase) {
-        var component;
-        if (testCase.desc) {
-            component = testCase.component ? testCase.component + ' ' : '';
-            return component + testCase.desc;
-        } else {
-            return comparisonKey(testCase);
-        }
-    };
-
-    var addTickToProgressBar = function (container, testCase, linkTarget) {
-        var progressBar = findElementIn(container, progressBarClassName),
-            clickableTickTemplate = '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
-            deactivatedTickTemplate = '<li><a title="{{title}}"></a></li>',
-            tickTemplate = linkTarget ? clickableTickTemplate : deactivatedTickTemplate;
-
-        var tick = elementFor(template(tickTemplate, {
-            linkTarget: linkTarget ? escapeId(linkTarget) : '',
-            title: testDescription(testCase)
-        }));
-        tick.classList.add(progressBarPendingClassName);
-        progressBar.appendChild(tick);
-
-        if (pageNavigationHandlingFallback) {
-            pageNavigationHandlingFallback.install(tick.querySelector('a'));
-        }
-
-        return tick;
-    };
-
-    var markTickDone = function (status, renderErrorCount, tickElement) {
-        tickElement.classList.remove(progressBarPendingClassName);
-        tickElement.classList.add(status);
-        if (renderErrorCount > 0) {
-            tickElement.classList.add('hasRenderErrors');
-        }
-    };
-
-    // status bar
-
-    var singularPlural = function (value, singularForm, pluralForm) {
-        if (value === 1) {
-            return singularForm;
-        } else {
-            return pluralForm;
-        }
-    };
-
-    var statusTotalText = function (totalCount, selectedCount) {
-        var totalContent = '{{total}} ' + singularPlural(totalCount, 'entry', 'entries') + ', ';
-        if (selectedCount < totalCount) {
-            totalContent = '{{selected}} of ' + totalContent;
-        }
-        return template('<span>' +
-                        totalContent +
-                        '</span>', {
-            total: totalCount,
-            selected: selectedCount
-        });
-    };
-
-    var statusIssueText = function (issueCount, selectedCount, doneCount) {
-        var issueContent = '{{issues}} ' + singularPlural(issueCount, 'needs', 'need') + ' some love',
-            doneContent = 'all good',
-            noTestsContent = "nothing here yet",
-            doneWithoutErrors = selectedCount === doneCount && issueCount === 0,
-            content;
-        if (selectedCount === 0) {
-            content = noTestsContent;
-        } else if (doneWithoutErrors) {
-            content = doneContent;
-        } else {
-            content = issueContent;
-        }
-        return template('<span>' +
-                        content +
-                        '</span>', {
-                            issues: issueCount
-                        });
-    };
-
-    var acceptAllClassName = 'acceptAll';
-
-    var acceptAllButton = function () {
-        return elementFor(template('<button class="{{acceptAllClassName}}">... accept all (I know what I\'m doing)</button>', {
-            acceptAllClassName: acceptAllClassName
-        }));
-    };
-
-    var showAcceptAllButtonIfNeccessary = function (container, acceptableEntries) {
-        var statusText = findElementIn(container, statusTextClassName),
-            button = statusText.querySelector('.' + acceptAllClassName);
-
-        if (acceptableEntries.length > 2) {
-            button.classList.add('active');
-            button.onclick = function () {
-                acceptableEntries.forEach(function (acceptableEntry) {
-                    acceptableEntry.acceptPage();
-                    acceptComparison(acceptableEntry.entry);
-                });
-
-                button.setAttribute('disabled', 'disabled');
-            };
-        }
-    };
-
-    var installFallbackClearSelectionHandler = function (element) {
-        if (selectionFilter.clearFilter) {
-            element.onclick = function (e) {
-                selectionFilter.clearFilter();
-                e.preventDefault();
-            };
-        }
-    };
-
-    var updateStatusBar = function (container, totalCount, selectedCount, issueCount, doneCount) {
-        var runAllUrl = selectionFilter.clearFilterUrl ? selectionFilter.clearFilterUrl() : '#',
-            runAll = elementFor(template('<a class="runAll" href="{{url}}">Run all</a>', {
-                url: runAllUrl
-            })),
-            statusText = findElementIn(container, statusTextClassName);
-
-        statusText.innerHTML = '';
-        statusText.appendChild(elementFor(statusTotalText(totalCount, selectedCount)));
-        statusText.appendChild(elementFor(statusIssueText(issueCount, selectedCount, doneCount)));
-        statusText.appendChild(acceptAllButton());
-        if (totalCount > selectedCount) {
-            installFallbackClearSelectionHandler(runAll);
-            statusText.appendChild(runAll);
-        }
     };
 
     // ToC
@@ -560,6 +424,15 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return button;
     };
 
+    var pageAsIframe = function (pageImage, testCaseUrl) {
+        var iframe = document.createElement('iframe');
+        iframe.width = pageImage.width;
+        iframe.height = pageImage.height;
+        iframe.src = testCaseUrl;
+        iframe.scrolling = "no";
+        return iframe;
+    };
+
     var showPageImage = function (pageImage, testCaseUrl, realView, imageContainer, container) {
         imageContainer.innerHTML = '';
         if (realView) {
@@ -620,15 +493,6 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         container.appendChild(pageImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
     };
 
-    var pageAsIframe = function (pageImage, testCaseUrl) {
-        var iframe = document.createElement('iframe');
-        iframe.width = pageImage.width;
-        iframe.height = pageImage.height;
-        iframe.src = testCaseUrl;
-        iframe.scrolling = "no";
-        return iframe;
-    };
-
     var showComparisonWithoutReference = function (pageImage, acceptPage, testCaseUrl, container) {
         container.appendChild(pageImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
     };
@@ -670,6 +534,142 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     var updateComparisonStatus = function (status, container) {
         container.classList.remove(runningComparisonClassName);
         container.classList.add(status);
+    };
+
+    // progress bar
+
+    var progressBarPendingClassName = 'pending';
+
+    var testDescription = function (testCase) {
+        var component;
+        if (testCase.desc) {
+            component = testCase.component ? testCase.component + ' ' : '';
+            return component + testCase.desc;
+        } else {
+            return comparisonKey(testCase);
+        }
+    };
+
+    var addTickToProgressBar = function (container, testCase, linkTarget) {
+        var progressBar = findElementIn(container, progressBarClassName),
+            clickableTickTemplate = '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
+            deactivatedTickTemplate = '<li><a title="{{title}}"></a></li>',
+            tickTemplate = linkTarget ? clickableTickTemplate : deactivatedTickTemplate;
+
+        var tick = elementFor(template(tickTemplate, {
+            linkTarget: linkTarget ? escapeId(linkTarget) : '',
+            title: testDescription(testCase)
+        }));
+        tick.classList.add(progressBarPendingClassName);
+        progressBar.appendChild(tick);
+
+        if (pageNavigationHandlingFallback) {
+            pageNavigationHandlingFallback.install(tick.querySelector('a'));
+        }
+
+        return tick;
+    };
+
+    var markTickDone = function (status, renderErrorCount, tickElement) {
+        tickElement.classList.remove(progressBarPendingClassName);
+        tickElement.classList.add(status);
+        if (renderErrorCount > 0) {
+            tickElement.classList.add('hasRenderErrors');
+        }
+    };
+
+    // status bar
+
+    var singularPlural = function (value, singularForm, pluralForm) {
+        if (value === 1) {
+            return singularForm;
+        } else {
+            return pluralForm;
+        }
+    };
+
+    var statusTotalText = function (totalCount, selectedCount) {
+        var totalContent = '{{total}} ' + singularPlural(totalCount, 'entry', 'entries') + ', ';
+        if (selectedCount < totalCount) {
+            totalContent = '{{selected}} of ' + totalContent;
+        }
+        return template('<span>' +
+                        totalContent +
+                        '</span>', {
+            total: totalCount,
+            selected: selectedCount
+        });
+    };
+
+    var statusIssueText = function (issueCount, selectedCount, doneCount) {
+        var issueContent = '{{issues}} ' + singularPlural(issueCount, 'needs', 'need') + ' some love',
+            doneContent = 'all good',
+            noTestsContent = "nothing here yet",
+            doneWithoutErrors = selectedCount === doneCount && issueCount === 0,
+            content;
+        if (selectedCount === 0) {
+            content = noTestsContent;
+        } else if (doneWithoutErrors) {
+            content = doneContent;
+        } else {
+            content = issueContent;
+        }
+        return template('<span>' +
+                        content +
+                        '</span>', {
+                            issues: issueCount
+                        });
+    };
+
+    var acceptAllClassName = 'acceptAll';
+
+    var acceptAllButton = function () {
+        return elementFor(template('<button class="{{acceptAllClassName}}">... accept all (I know what I\'m doing)</button>', {
+            acceptAllClassName: acceptAllClassName
+        }));
+    };
+
+    var showAcceptAllButtonIfNeccessary = function (container, acceptableEntries) {
+        var statusText = findElementIn(container, statusTextClassName),
+            button = statusText.querySelector('.' + acceptAllClassName);
+
+        if (acceptableEntries.length > 2) {
+            button.classList.add('active');
+            button.onclick = function () {
+                acceptableEntries.forEach(function (acceptableEntry) {
+                    acceptableEntry.acceptPage();
+                    acceptComparison(acceptableEntry.entry);
+                });
+
+                button.setAttribute('disabled', 'disabled');
+            };
+        }
+    };
+
+    var installFallbackClearSelectionHandler = function (element) {
+        if (selectionFilter.clearFilter) {
+            element.onclick = function (e) {
+                selectionFilter.clearFilter();
+                e.preventDefault();
+            };
+        }
+    };
+
+    var updateStatusBar = function (container, totalCount, selectedCount, issueCount, doneCount) {
+        var runAllUrl = selectionFilter.clearFilterUrl ? selectionFilter.clearFilterUrl() : '#',
+            runAll = elementFor(template('<a class="runAll" href="{{url}}">Run all</a>', {
+                url: runAllUrl
+            })),
+            statusText = findElementIn(container, statusTextClassName);
+
+        statusText.innerHTML = '';
+        statusText.appendChild(elementFor(statusTotalText(totalCount, selectedCount)));
+        statusText.appendChild(elementFor(statusIssueText(issueCount, selectedCount, doneCount)));
+        statusText.appendChild(acceptAllButton());
+        if (totalCount > selectedCount) {
+            installFallbackClearSelectionHandler(runAll);
+            statusText.appendChild(runAll);
+        }
     };
 
     // browser warning

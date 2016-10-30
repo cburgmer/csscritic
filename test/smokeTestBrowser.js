@@ -1,3 +1,5 @@
+"use strict";
+
 // Don't care about the examples
 csscritic.addReporter(csscritic.NiceReporter())
     .component('some component')

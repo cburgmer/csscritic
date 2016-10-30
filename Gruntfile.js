@@ -115,6 +115,9 @@ module.exports = function (grunt) {
                 src: 'src/**/*.css',
                 options: {
                     "ids": false,
+                    "order-alphabetical": false,
+                    "font-sizes": false,
+                    "outline-none": false,
                     "adjoining-classes": false,
                     "box-model": false,
                     "box-sizing": false,

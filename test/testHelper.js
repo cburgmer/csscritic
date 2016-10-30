@@ -1,6 +1,6 @@
-window.testHelper = (function () {
-    "use strict";
+"use strict";
 
+window.testHelper = (function () {
     var module = {},
         tempPath = null,
         tempPathCounter = 0;

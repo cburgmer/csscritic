@@ -56,6 +56,30 @@ window.testHelper = (function () {
         };
     };
 
+    var aComparison = function (status, testCase, pageImage, renderErrors, resizable) {
+        var dummyFunc = function () {},
+            mocks = setUpMocks(),
+            comparison;
+
+        comparison = {
+            status: status,
+            testCase: testCase,
+            renderErrors: renderErrors
+        };
+
+        comparison.pageImage = pageImage;
+
+        if (status === 'failed' || status === 'passed') {
+            comparison.referenceImage = mocks.image();
+        }
+
+        if (resizable !== false) {
+            comparison.resizePageImage = dummyFunc;
+        }
+        comparison.acceptPage = dummyFunc;
+        return comparison;
+    };
+
     testHelper.comparisonP = function (status, testCase, renderErrors, resizable) {
         var mocks = setUpMocks(),
             pageImage;
@@ -94,30 +118,6 @@ window.testHelper = (function () {
             defer.resolve(aComparison('failed', {url: 'aPage.html'}, pageImage, [], false));
         };
         return defer.promise;
-    };
-
-    var aComparison = function (status, testCase, pageImage, renderErrors, resizable) {
-        var dummyFunc = function () {},
-            mocks = setUpMocks(),
-            comparison;
-
-        comparison = {
-            status: status,
-            testCase: testCase,
-            renderErrors: renderErrors
-        };
-
-        comparison.pageImage = pageImage;
-
-        if (status === 'failed' || status === 'passed') {
-            comparison.referenceImage = mocks.image();
-        }
-
-        if (resizable !== false) {
-            comparison.resizePageImage = dummyFunc;
-        }
-        comparison.acceptPage = dummyFunc;
-        return comparison;
     };
 
     testHelper.startingComparison = function () {
