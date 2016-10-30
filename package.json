@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "cssify": "~1.0.2",
-    "ejs": "~2.3.1",
+    "ejs": "^2.5.2",
     "grunt": "~0.4.5",
     "grunt-browserify": "~4.0.1",
     "grunt-cli": "~0.1",
@@ -39,10 +39,10 @@
     "grunt-regex-check": "~0.1.9",
     "grunt-shell": "~1.1.1",
     "grunt-umd": "~2.3.3",
-    "jasmine-core": "2.4.1",
+    "jasmine-core": "^2.5.2",
     "jasmine-jquery": "~2.1.1",
-    "jquery": "~2.1.0",
-    "minifyify": "~7.1.0",
+    "jquery": "^3.1.1",
+    "minifyify": "^7.3.4",
     "phantomjs": "2.1.7",
     "slimerjs": "0.906.2"
   },
