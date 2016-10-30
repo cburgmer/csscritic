@@ -44,8 +44,8 @@
     "jasmine-jquery": "~2.1.1",
     "jquery": "~2.1.0",
     "minifyify": "~7.1.0",
-    "phantomjs": "1.9.8",
-    "slimerjs": "0.9.6-2"
+    "phantomjs": "2.1.7",
+    "slimerjs": "0.906.2"
   },
   "scripts": {
     "test": "bash go --verbose"
