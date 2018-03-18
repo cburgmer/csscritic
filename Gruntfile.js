@@ -14,6 +14,7 @@ module.exports = function (grunt) {
             options: {
                 specs: ['test/specs/shared/*.js', 'test/specs/*.js', 'test/specs/reporter/*.js'],
                 helpers: [
+                    'node_modules/es6-promise/dist/es6-promise.auto.js',
                     'test/helpers.js',
                     'node_modules/jquery/dist/jquery.js',
                     'node_modules/jasmine-jquery/lib/jasmine-jquery.js',

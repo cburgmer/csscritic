@@ -21,9 +21,10 @@
   "dependencies": {
     "ayepromise": "~1.1.0",
     "imagediff": "~1.0.7",
-    "rasterizehtml": "~1.2.0"
+    "rasterizehtml": "^1.3.0"
   },
   "devDependencies": {
+    "es6-promise": "^4.0.5",
     "cssify": "~1.0.2",
     "ejs": "^2.5.2",
     "grunt": "^1.0.1",
@@ -47,6 +48,6 @@
     "slimerjs": "0.906.2"
   },
   "scripts": {
-    "test": "bash go --verbose"
+    "test": "bash go"
   }
 }
