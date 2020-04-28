@@ -44,7 +44,6 @@
     "jasmine-jquery": "~2.1.1",
     "jquery": "^3.5.0",
     "minifyify": "^7.3.5",
-    "phantomjs": "2.1.7",
     "slimerjs": "0.906.2"
   },
   "scripts": {
