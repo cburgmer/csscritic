@@ -44,7 +44,7 @@
     "jasmine-jquery": "~2.1.1",
     "jquery": "^3.5.0",
     "minifyify": "^7.3.5",
-    "slimerjs": "0.906.2"
+    "puppeteer": "^3.0.2"
   },
   "scripts": {
     "test": "bash go"
