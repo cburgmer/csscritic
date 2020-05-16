@@ -41,7 +41,7 @@ CSS Critic checks your current layout constantly against a reference image you h
     ```js
     csscritic.add({
         url: 'SOME_URL',  // link to the test case HTML document
-        desc: 'some text' // optionlly, a description of the test case (see API for even more options)
+        desc: 'some text' // optionally, a description of the test case (see API for even more options)
     });
     ```
 
