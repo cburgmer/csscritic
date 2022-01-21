@@ -63,7 +63,7 @@ CSS Critic checks your current layout constantly against a reference image you h
 
 For tests install Node.js and run
 
-    $ ./go
+    $ npm install && npm test
 
 [![Build Status](https://travis-ci.org/cburgmer/csscritic.svg?branch=master)](https://travis-ci.org/cburgmer/csscritic)
 

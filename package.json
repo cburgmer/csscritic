@@ -51,6 +51,6 @@
     "tabWidth": 4
   },
   "scripts": {
-    "test": "bash go && prettier -c test src Gruntfile.js"
+    "test": "grunt && prettier -c test src Gruntfile.js"
   }
 }
