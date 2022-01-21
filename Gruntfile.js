@@ -5,7 +5,6 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
         clean: {
-            deps: ["build/dependencies/*.js"],
             dist: ["build/*.js", "dist/", "packageVersion.js"],
             all: ["build"],
         },
@@ -83,15 +82,6 @@ module.exports = function (grunt) {
             },
         },
         browserify: {
-            inlineresources: {
-                src: "node_modules/inlineresources/src/inline.js",
-                dest: "build/dependencies/inlineresources.js",
-                options: {
-                    browserifyOptions: {
-                        standalone: "inlineresources",
-                    },
-                },
-            },
             allinone: {
                 src: "build/<%= pkg.name %>.umd.js",
                 dest: "dist/<%= pkg.name %>.allinone.js",
@@ -120,7 +110,6 @@ module.exports = function (grunt) {
                         " * imagediff.js (MIT License),\n" +
                         " * ayepromise (BSD License & WTFPL),\n" +
                         " * url (MIT License),\n" +
-                        " * CSSOM (MIT License),\n" +
                         " * xmlserializer (MIT License),\n" +
                         " * css-font-face-src (BSD License),\n" +
                         " * inlineresources (MIT License),\n" +
@@ -203,11 +192,6 @@ module.exports = function (grunt) {
         }
     );
 
-    grunt.registerTask("dependencies", [
-        "clean:deps",
-        "browserify:inlineresources",
-    ]);
-
     grunt.registerTask("test", ["jshint", "csslint", "connect", "jasmine"]);
 
     grunt.registerTask("build", [
@@ -220,7 +204,6 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask("default", [
-        "dependencies",
         "test",
         "build",
         "shell:smokeTestLoader",

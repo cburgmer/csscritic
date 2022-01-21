@@ -3,7 +3,6 @@
     "globalstrict": true,
     "globals": {
         "require": true,
-        "localserver": true,
         "console": true,
         "jasmine": true,
         "describe": true,
@@ -11,21 +10,14 @@
         "xit": true,
         "beforeEach": true,
         "afterEach": true,
-        "runs": true,
         "expect": true,
         "spyOn": true,
-        "setFixtures": true,
-        "readFixtures": true,
-        "inlineresources": true,
         "ayepromise": true,
         "imagediff": true,
         "imagediffForJasmine2": true,
         "csscriticLib": true,
         "csscriticTestPath": true,
         "csscritic": true,
-        "testHelper": true,
-        "loadStoragePluginSpecs": true,
-        "jasmineRequire": true,
-        "executeJasmine": true
+        "testHelper": true
     }
 }

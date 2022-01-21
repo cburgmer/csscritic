@@ -1,24 +1,7 @@
 {
     "extends": "../../.jshintrc",
     "globals": {
-        "$": true,
-        "jasmine": true,
-        "describe": true,
-        "it": true,
-        "beforeEach": true,
-        "afterEach": true,
-        "waitsFor": true,
-        "runs": true,
-        "expect": true,
-        "spyOn": true,
-        "rasterizeHTML": true,
-        "imagediff": true,
-        "imagediffForJasmine2": true,
-        "csscriticLib": true,
-        "csscriticTestPath": true,
-        "testHelper": true,
-        "loadStoragePluginSpecs": true,
-        "indexedDB": true
+        "csscriticLib": true
     },
-    "exported": ["loadStoragePluginSpecs"]
+    "exported": []
 }
