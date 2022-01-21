@@ -36,7 +36,7 @@ module.exports = function (grunt) {
                 ],
                 summary: true,
                 display: "short",
-                version: "2.99.1",
+                version: "3.8.0", // https://github.com/gruntjs/grunt-contrib-jasmine/issues/339
             },
         },
         shell: {

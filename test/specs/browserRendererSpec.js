@@ -45,7 +45,9 @@ describe("Browser renderer", function () {
                 width: 42,
                 height: 7,
             })
-            .then(null, done);
+            .then(null, function () {
+                done();
+            });
     });
 
     describe("HTML page rendering", function () {
@@ -110,7 +112,9 @@ describe("Browser renderer", function () {
                     width: 42,
                     height: 7,
                 })
-                .then(null, done);
+                .then(null, function () {
+                    done();
+                });
         });
 
         it("should report errors from rendering", function (done) {
