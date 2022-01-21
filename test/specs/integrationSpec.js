@@ -143,7 +143,7 @@ describe("Integration", function () {
         request.onsuccess = done;
     });
 
-    ifNotInPhantomIt("should complete in any browser", function (done) {
+    it("should complete in any browser", function (done) {
         var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
         csscritic.addReporter(csscritic.NiceReporter());
@@ -158,29 +158,26 @@ describe("Integration", function () {
         });
     });
 
-    ifNotInPhantomIt(
-        "should compare an image with its reference and return true if similar",
-        function (done) {
-            var testImageUrl = testHelper.fixture("redWithLetter.png");
+    it("should compare an image with its reference and return true if similar", function (done) {
+        var testImageUrl = testHelper.fixture("redWithLetter.png");
 
-            util.getImageForUrl(testImageUrl)
-                .then(function (image) {
-                    var theReferenceImageUri = util.getDataURIForImage(image);
+        util.getImageForUrl(testImageUrl)
+            .then(function (image) {
+                var theReferenceImageUri = util.getDataURIForImage(image);
 
-                    return storeReferenceImage(testImageUrl, {
-                        imageUri: theReferenceImageUri,
-                    });
-                })
-                .then(function () {
-                    csscritic.add(testImageUrl);
-                    csscritic.execute().then(function (passed) {
-                        expect(passed).toBe(true);
-
-                        done();
-                    });
+                return storeReferenceImage(testImageUrl, {
+                    imageUri: theReferenceImageUri,
                 });
-        }
-    );
+            })
+            .then(function () {
+                csscritic.add(testImageUrl);
+                csscritic.execute().then(function (passed) {
+                    expect(passed).toBe(true);
+
+                    done();
+                });
+            });
+    });
 
     ifNotInWebkitIt(
         "should compare a page with its reference image and return true if similar",

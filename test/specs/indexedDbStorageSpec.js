@@ -85,16 +85,14 @@ describe("IndexedDB storage", function () {
             };
         });
 
-        if (!isPhantom) {
-            loadStoragePluginSpecs(
-                constructStorage,
-                readStoredReferenceImage,
-                storeReferenceImage
-            );
-        }
+        loadStoragePluginSpecs(
+            constructStorage,
+            readStoredReferenceImage,
+            storeReferenceImage
+        );
     });
 
-    ifNotInPhantomIt("should initally create a database", function (done) {
+    it("should initally create a database", function (done) {
         var storage = constructStorage(util);
         spyOn(util, "getDataURIForImage").and.returnValue("uri");
         storage

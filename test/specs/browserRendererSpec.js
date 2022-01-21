@@ -18,7 +18,7 @@ describe("Browser renderer", function () {
         );
     });
 
-    ifNotInPhantomIt("should draw an image directly", function (done) {
+    it("should draw an image directly", function (done) {
         spyOn(rasterizeHTML, "drawHTML");
 
         browserRenderer
@@ -64,91 +64,82 @@ describe("Browser renderer", function () {
             );
         };
 
-        ifNotInPhantomIt(
-            "should draw the html page if url is not an image, disable caching and execute JavaScript",
-            function (done) {
-                var theUrl = "the url",
-                    theHtml = "some html";
+        it("should draw the html page if url is not an image, disable caching and execute JavaScript", function (done) {
+            var theUrl = "the url",
+                theHtml = "some html";
 
-                setUpRasterizeHtmlToBeSuccessful();
+            setUpRasterizeHtmlToBeSuccessful();
 
-                spyOn(util, "loadAsBlob").and.callFake(function () {
-                    return testHelper.successfulPromise(
-                        new Blob([theHtml], { type: "text/html" })
+            spyOn(util, "loadAsBlob").and.callFake(function () {
+                return testHelper.successfulPromise(
+                    new Blob([theHtml], { type: "text/html" })
+                );
+            });
+
+            browserRenderer
+                .render({
+                    url: theUrl,
+                    width: 42,
+                    height: 7,
+                })
+                .then(function (result) {
+                    expect(result.image).toBe("the image");
+                    expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
+                        theHtml,
+                        {
+                            cache: "repeated",
+                            cacheBucket: jasmine.any(Object),
+                            width: 42,
+                            height: 7,
+                            executeJs: true,
+                            executeJsTimeout: 50,
+                            baseUrl: theUrl,
+                        }
                     );
+
+                    done();
                 });
+        });
 
-                browserRenderer
-                    .render({
-                        url: theUrl,
-                        width: 42,
-                        height: 7,
-                    })
-                    .then(function (result) {
-                        expect(result.image).toBe("the image");
-                        expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
-                            theHtml,
-                            {
-                                cache: "repeated",
-                                cacheBucket: jasmine.any(Object),
-                                width: 42,
-                                height: 7,
-                                executeJs: true,
-                                executeJsTimeout: 50,
-                                baseUrl: theUrl,
-                            }
-                        );
+        it("should call the error handler if a page could not be rendered", function (done) {
+            setUpRasterizeHtmlToFail();
 
-                        done();
-                    });
-            }
-        );
+            browserRenderer
+                .render({
+                    url: testHelper.fixture("pageUnderTest.html"),
+                    width: 42,
+                    height: 7,
+                })
+                .then(null, done);
+        });
 
-        ifNotInPhantomIt(
-            "should call the error handler if a page could not be rendered",
-            function (done) {
-                setUpRasterizeHtmlToFail();
+        it("should report errors from rendering", function (done) {
+            browserRenderer
+                .render({
+                    url: testHelper.fixture("brokenPage.html"),
+                    width: 42,
+                    height: 7,
+                })
+                .then(function (result) {
+                    expect(result.errors).not.toBeNull();
+                    expect(result.errors.length).toBe(3);
+                    result.errors.sort();
+                    expect(result.errors).toEqual([
+                        "Unable to load background-image " +
+                            testHelper.fixture(
+                                "background_image_does_not_exist.jpg"
+                            ),
+                        "Unable to load image " +
+                            testHelper.fixture("image_does_not_exist.png"),
+                        "Unable to load stylesheet " +
+                            testHelper.fixture("css_does_not_exist.css"),
+                    ]);
 
-                browserRenderer
-                    .render({
-                        url: testHelper.fixture("pageUnderTest.html"),
-                        width: 42,
-                        height: 7,
-                    })
-                    .then(null, done);
-            }
-        );
+                    done();
+                });
+        });
 
-        ifNotInPhantomIt(
-            "should report errors from rendering",
-            function (done) {
-                browserRenderer
-                    .render({
-                        url: testHelper.fixture("brokenPage.html"),
-                        width: 42,
-                        height: 7,
-                    })
-                    .then(function (result) {
-                        expect(result.errors).not.toBeNull();
-                        expect(result.errors.length).toBe(3);
-                        result.errors.sort();
-                        expect(result.errors).toEqual([
-                            "Unable to load background-image " +
-                                testHelper.fixture(
-                                    "background_image_does_not_exist.jpg"
-                                ),
-                            "Unable to load image " +
-                                testHelper.fixture("image_does_not_exist.png"),
-                            "Unable to load stylesheet " +
-                                testHelper.fixture("css_does_not_exist.css"),
-                        ]);
-
-                        done();
-                    });
-            }
-        );
-
-        ifNotInPhantomIt("should render with hover effect", function (done) {
+        it("should render with hover effect", function (done) {
             setUpRasterizeHtmlToBeSuccessful();
 
             browserRenderer
@@ -167,35 +158,32 @@ describe("Browser renderer", function () {
                 });
         });
 
-        ifNotInPhantomIt(
-            "should render with active/focus/target effect",
-            function (done) {
-                setUpRasterizeHtmlToBeSuccessful();
+        it("should render with active/focus/target effect", function (done) {
+            setUpRasterizeHtmlToBeSuccessful();
 
-                browserRenderer
-                    .render({
-                        url: testHelper.fixture("pageUnderTest.html"),
-                        width: 42,
-                        height: 7,
-                        active: ".someSelector",
-                        focus: "#other",
-                        target: "img",
-                    })
-                    .then(function () {
-                        expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
-                            jasmine.any(String),
-                            jasmine.objectContaining({
-                                active: ".someSelector",
-                                focus: "#other",
-                                target: "img",
-                            })
-                        );
-                        done();
-                    });
-            }
-        );
+            browserRenderer
+                .render({
+                    url: testHelper.fixture("pageUnderTest.html"),
+                    width: 42,
+                    height: 7,
+                    active: ".someSelector",
+                    focus: "#other",
+                    target: "img",
+                })
+                .then(function () {
+                    expect(rasterizeHTML.drawHTML).toHaveBeenCalledWith(
+                        jasmine.any(String),
+                        jasmine.objectContaining({
+                            active: ".someSelector",
+                            focus: "#other",
+                            target: "img",
+                        })
+                    );
+                    done();
+                });
+        });
 
-        ifNotInPhantomIt("should properly render Unicode", function (done) {
+        it("should properly render Unicode", function (done) {
             setUpRasterizeHtmlToBeSuccessful();
 
             browserRenderer

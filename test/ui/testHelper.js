@@ -156,13 +156,6 @@ window.testHelper = (function () {
         };
     };
 
-    var mockCanvasReadSupport = function () {
-        // Overwrite method to pass in PhantomJS
-        CanvasRenderingContext2D.prototype.getImageData = function () {};
-
-        HTMLCanvasElement.prototype.toDataURL = function () {};
-    };
-
     var mockDateAutoIncreasing = function () {
         var date = 0;
         window.Date = {
@@ -187,7 +180,6 @@ window.testHelper = (function () {
 
     testHelper.setUp = function () {
         mockImagediff();
-        mockCanvasReadSupport();
         mockDateAutoIncreasing();
     };
 

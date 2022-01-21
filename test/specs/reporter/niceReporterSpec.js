@@ -829,21 +829,18 @@ describe("Nice reporter", function () {
                 });
         });
 
-        ifNotInPhantomIt(
-            "should not show a warning if the browser is supported",
-            function (done) {
-                reporter.reportSelectedComparison(aPassedTest());
+        it("should not show a warning if the browser is supported", function (done) {
+            reporter.reportSelectedComparison(aPassedTest());
 
-                // Wait for the opposite until timeout
-                testHelper
-                    .waitsFor(function () {
-                        return $(".browserWarning").length > 0;
-                    })
-                    .then(null, function () {
-                        expect($(".browserWarning")).not.toExist();
-                        done();
-                    });
-            }
-        );
+            // Wait for the opposite until timeout
+            testHelper
+                .waitsFor(function () {
+                    return $(".browserWarning").length > 0;
+                })
+                .then(null, function () {
+                    expect($(".browserWarning")).not.toExist();
+                    done();
+                });
+        });
     });
 });

@@ -142,7 +142,7 @@ describe("Utility", function () {
             return defer.promise;
         };
 
-        ifNotInPhantomIt("should load content from a URL", function (done) {
+        it("should load content from a URL", function (done) {
             util.loadAsBlob(testHelper.fixture("simple.js"))
                 .then(blob2Text)
                 .then(function (blob) {
@@ -152,7 +152,7 @@ describe("Utility", function () {
                 });
         });
 
-        ifNotInPhantomIt("should load binary data", function (done) {
+        it("should load binary data", function (done) {
             util.loadAsBlob(testHelper.fixture("green.png"))
                 .then(blob2Base64)
                 .then(function (blob) {
@@ -200,7 +200,7 @@ describe("Utility", function () {
     });
 
     describe("loadBlobAsText", function () {
-        ifNotInPhantomIt("should return the text", function (done) {
+        it("should return the text", function (done) {
             var blob = new Blob(["<strong>The Blob</strong>"], {
                 type: "text/html",
             });
@@ -214,7 +214,7 @@ describe("Utility", function () {
     });
 
     describe("loadBlobAsDataURI", function () {
-        ifNotInPhantomIt("should return the text", function (done) {
+        it("should return the text", function (done) {
             var base64EncodedImage =
                     "R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
                 blob = new Blob([atob(base64EncodedImage)], {

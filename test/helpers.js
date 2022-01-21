@@ -1,19 +1,9 @@
 "use strict";
 
-var isWebkit = navigator.userAgent.indexOf("WebKit") >= 0,
-    isPhantom = navigator.userAgent.indexOf("PhantomJS") >= 0;
+var isWebkit = navigator.userAgent.indexOf("WebKit") >= 0;
 
 window.ifNotInWebkitIt = function (text, functionHandle) {
     if (!isWebkit) {
-        return it(text, functionHandle);
-    } else {
-        console.warn('Warning: "' + text + '" is disabled on this platform');
-        return xit(text, functionHandle);
-    }
-};
-
-window.ifNotInPhantomIt = function (text, functionHandle) {
-    if (!isPhantom) {
         return it(text, functionHandle);
     } else {
         console.warn('Warning: "' + text + '" is disabled on this platform');

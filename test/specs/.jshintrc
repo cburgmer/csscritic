@@ -17,8 +17,6 @@
         "imagediffForJasmine2": true,
         "csscriticLib": true,
         "ifNotInWebkitIt": true,
-        "ifNotInPhantomIt": true,
-        "isPhantom": true,
         "csscriticTestPath": true,
         "testHelper": true,
         "loadStoragePluginSpecs": true,
