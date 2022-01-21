@@ -9,9 +9,18 @@ module.exports = function (grunt) {
             dist: ["build/*.js", "dist/", "packageVersion.js"],
             all: ["build", "test/ui/*.html.json", "example/*.html.json"],
         },
+        connect: {
+            server: {
+                options: {
+                    port: 8765,
+                    hostname: "127.0.0.1",
+                },
+            },
+        },
         jasmine: {
             src: "csscritic.js",
             options: {
+                host: "http://127.0.0.1:8765/",
                 specs: [
                     "test/specs/shared/*.js",
                     "test/specs/*.js",
@@ -23,10 +32,11 @@ module.exports = function (grunt) {
                     "node_modules/jquery/dist/jquery.js",
                     "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
                     "test/testHelper.js",
+                    "test/gruntpath.js",
                 ],
-                fixturesPath: "./fixtures/",
                 summary: true,
                 display: "short",
+                version: "2.99.1",
             },
         },
         shell: {
@@ -171,6 +181,7 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks("grunt-contrib-connect");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-contrib-watch");
@@ -213,7 +224,7 @@ module.exports = function (grunt) {
         "browserify:inlineresources",
     ]);
 
-    grunt.registerTask("test", ["jshint", "csslint", "jasmine"]);
+    grunt.registerTask("test", ["jshint", "csslint", "connect", "jasmine"]);
 
     grunt.registerTask("build", [
         "clean:dist",
