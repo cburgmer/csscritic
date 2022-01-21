@@ -10,7 +10,7 @@ describe("Reporting", function () {
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
         rendererBackend.render.and.returnValue(
-            testHelper.successfulPromise({
+            Promise.resolve({
                 image: image,
                 errors: errors,
             })

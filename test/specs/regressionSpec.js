@@ -10,7 +10,7 @@ describe("Regression testing", function () {
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
         rendererBackend.render.and.returnValue(
-            testHelper.successfulPromise({
+            Promise.resolve({
                 image: image,
                 errors: errors,
             })
@@ -48,7 +48,7 @@ describe("Regression testing", function () {
 
         spyOn(util, "workAroundTransparencyIssueInFirefox").and.callFake(
             function (image) {
-                return testHelper.successfulPromise(image);
+                return Promise.resolve(image);
             }
         );
 

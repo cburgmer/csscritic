@@ -13,41 +13,39 @@ describe("IndexedDB storage", function () {
     });
 
     var getDb = function () {
-        var defer = ayepromise.defer();
-
-        var request = indexedDB.open("csscritic", 1);
-        request.onsuccess = function (event) {
-            var db = event.target.result;
-            defer.resolve(db);
-        };
-        return defer.promise;
+        return new Promise(function (fulfill) {
+            var request = indexedDB.open("csscritic", 1);
+            request.onsuccess = function (event) {
+                var db = event.target.result;
+                fulfill(db);
+            };
+        });
     };
 
     var readStoredReferenceImage = function (key) {
-        var defer = ayepromise.defer();
+        return getDb().then(function (db) {
+            return new Promise(function (fulfill) {
+                var request = db
+                    .transaction(["references"])
+                    .objectStore("references")
+                    .get(key);
 
-        getDb().then(function (db) {
-            var request = db
-                .transaction(["references"])
-                .objectStore("references")
-                .get(key);
-
-            request.onsuccess = function () {
-                db.close();
-                // TODO stop using JSON string as interface in test
-                defer.resolve(
-                    JSON.stringify({
-                        referenceImageUri: request.result.reference.imageUri,
-                        viewport: request.result.reference.viewport,
-                    })
-                );
-            };
+                request.onsuccess = function () {
+                    db.close();
+                    // TODO stop using JSON string as interface in test
+                    fulfill(
+                        JSON.stringify({
+                            referenceImageUri:
+                                request.result.reference.imageUri,
+                            viewport: request.result.reference.viewport,
+                        })
+                    );
+                };
+            });
         });
-        return defer.promise;
     };
 
     var storeReferenceImage = function (key, stringData) {
-        var defer = ayepromise.defer();
         // TODO move away from JSON encoded test input, doesn't match internals of this module
         var data = JSON.parse(stringData),
             dataObj = {};
@@ -57,18 +55,19 @@ describe("IndexedDB storage", function () {
         if (data.viewport) {
             dataObj.viewport = data.viewport;
         }
-        getDb().then(function (db) {
-            var request = db
-                .transaction(["references"], "readwrite")
-                .objectStore("references")
-                .add({ testCase: key, reference: dataObj });
+        return getDb().then(function (db) {
+            return new Promise(function (fulfill) {
+                var request = db
+                    .transaction(["references"], "readwrite")
+                    .objectStore("references")
+                    .add({ testCase: key, reference: dataObj });
 
-            request.onsuccess = function () {
-                db.close();
-                defer.resolve();
-            };
+                request.onsuccess = function () {
+                    db.close();
+                    fulfill();
+                };
+            });
         });
-        return defer.promise;
     };
 
     describe("with existing database", function () {

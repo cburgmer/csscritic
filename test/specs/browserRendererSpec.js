@@ -53,7 +53,7 @@ describe("Browser renderer", function () {
     describe("HTML page rendering", function () {
         var setUpRasterizeHtmlToBeSuccessful = function () {
             spyOn(rasterizeHTML, "drawHTML").and.returnValue(
-                testHelper.successfulPromise({
+                Promise.resolve({
                     image: "the image",
                     errors: [],
                 })
@@ -73,7 +73,7 @@ describe("Browser renderer", function () {
             setUpRasterizeHtmlToBeSuccessful();
 
             spyOn(util, "loadAsBlob").and.callFake(function () {
-                return testHelper.successfulPromise(
+                return Promise.resolve(
                     new Blob([theHtml], { type: "text/html" })
                 );
             });

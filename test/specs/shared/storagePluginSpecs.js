@@ -13,9 +13,7 @@ var loadStoragePluginSpecs = function (
     var util = csscriticLib.util();
 
     var setUpImageReturnedForUrl = function (image) {
-        util.getImageForUrl.and.returnValue(
-            testHelper.successfulPromise(image)
-        );
+        util.getImageForUrl.and.returnValue(Promise.resolve(image));
     };
 
     var setUpImageForUrlToFail = function (e) {

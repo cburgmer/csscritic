@@ -8,18 +8,23 @@ describe("Job Queue", function () {
     });
 
     it("should execute a single job", function () {
-        var defer = ayepromise.defer(),
-            job = jasmine.createSpy("job").and.returnValue(defer.promise);
+        var job = jasmine
+            .createSpy("job")
+            .and.returnValue(new Promise(function () {}));
         subject.execute(job);
 
         expect(job).toHaveBeenCalled();
     });
 
     it("should execute two jobs sequencially", function (done) {
-        var defer1 = ayepromise.defer(),
-            job1 = jasmine.createSpy("job1").and.returnValue(defer1.promise),
-            defer2 = ayepromise.defer(),
-            job2 = jasmine.createSpy("job2").and.returnValue(defer2.promise);
+        var job1Fulfill,
+            job1Promise = new Promise(function (fulfill) {
+                job1Fulfill = fulfill;
+            }),
+            job1 = jasmine.createSpy("job1").and.returnValue(job1Promise),
+            job2 = jasmine
+                .createSpy("job2")
+                .and.returnValue(new Promise(function () {}));
 
         subject.execute(job1);
         subject.execute(job2);
@@ -27,9 +32,9 @@ describe("Job Queue", function () {
         expect(job1).toHaveBeenCalled();
         expect(job2).not.toHaveBeenCalled();
 
-        defer1.resolve();
+        job1Fulfill();
 
-        defer1.promise.then(function () {
+        job1Promise.then(function () {
             expect(job2).toHaveBeenCalled();
 
             done();
@@ -37,10 +42,14 @@ describe("Job Queue", function () {
     });
 
     it("should execute following job even if it fails", function (done) {
-        var defer1 = ayepromise.defer(),
-            job1 = jasmine.createSpy("job1").and.returnValue(defer1.promise),
-            defer2 = ayepromise.defer(),
-            job2 = jasmine.createSpy("job2").and.returnValue(defer2.promise);
+        var job1Reject,
+            job1Promise = new Promise(function (_, reject) {
+                job1Reject = reject;
+            }),
+            job1 = jasmine.createSpy("job1").and.returnValue(job1Promise),
+            job2 = jasmine
+                .createSpy("job2")
+                .and.returnValue(new Promise(function () {}));
 
         subject.execute(job1);
         subject.execute(job2);
@@ -48,9 +57,9 @@ describe("Job Queue", function () {
         expect(job1).toHaveBeenCalled();
         expect(job2).not.toHaveBeenCalled();
 
-        defer1.reject();
+        job1Reject();
 
-        defer1.promise.then(null, function () {
+        job1Promise.then(null, function () {
             expect(job2).toHaveBeenCalled();
 
             done();
@@ -58,16 +67,19 @@ describe("Job Queue", function () {
     });
 
     it("should return a promise for the job to be executed", function (done) {
-        var defer = ayepromise.defer(),
-            job = jasmine.createSpy("job").and.returnValue(defer.promise),
+        var jobFulfill,
+            jobPromise = new Promise(function (fulfill) {
+                jobFulfill = fulfill;
+            }),
+            job = jasmine.createSpy("job").and.returnValue(jobPromise),
             jobExecutionSpy = jasmine.createSpy("jobExecution");
 
         var executionPromise = subject.execute(job);
         executionPromise.then(jobExecutionSpy);
 
-        defer.resolve("the_result");
+        jobFulfill("the_result");
 
-        defer.promise.then(function () {
+        jobPromise.then(function () {
             setTimeout(function () {
                 expect(jobExecutionSpy).toHaveBeenCalledWith("the_result");
 
@@ -77,17 +89,20 @@ describe("Job Queue", function () {
     });
 
     it("should handle rejection for the returned promise of the executed job", function (done) {
-        var defer = ayepromise.defer(),
-            job = jasmine.createSpy("job").and.returnValue(defer.promise),
+        var jobReject,
+            jobPromise = new Promise(function (_, reject) {
+                jobReject = reject;
+            }),
+            job = jasmine.createSpy("job").and.returnValue(jobPromise),
             jobExecutionSpy = jasmine.createSpy("jobExecution"),
             e = new Error();
 
         var executionPromise = subject.execute(job);
         executionPromise.then(null, jobExecutionSpy);
 
-        defer.reject(e);
+        jobReject(e);
 
-        defer.promise.then(null, function () {
+        jobPromise.then(null, function () {
             setTimeout(function () {
                 expect(jobExecutionSpy).toHaveBeenCalledWith(e);
 

@@ -11,8 +11,6 @@
         "runs": true,
         "expect": true,
         "spyOn": true,
-        "setFixtures": true,
-        "readFixtures": true,
         "rasterizeHTML": true,
         "imagediff": true,
         "imagediffForJasmine2": true,
@@ -20,8 +18,6 @@
         "csscriticTestPath": true,
         "testHelper": true,
         "loadStoragePluginSpecs": true,
-        "CanvasRenderingContext2D": true,
-        "ayepromise": true,
         "indexedDB": true
     },
     "exported": ["loadStoragePluginSpecs"]

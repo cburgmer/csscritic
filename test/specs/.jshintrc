@@ -22,6 +22,7 @@
         "loadStoragePluginSpecs": true,
         "CanvasRenderingContext2D": true,
         "ayepromise": true,
+        "Promise": true,
         "indexedDB": true
     },
     "exported": ["loadStoragePluginSpecs"]

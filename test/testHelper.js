@@ -100,22 +100,6 @@ window.testHelper = (function () {
         return defer.promise;
     };
 
-    module.successfulPromiseFake = function (value) {
-        return {
-            then: function (successHandler) {
-                successHandler(value);
-            },
-        };
-    };
-
-    module.failedPromiseFake = function (e) {
-        return {
-            then: function (_, failHandler) {
-                failHandler(e);
-            },
-        };
-    };
-
     module.deferFake = function (value) {
         var successHandler,
             resolved = false;
