@@ -16,18 +16,17 @@ csscriticLib.util = function () {
     };
 
     module.getImageForUrl = function (url) {
-        var defer = ayepromise.defer(),
-            image = new window.Image();
+        return new Promise(function (fulfill, reject) {
+            var image = new window.Image();
 
-        image.onload = function () {
-            defer.resolve(image);
-        };
-        image.onerror = function () {
-            defer.reject();
-        };
-        image.src = url;
-
-        return defer.promise;
+            image.onload = function () {
+                fulfill(image);
+            };
+            image.onerror = function () {
+                reject();
+            };
+            image.src = url;
+        });
     };
 
     var getUncachableURL = function (url) {
@@ -41,90 +40,86 @@ csscriticLib.util = function () {
     };
 
     module.ajax = function (url) {
-        var defer = ayepromise.defer(),
-            xhr = new XMLHttpRequest();
+        return new Promise(function (fulfill, reject) {
+            var xhr = new XMLHttpRequest();
 
-        xhr.onload = function () {
-            if (xhr.status === 200 || xhr.status === 0) {
-                defer.resolve(xhr.response);
-            } else {
-                defer.reject();
+            xhr.onload = function () {
+                if (xhr.status === 200 || xhr.status === 0) {
+                    fulfill(xhr.response);
+                } else {
+                    reject();
+                }
+            };
+
+            xhr.onerror = function () {
+                reject();
+            };
+
+            try {
+                xhr.open("get", getUncachableURL(url), true);
+                xhr.send();
+            } catch (e) {
+                reject();
             }
-        };
-
-        xhr.onerror = function () {
-            defer.reject();
-        };
-
-        try {
-            xhr.open("get", getUncachableURL(url), true);
-            xhr.send();
-        } catch (e) {
-            defer.reject();
-        }
-
-        return defer.promise;
+        });
     };
 
     module.loadAsBlob = function (url) {
-        var defer = ayepromise.defer(),
-            xhr = new XMLHttpRequest();
+        return new Promise(function (fulfill, reject) {
+            var xhr = new XMLHttpRequest();
 
-        xhr.onload = function () {
-            if (xhr.status === 200 || xhr.status === 0) {
-                defer.resolve(xhr.response);
-            } else {
-                defer.reject(new Error(xhr.statusText));
+            xhr.onload = function () {
+                if (xhr.status === 200 || xhr.status === 0) {
+                    fulfill(xhr.response);
+                } else {
+                    reject(new Error(xhr.statusText));
+                }
+            };
+
+            xhr.onerror = function (e) {
+                reject(e);
+            };
+
+            try {
+                xhr.open("get", getUncachableURL(url), true);
+                xhr.responseType = "blob";
+                xhr.send();
+            } catch (e) {
+                reject(e);
             }
-        };
-
-        xhr.onerror = function (e) {
-            defer.reject(e);
-        };
-
-        try {
-            xhr.open("get", getUncachableURL(url), true);
-            xhr.responseType = "blob";
-            xhr.send();
-        } catch (e) {
-            defer.reject(e);
-        }
-
-        return defer.promise;
+        });
     };
 
     module.loadBlobAsText = function (blob) {
-        var defer = ayepromise.defer(),
-            reader = new FileReader();
+        return new Promise(function (fulfill, reject) {
+            var reader = new FileReader();
 
-        reader.onload = function (e) {
-            defer.resolve(e.target.result);
-        };
+            reader.onload = function (e) {
+                fulfill(e.target.result);
+            };
 
-        reader.onerror = function () {
-            defer.reject();
-        };
+            reader.onerror = function () {
+                reject();
+            };
 
-        reader.readAsText(blob);
-
-        return defer.promise;
+            reader.readAsText(blob);
+        });
     };
 
     module.loadBlobAsDataURI = function (blob) {
-        var defer = ayepromise.defer(),
-            reader = new FileReader();
+        return new Promise(function (fulfill, reject) {
+            var reader = new FileReader();
 
-        reader.onload = function (e) {
-            defer.resolve(e.target.result);
-        };
+            reader.onload = function (e) {
+                fulfill(e.target.result);
+            };
 
-        reader.onerror = function () {
-            defer.reject();
-        };
+            reader.onerror = function () {
+                reject();
+            };
 
-        reader.readAsDataURL(blob);
-
-        return defer.promise;
+            reader.readAsDataURL(blob);
+        });
     };
 
     // excludeKeys(theMap, excludeKey...)
@@ -163,12 +158,6 @@ csscriticLib.util = function () {
         return theClone;
     };
 
-    var successfulPromise = function (value) {
-        var defer = ayepromise.defer();
-        defer.resolve(value);
-        return defer.promise;
-    };
-
     module.workAroundTransparencyIssueInFirefox = function (image) {
         // Work around bug https://bugzilla.mozilla.org/show_bug.cgi?id=790468 where the content of a canvas
         //   drawn to another one will be slightly different if transparency is involved.
@@ -179,7 +168,7 @@ csscriticLib.util = function () {
             dataUri = module.getDataURIForImage(image);
         } catch (e) {
             // Fallback for Chrome & Safari
-            return successfulPromise(image);
+            return Promise.resolve(image);
         }
 
         return module.getImageForUrl(dataUri);

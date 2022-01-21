@@ -4,6 +4,7 @@
         "rasterizeHTML": true,
         "inlineresources": true,
         "imagediff": true,
+        "Promise": true,
         "ayepromise": true,
         "indexedDB": true,
         "console": true,
