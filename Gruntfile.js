@@ -150,6 +150,7 @@ module.exports = function (grunt) {
                     "duplicate-background-images": false,
                     "compatible-vendor-prefixes": false,
                     "fallback-colors": false,
+                    "selector-newline": false,
                 },
             },
         },
