@@ -38,21 +38,18 @@ describe("Workarounds", function () {
         localStorage.clear();
     });
 
-    ifNotInWebkitIt(
-        "should work around transparency making pages non-comparable",
-        function (done) {
-            // Create reference image first
-            reporting.addReporter(aOnceAutoAcceptingReporter());
+    it("should work around transparency making pages non-comparable", function (done) {
+        // Create reference image first
+        reporting.addReporter(aOnceAutoAcceptingReporter());
+        main.add({ url: testHelper.fixture("transparencyBug.html") });
+        main.execute().then(function () {
+            // Now test against the reference
             main.add({ url: testHelper.fixture("transparencyBug.html") });
-            main.execute().then(function () {
-                // Now test against the reference
-                main.add({ url: testHelper.fixture("transparencyBug.html") });
-                main.execute().then(function (passed) {
-                    expect(passed).toBe(true);
+            main.execute().then(function (passed) {
+                expect(passed).toBe(true);
 
-                    done();
-                });
+                done();
             });
-        }
-    );
+        });
+    });
 });

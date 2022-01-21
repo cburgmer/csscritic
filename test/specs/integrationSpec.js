@@ -179,23 +179,20 @@ describe("Integration", function () {
             });
     });
 
-    ifNotInWebkitIt(
-        "should compare a page with its reference image and return true if similar",
-        function (done) {
-            var testPageUrl = testHelper.fixture("pageUnderTest.html");
+    it("should compare a page with its reference image and return true if similar", function (done) {
+        var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
-            storeReferenceImage(testPageUrl, {
-                imageUri: theReferenceImageUri,
-            }).then(function () {
-                csscritic.add(testPageUrl);
-                csscritic.execute().then(function (passed) {
-                    expect(passed).toBe(true);
+        storeReferenceImage(testPageUrl, {
+            imageUri: theReferenceImageUri,
+        }).then(function () {
+            csscritic.add(testPageUrl);
+            csscritic.execute().then(function (passed) {
+                expect(passed).toBe(true);
 
-                    done();
-                });
+                done();
             });
-        }
-    );
+        });
+    });
 
     // Disabled, as we cannot compare the serialized image across browsers. Same image has different serialisations
     xit("should store a reference when a result is accepted", function (done) {
@@ -231,84 +228,72 @@ describe("Integration", function () {
         });
     });
 
-    ifNotInWebkitIt(
-        "should properly report a failing comparison",
-        function (done) {
-            var testPageUrl = testHelper.fixture("brokenPage.html");
+    it("should properly report a failing comparison", function (done) {
+        var testPageUrl = testHelper.fixture("brokenPage.html");
 
-            storeReferenceImage(testPageUrl, {
-                imageUri: theReferenceImageUri,
-            }).then(function () {
-                csscritic.addReporter(csscritic.NiceReporter());
-                csscritic.add(testPageUrl);
-                csscritic.execute().then(function () {
-                    expect(
-                        $(".cssCriticNiceReporter .failed.comparison")
-                    ).toExist();
-                    expect(
-                        $(
-                            ".cssCriticNiceReporter .comparison .titleLink"
-                        ).text()
-                    ).toEqual(testPageUrl);
-                    expect(
-                        $(".cssCriticNiceReporter .comparison .errorText")
-                    ).toExist();
-                    expect(
-                        $(
-                            ".cssCriticNiceReporter .comparison .errorText"
-                        ).text()
-                    ).toContain("background_image_does_not_exist.jpg");
-                    expect(
-                        $(
-                            ".cssCriticNiceReporter .comparison .referenceImageContainer img"
-                        )
-                    ).toExist();
-                    expect(
-                        $(
-                            ".cssCriticNiceReporter .comparison .referenceImageContainer canvas"
-                        )
-                    ).toExist();
-                    expect(
-                        $(
-                            ".cssCriticNiceReporter .comparison .pageImageContainer canvas"
-                        )
-                    ).toExist();
-
-                    done();
-                });
-            });
-        }
-    );
-
-    ifNotInWebkitIt(
-        "should correctly re-render a page overflowing the given viewport",
-        function (done) {
-            var testPageUrl = testHelper.fixture("overflowingPage.html"),
-                reporter = jasmine.createSpyObj("Reporter", [
-                    "reportComparison",
-                ]),
-                result;
-
-            csscritic.addReporter(reporter);
-
-            // Accept first rendering
-            reporter.reportComparison.and.callFake(function (theResult) {
-                result = theResult;
-            });
-
+        storeReferenceImage(testPageUrl, {
+            imageUri: theReferenceImageUri,
+        }).then(function () {
+            csscritic.addReporter(csscritic.NiceReporter());
             csscritic.add(testPageUrl);
             csscritic.execute().then(function () {
-                var anothercsscritic = aCssCriticInstance();
-                result.acceptPage();
+                expect(
+                    $(".cssCriticNiceReporter .failed.comparison")
+                ).toExist();
+                expect(
+                    $(".cssCriticNiceReporter .comparison .titleLink").text()
+                ).toEqual(testPageUrl);
+                expect(
+                    $(".cssCriticNiceReporter .comparison .errorText")
+                ).toExist();
+                expect(
+                    $(".cssCriticNiceReporter .comparison .errorText").text()
+                ).toContain("background_image_does_not_exist.jpg");
+                expect(
+                    $(
+                        ".cssCriticNiceReporter .comparison .referenceImageContainer img"
+                    )
+                ).toExist();
+                expect(
+                    $(
+                        ".cssCriticNiceReporter .comparison .referenceImageContainer canvas"
+                    )
+                ).toExist();
+                expect(
+                    $(
+                        ".cssCriticNiceReporter .comparison .pageImageContainer canvas"
+                    )
+                ).toExist();
 
-                anothercsscritic.addReporter(reporter);
-                anothercsscritic.add(testPageUrl);
-                anothercsscritic.execute().then(function (status) {
-                    expect(status).toBe(true);
-
-                    done();
-                });
+                done();
             });
-        }
-    );
+        });
+    });
+
+    it("should correctly re-render a page overflowing the given viewport", function (done) {
+        var testPageUrl = testHelper.fixture("overflowingPage.html"),
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]),
+            result;
+
+        csscritic.addReporter(reporter);
+
+        // Accept first rendering
+        reporter.reportComparison.and.callFake(function (theResult) {
+            result = theResult;
+        });
+
+        csscritic.add(testPageUrl);
+        csscritic.execute().then(function () {
+            var anothercsscritic = aCssCriticInstance();
+            result.acceptPage();
+
+            anothercsscritic.addReporter(reporter);
+            anothercsscritic.add(testPageUrl);
+            anothercsscritic.execute().then(function (status) {
+                expect(status).toBe(true);
+
+                done();
+            });
+        });
+    });
 });

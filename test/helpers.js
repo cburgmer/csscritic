@@ -1,16 +1,5 @@
 "use strict";
 
-var isWebkit = navigator.userAgent.indexOf("WebKit") >= 0;
-
-window.ifNotInWebkitIt = function (text, functionHandle) {
-    if (!isWebkit) {
-        return it(text, functionHandle);
-    } else {
-        console.warn('Warning: "' + text + '" is disabled on this platform');
-        return xit(text, functionHandle);
-    }
-};
-
 window.imagediffForJasmine2 = {
     // work around imagediff only supporting jasmine 1.x
     toImageDiffEqual: function () {
