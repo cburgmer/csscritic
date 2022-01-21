@@ -46,7 +46,7 @@
     "jasmine-jquery": "~2.1.1",
     "jquery": "^3.6.0",
     "minifyify": "^7.3.5",
-    "puppeteer": "^3.3.0"
+    "puppeteer": "^13.1.1"
   },
   "prettier": {
     "tabWidth": 4
