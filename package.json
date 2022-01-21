@@ -39,7 +39,6 @@
     "grunt-contrib-jasmine": "^3.0.0",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-regex-check": "~0.1.9",
     "grunt-shell": "^2.1.0",
     "grunt-umd": "~2.3.3",
     "jasmine-core": "^3.8.0",

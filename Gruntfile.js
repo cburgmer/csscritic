@@ -163,21 +163,6 @@ module.exports = function (grunt) {
                 jshintrc: true,
             },
         },
-        "regex-check": {
-            files: [
-                "*.md",
-                "src/*.js",
-                "src/*/*.js",
-                "test/*.js",
-                "test/*.html",
-                "test/*/*.js",
-                "test/*/*.html",
-                "test/*/*/*.js",
-            ],
-            options: {
-                pattern: /FIXME/g,
-            },
-        },
     });
 
     grunt.loadNpmTasks("grunt-contrib-concat");
@@ -188,7 +173,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-contrib-cssmin");
     grunt.loadNpmTasks("grunt-contrib-csslint");
     grunt.loadNpmTasks("grunt-contrib-clean");
-    grunt.loadNpmTasks("grunt-regex-check");
     grunt.loadNpmTasks("grunt-shell");
     grunt.loadNpmTasks("grunt-browserify");
     grunt.loadNpmTasks("grunt-umd");
@@ -241,6 +225,5 @@ module.exports = function (grunt) {
         "build",
         "shell:smokeTestLoader",
         "shell:smokeTestBundle",
-        "regex-check",
     ]);
 };
