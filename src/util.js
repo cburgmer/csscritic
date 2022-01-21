@@ -39,31 +39,6 @@ csscriticLib.util = function () {
         return url + delimiter + "_=" + Date.now();
     };
 
-    module.ajax = function (url) {
-        return new Promise(function (fulfill, reject) {
-            var xhr = new XMLHttpRequest();
-
-            xhr.onload = function () {
-                if (xhr.status === 200 || xhr.status === 0) {
-                    fulfill(xhr.response);
-                } else {
-                    reject();
-                }
-            };
-
-            xhr.onerror = function () {
-                reject();
-            };
-
-            try {
-                xhr.open("get", getUncachableURL(url), true);
-                xhr.send();
-            } catch (e) {
-                reject();
-            }
-        });
-    };
-
     module.loadAsBlob = function (url) {
         return new Promise(function (fulfill, reject) {
             var xhr = new XMLHttpRequest();

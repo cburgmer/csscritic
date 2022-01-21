@@ -55,66 +55,6 @@ describe("Utility", function () {
         });
     });
 
-    describe("ajax", function () {
-        it("should load content from a URL", function (done) {
-            util.ajax(testHelper.fixture("simple.js")).then(function (content) {
-                expect(content).toEqual('var s = "hello";\n');
-
-                done();
-            });
-        });
-
-        it("should call error callback on fail", function (done) {
-            util.ajax(testHelper.fixture("non_existing_url.html")).then(
-                null,
-                function () {
-                    done();
-                }
-            );
-        });
-
-        it("should not cache repeated calls by default", function () {
-            var dateNowSpy = spyOn(window.Date, "now").and.returnValue(42),
-                ajaxRequest = jasmine.createSpyObj("ajaxRequest", [
-                    "open",
-                    "addEventListener",
-                    "overrideMimeType",
-                    "send",
-                ]);
-
-            spyOn(window, "XMLHttpRequest").and.returnValue(ajaxRequest);
-
-            util.ajax("non_existing_url.html");
-
-            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual(
-                "non_existing_url.html?_=42"
-            );
-
-            dateNowSpy.and.returnValue(43);
-            util.ajax("non_existing_url.html");
-            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual(
-                "non_existing_url.html?_=43"
-            );
-        });
-
-        it("should not break existing query parameters", function () {
-            var ajaxRequest = jasmine.createSpyObj("ajaxRequest", [
-                "open",
-                "addEventListener",
-                "overrideMimeType",
-                "send",
-            ]);
-            spyOn(window.Date, "now").and.returnValue(42);
-            spyOn(window, "XMLHttpRequest").and.returnValue(ajaxRequest);
-
-            util.ajax("non_existing_url?someParam=foo");
-
-            expect(ajaxRequest.open.calls.mostRecent().args[1]).toEqual(
-                "non_existing_url?someParam=foo&_=42"
-            );
-        });
-    });
-
     describe("loadAsBlob", function () {
         var blob2Text = function (blob) {
             var defer = ayepromise.defer(),
