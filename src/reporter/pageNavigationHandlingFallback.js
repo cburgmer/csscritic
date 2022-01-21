@@ -6,10 +6,12 @@ csscriticLib.pageNavigationHandlingFallback = function () {
 
     var module = {};
 
-    var fakeTargetClassName = 'fakeTarget';
+    var fakeTargetClassName = "fakeTarget";
 
     var clearFakeActiveClass = function () {
-        var previousTargets = Array.prototype.slice.call(document.querySelectorAll('.' + fakeTargetClassName));
+        var previousTargets = Array.prototype.slice.call(
+            document.querySelectorAll("." + fakeTargetClassName)
+        );
         previousTargets.forEach(function (elem) {
             elem.classList.remove(fakeTargetClassName);
         });
@@ -49,7 +51,7 @@ csscriticLib.pageNavigationHandlingFallback = function () {
 
         element.onclick = function (e) {
             var targetLink = decodeURIComponent(e.target.href),
-                targetId = targetLink.substr(targetLink.indexOf('#')+1);
+                targetId = targetLink.substr(targetLink.indexOf("#") + 1);
 
             scrollTo(targetId);
             history.pushState(targetId, targetId);

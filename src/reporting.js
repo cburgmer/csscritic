@@ -25,23 +25,29 @@ csscriticLib.reporting = function (renderer, storage, util) {
                     viewportWidth = width;
                     viewportHeight = height;
 
-                    return renderer.render({
-                        url: comparison.testCase.url,
-                        hover: comparison.testCase.hover,
-                        active: comparison.testCase.active,
-                        width: width,
-                        height: height
-                    }).then(function (renderResult) {
-                        comparison.pageImage = renderResult.image;
-                        return renderResult.image;
-                    });
+                    return renderer
+                        .render({
+                            url: comparison.testCase.url,
+                            hover: comparison.testCase.hover,
+                            active: comparison.testCase.active,
+                            width: width,
+                            height: height,
+                        })
+                        .then(function (renderResult) {
+                            comparison.pageImage = renderResult.image;
+                            return renderResult.image;
+                        });
                 };
             }
             comparison.acceptPage = function () {
-                storage.storeReferenceImage(comparison.testCase, comparison.pageImage, {
-                    width: viewportWidth,
-                    height: viewportHeight
-                });
+                storage.storeReferenceImage(
+                    comparison.testCase,
+                    comparison.pageImage,
+                    {
+                        width: viewportWidth,
+                        height: viewportHeight,
+                    }
+                );
             };
         }
     };
@@ -54,13 +60,18 @@ csscriticLib.reporting = function (renderer, storage, util) {
         }
     };
 
-    module.doReportConfiguredComparison = function (configuredComparison, isSelected) {
-        return util.all(reporters.map(function (reporter) {
-            var reportingFunc = reportingMethod(reporter, isSelected);
-            if (reportingFunc) {
-                return reportingFunc(configuredComparison);
-            }
-        }));
+    module.doReportConfiguredComparison = function (
+        configuredComparison,
+        isSelected
+    ) {
+        return util.all(
+            reporters.map(function (reporter) {
+                var reportingFunc = reportingMethod(reporter, isSelected);
+                if (reportingFunc) {
+                    return reportingFunc(configuredComparison);
+                }
+            })
+        );
     };
 
     module.doReportComparison = function (comparison) {
@@ -68,19 +79,23 @@ csscriticLib.reporting = function (renderer, storage, util) {
 
         attachPageAcceptHelpers(result);
 
-        return util.all(reporters.map(function (reporter) {
-            if (reporter.reportComparison) {
-                return reporter.reportComparison(result);
-            }
-        }));
+        return util.all(
+            reporters.map(function (reporter) {
+                if (reporter.reportComparison) {
+                    return reporter.reportComparison(result);
+                }
+            })
+        );
     };
 
     module.doReportTestSuite = function (passed) {
-        return util.all(reporters.map(function (reporter) {
-            if (reporter.reportTestSuite) {
-                return reporter.reportTestSuite({success: passed});
-            }
-        }));
+        return util.all(
+            reporters.map(function (reporter) {
+                if (reporter.reportTestSuite) {
+                    return reporter.reportTestSuite({ success: passed });
+                }
+            })
+        );
     };
 
     return module;

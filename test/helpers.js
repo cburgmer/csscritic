@@ -3,8 +3,8 @@
 var isWebkit = navigator.userAgent.indexOf("WebKit") >= 0,
     isPhantom = navigator.userAgent.indexOf("PhantomJS") >= 0;
 
-window.ifNotInWebkitIt = function(text, functionHandle) {
-    if (! isWebkit) {
+window.ifNotInWebkitIt = function (text, functionHandle) {
+    if (!isWebkit) {
         return it(text, functionHandle);
     } else {
         console.warn('Warning: "' + text + '" is disabled on this platform');
@@ -12,8 +12,8 @@ window.ifNotInWebkitIt = function(text, functionHandle) {
     }
 };
 
-window.ifNotInPhantomIt = function(text, functionHandle) {
-    if (! isPhantom) {
+window.ifNotInPhantomIt = function (text, functionHandle) {
+    if (!isPhantom) {
         return it(text, functionHandle);
     } else {
         console.warn('Warning: "' + text + '" is disabled on this platform');
@@ -26,12 +26,15 @@ window.imagediffForJasmine2 = {
     toImageDiffEqual: function () {
         return {
             compare: function (actual, expected, tolerancePercentage) {
-                var context = {actual: actual},
+                var context = { actual: actual },
                     result = {};
-                result.pass = imagediff.jasmine.toImageDiffEqual.call(context, expected, tolerancePercentage);
+                result.pass = imagediff.jasmine.toImageDiffEqual.call(
+                    context,
+                    expected,
+                    tolerancePercentage
+                );
                 return result;
-            }
+            },
         };
-    }
+    },
 };
-

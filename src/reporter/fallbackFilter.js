@@ -3,10 +3,12 @@ csscriticLib.fallbackFilter = function (windowLocation) {
 
     var module = {};
 
-    var storageKey = 'csscriticFallbackFilter';
+    var storageKey = "csscriticFallbackFilter";
 
     var fullDescription = function (testCase) {
-        return testCase.component ? testCase.component + ' ' + testCase.desc : testCase.desc;
+        return testCase.component
+            ? testCase.component + " " + testCase.desc
+            : testCase.desc;
     };
 
     module.isComparisonSelected = function (comparison) {
@@ -16,10 +18,16 @@ csscriticLib.fallbackFilter = function (windowLocation) {
             return true;
         }
 
-        if (comparison.testCase.desc && fullDescription(comparison.testCase) === filter) {
+        if (
+            comparison.testCase.desc &&
+            fullDescription(comparison.testCase) === filter
+        ) {
             return true;
         }
-        if (comparison.testCase.component && comparison.testCase.component === filter) {
+        if (
+            comparison.testCase.component &&
+            comparison.testCase.component === filter
+        ) {
             return true;
         }
 

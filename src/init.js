@@ -16,16 +16,24 @@ var csscritic = (function () {
 
     // Work around https://bugzilla.mozilla.org/show_bug.cgi?id=1005634
     var needsFallback = function () {
-        return startsWith(window.location.href, 'file://');
+        return startsWith(window.location.href, "file://");
     };
 
-    var packageVersion = csscriticLib.packageVersion || 'dev',
+    var packageVersion = csscriticLib.packageVersion || "dev",
         util = csscriticLib.util();
 
     var indexedDbStorage = csscriticLib.indexeddbstorage(util);
 
-    var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
-        reporting = csscriticLib.reporting(browserRenderer, indexedDbStorage, util),
+    var browserRenderer = csscriticLib.browserRenderer(
+            util,
+            csscriticLib.jobQueue,
+            rasterizeHTML
+        ),
+        reporting = csscriticLib.reporting(
+            browserRenderer,
+            indexedDbStorage,
+            util
+        ),
         regression = csscriticLib.regression(browserRenderer, util, imagediff),
         queryFilter = csscriticLib.urlQueryFilter(window.location),
         fallbackFilter = csscriticLib.fallbackFilter(window.location);
@@ -40,7 +48,8 @@ var csscritic = (function () {
         filter
     );
 
-    var pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback(window.location),
+    var pageNavigationHandlingFallback =
+            csscriticLib.pageNavigationHandlingFallback(window.location),
         niceReporter = csscriticLib.niceReporter(
             window,
             util,
@@ -49,7 +58,6 @@ var csscritic = (function () {
             rasterizeHTML,
             packageVersion
         );
-
 
     var self = {};
 
@@ -62,4 +70,4 @@ var csscritic = (function () {
     self.NiceReporter = niceReporter.NiceReporter;
 
     return self;
-}());
+})();

@@ -20,8 +20,7 @@ csscriticLib.jobQueue = function () {
 
             job = jobQueue.shift();
 
-            runJob(job)
-                .then(nextInQueue, nextInQueue);
+            runJob(job).then(nextInQueue, nextInQueue);
         } else {
             busy = false;
         }
@@ -33,7 +32,7 @@ csscriticLib.jobQueue = function () {
         return {
             func: func,
             resolve: defer.resolve,
-            promise: defer.promise
+            promise: defer.promise,
         };
     };
 

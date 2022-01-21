@@ -1,4 +1,11 @@
-csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigationHandlingFallback, rasterizeHTML, packageVersion) {
+csscriticLib.niceReporter = function (
+    window,
+    util,
+    selectionFilter,
+    pageNavigationHandlingFallback,
+    rasterizeHTML,
+    packageVersion
+) {
     "use strict";
 
     var module = {};
@@ -6,87 +13,96 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     // our very own templating implementation
 
     var escapeValue = function (value) {
-        return value.toString()
-            .replace(/&/g, '&amp;')
-            .replace(new RegExp('<'), '&lt;', 'g') // work around https://github.com/cburgmer/inlineresources/issues/2
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&apos;');
+        return value
+            .toString()
+            .replace(/&/g, "&amp;")
+            .replace(new RegExp("<"), "&lt;", "g") // work around https://github.com/cburgmer/inlineresources/issues/2
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&apos;");
     };
 
     var template = function (templateStr, values) {
         return templateStr.replace(/\{\{(\w+)\}\}/g, function (_, param) {
-            var value = values[param] !== undefined ? values[param] : '';
+            var value = values[param] !== undefined ? values[param] : "";
             return escapeValue(value);
         });
     };
 
     var elementFor = function (htmlString) {
-        var tmp = document.createElement('body');
-        tmp.insertAdjacentHTML('beforeend', htmlString);
+        var tmp = document.createElement("body");
+        tmp.insertAdjacentHTML("beforeend", htmlString);
         return tmp.firstChild;
     };
 
     var findElementIn = function (container, elementClassName) {
-        return container.querySelector('.' + elementClassName);
+        return container.querySelector("." + elementClassName);
     };
 
     var escapeId = function (id) {
-        return id.replace(/ /g, '_');
+        return id.replace(/ /g, "_");
     };
 
     // container
 
-    var headerClassName = 'header',
-        timeTakenClassName = 'timeTaken',
-        progressBarClassName = 'progressBar',
-        statusTextClassName = 'statusText',
-        headerOptionalClassName = 'optional';
+    var headerClassName = "header",
+        timeTakenClassName = "timeTaken",
+        progressBarClassName = "progressBar",
+        statusTextClassName = "statusText",
+        headerOptionalClassName = "optional";
 
     var elementDimensions = function (element) {
         var initialPosition = element.getBoundingClientRect(),
-            scrollOffsetTop = document.body.scrollTop || document.documentElement.scrollTop,
-            scrollOffsetLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+            scrollOffsetTop =
+                document.body.scrollTop || document.documentElement.scrollTop,
+            scrollOffsetLeft =
+                document.body.scrollLeft || document.documentElement.scrollLeft;
 
         return {
             top: initialPosition.top + scrollOffsetTop,
             left: initialPosition.left + scrollOffsetLeft,
-            right: initialPosition.right - initialPosition.width + scrollOffsetLeft,
-            height: initialPosition.height
+            right:
+                initialPosition.right -
+                initialPosition.width +
+                scrollOffsetLeft,
+            height: initialPosition.height,
         };
     };
 
     var px = function (value) {
-        return value + 'px';
+        return value + "px";
     };
 
     var makeElementFixedOnScroll = function (element) {
-        var scrollingClass = 'scrolling',
-            smallClass = 'small',
+        var scrollingClass = "scrolling",
+            smallClass = "small",
             smallScrollThreshold = 50,
             isScrolling = false,
             isSmall = false,
-            pseudoInlineElement = document.createElement('div'),
+            pseudoInlineElement = document.createElement("div"),
             dimensions;
 
         window.addEventListener("scroll", function () {
             if (window.scrollY > 0) {
-                if (! isScrolling) {
+                if (!isScrolling) {
                     isScrolling = true;
 
                     dimensions = elementDimensions(element);
 
                     element.classList.add(scrollingClass);
 
-                    element.style.position = 'fixed';
+                    element.style.position = "fixed";
                     element.style.top = px(dimensions.top);
                     element.style.left = px(dimensions.left);
                     element.style.right = px(dimensions.right);
 
                     pseudoInlineElement.style.height = px(dimensions.height);
-                    element.parentElement.insertBefore(pseudoInlineElement, element);
+                    element.parentElement.insertBefore(
+                        pseudoInlineElement,
+                        element
+                    );
                 }
-                if (! isSmall && window.scrollY > smallScrollThreshold) {
+                if (!isSmall && window.scrollY > smallScrollThreshold) {
                     isSmall = true;
                     element.classList.add(smallClass);
                 } else if (isSmall && window.scrollY <= smallScrollThreshold) {
@@ -100,10 +116,10 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                     element.classList.remove(scrollingClass);
                     element.classList.remove(smallClass);
 
-                    element.style.position = '';
-                    element.style.top = '';
-                    element.style.left = '';
-                    element.style.right = '';
+                    element.style.position = "";
+                    element.style.top = "";
+                    element.style.left = "";
+                    element.style.right = "";
 
                     element.parentElement.removeChild(pseudoInlineElement);
                 }
@@ -112,30 +128,37 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var showHeader = function (container) {
-        var header = elementFor(template('<header class="{{headerClassName}}">' +
-                                         '<span class="{{timeTakenClassName}}"></span>' +
-                                         '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
-                                         'CSS Critic {{packageVersion}}' +
-                                         '</a>' +
-                                         '<ul class="{{progressBarClassName}}"></ul>' +
-                                         '<div class="{{headerOptionalClassName}}">' +
-                                         '<div class="{{statusTextClassName}}" class="statusText"></div>' +
-                                         '</div>' +
-                                         '</header>', {
-                                             headerClassName: headerClassName,
-                                             timeTakenClassName: timeTakenClassName,
-                                             progressBarClassName: progressBarClassName,
-                                             headerOptionalClassName: headerOptionalClassName,
-                                             statusTextClassName: statusTextClassName,
-                                             packageVersion: packageVersion
-                                         }));
+        var header = elementFor(
+            template(
+                '<header class="{{headerClassName}}">' +
+                    '<span class="{{timeTakenClassName}}"></span>' +
+                    '<a href="http://cburgmer.github.io/csscritic/" class="cssCriticVersion">' +
+                    "CSS Critic {{packageVersion}}" +
+                    "</a>" +
+                    '<ul class="{{progressBarClassName}}"></ul>' +
+                    '<div class="{{headerOptionalClassName}}">' +
+                    '<div class="{{statusTextClassName}}" class="statusText"></div>' +
+                    "</div>" +
+                    "</header>",
+                {
+                    headerClassName: headerClassName,
+                    timeTakenClassName: timeTakenClassName,
+                    progressBarClassName: progressBarClassName,
+                    headerOptionalClassName: headerOptionalClassName,
+                    statusTextClassName: statusTextClassName,
+                    packageVersion: packageVersion,
+                }
+            )
+        );
 
         makeElementFixedOnScroll(header);
         container.appendChild(header);
     };
 
     var createContainer = function (parentContainer) {
-        var reportBody = elementFor('<div class="cssCriticNiceReporter"></div>');
+        var reportBody = elementFor(
+            '<div class="cssCriticNiceReporter"></div>'
+        );
 
         showHeader(reportBody);
 
@@ -153,13 +176,14 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
             originalTitle = document.title;
         }
 
-        document.title = "(" + doneCount + "/" + totalCount + ") " + originalTitle;
+        document.title =
+            "(" + doneCount + "/" + totalCount + ") " + originalTitle;
     };
 
     // header
 
     var padNumber = function (number, length) {
-        number += '';
+        number += "";
         while (number.length < length) {
             number = "0" + number;
         }
@@ -169,46 +193,59 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     var renderMilliseconds = function (time) {
         var seconds = Math.floor(time / 1000),
             milliSeconds = time % 1000;
-        return seconds + '.' + padNumber(milliSeconds, 3);
+        return seconds + "." + padNumber(milliSeconds, 3);
     };
 
     var showTimeTaken = function (container, timeTakenInMillis) {
         var timeTaken = findElementIn(container, timeTakenClassName);
-        timeTaken.textContent = "finished in " + renderMilliseconds(timeTakenInMillis) + "s";
+        timeTaken.textContent =
+            "finished in " + renderMilliseconds(timeTakenInMillis) + "s";
     };
 
     var setOutcomeOnHeader = function (container, successful) {
         var header = findElementIn(container, headerClassName);
 
-        header.classList.add(successful ? 'pass' : 'fail');
+        header.classList.add(successful ? "pass" : "fail");
     };
 
     // ToC
 
     var getOrCreateToc = function (container) {
-        var tocClassName = 'tocParent',
-            toc = container.querySelector('.' + tocClassName);
+        var tocClassName = "tocParent",
+            toc = container.querySelector("." + tocClassName);
 
         if (!toc) {
-            toc = elementFor(template('<div class="{{className}}"><ul class="toc"></ul></div>', {
-                className: tocClassName
-            }));
-            container.querySelector('.' + headerOptionalClassName).appendChild(toc);
+            toc = elementFor(
+                template(
+                    '<div class="{{className}}"><ul class="toc"></ul></div>',
+                    {
+                        className: tocClassName,
+                    }
+                )
+            );
+            container
+                .querySelector("." + headerOptionalClassName)
+                .appendChild(toc);
         }
-        return toc.querySelector('ul');
+        return toc.querySelector("ul");
     };
 
     var addTocEntry = function (container, componentLabel, linkTarget) {
         var toc = getOrCreateToc(container),
-            entry = elementFor(template('<li class="tocEntry">' +
-                                        '<a href="#{{linkTarget}}">{{headline}}</a>' +
-                                        '</li>', {
-                                            linkTarget: escapeId(linkTarget),
-                                            headline: componentLabel
-                                        }));
+            entry = elementFor(
+                template(
+                    '<li class="tocEntry">' +
+                        '<a href="#{{linkTarget}}">{{headline}}</a>' +
+                        "</li>",
+                    {
+                        linkTarget: escapeId(linkTarget),
+                        headline: componentLabel,
+                    }
+                )
+            );
 
         if (pageNavigationHandlingFallback) {
-            pageNavigationHandlingFallback.install(entry.querySelector('a'));
+            pageNavigationHandlingFallback.install(entry.querySelector("a"));
         }
 
         toc.appendChild(entry);
@@ -216,7 +253,10 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
 
     // component headline
 
-    var installFallbackComponentSelectionHandler = function (element, componentLabel) {
+    var installFallbackComponentSelectionHandler = function (
+        element,
+        componentLabel
+    ) {
         if (selectionFilter.filterForComponent) {
             element.onclick = function (e) {
                 selectionFilter.filterForComponent(componentLabel);
@@ -226,33 +266,43 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var addComponentHeading = function (container, componentLabel) {
-        var filterUrl = selectionFilter.filterUrlForComponent ? selectionFilter.filterUrlForComponent(componentLabel) : '#',
-            headlineElement = elementFor(template('<h2 class="componentLabel"><a href="{{filterUrl}}">{{headline}}</a></h2>', {
-                headline: componentLabel,
-                filterUrl: filterUrl
-            }));
+        var filterUrl = selectionFilter.filterUrlForComponent
+                ? selectionFilter.filterUrlForComponent(componentLabel)
+                : "#",
+            headlineElement = elementFor(
+                template(
+                    '<h2 class="componentLabel"><a href="{{filterUrl}}">{{headline}}</a></h2>',
+                    {
+                        headline: componentLabel,
+                        filterUrl: filterUrl,
+                    }
+                )
+            );
 
-        installFallbackComponentSelectionHandler(headlineElement, componentLabel);
+        installFallbackComponentSelectionHandler(
+            headlineElement,
+            componentLabel
+        );
         container.appendChild(headlineElement);
     };
 
     // comparisons
 
     var comparisonKey = function (testCase) {
-        var testCaseParameters = util.excludeKeys(testCase, 'url'),
+        var testCaseParameters = util.excludeKeys(testCase, "url"),
             serializedParameters = util.serializeMap(testCaseParameters),
             key = testCase.url;
 
         if (serializedParameters) {
-            return key + ',' + serializedParameters;
+            return key + "," + serializedParameters;
         }
 
         return key;
     };
 
-    var runningComparisonClassName = 'running',
-        referenceImageContainerClassName = 'referenceImageContainer',
-        errorContainerClassName = 'errorText';
+    var runningComparisonClassName = "running",
+        referenceImageContainerClassName = "referenceImageContainer",
+        errorContainerClassName = "errorText";
 
     var imageWrapper = function (image) {
         var wrapper = elementFor('<div class="imageWrapper"></div>');
@@ -261,29 +311,33 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var serializeValue = function (value) {
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
             return "'" + value + "'";
         }
         return value;
     };
 
     var testCaseParameters = function (testCase) {
-        var parameters = util.excludeKeys(testCase, 'url', 'desc', 'component'),
+        var parameters = util.excludeKeys(testCase, "url", "desc", "component"),
             keys = Object.keys(parameters);
 
         if (!keys.length) {
-            return '';
+            return "";
         }
         keys.sort();
 
-        return '<dl class="parameters">' +
-            keys.map(function (key) {
-                return template('<dt>{{key}}</dt><dd>{{value}}</dd>', {
-                    key: key,
-                    value: serializeValue(parameters[key])
-                });
-            }).join('\n') +
-            '</dl>';
+        return (
+            '<dl class="parameters">' +
+            keys
+                .map(function (key) {
+                    return template("<dt>{{key}}</dt><dd>{{value}}</dd>", {
+                        key: key,
+                        value: serializeValue(parameters[key]),
+                    });
+                })
+                .join("\n") +
+            "</dl>"
+        );
     };
 
     var installFallbackSelectionHandler = function (element, testCase) {
@@ -296,32 +350,47 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var addComparison = function (container, testCase, referenceImage, key) {
-        var titleLinkClassName = 'titleLink',
-            filterUrl = selectionFilter.filterUrlFor ? selectionFilter.filterUrlFor(testCase) : '#',
-            comparison = elementFor(template('<section class="comparison {{runningComparisonClassName}}">' +
-                                             '<h3 class="title">' +
-                                             '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{title}}</a> ' +
-                                             '<a class="externalLink" href="{{url}}"></a>' +
-                                             testCaseParameters(testCase) +
-                                             '</h3>' +
-                                             '<div class="{{errorContainerClassName}}"></div>' +
-                                             '<div>' +
-                                             '<div class="{{referenceImageContainerClassName}}"></div>' +
-                                             '</div>' +
-                                             '</section>', {
-                                                 url: testCase.url,
-                                                 title: testCase.desc ? testCase.desc : testCase.url,
-                                                 filterUrl: filterUrl,
-                                                 runningComparisonClassName: runningComparisonClassName,
-                                                 errorContainerClassName: errorContainerClassName,
-                                                 referenceImageContainerClassName: referenceImageContainerClassName,
-                                                 titleLinkClassName: titleLinkClassName
-                                             })),
-            anchorTarget = elementFor(template('<span class="fixedHeaderAnchorTarget" id="{{id}}"></span>', {
-                id: escapeId(key)
-            })),
-            referenceImageContainer = comparison.querySelector('.' + referenceImageContainerClassName),
-            titleLink = comparison.querySelector('.' + titleLinkClassName);
+        var titleLinkClassName = "titleLink",
+            filterUrl = selectionFilter.filterUrlFor
+                ? selectionFilter.filterUrlFor(testCase)
+                : "#",
+            comparison = elementFor(
+                template(
+                    '<section class="comparison {{runningComparisonClassName}}">' +
+                        '<h3 class="title">' +
+                        '<a class="{{titleLinkClassName}}" href="{{filterUrl}}">{{title}}</a> ' +
+                        '<a class="externalLink" href="{{url}}"></a>' +
+                        testCaseParameters(testCase) +
+                        "</h3>" +
+                        '<div class="{{errorContainerClassName}}"></div>' +
+                        "<div>" +
+                        '<div class="{{referenceImageContainerClassName}}"></div>' +
+                        "</div>" +
+                        "</section>",
+                    {
+                        url: testCase.url,
+                        title: testCase.desc ? testCase.desc : testCase.url,
+                        filterUrl: filterUrl,
+                        runningComparisonClassName: runningComparisonClassName,
+                        errorContainerClassName: errorContainerClassName,
+                        referenceImageContainerClassName:
+                            referenceImageContainerClassName,
+                        titleLinkClassName: titleLinkClassName,
+                    }
+                )
+            ),
+            anchorTarget = elementFor(
+                template(
+                    '<span class="fixedHeaderAnchorTarget" id="{{id}}"></span>',
+                    {
+                        id: escapeId(key),
+                    }
+                )
+            ),
+            referenceImageContainer = comparison.querySelector(
+                "." + referenceImageContainerClassName
+            ),
+            titleLink = comparison.querySelector("." + titleLinkClassName);
 
         if (referenceImage) {
             referenceImageContainer.appendChild(imageWrapper(referenceImage));
@@ -339,7 +408,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
             context;
 
         canvas.height = imageData.height;
-        canvas.width  = imageData.width;
+        canvas.width = imageData.width;
 
         context = canvas.getContext("2d");
         context.putImageData(imageData, 0, 0);
@@ -348,20 +417,20 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var diffPageImages = function (imageA, imageB) {
-        return imagediff.diff(imageA, imageB, {align: 'top'});
+        return imagediff.diff(imageA, imageB, { align: "top" });
     };
 
     var embossChanges = function (imageData) {
         var d = imageData.data,
             i;
         for (i = 0; i < d.length; i += 4) {
-            if (d[i] === 0 && d[i+1] === 0 && d[i+2] === 0) {
-                d[i+3] = 0;
+            if (d[i] === 0 && d[i + 1] === 0 && d[i + 2] === 0) {
+                d[i + 3] = 0;
             } else {
                 d[i] = 0;
-                d[i+1] = 0;
-                d[i+2] = 255;
-                d[i+3] = 255;
+                d[i + 1] = 0;
+                d[i + 2] = 255;
+                d[i + 3] = 255;
             }
         }
         return imageData;
@@ -371,52 +440,61 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         var differenceImageData = diffPageImages(imageA, imageB),
             canvas = canvasForImageCanvas(embossChanges(differenceImageData));
 
-        canvas.classList.add('diff');
+        canvas.classList.add("diff");
         return canvas;
     };
 
     // Use a canvas for display to work around https://bugzilla.mozilla.org/show_bug.cgi?id=986403
     var canvasForImage = function (image) {
         var canvas = document.createElement("canvas"),
-            width  = image.naturalWidth,
+            width = image.naturalWidth,
             height = image.naturalHeight,
             context;
 
-        canvas.width  = width;
+        canvas.width = width;
         canvas.height = height;
 
         context = canvas.getContext("2d");
         context.drawImage(image, 0, 0, width, height);
 
         // fix size in css so the tests will show something (canvas is not supported so far)
-        canvas.style.width = width + 'px';
-        canvas.style.height = height + 'px';
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
 
         return canvas;
     };
 
     var addImageDiff = function (image, imageForDiff, container) {
-        var referenceImageContainer = container.querySelector('.' + referenceImageContainerClassName);
+        var referenceImageContainer = container.querySelector(
+            "." + referenceImageContainerClassName
+        );
 
-        referenceImageContainer.appendChild(getDifferenceCanvas(image, imageForDiff));
+        referenceImageContainer.appendChild(
+            getDifferenceCanvas(image, imageForDiff)
+        );
     };
 
-    var toggleViewClassName = 'toggleView',
-        acceptClassName = 'accept';
+    var toggleViewClassName = "toggleView",
+        acceptClassName = "accept";
 
     var acceptComparison = function (container) {
-        var acceptButton = container.querySelector('.' + acceptClassName);
-        acceptButton.setAttribute('disabled', 'disabled');
+        var acceptButton = container.querySelector("." + acceptClassName);
+        acceptButton.setAttribute("disabled", "disabled");
         acceptButton.textContent = "✓";
-        container.classList.add('accepted');
+        container.classList.add("accepted");
     };
 
     var acceptButton = function (acceptPage, container) {
-        var button = elementFor(template('<button class="{{acceptClassName}}">' +
-                                         '<span>Accept</span>' +
-                                         '</button>', {
-                                             acceptClassName: acceptClassName
-                                         }));
+        var button = elementFor(
+            template(
+                '<button class="{{acceptClassName}}">' +
+                    "<span>Accept</span>" +
+                    "</button>",
+                {
+                    acceptClassName: acceptClassName,
+                }
+            )
+        );
         button.onclick = function () {
             acceptPage();
             acceptComparison(container);
@@ -425,7 +503,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var pageAsIframe = function (pageImage, testCaseUrl) {
-        var iframe = document.createElement('iframe');
+        var iframe = document.createElement("iframe");
         iframe.width = pageImage.width;
         iframe.height = pageImage.height;
         iframe.src = testCaseUrl;
@@ -433,30 +511,53 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return iframe;
     };
 
-    var showPageImage = function (pageImage, testCaseUrl, realView, imageContainer, container) {
-        imageContainer.innerHTML = '';
+    var showPageImage = function (
+        pageImage,
+        testCaseUrl,
+        realView,
+        imageContainer,
+        container
+    ) {
+        imageContainer.innerHTML = "";
         if (realView) {
-            imageContainer.appendChild(imageWrapper(pageAsIframe(pageImage, testCaseUrl)));
+            imageContainer.appendChild(
+                imageWrapper(pageAsIframe(pageImage, testCaseUrl))
+            );
 
-            container.classList.add('realView');
+            container.classList.add("realView");
         } else {
             imageContainer.appendChild(imageWrapper(pageImage));
 
-            container.classList.remove('realView');
+            container.classList.remove("realView");
         }
     };
 
-    var pageImageContainer = function (pageImage, acceptPage, testCaseUrl, container) {
-        var pageImageContainerClassName = 'pageImageContainer',
-            outerPageImageContainer = elementFor(template('<div class="outerPageImageContainer">' +
-                                                          '<div class="{{pageImageContainerClassName}}"></div>' +
-                                                          '<button class="{{toggleViewClassName}}" title="Toggle DOM view"></button>' +
-                                                          '</div>', {
-                                                              pageImageContainerClassName: pageImageContainerClassName,
-                                                              toggleViewClassName: toggleViewClassName
-                                                          })),
-            pageImageContainer = outerPageImageContainer.querySelector('.' + pageImageContainerClassName),
-            toggleButton = outerPageImageContainer.querySelector('.' + toggleViewClassName),
+    var pageImageContainer = function (
+        pageImage,
+        acceptPage,
+        testCaseUrl,
+        container
+    ) {
+        var pageImageContainerClassName = "pageImageContainer",
+            outerPageImageContainer = elementFor(
+                template(
+                    '<div class="outerPageImageContainer">' +
+                        '<div class="{{pageImageContainerClassName}}"></div>' +
+                        '<button class="{{toggleViewClassName}}" title="Toggle DOM view"></button>' +
+                        "</div>",
+                    {
+                        pageImageContainerClassName:
+                            pageImageContainerClassName,
+                        toggleViewClassName: toggleViewClassName,
+                    }
+                )
+            ),
+            pageImageContainer = outerPageImageContainer.querySelector(
+                "." + pageImageContainerClassName
+            ),
+            toggleButton = outerPageImageContainer.querySelector(
+                "." + toggleViewClassName
+            ),
             showRealView = false,
             accepted = false,
             acceptButtonElement;
@@ -470,17 +571,29 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
             outerPageImageContainer.appendChild(acceptButtonElement);
         }
 
-        showPageImage(pageImage, testCaseUrl, showRealView, pageImageContainer, container);
+        showPageImage(
+            pageImage,
+            testCaseUrl,
+            showRealView,
+            pageImageContainer,
+            container
+        );
 
         toggleButton.onclick = function () {
             showRealView = !showRealView;
-            showPageImage(pageImage, testCaseUrl, showRealView, pageImageContainer, container);
+            showPageImage(
+                pageImage,
+                testCaseUrl,
+                showRealView,
+                pageImageContainer,
+                container
+            );
 
             if (acceptPage) {
                 if (showRealView) {
-                    acceptButtonElement.setAttribute('disabled', 'disabled');
+                    acceptButtonElement.setAttribute("disabled", "disabled");
                 } else if (!accepted) {
-                    acceptButtonElement.removeAttribute('disabled');
+                    acceptButtonElement.removeAttribute("disabled");
                 }
             }
         };
@@ -488,45 +601,86 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         return outerPageImageContainer;
     };
 
-    var showComparisonWithDiff = function (pageImage, referenceImage, acceptPage, testCaseUrl, container) {
+    var showComparisonWithDiff = function (
+        pageImage,
+        referenceImage,
+        acceptPage,
+        testCaseUrl,
+        container
+    ) {
         addImageDiff(referenceImage, pageImage, container);
-        container.appendChild(pageImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
+        container.appendChild(
+            pageImageContainer(
+                canvasForImage(pageImage),
+                acceptPage,
+                testCaseUrl,
+                container
+            )
+        );
     };
 
-    var showComparisonWithoutReference = function (pageImage, acceptPage, testCaseUrl, container) {
-        container.appendChild(pageImageContainer(canvasForImage(pageImage), acceptPage, testCaseUrl, container));
+    var showComparisonWithoutReference = function (
+        pageImage,
+        acceptPage,
+        testCaseUrl,
+        container
+    ) {
+        container.appendChild(
+            pageImageContainer(
+                canvasForImage(pageImage),
+                acceptPage,
+                testCaseUrl,
+                container
+            )
+        );
     };
 
-    var sameOriginWarning = 'Make sure the path lies within the ' +
+    var sameOriginWarning =
+        "Make sure the path lies within the " +
         '<a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">' +
-        'same origin' +
-        '</a> ' +
-        'as this document.';
+        "same origin" +
+        "</a> " +
+        "as this document.";
 
     var showComparisonWithError = function (url, container) {
-        var errorMsg = elementFor(template('<span>' +
-                                           'The page "{{url}}" could not be rendered. ' +
-                                           '</span>', {
-                                               url: url
-                                           })),
-            errorContainer = container.querySelector('.' + errorContainerClassName);
+        var errorMsg = elementFor(
+                template(
+                    "<span>" +
+                        'The page "{{url}}" could not be rendered. ' +
+                        "</span>",
+                    {
+                        url: url,
+                    }
+                )
+            ),
+            errorContainer = container.querySelector(
+                "." + errorContainerClassName
+            );
         errorContainer.appendChild(errorMsg);
     };
 
     var showRenderErrors = function (errors, container) {
-        var errorMsg = elementFor(template('<span>' +
-                                           'Had the following errors rendering the page:' +
-                                           '<ul></ul>' +
-                                           sameOriginWarning +
-                                           '</span>')),
-            listElement = errorMsg.querySelector('ul'),
-            errorContainer = container.querySelector('.' + errorContainerClassName);
+        var errorMsg = elementFor(
+                template(
+                    "<span>" +
+                        "Had the following errors rendering the page:" +
+                        "<ul></ul>" +
+                        sameOriginWarning +
+                        "</span>"
+                )
+            ),
+            listElement = errorMsg.querySelector("ul"),
+            errorContainer = container.querySelector(
+                "." + errorContainerClassName
+            );
 
-        errors.map(function (error) {
-            return elementFor(template('<li>{{msg}}</li>', {msg: error}));
-        }).forEach(function (li) {
-            listElement.appendChild(li);
-        });
+        errors
+            .map(function (error) {
+                return elementFor(template("<li>{{msg}}</li>", { msg: error }));
+            })
+            .forEach(function (li) {
+                listElement.appendChild(li);
+            });
 
         errorContainer.appendChild(errorMsg);
     };
@@ -538,12 +692,12 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
 
     // progress bar
 
-    var progressBarPendingClassName = 'pending';
+    var progressBarPendingClassName = "pending";
 
     var testDescription = function (testCase) {
         var component;
         if (testCase.desc) {
-            component = testCase.component ? testCase.component + ' ' : '';
+            component = testCase.component ? testCase.component + " " : "";
             return component + testCase.desc;
         } else {
             return comparisonKey(testCase);
@@ -552,19 +706,24 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
 
     var addTickToProgressBar = function (container, testCase, linkTarget) {
         var progressBar = findElementIn(container, progressBarClassName),
-            clickableTickTemplate = '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
+            clickableTickTemplate =
+                '<li><a href="#{{linkTarget}}" title="{{title}}"></a></li>',
             deactivatedTickTemplate = '<li><a title="{{title}}"></a></li>',
-            tickTemplate = linkTarget ? clickableTickTemplate : deactivatedTickTemplate;
+            tickTemplate = linkTarget
+                ? clickableTickTemplate
+                : deactivatedTickTemplate;
 
-        var tick = elementFor(template(tickTemplate, {
-            linkTarget: linkTarget ? escapeId(linkTarget) : '',
-            title: testDescription(testCase)
-        }));
+        var tick = elementFor(
+            template(tickTemplate, {
+                linkTarget: linkTarget ? escapeId(linkTarget) : "",
+                title: testDescription(testCase),
+            })
+        );
         tick.classList.add(progressBarPendingClassName);
         progressBar.appendChild(tick);
 
         if (pageNavigationHandlingFallback) {
-            pageNavigationHandlingFallback.install(tick.querySelector('a'));
+            pageNavigationHandlingFallback.install(tick.querySelector("a"));
         }
 
         return tick;
@@ -574,7 +733,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         tickElement.classList.remove(progressBarPendingClassName);
         tickElement.classList.add(status);
         if (renderErrorCount > 0) {
-            tickElement.classList.add('hasRenderErrors');
+            tickElement.classList.add("hasRenderErrors");
         }
     };
 
@@ -589,21 +748,25 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     };
 
     var statusTotalText = function (totalCount, selectedCount) {
-        var totalContent = '{{total}} ' + singularPlural(totalCount, 'entry', 'entries') + ', ';
+        var totalContent =
+            "{{total}} " +
+            singularPlural(totalCount, "entry", "entries") +
+            ", ";
         if (selectedCount < totalCount) {
-            totalContent = '{{selected}} of ' + totalContent;
+            totalContent = "{{selected}} of " + totalContent;
         }
-        return template('<span>' +
-                        totalContent +
-                        '</span>', {
+        return template("<span>" + totalContent + "</span>", {
             total: totalCount,
-            selected: selectedCount
+            selected: selectedCount,
         });
     };
 
     var statusIssueText = function (issueCount, selectedCount, doneCount) {
-        var issueContent = '{{issues}} ' + singularPlural(issueCount, 'needs', 'need') + ' some love',
-            doneContent = 'all good',
+        var issueContent =
+                "{{issues}} " +
+                singularPlural(issueCount, "needs", "need") +
+                " some love",
+            doneContent = "all good",
             noTestsContent = "nothing here yet",
             doneWithoutErrors = selectedCount === doneCount && issueCount === 0,
             content;
@@ -614,34 +777,40 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         } else {
             content = issueContent;
         }
-        return template('<span>' +
-                        content +
-                        '</span>', {
-                            issues: issueCount
-                        });
+        return template("<span>" + content + "</span>", {
+            issues: issueCount,
+        });
     };
 
-    var acceptAllClassName = 'acceptAll';
+    var acceptAllClassName = "acceptAll";
 
     var acceptAllButton = function () {
-        return elementFor(template('<button class="{{acceptAllClassName}}">... accept all (I know what I\'m doing)</button>', {
-            acceptAllClassName: acceptAllClassName
-        }));
+        return elementFor(
+            template(
+                '<button class="{{acceptAllClassName}}">... accept all (I know what I\'m doing)</button>',
+                {
+                    acceptAllClassName: acceptAllClassName,
+                }
+            )
+        );
     };
 
-    var showAcceptAllButtonIfNeccessary = function (container, acceptableEntries) {
+    var showAcceptAllButtonIfNeccessary = function (
+        container,
+        acceptableEntries
+    ) {
         var statusText = findElementIn(container, statusTextClassName),
-            button = statusText.querySelector('.' + acceptAllClassName);
+            button = statusText.querySelector("." + acceptAllClassName);
 
         if (acceptableEntries.length > 2) {
-            button.classList.add('active');
+            button.classList.add("active");
             button.onclick = function () {
                 acceptableEntries.forEach(function (acceptableEntry) {
                     acceptableEntry.acceptPage();
                     acceptComparison(acceptableEntry.entry);
                 });
 
-                button.setAttribute('disabled', 'disabled');
+                button.setAttribute("disabled", "disabled");
             };
         }
     };
@@ -655,16 +824,30 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
         }
     };
 
-    var updateStatusBar = function (container, totalCount, selectedCount, issueCount, doneCount) {
-        var runAllUrl = selectionFilter.clearFilterUrl ? selectionFilter.clearFilterUrl() : '#',
-            runAll = elementFor(template('<a class="runAll" href="{{url}}">Run all</a>', {
-                url: runAllUrl
-            })),
+    var updateStatusBar = function (
+        container,
+        totalCount,
+        selectedCount,
+        issueCount,
+        doneCount
+    ) {
+        var runAllUrl = selectionFilter.clearFilterUrl
+                ? selectionFilter.clearFilterUrl()
+                : "#",
+            runAll = elementFor(
+                template('<a class="runAll" href="{{url}}">Run all</a>', {
+                    url: runAllUrl,
+                })
+            ),
             statusText = findElementIn(container, statusTextClassName);
 
-        statusText.innerHTML = '';
-        statusText.appendChild(elementFor(statusTotalText(totalCount, selectedCount)));
-        statusText.appendChild(elementFor(statusIssueText(issueCount, selectedCount, doneCount)));
+        statusText.innerHTML = "";
+        statusText.appendChild(
+            elementFor(statusTotalText(totalCount, selectedCount))
+        );
+        statusText.appendChild(
+            elementFor(statusIssueText(issueCount, selectedCount, doneCount))
+        );
         statusText.appendChild(acceptAllButton());
         if (totalCount > selectedCount) {
             installFallbackClearSelectionHandler(runAll);
@@ -675,7 +858,7 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
     // browser warning
 
     var supportsReadingHtmlFromCanvas = function () {
-        return rasterizeHTML.drawHTML('<b></b>').then(function (result) {
+        return rasterizeHTML.drawHTML("<b></b>").then(function (result) {
             var canvas = document.createElement("canvas"),
                 context = canvas.getContext("2d");
             try {
@@ -702,14 +885,16 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                 return;
             }
 
-            container.appendChild(elementFor(
-                '<div class="browserWarning">' +
-                    'Your browser is currently not supported, ' +
-                    'as it does not support reading rendered HTML from the canvas ' +
-                    '(<a href="https://code.google.com/p/chromium/issues/detail?id=294129">Chrome #294129</a>, ' +
-                    '<a href="https://bugs.webkit.org/show_bug.cgi?id=17352">Safari #17352</a>). How about trying Firefox?' +
-                    '</div>'
-            ));
+            container.appendChild(
+                elementFor(
+                    '<div class="browserWarning">' +
+                        "Your browser is currently not supported, " +
+                        "as it does not support reading rendered HTML from the canvas " +
+                        '(<a href="https://code.google.com/p/chromium/issues/detail?id=294129">Chrome #294129</a>, ' +
+                        '<a href="https://bugs.webkit.org/show_bug.cgi?id=17352">Safari #17352</a>). How about trying Firefox?' +
+                        "</div>"
+                )
+            );
         });
     };
 
@@ -723,11 +908,15 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
             progressTickElements = {},
             runningComparisonEntries = {},
             acceptableComparisons = [],
-            containerElement, timeStarted, lastComponentLabel;
+            containerElement,
+            timeStarted,
+            lastComponentLabel;
 
         var container = function () {
             if (!containerElement) {
-                containerElement = createContainer(outerContainer || document.body);
+                containerElement = createContainer(
+                    outerContainer || document.body
+                );
             }
             return containerElement;
         };
@@ -753,21 +942,37 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                 var key = comparisonKey(comparison.testCase);
                 selectedCount += 1;
 
-                if (comparison.testCase.component && comparison.testCase.component !== lastComponentLabel) {
+                if (
+                    comparison.testCase.component &&
+                    comparison.testCase.component !== lastComponentLabel
+                ) {
                     lastComponentLabel = comparison.testCase.component;
-                    addComponentHeading(container(), comparison.testCase.component);
-                    addTocEntry(container(), comparison.testCase.component, key);
+                    addComponentHeading(
+                        container(),
+                        comparison.testCase.component
+                    );
+                    addTocEntry(
+                        container(),
+                        comparison.testCase.component,
+                        key
+                    );
                 }
 
                 registerComparison();
 
-                var tickElement = addTickToProgressBar(container(), comparison.testCase, key);
+                var tickElement = addTickToProgressBar(
+                    container(),
+                    comparison.testCase,
+                    key
+                );
                 progressTickElements[key] = tickElement;
 
-                var comparisonElement = addComparison(container(),
-                                                      comparison.testCase,
-                                                      comparison.referenceImage,
-                                                      key);
+                var comparisonElement = addComparison(
+                    container(),
+                    comparison.testCase,
+                    comparison.referenceImage,
+                    key
+                );
                 runningComparisonEntries[key] = comparisonElement;
             },
             reportComparison: function (comparison) {
@@ -776,35 +981,50 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                     entry = runningComparisonEntries[key];
 
                 doneCount += 1;
-                if (comparison.status !== 'passed') {
+                if (comparison.status !== "passed") {
                     issueCount += 1;
                 }
 
                 updateStatusInDocumentTitle(totalCount, doneCount);
-                updateStatusBar(container(), totalCount, selectedCount, issueCount, doneCount);
-                markTickDone(comparison.status, comparison.renderErrors.length, tickElement);
+                updateStatusBar(
+                    container(),
+                    totalCount,
+                    selectedCount,
+                    issueCount,
+                    doneCount
+                );
+                markTickDone(
+                    comparison.status,
+                    comparison.renderErrors.length,
+                    tickElement
+                );
 
-                if (comparison.status === 'failed') {
-                    showComparisonWithDiff(comparison.pageImage,
-                                           comparison.referenceImage,
-                                           comparison.acceptPage,
-                                           comparison.testCase.url,
-                                           entry);
+                if (comparison.status === "failed") {
+                    showComparisonWithDiff(
+                        comparison.pageImage,
+                        comparison.referenceImage,
+                        comparison.acceptPage,
+                        comparison.testCase.url,
+                        entry
+                    );
                     acceptableComparisons.push(comparison);
-                } else if (comparison.status === 'referenceMissing') {
-                    showComparisonWithoutReference(comparison.pageImage,
-                                                   comparison.acceptPage,
-                                                   comparison.testCase.url,
-                                                   entry);
+                } else if (comparison.status === "referenceMissing") {
+                    showComparisonWithoutReference(
+                        comparison.pageImage,
+                        comparison.acceptPage,
+                        comparison.testCase.url,
+                        entry
+                    );
                     acceptableComparisons.push(comparison);
-                } else if (comparison.status === 'passed') {
-                    showComparisonWithoutReference(comparison.pageImage,
-                                                   undefined,
-                                                   comparison.testCase.url,
-                                                   entry);
-                } else if (comparison.status === 'error') {
-                    showComparisonWithError(comparison.testCase.url,
-                                            entry);
+                } else if (comparison.status === "passed") {
+                    showComparisonWithoutReference(
+                        comparison.pageImage,
+                        undefined,
+                        comparison.testCase.url,
+                        entry
+                    );
+                } else if (comparison.status === "error") {
+                    showComparisonWithError(comparison.testCase.url, entry);
                 }
 
                 if (comparison.renderErrors.length > 0) {
@@ -814,21 +1034,32 @@ csscriticLib.niceReporter = function (window, util, selectionFilter, pageNavigat
                 updateComparisonStatus(comparison.status, entry);
             },
             reportTestSuite: function (result) {
-                var acceptableEntries = acceptableComparisons.map(function (comparison) {
+                var acceptableEntries = acceptableComparisons.map(function (
+                    comparison
+                ) {
                     var key = comparisonKey(comparison.testCase);
                     return {
                         acceptPage: comparison.acceptPage,
-                        entry: runningComparisonEntries[key]
+                        entry: runningComparisonEntries[key],
                     };
                 });
 
                 updateStatusInDocumentTitle(totalCount, doneCount);
-                updateStatusBar(container(), totalCount, selectedCount, issueCount, doneCount);
+                updateStatusBar(
+                    container(),
+                    totalCount,
+                    selectedCount,
+                    issueCount,
+                    doneCount
+                );
 
-                showTimeTaken(container(), timeStarted ? Date.now() - timeStarted : 0);
+                showTimeTaken(
+                    container(),
+                    timeStarted ? Date.now() - timeStarted : 0
+                );
                 setOutcomeOnHeader(container(), result.success);
                 showAcceptAllButtonIfNeccessary(container(), acceptableEntries);
-            }
+            },
         };
     };
 

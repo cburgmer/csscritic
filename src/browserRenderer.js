@@ -28,28 +28,30 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
 
     var doRenderHtml = function (parameters) {
         var drawOptions = {
-            cache: 'repeated',
+            cache: "repeated",
             cacheBucket: cache,
             width: parameters.width,
             height: parameters.height,
             executeJs: true,
             executeJsTimeout: 50,
-            baseUrl: parameters.baseUrl
+            baseUrl: parameters.baseUrl,
         };
-        ['hover', 'active', 'focus', 'target'].forEach(function (key) {
+        ["hover", "active", "focus", "target"].forEach(function (key) {
             if (parameters[key]) {
                 drawOptions[key] = parameters[key];
             }
         });
 
-        return rasterizeHTML.drawHTML(parameters.html, drawOptions).then(function (result) {
-            var renderErrors = extractErrorMessages(result.errors);
+        return rasterizeHTML
+            .drawHTML(parameters.html, drawOptions)
+            .then(function (result) {
+                var renderErrors = extractErrorMessages(result.errors);
 
-            return {
-                image: result.image,
-                errors: renderErrors
-            };
-        }, logErrorToConsole);
+                return {
+                    image: result.image,
+                    errors: renderErrors,
+                };
+            }, logErrorToConsole);
     };
 
     var renderHtmlFromBlob = function (blob, parameters) {
@@ -62,33 +64,36 @@ csscriticLib.browserRenderer = function (util, jobQueue, rasterizeHTML) {
                 hover: parameters.hover,
                 active: parameters.active,
                 focus: parameters.focus,
-                target: parameters.target
+                target: parameters.target,
             });
         });
     };
 
     var loadImageFromBlob = function (blob, parameters) {
-        return util.loadBlobAsDataURI(blob)
+        return util
+            .loadBlobAsDataURI(blob)
             .then(util.getImageForUrl)
-            .then(function (image) {
-                return {
-                    image: image,
-                    errors: []
-                };
-            }, function () {
-                // It's not an image, so it must be a HTML page
-                return renderHtmlFromBlob(blob, parameters);
-            });
+            .then(
+                function (image) {
+                    return {
+                        image: image,
+                        errors: [],
+                    };
+                },
+                function () {
+                    // It's not an image, so it must be a HTML page
+                    return renderHtmlFromBlob(blob, parameters);
+                }
+            );
     };
 
     module.render = function (parameters) {
         // Execute render jobs one after another to stabilise rendering (especially JS execution).
         // Also provides a more fluid response. Performance seems not to be affected.
         return getOrCreateJobQueue().execute(function () {
-            return util.loadAsBlob(parameters.url)
-                .then(function (blob) {
-                    return loadImageFromBlob(blob, parameters);
-                });
+            return util.loadAsBlob(parameters.url).then(function (blob) {
+                return loadImageFromBlob(blob, parameters);
+            });
         });
     };
 

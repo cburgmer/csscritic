@@ -1,17 +1,25 @@
 describe("Integration", function () {
     "use strict";
 
-    var windowLocation = {search: ''},
+    var windowLocation = { search: "" },
         theReferenceImageUri;
 
     var util = csscriticLib.util(),
         csscritic;
 
     var aCssCriticInstance = function () {
-        var browserRenderer = csscriticLib.browserRenderer(util, csscriticLib.jobQueue, rasterizeHTML),
+        var browserRenderer = csscriticLib.browserRenderer(
+                util,
+                csscriticLib.jobQueue,
+                rasterizeHTML
+            ),
             storage = csscriticLib.indexeddbstorage(util),
             reporting = csscriticLib.reporting(browserRenderer, storage, util),
-            regression = csscriticLib.regression(browserRenderer, util, imagediff),
+            regression = csscriticLib.regression(
+                browserRenderer,
+                util,
+                imagediff
+            ),
             urlQueryFilter = csscriticLib.urlQueryFilter(windowLocation);
 
         var main = csscriticLib.main(
@@ -19,14 +27,17 @@ describe("Integration", function () {
             reporting,
             util,
             storage,
-            urlQueryFilter);
+            urlQueryFilter
+        );
 
-        var niceReporter = csscriticLib.niceReporter(window,
-                                                     util,
-                                                     urlQueryFilter,
-                                                     csscriticLib.pageNavigationHandlingFallback(),
-                                                     rasterizeHTML,
-                                                     'dev');
+        var niceReporter = csscriticLib.niceReporter(
+            window,
+            util,
+            urlQueryFilter,
+            csscriticLib.pageNavigationHandlingFallback(),
+            rasterizeHTML,
+            "dev"
+        );
 
         return {
             addReporter: reporting.addReporter,
@@ -34,21 +45,21 @@ describe("Integration", function () {
             add: main.add,
             execute: main.execute,
 
-            NiceReporter: niceReporter.NiceReporter
+            NiceReporter: niceReporter.NiceReporter,
         };
     };
 
     var getDb = function () {
         var defer = ayepromise.defer();
 
-        var request = indexedDB.open('csscritic', 1);
+        var request = indexedDB.open("csscritic", 1);
         request.onsuccess = function (event) {
             var db = event.target.result;
             defer.resolve(db);
         };
-        request.onupgradeneeded = function(event) {
+        request.onupgradeneeded = function (event) {
             var db = event.target.result;
-            db.createObjectStore('references', { keyPath: "testCase" });
+            db.createObjectStore("references", { keyPath: "testCase" });
         };
         return defer.promise;
     };
@@ -56,9 +67,10 @@ describe("Integration", function () {
     var storeReferenceImage = function (key, data) {
         var defer = ayepromise.defer();
         getDb().then(function (db) {
-            var request = db.transaction(['references'], 'readwrite')
-                    .objectStore('references')
-                    .add({testCase: key, reference: data});
+            var request = db
+                .transaction(["references"], "readwrite")
+                .objectStore("references")
+                .add({ testCase: key, reference: data });
 
             request.onsuccess = function () {
                 db.close();
@@ -72,9 +84,10 @@ describe("Integration", function () {
         var defer = ayepromise.defer();
 
         getDb().then(function (db) {
-            var request = db.transaction(['references'])
-                    .objectStore('references')
-                    .get(key);
+            var request = db
+                .transaction(["references"])
+                .objectStore("references")
+                .get(key);
 
             request.onsuccess = function () {
                 db.close();
@@ -100,7 +113,8 @@ describe("Integration", function () {
     });
 
     beforeEach(function () {
-        theReferenceImageUri = "data:image/png;base64," +
+        theReferenceImageUri =
+            "data:image/png;base64," +
             "iVBORw0KGgoAAAANSUhEUgAAAUoAAACXCAYAAABz/hJAAAADR0lEQVR4nO3UsRECQB" +
             "DEMJdO51DAJ2S3gTTjFty3vtqpj6aCqusxyCing8ooxzofg4yS1/UYZJTTQWWUY52P" +
             "QUbJ63oMMsrpoDLKsc7HIKPkdT0GGeV0UBnlWOdjkFHyuh6DjHI6qIxyrPMxyCh5XY" +
@@ -125,7 +139,7 @@ describe("Integration", function () {
     afterEach(function (done) {
         $(".cssCriticNiceReporter").remove();
 
-        var request = indexedDB.deleteDatabase('csscritic');
+        var request = indexedDB.deleteDatabase("csscritic");
         request.onsuccess = done;
     });
 
@@ -136,114 +150,172 @@ describe("Integration", function () {
         csscritic.add(testPageUrl);
         csscritic.execute().then(function (passed) {
             expect(passed).toBe(false);
-            expect($(".cssCriticNiceReporter .referenceMissing.comparison")).toExist();
+            expect(
+                $(".cssCriticNiceReporter .referenceMissing.comparison")
+            ).toExist();
 
             done();
         });
     });
 
-    ifNotInPhantomIt("should compare an image with its reference and return true if similar", function (done) {
-        var testImageUrl = testHelper.fixture("redWithLetter.png");
+    ifNotInPhantomIt(
+        "should compare an image with its reference and return true if similar",
+        function (done) {
+            var testImageUrl = testHelper.fixture("redWithLetter.png");
 
-        util.getImageForUrl(testImageUrl).then(function (image) {
-            var theReferenceImageUri = util.getDataURIForImage(image);
+            util.getImageForUrl(testImageUrl)
+                .then(function (image) {
+                    var theReferenceImageUri = util.getDataURIForImage(image);
 
-            return storeReferenceImage(testImageUrl, {
-                imageUri: theReferenceImageUri
-            });
-        }).then(function () {
-            csscritic.add(testImageUrl);
-            csscritic.execute().then(function (passed) {
-                expect(passed).toBe(true);
+                    return storeReferenceImage(testImageUrl, {
+                        imageUri: theReferenceImageUri,
+                    });
+                })
+                .then(function () {
+                    csscritic.add(testImageUrl);
+                    csscritic.execute().then(function (passed) {
+                        expect(passed).toBe(true);
 
-                done();
-            });
-        });
-    });
+                        done();
+                    });
+                });
+        }
+    );
 
-    ifNotInWebkitIt("should compare a page with its reference image and return true if similar", function (done) {
-        var testPageUrl = testHelper.fixture("pageUnderTest.html");
+    ifNotInWebkitIt(
+        "should compare a page with its reference image and return true if similar",
+        function (done) {
+            var testPageUrl = testHelper.fixture("pageUnderTest.html");
 
-        storeReferenceImage(testPageUrl, {
-            imageUri: theReferenceImageUri
-        }).then(function () {
-            csscritic.add(testPageUrl);
-            csscritic.execute().then(function (passed) {
-                expect(passed).toBe(true);
-
-                done();
-            });
-        });
-    });
-
-    ifNotInWebkitIt("should store a reference when a result is accepted", function (done) {
-        var testPageUrl = testHelper.fixture("pageUnderTest.html"),
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
-
-        csscritic.addReporter(reporter);
-        csscritic.add(testPageUrl);
-        csscritic.execute().then(function (passed) {
-            expect(passed).toBe(false);
-            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.any(Object));
-
-            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(330, 151).then(function () {
-                reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
-
-                readReferenceImage(testPageUrl).then(function (referenceObj) {
-                    expect(referenceObj.imageUri).toEqual(theReferenceImageUri);
+            storeReferenceImage(testPageUrl, {
+                imageUri: theReferenceImageUri,
+            }).then(function () {
+                csscritic.add(testPageUrl);
+                csscritic.execute().then(function (passed) {
+                    expect(passed).toBe(true);
 
                     done();
                 });
             });
-        });
-    });
+        }
+    );
 
-    ifNotInWebkitIt("should properly report a failing comparison", function (done) {
-        var testPageUrl = testHelper.fixture("brokenPage.html");
+    ifNotInWebkitIt(
+        "should store a reference when a result is accepted",
+        function (done) {
+            var testPageUrl = testHelper.fixture("pageUnderTest.html"),
+                reporter = jasmine.createSpyObj("Reporter", [
+                    "reportComparison",
+                ]);
 
-        storeReferenceImage(testPageUrl, {
-            imageUri: theReferenceImageUri
-        }).then(function () {
-            csscritic.addReporter(csscritic.NiceReporter());
+            csscritic.addReporter(reporter);
+            csscritic.add(testPageUrl);
+            csscritic.execute().then(function (passed) {
+                expect(passed).toBe(false);
+                expect(reporter.reportComparison).toHaveBeenCalledWith(
+                    jasmine.any(Object)
+                );
+
+                reporter.reportComparison.calls
+                    .mostRecent()
+                    .args[0].resizePageImage(330, 151)
+                    .then(function () {
+                        reporter.reportComparison.calls
+                            .mostRecent()
+                            .args[0].acceptPage();
+
+                        readReferenceImage(testPageUrl).then(function (
+                            referenceObj
+                        ) {
+                            expect(referenceObj.imageUri).toEqual(
+                                theReferenceImageUri
+                            );
+
+                            done();
+                        });
+                    });
+            });
+        }
+    );
+
+    ifNotInWebkitIt(
+        "should properly report a failing comparison",
+        function (done) {
+            var testPageUrl = testHelper.fixture("brokenPage.html");
+
+            storeReferenceImage(testPageUrl, {
+                imageUri: theReferenceImageUri,
+            }).then(function () {
+                csscritic.addReporter(csscritic.NiceReporter());
+                csscritic.add(testPageUrl);
+                csscritic.execute().then(function () {
+                    expect(
+                        $(".cssCriticNiceReporter .failed.comparison")
+                    ).toExist();
+                    expect(
+                        $(
+                            ".cssCriticNiceReporter .comparison .titleLink"
+                        ).text()
+                    ).toEqual(testPageUrl);
+                    expect(
+                        $(".cssCriticNiceReporter .comparison .errorText")
+                    ).toExist();
+                    expect(
+                        $(
+                            ".cssCriticNiceReporter .comparison .errorText"
+                        ).text()
+                    ).toContain("background_image_does_not_exist.jpg");
+                    expect(
+                        $(
+                            ".cssCriticNiceReporter .comparison .referenceImageContainer img"
+                        )
+                    ).toExist();
+                    expect(
+                        $(
+                            ".cssCriticNiceReporter .comparison .referenceImageContainer canvas"
+                        )
+                    ).toExist();
+                    expect(
+                        $(
+                            ".cssCriticNiceReporter .comparison .pageImageContainer canvas"
+                        )
+                    ).toExist();
+
+                    done();
+                });
+            });
+        }
+    );
+
+    ifNotInWebkitIt(
+        "should correctly re-render a page overflowing the given viewport",
+        function (done) {
+            var testPageUrl = testHelper.fixture("overflowingPage.html"),
+                reporter = jasmine.createSpyObj("Reporter", [
+                    "reportComparison",
+                ]),
+                result;
+
+            csscritic.addReporter(reporter);
+
+            // Accept first rendering
+            reporter.reportComparison.and.callFake(function (theResult) {
+                result = theResult;
+            });
+
             csscritic.add(testPageUrl);
             csscritic.execute().then(function () {
-                expect($(".cssCriticNiceReporter .failed.comparison")).toExist();
-                expect($(".cssCriticNiceReporter .comparison .titleLink").text()).toEqual(testPageUrl);
-                expect($(".cssCriticNiceReporter .comparison .errorText")).toExist();
-                expect($(".cssCriticNiceReporter .comparison .errorText").text()).toContain("background_image_does_not_exist.jpg");
-                expect($(".cssCriticNiceReporter .comparison .referenceImageContainer img")).toExist();
-                expect($(".cssCriticNiceReporter .comparison .referenceImageContainer canvas")).toExist();
-                expect($(".cssCriticNiceReporter .comparison .pageImageContainer canvas")).toExist();
+                var anothercsscritic = aCssCriticInstance();
+                result.acceptPage();
 
-                done();
+                anothercsscritic.addReporter(reporter);
+                anothercsscritic.add(testPageUrl);
+                anothercsscritic.execute().then(function (status) {
+                    expect(status).toBe(true);
+
+                    done();
+                });
             });
-        });
-    });
-
-    ifNotInWebkitIt("should correctly re-render a page overflowing the given viewport", function (done) {
-        var testPageUrl = testHelper.fixture("overflowingPage.html"),
-            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]),
-            result;
-
-        csscritic.addReporter(reporter);
-
-        // Accept first rendering
-        reporter.reportComparison.and.callFake(function (theResult) {
-            result = theResult;
-        });
-
-        csscritic.add(testPageUrl);
-        csscritic.execute().then(function () {
-            var anothercsscritic = aCssCriticInstance();
-            result.acceptPage();
-
-            anothercsscritic.addReporter(reporter);
-            anothercsscritic.add(testPageUrl);
-            anothercsscritic.execute().then(function (status) {
-                expect(status).toBe(true);
-
-                done();
-            });
-        });
-    });
+        }
+    );
 });

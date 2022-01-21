@@ -8,14 +8,14 @@ describe("IndexedDB storage", function () {
     };
 
     afterEach(function (done) {
-        var request = indexedDB.deleteDatabase('csscritic');
+        var request = indexedDB.deleteDatabase("csscritic");
         request.onsuccess = done;
     });
 
     var getDb = function () {
         var defer = ayepromise.defer();
 
-        var request = indexedDB.open('csscritic', 1);
+        var request = indexedDB.open("csscritic", 1);
         request.onsuccess = function (event) {
             var db = event.target.result;
             defer.resolve(db);
@@ -27,17 +27,20 @@ describe("IndexedDB storage", function () {
         var defer = ayepromise.defer();
 
         getDb().then(function (db) {
-            var request = db.transaction(['references'])
-                .objectStore('references')
+            var request = db
+                .transaction(["references"])
+                .objectStore("references")
                 .get(key);
 
             request.onsuccess = function () {
                 db.close();
                 // TODO stop using JSON string as interface in test
-                defer.resolve(JSON.stringify({
-                    referenceImageUri: request.result.reference.imageUri,
-                    viewport: request.result.reference.viewport
-                }));
+                defer.resolve(
+                    JSON.stringify({
+                        referenceImageUri: request.result.reference.imageUri,
+                        viewport: request.result.reference.viewport,
+                    })
+                );
             };
         });
         return defer.promise;
@@ -55,9 +58,10 @@ describe("IndexedDB storage", function () {
             dataObj.viewport = data.viewport;
         }
         getDb().then(function (db) {
-            var request = db.transaction(['references'], 'readwrite')
-                .objectStore('references')
-                .add({testCase: key, reference: dataObj});
+            var request = db
+                .transaction(["references"], "readwrite")
+                .objectStore("references")
+                .add({ testCase: key, reference: dataObj });
 
             request.onsuccess = function () {
                 db.close();
@@ -69,31 +73,39 @@ describe("IndexedDB storage", function () {
 
     describe("with existing database", function () {
         beforeEach(function (done) {
-            var request = indexedDB.open('csscritic', 1);
+            var request = indexedDB.open("csscritic", 1);
             request.onsuccess = function (event) {
                 var db = event.target.result;
                 db.close();
                 done();
             };
-            request.onupgradeneeded = function(event) {
+            request.onupgradeneeded = function (event) {
                 var db = event.target.result;
-                db.createObjectStore('references', { keyPath: "testCase" });
+                db.createObjectStore("references", { keyPath: "testCase" });
             };
         });
 
         if (!isPhantom) {
-            loadStoragePluginSpecs(constructStorage, readStoredReferenceImage, storeReferenceImage);
+            loadStoragePluginSpecs(
+                constructStorage,
+                readStoredReferenceImage,
+                storeReferenceImage
+            );
         }
     });
 
     ifNotInPhantomIt("should initally create a database", function (done) {
         var storage = constructStorage(util);
-        spyOn(util, 'getDataURIForImage').and.returnValue('uri');
-        storage.storeReferenceImage({url: 'somePage.html'}, 'the_image', 47, 11).then(function () {
-            readStoredReferenceImage('somePage.html').then(function (result) {
-                expect(result).not.toBe(undefined);
-                done();
+        spyOn(util, "getDataURIForImage").and.returnValue("uri");
+        storage
+            .storeReferenceImage({ url: "somePage.html" }, "the_image", 47, 11)
+            .then(function () {
+                readStoredReferenceImage("somePage.html").then(function (
+                    result
+                ) {
+                    expect(result).not.toBe(undefined);
+                    done();
+                });
             });
-        });
     });
 });

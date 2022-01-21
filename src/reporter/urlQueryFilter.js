@@ -3,45 +3,44 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
 
     var module = {};
 
-    var filterParam = 'filter';
+    var filterParam = "filter";
 
     var parseUrlSearch = function (search) {
-        var paramString = search.replace(/^\?/, '');
+        var paramString = search.replace(/^\?/, "");
         if (!paramString) {
             return [];
         }
-        return paramString
-            .split('&')
-            .map(function (keyValue) {
-                var equalsIdx = keyValue.indexOf('='),
-                    key, value;
+        return paramString.split("&").map(function (keyValue) {
+            var equalsIdx = keyValue.indexOf("="),
+                key,
+                value;
 
-                if (equalsIdx >= 0) {
-                    key = keyValue.substr(0, equalsIdx);
-                    value = keyValue.substr(equalsIdx + 1);
-                } else {
-                    key = keyValue;
-                }
-                return {
-                    key: key,
-                    value: value
-                };
-            });
+            if (equalsIdx >= 0) {
+                key = keyValue.substr(0, equalsIdx);
+                value = keyValue.substr(equalsIdx + 1);
+            } else {
+                key = keyValue;
+            }
+            return {
+                key: key,
+                value: value,
+            };
+        });
     };
 
     var serializeKeyValuePair = function (pair) {
         if (pair.value) {
-            return pair.key + '=' + pair.value;
+            return pair.key + "=" + pair.value;
         }
         return pair.key;
     };
 
     var getFilterValue = function () {
         var filterKeyValue = parseUrlSearch(windowLocation.search)
-                .filter(function (entryPair) {
-                    return entryPair.key === filterParam;
-                })
-                .pop();
+            .filter(function (entryPair) {
+                return entryPair.key === filterParam;
+            })
+            .pop();
 
         if (filterKeyValue) {
             return decodeURIComponent(filterKeyValue.value);
@@ -49,7 +48,9 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
     };
 
     var fullDescription = function (testCase) {
-        return testCase.component ? testCase.component + ' ' + testCase.desc : testCase.desc;
+        return testCase.component
+            ? testCase.component + " " + testCase.desc
+            : testCase.desc;
     };
 
     var filter = getFilterValue(),
@@ -62,10 +63,16 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
             return true;
         }
 
-        if (comparison.testCase.desc && fullDescription(comparison.testCase) === filter) {
+        if (
+            comparison.testCase.desc &&
+            fullDescription(comparison.testCase) === filter
+        ) {
             return true;
         }
-        if (comparison.testCase.component && comparison.testCase.component === filter) {
+        if (
+            comparison.testCase.component &&
+            comparison.testCase.component === filter
+        ) {
             return true;
         }
         return comparison.testCase.url === filter;
@@ -74,18 +81,17 @@ csscriticLib.urlQueryFilter = function (windowLocation) {
     // interface towards browser reporters
 
     var queryPart = function (selection) {
-        var queryParams = existingQueryParams
-                .filter(function (pair) {
-                    return pair.key !== filterParam;
-                });
+        var queryParams = existingQueryParams.filter(function (pair) {
+            return pair.key !== filterParam;
+        });
         if (selection) {
             queryParams.push({
                 key: filterParam,
-                value: encodeURIComponent(selection)
+                value: encodeURIComponent(selection),
             });
         }
 
-        return '?' + queryParams.map(serializeKeyValuePair).join('&');
+        return "?" + queryParams.map(serializeKeyValuePair).join("&");
     };
 
     module.filterUrlForComponent = function (componentLabel) {

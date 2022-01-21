@@ -13,5 +13,6 @@
     "sub": true,
     "strict": true,
     "freeze": true,
-    "nonbsp": true
+    "nonbsp": true,
+    "laxbreak": true
 }

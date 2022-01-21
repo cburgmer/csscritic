@@ -5,7 +5,10 @@ csscriticLib.regression = function (renderer, util, imagediff) {
 
     var toleranceToWorkAroundFirefoxRenderingAFewPixelsIndeterministicallyOnLinux = 1;
 
-    var workAroundFirefoxResourcesSporadicallyMissing = function (htmlImage, referenceImage) {
+    var workAroundFirefoxResourcesSporadicallyMissing = function (
+        htmlImage,
+        referenceImage
+    ) {
         if (referenceImage) {
             // This does nothing meaningful for us, but seems to trigger Firefox to load any missing resources.
             imagediff.diff(htmlImage, referenceImage);
@@ -13,7 +16,10 @@ csscriticLib.regression = function (renderer, util, imagediff) {
     };
 
     var workAroundBrowserIssues = function (pageImage, referenceImage) {
-        workAroundFirefoxResourcesSporadicallyMissing(pageImage, referenceImage);
+        workAroundFirefoxResourcesSporadicallyMissing(
+            pageImage,
+            referenceImage
+        );
 
         return util.workAroundTransparencyIssueInFirefox(pageImage);
     };
@@ -21,26 +27,35 @@ csscriticLib.regression = function (renderer, util, imagediff) {
     var compareRenderingAndReference = function (pageImage, referenceImage) {
         var isEqual;
 
-        return workAroundBrowserIssues(pageImage, referenceImage).then(function (adaptedHtmlImage) {
-            if (referenceImage) {
-                isEqual = imagediff.equal(
-                    adaptedHtmlImage,
-                    referenceImage,
-                    toleranceToWorkAroundFirefoxRenderingAFewPixelsIndeterministicallyOnLinux
-                );
-                return isEqual ? "passed" : "failed";
-            } else {
-                return "referenceMissing";
+        return workAroundBrowserIssues(pageImage, referenceImage).then(
+            function (adaptedHtmlImage) {
+                if (referenceImage) {
+                    isEqual = imagediff.equal(
+                        adaptedHtmlImage,
+                        referenceImage,
+                        toleranceToWorkAroundFirefoxRenderingAFewPixelsIndeterministicallyOnLinux
+                    );
+                    return isEqual ? "passed" : "failed";
+                } else {
+                    return "referenceMissing";
+                }
             }
-        });
+        );
     };
 
-    var comparisonResult = function (textualStatus, testCase, viewport, renderErrors, pageImage, referenceImage) {
+    var comparisonResult = function (
+        textualStatus,
+        testCase,
+        viewport,
+        renderErrors,
+        pageImage,
+        referenceImage
+    ) {
         var result = {
             status: textualStatus,
             testCase: testCase,
             viewport: util.clone(viewport),
-            renderErrors: renderErrors
+            renderErrors: renderErrors,
         };
 
         if (pageImage) {
@@ -54,40 +69,52 @@ csscriticLib.regression = function (renderer, util, imagediff) {
 
     var extractErrorMessage = function (e) {
         if (e.originalError && e.originalError.message) {
-            return e.message +': ' + e.originalError.message;
+            return e.message + ": " + e.originalError.message;
         }
 
         return e.message;
     };
 
     var loadPageAndCompare = function (testCase, viewport, referenceImage) {
-        return renderer.render({
-            url: testCase.url,
-            hover: testCase.hover,
-            active: testCase.active,
-            focus: testCase.focus,
-            target: testCase.target,
-            width: viewport.width,
-            height: viewport.height
-        }).then(function (renderResult) {
-            return compareRenderingAndReference(renderResult.image, referenceImage).then(function (textualStatus) {
-                return comparisonResult(textualStatus,
-                                        testCase,
-                                        viewport,
-                                        renderResult.errors,
-                                        renderResult.image,
-                                        referenceImage);
-            });
-        }, function (e) {
-            var errors = [];
-            if (e) {
-                errors.push(extractErrorMessage(e));
-            }
-            return comparisonResult("error",
-                                    testCase,
-                                    viewport,
-                                    errors);
-        });
+        return renderer
+            .render({
+                url: testCase.url,
+                hover: testCase.hover,
+                active: testCase.active,
+                focus: testCase.focus,
+                target: testCase.target,
+                width: viewport.width,
+                height: viewport.height,
+            })
+            .then(
+                function (renderResult) {
+                    return compareRenderingAndReference(
+                        renderResult.image,
+                        referenceImage
+                    ).then(function (textualStatus) {
+                        return comparisonResult(
+                            textualStatus,
+                            testCase,
+                            viewport,
+                            renderResult.errors,
+                            renderResult.image,
+                            referenceImage
+                        );
+                    });
+                },
+                function (e) {
+                    var errors = [];
+                    if (e) {
+                        errors.push(extractErrorMessage(e));
+                    }
+                    return comparisonResult(
+                        "error",
+                        testCase,
+                        viewport,
+                        errors
+                    );
+                }
+            );
     };
 
     var viewportFallback = function (testCase) {
@@ -95,7 +122,7 @@ csscriticLib.regression = function (renderer, util, imagediff) {
             fallbackHeight = 100;
         return {
             width: testCase.width || fallbackWidth,
-            height: testCase.height || fallbackHeight
+            height: testCase.height || fallbackHeight,
         };
     };
 
@@ -106,7 +133,11 @@ csscriticLib.regression = function (renderer, util, imagediff) {
             viewport = viewportFallback(startingComparison.testCase);
         }
 
-        return loadPageAndCompare(startingComparison.testCase, viewport, startingComparison.referenceImage);
+        return loadPageAndCompare(
+            startingComparison.testCase,
+            viewport,
+            startingComparison.referenceImage
+        );
     };
 
     return module;

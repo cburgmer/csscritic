@@ -1,44 +1,50 @@
 <html>
-<head>
-    <meta charset="utf-8"/>
+    <head>
+        <meta charset="utf-8" />
 
-    <link rel="stylesheet" href="src/reporter/niceReporter.css">
-    <script src="src/scope.js"></script>
-    <script src="src/util.js"></script>
-    <script src="src/reporter/pageNavigationHandlingFallback.js"></script>
-    <script src="src/reporter/niceReporter.js"></script>
-</head>
-<body>
-    <script src="testHelper.js"></script>
-    <script>
-     var clickElement = function (el){
-         // Yay phantomjs
-         var ev = document.createEvent("MouseEvent");
-         ev.initMouseEvent(
-             "click",
-             true,
-             true,
-             window,
-             null,
-             0, 0, 0, 0,
-             false, false, false, false,
-             0,
-             null
-         );
-         el.dispatchEvent(ev);
-     };
+        <link rel="stylesheet" href="src/reporter/niceReporter.css" />
+        <script src="src/scope.js"></script>
+        <script src="src/util.js"></script>
+        <script src="src/reporter/pageNavigationHandlingFallback.js"></script>
+        <script src="src/reporter/niceReporter.js"></script>
+    </head>
+    <body>
+        <script src="testHelper.js"></script>
+        <script>
+            var clickElement = function (el) {
+                // Yay phantomjs
+                var ev = document.createEvent("MouseEvent");
+                ev.initMouseEvent(
+                    "click",
+                    true,
+                    true,
+                    window,
+                    null,
+                    0,
+                    0,
+                    0,
+                    0,
+                    false,
+                    false,
+                    false,
+                    false,
+                    0,
+                    null
+                );
+                el.dispatchEvent(ev);
+            };
 
-     var reporter = testHelper.constructNiceReporter();
+            var reporter = testHelper.constructNiceReporter();
 
-        testHelper.setUp();
+            testHelper.setUp();
 
-        testHelper.comparisonP('passed').then(function (test) {
-            reporter.reportSelectedComparison(test);
-            reporter.reportComparison(test);
-            reporter.reportTestSuite(testHelper.passingTestSuite());
+            testHelper.comparisonP("passed").then(function (test) {
+                reporter.reportSelectedComparison(test);
+                reporter.reportComparison(test);
+                reporter.reportTestSuite(testHelper.passingTestSuite());
 
-            clickElement(document.querySelector('.progressBar a'));
-        });
-    </script>
-</body>
+                clickElement(document.querySelector(".progressBar a"));
+            });
+        </script>
+    </body>
 </html>

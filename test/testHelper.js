@@ -8,7 +8,7 @@ window.testHelper = (function () {
     var isPhantomJs = navigator.userAgent.indexOf("PhantomJS") >= 0,
         isRunFromTheProjectRoot = isPhantomJs;
 
-    var fixturePath = (isRunFromTheProjectRoot ? 'test/' : '' ) + 'fixtures/';
+    var fixturePath = (isRunFromTheProjectRoot ? "test/" : "") + "fixtures/";
 
     module.fixture = function (path) {
         return fixturePath + path;
@@ -31,17 +31,29 @@ window.testHelper = (function () {
     };
 
     module.testImageUrl = function (url, callback) {
-        loadImage(url, function () {
-            callback(true);
-        }, function () {
-            callback(false);
-        });
+        loadImage(
+            url,
+            function () {
+                callback(true);
+            },
+            function () {
+                callback(false);
+            }
+        );
     };
 
     module.createImageOfSize = function (width, height, callback) {
-        module.loadImageFromUrl('data:image/svg+xml;charset=utf-8,' +
-            encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '"></svg>'),
-            callback);
+        module.loadImageFromUrl(
+            "data:image/svg+xml;charset=utf-8," +
+                encodeURIComponent(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+                        width +
+                        '" height="' +
+                        height +
+                        '"></svg>'
+                ),
+            callback
+        );
     };
 
     module.getFileUrl = function (filePath) {
@@ -50,7 +62,7 @@ window.testHelper = (function () {
         return "file://" + fs.absolute(filePath);
     };
 
-    function tempPathName () {
+    function tempPathName() {
         return "/tmp/csscriticTest." + Math.floor(Math.random() * 10000) + "/";
     }
 
@@ -73,7 +85,7 @@ window.testHelper = (function () {
         if (tempPath === null) {
             tempPath = createMainTempPath();
         }
-        tempSubPath = tempPath + '/' + tempPathCounter + '/';
+        tempSubPath = tempPath + "/" + tempPathCounter + "/";
         tempPathCounter += 1;
         fs.makeDirectory(tempSubPath);
         return tempSubPath;
@@ -95,7 +107,7 @@ window.testHelper = (function () {
         return {
             then: function (successHandler) {
                 successHandler(value);
-            }
+            },
         };
     };
 
@@ -103,7 +115,7 @@ window.testHelper = (function () {
         return {
             then: function (_, failHandler) {
                 failHandler(e);
-            }
+            },
         };
     };
 
@@ -124,8 +136,8 @@ window.testHelper = (function () {
                     } else {
                         successHandler = theSuccessHandler;
                     }
-                }
-            }
+                },
+            },
         };
     };
 
@@ -159,4 +171,4 @@ window.testHelper = (function () {
     };
 
     return module;
-}());
+})();

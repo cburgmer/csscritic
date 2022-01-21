@@ -9,10 +9,12 @@ describe("Reporting", function () {
 
     var setUpRenderedImage = function (image, errors) {
         errors = errors || [];
-        rendererBackend.render.and.returnValue(testHelper.successfulPromise({
-            image: image,
-            errors: errors
-        }));
+        rendererBackend.render.and.returnValue(
+            testHelper.successfulPromise({
+                image: image,
+                errors: errors,
+            })
+        );
     };
 
     var delayCall = function (func) {
@@ -25,13 +27,20 @@ describe("Reporting", function () {
         referenceImage = "the_reference_image";
         viewport = {
             width: 42,
-            height: 21
+            height: 21,
         };
 
-        rendererBackend = jasmine.createSpyObj('renderer', ['render']);
-        storageBackend = jasmine.createSpyObj('storageBackend', ['readReferenceImage', 'storeReferenceImage']);
+        rendererBackend = jasmine.createSpyObj("renderer", ["render"]);
+        storageBackend = jasmine.createSpyObj("storageBackend", [
+            "readReferenceImage",
+            "storeReferenceImage",
+        ]);
 
-        reporting = csscriticLib.reporting(rendererBackend, storageBackend, util);
+        reporting = csscriticLib.reporting(
+            rendererBackend,
+            storageBackend,
+            util
+        );
     });
 
     describe("reportConfiguredComparison", function () {
@@ -41,29 +50,36 @@ describe("Reporting", function () {
             reporter = jasmine.createSpyObj("Reporter", [
                 "reportComparisonStarting",
                 "reportSelectedComparison",
-                "reportDeselectedComparison"
+                "reportDeselectedComparison",
             ]);
             reporting.addReporter(reporter);
         });
 
         it("should report a starting comparison", function () {
-            reporting.doReportConfiguredComparison({
-                testCase: {
-                    url: "samplepage.html"
-                }
-            }, true);
+            reporting.doReportConfiguredComparison(
+                {
+                    testCase: {
+                        url: "samplepage.html",
+                    },
+                },
+                true
+            );
 
             expect(reporter.reportSelectedComparison).toHaveBeenCalledWith({
                 testCase: {
-                    url: "samplepage.html"
-                }
+                    url: "samplepage.html",
+                },
             });
         });
 
         it("should make method optional", function () {
             var startingComparison = "blah";
 
-            var reporting = csscriticLib.reporting(rendererBackend, storageBackend, util);
+            var reporting = csscriticLib.reporting(
+                rendererBackend,
+                storageBackend,
+                util
+            );
             reporting.addReporter({});
 
             reporting.doReportConfiguredComparison(startingComparison, true);
@@ -87,24 +103,29 @@ describe("Reporting", function () {
                 return defer.promise;
             });
 
-            reporting.doReportConfiguredComparison(startingComparison, true).then(function () {
-                expect(reporterHasFinished).toBe(true);
+            reporting
+                .doReportConfiguredComparison(startingComparison, true)
+                .then(function () {
+                    expect(reporterHasFinished).toBe(true);
 
-                done();
-            });
+                    done();
+                });
         });
 
         it("should report a deselected comparison", function () {
-            reporting.doReportConfiguredComparison({
-                testCase: {
-                    url: "samplepage.html"
-                }
-            }, false);
+            reporting.doReportConfiguredComparison(
+                {
+                    testCase: {
+                        url: "samplepage.html",
+                    },
+                },
+                false
+            );
 
             expect(reporter.reportDeselectedComparison).toHaveBeenCalledWith({
                 testCase: {
-                    url: "samplepage.html"
-                }
+                    url: "samplepage.html",
+                },
             });
         });
     });
@@ -117,7 +138,7 @@ describe("Reporting", function () {
             reporting.addReporter(reporter);
 
             comparison = {
-                viewport: viewport
+                viewport: viewport,
             };
         });
 
@@ -155,25 +176,25 @@ describe("Reporting", function () {
             reporting.doReportComparison({
                 status: "passed",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 referenceImage: referenceImage,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "passed",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
                 referenceImage: referenceImage,
                 viewport: viewport,
-                renderErrors: []
+                renderErrors: [],
             });
         });
 
@@ -181,42 +202,44 @@ describe("Reporting", function () {
             reporting.doReportComparison({
                 status: "failed",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 referenceImage: referenceImage,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
-            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
-                status: "failed"
-            }));
+            expect(reporter.reportComparison).toHaveBeenCalledWith(
+                jasmine.objectContaining({
+                    status: "failed",
+                })
+            );
         });
 
         it("should report a missing reference image", function () {
             reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "referenceMissing",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 viewport: viewport,
                 resizePageImage: jasmine.any(Function),
                 acceptPage: jasmine.any(Function),
-                renderErrors: []
+                renderErrors: [],
             });
         });
 
@@ -224,15 +247,15 @@ describe("Reporting", function () {
             reporting.doReportComparison({
                 status: "error",
                 testCase: {
-                    url: "differentpage.html"
-                }
+                    url: "differentpage.html",
+                },
             });
 
             expect(reporter.reportComparison).toHaveBeenCalledWith({
                 status: "error",
                 testCase: {
-                    url: "differentpage.html"
-                }
+                    url: "differentpage.html",
+                },
             });
         });
 
@@ -243,12 +266,12 @@ describe("Reporting", function () {
             reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
             setUpRenderedImage(newpageImage);
@@ -256,11 +279,13 @@ describe("Reporting", function () {
             result = reporter.reportComparison.calls.mostRecent().args[0];
 
             result.resizePageImage(16, 34).then(function () {
-                expect(rendererBackend.render).toHaveBeenCalledWith(jasmine.objectContaining({
-                    url: "differentpage.html",
-                    width: 16,
-                    height: 34
-                }));
+                expect(rendererBackend.render).toHaveBeenCalledWith(
+                    jasmine.objectContaining({
+                        url: "differentpage.html",
+                        width: 16,
+                        height: 34,
+                    })
+                );
                 expect(result.pageImage).toBe(newpageImage);
 
                 done();
@@ -274,21 +299,24 @@ describe("Reporting", function () {
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
-                    hover: '.selector'
+                    hover: ".selector",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
-            reporter.reportComparison.calls.mostRecent().args[0].resizePageImage(16, 34).then(function () {
-                expect(rendererBackend.render).toHaveBeenCalledWith(
-                    jasmine.objectContaining({hover: '.selector'})
-                );
+            reporter.reportComparison.calls
+                .mostRecent()
+                .args[0].resizePageImage(16, 34)
+                .then(function () {
+                    expect(rendererBackend.render).toHaveBeenCalledWith(
+                        jasmine.objectContaining({ hover: ".selector" })
+                    );
 
-                done();
-            });
+                    done();
+                });
         });
 
         it("should not pass resizing handle on a fixed height test case", function () {
@@ -296,17 +324,19 @@ describe("Reporting", function () {
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
-                    height: 21
+                    height: 21,
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
-            expect(reporter.reportComparison).not.toHaveBeenCalledWith(jasmine.objectContaining({
-                resizePageImage: jasmine.any(Function)
-            }));
+            expect(reporter.reportComparison).not.toHaveBeenCalledWith(
+                jasmine.objectContaining({
+                    resizePageImage: jasmine.any(Function),
+                })
+            );
         });
 
         it("should not pass resizing handle on a fixed width test case", function () {
@@ -314,51 +344,61 @@ describe("Reporting", function () {
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
-                    width: 42
+                    width: 42,
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
-            expect(reporter.reportComparison).not.toHaveBeenCalledWith(jasmine.objectContaining({
-                resizePageImage: jasmine.any(Function)
-            }));
+            expect(reporter.reportComparison).not.toHaveBeenCalledWith(
+                jasmine.objectContaining({
+                    resizePageImage: jasmine.any(Function),
+                })
+            );
         });
 
         it("should provide a method to accept the rendered page and store as new reference", function () {
             reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith({url: "differentpage.html"}, pageImage, jasmine.any(Object));
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(
+                { url: "differentpage.html" },
+                pageImage,
+                jasmine.any(Object)
+            );
         });
 
         it("should store the viewport's size on accept", function () {
             reporting.doReportComparison({
                 status: "referenceMissing",
                 testCase: {
-                    url: "differentpage.html"
+                    url: "differentpage.html",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
-            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, viewport);
+            expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(
+                jasmine.any(Object),
+                pageImage,
+                viewport
+            );
         });
 
         it("should pass the test case's additional parameters on accept", function () {
@@ -366,18 +406,18 @@ describe("Reporting", function () {
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
-                    hover: '.selector'
+                    hover: ".selector",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
             reporter.reportComparison.calls.mostRecent().args[0].acceptPage();
 
             expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(
-                jasmine.objectContaining({hover: '.selector'}),
+                jasmine.objectContaining({ hover: ".selector" }),
                 pageImage,
                 jasmine.any(Object)
             );
@@ -390,12 +430,12 @@ describe("Reporting", function () {
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
-                    hover: '.selector'
+                    hover: ".selector",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: [],
-                viewport: viewport
+                viewport: viewport,
             });
 
             var result = reporter.reportComparison.calls.mostRecent().args[0];
@@ -403,10 +443,14 @@ describe("Reporting", function () {
             result.resizePageImage(16, 34).then(function () {
                 result.acceptPage();
 
-                expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(jasmine.any(Object), pageImage, {
-                    width: 16,
-                    height: 34
-                });
+                expect(storageBackend.storeReferenceImage).toHaveBeenCalledWith(
+                    jasmine.any(Object),
+                    pageImage,
+                    {
+                        width: 16,
+                        height: 34,
+                    }
+                );
 
                 done();
             });
@@ -417,17 +461,19 @@ describe("Reporting", function () {
                 status: "referenceMissing",
                 testCase: {
                     url: "differentpage.html",
-                    hover: '.selector'
+                    hover: ".selector",
                 },
                 pageImage: pageImage,
                 referenceImage: undefined,
                 renderErrors: ["oneUrl", "anotherUrl"],
-                viewport: viewport
+                viewport: viewport,
             });
 
-            expect(reporter.reportComparison).toHaveBeenCalledWith(jasmine.objectContaining({
-                renderErrors: ["oneUrl", "anotherUrl"],
-            }));
+            expect(reporter.reportComparison).toHaveBeenCalledWith(
+                jasmine.objectContaining({
+                    renderErrors: ["oneUrl", "anotherUrl"],
+                })
+            );
         });
     });
 
@@ -443,7 +489,7 @@ describe("Reporting", function () {
             reporting.doReportTestSuite(true);
 
             expect(reporter.reportTestSuite).toHaveBeenCalledWith({
-                success: true
+                success: true,
             });
         });
 
@@ -451,7 +497,7 @@ describe("Reporting", function () {
             reporting.doReportTestSuite(false);
 
             expect(reporter.reportTestSuite).toHaveBeenCalledWith({
-                success: false
+                success: false,
             });
         });
 
@@ -483,6 +529,5 @@ describe("Reporting", function () {
                 done();
             });
         });
-
     });
 });

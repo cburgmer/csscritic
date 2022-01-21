@@ -10,16 +10,18 @@ window.testHelper = (function () {
                     height = Math.max(imageA.height, imageB.height),
                     width = Math.max(imageA.width, imageB.width);
                 return canvas.getContext("2d").createImageData(width, height);
-            }
+            },
         };
     };
 
     var setUpMocks = function () {
         var mocks = {};
 
-        var mockImageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AsECh0kn2LdqQAAAKlJREFUeNrt3bERADAIAzGT/XeGLQiFfgR0rql0OjrTcwIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABAaJvlXcuFiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAA0U4DUeIDxDHtCI8AAAAASUVORK5CYII=";
+        var mockImageUrl =
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AsECh0kn2LdqQAAAKlJREFUeNrt3bERADAIAzGT/XeGLQiFfgR0rql0OjrTcwIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABASIgAgJEQIAICBABAaJvlXcuFiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAAERAgAiIgQAQEiIAA0U4DUeIDxDHtCI8AAAAASUVORK5CYII=";
 
-        var heigherMockImageUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAACWCAYAAAAouC1GAAABSklEQVR4nO3OsQ3AMADDsJzez9vZFygoaMK7znm5Sh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIA1nnP4xfdzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM7If7AKXEFkl4JVdsAAAAAElFTkSuQmCC";
+        var heigherMockImageUrl =
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAACWCAYAAAAouC1GAAABSklEQVR4nO3OsQ3AMADDsJzez9vZFygoaMK7znm5Sh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAaw8gJUHsPIA1nnP4xfdzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM7If7AKXEFkl4JVdsAAAAAElFTkSuQmCC";
 
         mocks.image = function () {
             var image = window.document.createElement("img");
@@ -48,15 +50,21 @@ window.testHelper = (function () {
             promise: {
                 then: function (func) {
                     handler = func;
-                }
+                },
             },
             resolve: function (value) {
                 handler(value);
-            }
+            },
         };
     };
 
-    var aComparison = function (status, testCase, pageImage, renderErrors, resizable) {
+    var aComparison = function (
+        status,
+        testCase,
+        pageImage,
+        renderErrors,
+        resizable
+    ) {
         var dummyFunc = function () {},
             mocks = setUpMocks(),
             comparison;
@@ -64,12 +72,12 @@ window.testHelper = (function () {
         comparison = {
             status: status,
             testCase: testCase,
-            renderErrors: renderErrors
+            renderErrors: renderErrors,
         };
 
         comparison.pageImage = pageImage;
 
-        if (status === 'failed' || status === 'passed') {
+        if (status === "failed" || status === "passed") {
             comparison.referenceImage = mocks.image();
         }
 
@@ -80,14 +88,19 @@ window.testHelper = (function () {
         return comparison;
     };
 
-    testHelper.comparisonP = function (status, testCase, renderErrors, resizable) {
+    testHelper.comparisonP = function (
+        status,
+        testCase,
+        renderErrors,
+        resizable
+    ) {
         var mocks = setUpMocks(),
             pageImage;
 
         testCase = testCase || {};
         testCase.url = testCase.url || "aPage.html";
 
-        if (status === 'error') {
+        if (status === "error") {
             pageImage = null;
         } else {
             pageImage = mocks.image();
@@ -95,14 +108,20 @@ window.testHelper = (function () {
 
         var defer = cheapPromise();
 
-        var comparison = aComparison(status, testCase, pageImage, renderErrors || [], resizable);
+        var comparison = aComparison(
+            status,
+            testCase,
+            pageImage,
+            renderErrors || [],
+            resizable
+        );
 
-        if (status === 'error') {
+        if (status === "error") {
             setTimeout(function () {
                 defer.resolve(comparison);
             }, 1);
         } else {
-            pageImage.onload = function() {
+            pageImage.onload = function () {
                 defer.resolve(comparison);
             };
         }
@@ -114,8 +133,16 @@ window.testHelper = (function () {
             pageImage = mocks.heigherImage(),
             defer = cheapPromise();
 
-        pageImage.onload = function() {
-            defer.resolve(aComparison('failed', {url: 'aPage.html'}, pageImage, [], false));
+        pageImage.onload = function () {
+            defer.resolve(
+                aComparison(
+                    "failed",
+                    { url: "aPage.html" },
+                    pageImage,
+                    [],
+                    false
+                )
+            );
         };
         return defer.promise;
     };
@@ -124,8 +151,8 @@ window.testHelper = (function () {
         return {
             pageUrl: "aPage.html",
             testCase: {
-                url: "aPage.html"
-            }
+                url: "aPage.html",
+            },
         };
     };
 
@@ -142,19 +169,19 @@ window.testHelper = (function () {
             now: function () {
                 date += 123;
                 return date;
-            }
+            },
         };
     };
 
     testHelper.passingTestSuite = function () {
         return {
-            success: true
+            success: true,
         };
     };
 
     testHelper.failingTestSuite = function () {
         return {
-            success: false
+            success: false,
         };
     };
 
@@ -169,10 +196,10 @@ window.testHelper = (function () {
     var fakeWindow = {
         scrollY: 0,
         addEventListener: function (event, handler) {
-            if (event === 'scroll') {
+            if (event === "scroll") {
                 scrollEventListener = handler;
             }
-        }
+        },
     };
 
     testHelper.scrollTo = function (scrollY) {
@@ -182,28 +209,35 @@ window.testHelper = (function () {
 
     testHelper.constructNiceReporter = function (hasTaintedCanvasBug) {
         var util = csscriticLib.util(),
-            packageVersion = '0.1.42',
-            pageNavigationHandlingFallback = csscriticLib.pageNavigationHandlingFallback({href: 'file://somepath'}),
+            packageVersion = "0.1.42",
+            pageNavigationHandlingFallback =
+                csscriticLib.pageNavigationHandlingFallback({
+                    href: "file://somepath",
+                }),
             mockPromise = function (result) {
-                return {then: function (callback) {
-                    callback(result);
-                    return mockPromise(result);
-                }};
+                return {
+                    then: function (callback) {
+                        callback(result);
+                        return mockPromise(result);
+                    },
+                };
             },
             mockRasterizeHTML = {
                 drawHTML: function () {
                     return mockPromise(!hasTaintedCanvasBug);
-                }
+                },
             },
-            niceReporter = csscriticLib.niceReporter(fakeWindow,
-                                                     util,
-                                                     {filterFor: function () {}},
-                                                     pageNavigationHandlingFallback,
-                                                     mockRasterizeHTML,
-                                                     packageVersion);
+            niceReporter = csscriticLib.niceReporter(
+                fakeWindow,
+                util,
+                { filterFor: function () {} },
+                pageNavigationHandlingFallback,
+                mockRasterizeHTML,
+                packageVersion
+            );
 
         return niceReporter.NiceReporter();
     };
 
     return testHelper;
-}());
+})();

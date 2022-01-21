@@ -3,13 +3,13 @@ csscriticLib.indexeddbstorage = function (util) {
 
     var module = {};
 
-    var createDb = function(db) {
-        db.createObjectStore('references', { keyPath: "testCase" });
+    var createDb = function (db) {
+        db.createObjectStore("references", { keyPath: "testCase" });
     };
 
     var getDb = function () {
         var defer = ayepromise.defer(),
-            request = indexedDB.open('csscritic', 1);
+            request = indexedDB.open("csscritic", 1);
 
         request.onsuccess = function (event) {
             var db = event.target.result;
@@ -23,12 +23,12 @@ csscriticLib.indexeddbstorage = function (util) {
     };
 
     var buildKey = function (testCase) {
-        var testCaseParameters = util.excludeKeys(testCase, 'url'),
+        var testCaseParameters = util.excludeKeys(testCase, "url"),
             serializedParameters = util.serializeMap(testCaseParameters),
             key = testCase.url;
 
         if (serializedParameters) {
-            key += ',' + serializedParameters;
+            key += "," + serializedParameters;
         }
 
         return key;
@@ -43,14 +43,15 @@ csscriticLib.indexeddbstorage = function (util) {
         var key = buildKey(testCase);
 
         getDb().then(function (db) {
-            var request = db.transaction(['references'], 'readwrite')
-                .objectStore('references')
+            var request = db
+                .transaction(["references"], "readwrite")
+                .objectStore("references")
                 .put({
                     testCase: key,
                     reference: {
                         imageUri: imageUri,
-                        viewport: viewport
-                    }
+                        viewport: viewport,
+                    },
                 });
 
             request.onsuccess = function () {
@@ -68,14 +69,19 @@ csscriticLib.indexeddbstorage = function (util) {
             key = buildKey(testCase);
 
         getDb().then(function (db) {
-            var request = db.transaction(['references'])
-                .objectStore('references')
+            var request = db
+                .transaction(["references"])
+                .objectStore("references")
                 .get(key);
 
             request.onsuccess = function () {
                 db.close();
 
-                if (request.result === undefined || request.result.reference === undefined || request.result.reference.imageUri === undefined) {
+                if (
+                    request.result === undefined ||
+                    request.result.reference === undefined ||
+                    request.result.reference.imageUri === undefined
+                ) {
                     defer.reject();
                     return;
                 }
@@ -85,12 +91,12 @@ csscriticLib.indexeddbstorage = function (util) {
                 util.getImageForUrl(dataObj.imageUri).then(function (img) {
                     var viewport = dataObj.viewport || {
                         width: img.width,
-                        height: img.height
+                        height: img.height,
                     };
 
                     defer.resolve({
                         image: img,
-                        viewport: viewport
+                        viewport: viewport,
                     });
                 }, defer.reject);
             };

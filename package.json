@@ -21,6 +21,7 @@
   "dependencies": {
     "ayepromise": "~1.1.0",
     "imagediff": "git://github.com/HumbleSoftware/js-imagediff.git#5edce005fe",
+    "prettier": "^2.5.1",
     "rasterizehtml": "^1.3.0"
   },
   "devDependencies": {
@@ -46,7 +47,10 @@
     "minifyify": "^7.3.5",
     "puppeteer": "^3.0.2"
   },
+  "prettier": {
+    "tabWidth": 4
+  },
   "scripts": {
-    "test": "bash go"
+    "test": "bash go && prettier -c test src Gruntfile.js"
   }
 }

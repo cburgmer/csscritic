@@ -57,7 +57,7 @@ csscriticLib.util = function () {
         };
 
         try {
-            xhr.open('get', getUncachableURL(url), true);
+            xhr.open("get", getUncachableURL(url), true);
             xhr.send();
         } catch (e) {
             defer.reject();
@@ -83,8 +83,8 @@ csscriticLib.util = function () {
         };
 
         try {
-            xhr.open('get', getUncachableURL(url), true);
-            xhr.responseType = 'blob';
+            xhr.open("get", getUncachableURL(url), true);
+            xhr.responseType = "blob";
             xhr.send();
         } catch (e) {
             defer.reject(e);
@@ -125,7 +125,6 @@ csscriticLib.util = function () {
         reader.readAsDataURL(blob);
 
         return defer.promise;
-
     };
 
     // excludeKeys(theMap, excludeKey...)
@@ -148,9 +147,9 @@ csscriticLib.util = function () {
 
         keys.sort();
         keys.forEach(function (key) {
-            serializationEntries.push(key + '=' + theMap[key]);
+            serializationEntries.push(key + "=" + theMap[key]);
         });
-        return serializationEntries.join(',');
+        return serializationEntries.join(",");
     };
 
     module.clone = function (object) {
@@ -158,7 +157,7 @@ csscriticLib.util = function () {
             i;
         for (i in object) {
             if (object.hasOwnProperty(i)) {
-               theClone[i] = object[i];
+                theClone[i] = object[i];
             }
         }
         return theClone;
@@ -217,11 +216,14 @@ csscriticLib.util = function () {
 
         functionReturnValues.forEach(function (returnValue, idx) {
             if (returnValue && returnValue.then) {
-                returnValue.then(function (result) {
-                    functionCallResolved(result, idx);
-                }, function (e) {
-                    defer.reject(e);
-                });
+                returnValue.then(
+                    function (result) {
+                        functionCallResolved(result, idx);
+                    },
+                    function (e) {
+                        defer.reject(e);
+                    }
+                );
             } else {
                 functionCallResolved(returnValue, idx);
             }
