@@ -501,29 +501,3 @@
     .referenceImageContainer:hover::after {
     display: none;
 }
-
-/* Warning for Chrome + Safari */
-
-.cssCriticNiceReporter .browserWarning::before {
-    content: "⚠";
-    font-size: 1.2rem;
-    padding-right: 5px;
-    vertical-align: middle;
-}
-
-.cssCriticNiceReporter .browserWarning {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    z-index: 2;
-
-    background-color: rgba(182, 39, 5, 0.85);
-    color: white;
-    font-size: 1.2rem;
-    border: 2px solid black;
-    padding: 20px;
-}

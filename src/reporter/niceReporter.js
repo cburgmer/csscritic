@@ -855,49 +855,6 @@ csscriticLib.niceReporter = function (
         }
     };
 
-    // browser warning
-
-    var supportsReadingHtmlFromCanvas = function () {
-        return rasterizeHTML.drawHTML("<b></b>").then(function (result) {
-            var canvas = document.createElement("canvas"),
-                context = canvas.getContext("2d");
-            try {
-                context.drawImage(result.image, 0, 0);
-                // This will fail in Chrome & Safari
-                canvas.toDataURL("image/png");
-                return true;
-            } catch (e) {
-                return false;
-            }
-        });
-    };
-
-    var browserIssueChecked = false;
-
-    var showBrowserWarningIfNeeded = function (container) {
-        if (browserIssueChecked) {
-            return;
-        }
-        browserIssueChecked = true;
-
-        supportsReadingHtmlFromCanvas().then(function (supported) {
-            if (supported) {
-                return;
-            }
-
-            container.appendChild(
-                elementFor(
-                    '<div class="browserWarning">' +
-                        "Your browser is currently not supported, " +
-                        "as it does not support reading rendered HTML from the canvas " +
-                        '(<a href="https://code.google.com/p/chromium/issues/detail?id=294129">Chrome #294129</a>, ' +
-                        '<a href="https://bugs.webkit.org/show_bug.cgi?id=17352">Safari #17352</a>). How about trying Firefox?' +
-                        "</div>"
-                )
-            );
-        });
-    };
-
     // the reporter
 
     module.NiceReporter = function (outerContainer) {
@@ -927,7 +884,6 @@ csscriticLib.niceReporter = function (
                 timeStarted = Date.now();
             }
 
-            showBrowserWarningIfNeeded(container());
             updateStatusInDocumentTitle(totalCount, doneCount);
             updateStatusBar(container(), totalCount, selectedCount, issueCount);
         };
