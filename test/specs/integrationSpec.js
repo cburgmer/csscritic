@@ -197,43 +197,39 @@ describe("Integration", function () {
         }
     );
 
-    ifNotInWebkitIt(
-        "should store a reference when a result is accepted",
-        function (done) {
-            var testPageUrl = testHelper.fixture("pageUnderTest.html"),
-                reporter = jasmine.createSpyObj("Reporter", [
-                    "reportComparison",
-                ]);
+    // Disabled, as we cannot compare the serialized image across browsers. Same image has different serialisations
+    xit("should store a reference when a result is accepted", function (done) {
+        var testPageUrl = testHelper.fixture("pageUnderTest.html"),
+            reporter = jasmine.createSpyObj("Reporter", ["reportComparison"]);
 
-            csscritic.addReporter(reporter);
-            csscritic.add(testPageUrl);
-            csscritic.execute().then(function (passed) {
-                expect(passed).toBe(false);
-                expect(reporter.reportComparison).toHaveBeenCalledWith(
-                    jasmine.any(Object)
-                );
+        csscritic.addReporter(reporter);
+        csscritic.add(testPageUrl);
+        csscritic.execute().then(function (passed) {
+            expect(passed).toBe(false);
+            expect(reporter.reportComparison).toHaveBeenCalledWith(
+                jasmine.any(Object)
+            );
 
-                reporter.reportComparison.calls
-                    .mostRecent()
-                    .args[0].resizePageImage(330, 151)
-                    .then(function () {
-                        reporter.reportComparison.calls
-                            .mostRecent()
-                            .args[0].acceptPage();
+            reporter.reportComparison.calls
+                .mostRecent()
+                .args[0].resizePageImage(330, 151)
+                .then(function () {
+                    reporter.reportComparison.calls
+                        .mostRecent()
+                        .args[0].acceptPage();
 
-                        readReferenceImage(testPageUrl).then(function (
-                            referenceObj
-                        ) {
-                            expect(referenceObj.imageUri).toEqual(
-                                theReferenceImageUri
-                            );
+                    readReferenceImage(testPageUrl).then(function (
+                        referenceObj
+                    ) {
+                        expect(referenceObj.imageUri).toEqual(
+                            theReferenceImageUri
+                        );
 
-                            done();
-                        });
+                        done();
                     });
-            });
-        }
-    );
+                });
+        });
+    });
 
     ifNotInWebkitIt(
         "should properly report a failing comparison",

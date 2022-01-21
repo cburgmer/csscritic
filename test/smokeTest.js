@@ -7,7 +7,7 @@ const fs = require("fs");
 const http = require("http");
 const puppeteer = require("puppeteer");
 
-const webserverPort = 8000;
+const webserverPort = 8099;
 
 if (process.argv.length !== 3) {
     console.log("Usage: smokeTest.js csscriticLoadingHtmlPage");
