@@ -7,7 +7,7 @@ module.exports = function (grunt) {
         clean: {
             deps: ["build/dependencies/*.js"],
             dist: ["build/*.js", "dist/", "packageVersion.js"],
-            all: ["build", "test/ui/*.html.json", "example/*.html.json"],
+            all: ["build"],
         },
         connect: {
             server: {
