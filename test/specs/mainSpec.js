@@ -221,56 +221,62 @@ describe("Main", function () {
     });
 
     describe("Reporting", function () {
-        var triggerDelayedPromise = function () {
-            jasmine.clock().tick(100);
-        };
-
-        beforeEach(function () {
-            jasmine.clock().install();
-        });
-
-        afterEach(function () {
-            jasmine.clock().uninstall();
-        });
-
-        it("should report a starting comparison with reference image", function () {
+        it("should report a starting comparison with reference image", function (done) {
             setUpReferenceImage("the image", "the viewport");
 
             csscritic.add("samplepage.html");
-            csscritic.execute();
+            csscritic
+                .execute()
+                .then(null, function () {}) // catch error
+                .then(function () {
+                    expect(
+                        reporting.doReportConfiguredComparison
+                    ).toHaveBeenCalledWith(
+                        {
+                            testCase: {
+                                url: "samplepage.html",
+                            },
+                            referenceImage: "the image",
+                            viewport: "the viewport",
+                        },
+                        true
+                    );
 
-            triggerDelayedPromise();
-            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith(
-                {
-                    testCase: {
-                        url: "samplepage.html",
-                    },
-                    referenceImage: "the image",
-                    viewport: "the viewport",
-                },
-                true
-            );
+                    done();
+                });
         });
 
-        it("should report a starting comparison without reference image", function () {
+        it("should report a starting comparison without reference image", function (done) {
             setUpReferenceImageMissing();
 
             csscritic.add("samplepage.html");
-            csscritic.execute();
+            csscritic
+                .execute()
+                .then(null, function () {}) // catch error
+                .then(function () {
+                    expect(
+                        reporting.doReportConfiguredComparison
+                    ).toHaveBeenCalledWith(
+                        {
+                            testCase: {
+                                url: "samplepage.html",
+                            },
+                        },
+                        true
+                    );
 
-            triggerDelayedPromise();
-            expect(reporting.doReportConfiguredComparison).toHaveBeenCalledWith(
-                {
-                    testCase: {
-                        url: "samplepage.html",
-                    },
-                },
-                true
-            );
+                    done();
+                });
         });
 
-        it("should wait for reporting on starting comparison to finish", function () {
-            var defer = ayepromise.defer(),
+        var sleep = function () {
+            return new Promise(function (fulfill) {
+                setTimeout(fulfill, 100);
+            });
+        };
+
+        it("should wait for reporting on starting comparison to finish", function (done) {
+            var reportingFulfill,
                 callback = jasmine.createSpy("callback");
 
             setUpReferenceImageMissing();
@@ -278,17 +284,25 @@ describe("Main", function () {
             csscritic.add("something");
 
             reporting.doReportConfiguredComparison.and.returnValue(
-                defer.promise
+                new Promise(function (fulfill) {
+                    reportingFulfill = fulfill;
+                })
             );
             csscritic.execute().then(callback);
 
-            triggerDelayedPromise();
-            expect(callback).not.toHaveBeenCalled();
+            sleep()
+                .then(function () {
+                    expect(callback).not.toHaveBeenCalled();
 
-            defer.resolve();
+                    reportingFulfill();
 
-            triggerDelayedPromise();
-            expect(callback).toHaveBeenCalled();
+                    return sleep();
+                })
+                .then(function () {
+                    expect(callback).toHaveBeenCalled();
+
+                    done();
+                });
         });
 
         it("should call final report on empty test case list and report as failed", function (done) {
@@ -297,12 +311,10 @@ describe("Main", function () {
 
                 done();
             });
-
-            triggerDelayedPromise();
         });
 
-        it("should wait for reporting on comparison to finish", function () {
-            var defer = ayepromise.defer(),
+        it("should wait for reporting on comparison to finish", function (done) {
+            var reportingFulfill,
                 callback = jasmine.createSpy("callback");
 
             setUpReferenceImage("the image", "the viewport");
@@ -310,33 +322,52 @@ describe("Main", function () {
                 status: "success",
             });
 
-            reporting.doReportComparison.and.returnValue(defer.promise);
+            reporting.doReportComparison.and.returnValue(
+                new Promise(function (fulfill) {
+                    reportingFulfill = fulfill;
+                })
+            );
             csscritic.add("a_test");
             csscritic.execute().then(callback);
 
-            triggerDelayedPromise();
-            expect(callback).not.toHaveBeenCalled();
+            sleep()
+                .then(function () {
+                    expect(callback).not.toHaveBeenCalled();
 
-            defer.resolve();
+                    reportingFulfill();
+                    return sleep();
+                })
+                .then(function () {
+                    expect(callback).toHaveBeenCalled();
 
-            triggerDelayedPromise();
-            expect(callback).toHaveBeenCalled();
+                    done();
+                });
         });
 
-        it("should wait for reporting on final report to finish", function () {
-            var defer = ayepromise.defer(),
+        it("should wait for reporting on final report to finish", function (done) {
+            var reportingFulfill,
                 callback = jasmine.createSpy("callback");
 
-            reporting.doReportTestSuite.and.returnValue(defer.promise);
+            reporting.doReportTestSuite.and.returnValue(
+                new Promise(function (fulfill) {
+                    reportingFulfill = fulfill;
+                })
+            );
             csscritic.execute().then(callback);
 
-            triggerDelayedPromise();
-            expect(callback).not.toHaveBeenCalled();
+            sleep()
+                .then(function () {
+                    expect(callback).not.toHaveBeenCalled();
 
-            defer.resolve();
+                    reportingFulfill();
 
-            triggerDelayedPromise();
-            expect(callback).toHaveBeenCalled();
+                    return sleep();
+                })
+                .then(function () {
+                    expect(callback).toHaveBeenCalled();
+
+                    done();
+                });
         });
     });
 

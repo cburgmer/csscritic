@@ -50,52 +50,50 @@ describe("Integration", function () {
     };
 
     var getDb = function () {
-        var defer = ayepromise.defer();
-
-        var request = indexedDB.open("csscritic", 1);
-        request.onsuccess = function (event) {
-            var db = event.target.result;
-            defer.resolve(db);
-        };
-        request.onupgradeneeded = function (event) {
-            var db = event.target.result;
-            db.createObjectStore("references", { keyPath: "testCase" });
-        };
-        return defer.promise;
+        return new Promise(function (fulfill) {
+            var request = indexedDB.open("csscritic", 1);
+            request.onsuccess = function (event) {
+                var db = event.target.result;
+                fulfill(db);
+            };
+            request.onupgradeneeded = function (event) {
+                var db = event.target.result;
+                db.createObjectStore("references", { keyPath: "testCase" });
+            };
+        });
     };
 
     var storeReferenceImage = function (key, data) {
-        var defer = ayepromise.defer();
-        getDb().then(function (db) {
-            var request = db
-                .transaction(["references"], "readwrite")
-                .objectStore("references")
-                .add({ testCase: key, reference: data });
+        return getDb().then(function (db) {
+            return new Promise(function (fulfill) {
+                var request = db
+                    .transaction(["references"], "readwrite")
+                    .objectStore("references")
+                    .add({ testCase: key, reference: data });
 
-            request.onsuccess = function () {
-                db.close();
-                defer.resolve();
-            };
+                request.onsuccess = function () {
+                    db.close();
+                    fulfill();
+                };
+            });
         });
-        return defer.promise;
     };
 
     var readReferenceImage = function (key) {
-        var defer = ayepromise.defer();
+        return getDb().then(function (db) {
+            return new Promise(function (fulfill) {
+                var request = db
+                    .transaction(["references"])
+                    .objectStore("references")
+                    .get(key);
 
-        getDb().then(function (db) {
-            var request = db
-                .transaction(["references"])
-                .objectStore("references")
-                .get(key);
-
-            request.onsuccess = function () {
-                db.close();
-                // TODO stop using JSON string as interface in test
-                defer.resolve(request.result.reference);
-            };
+                request.onsuccess = function () {
+                    db.close();
+                    // TODO stop using JSON string as interface in test
+                    fulfill(request.result.reference);
+                };
+            });
         });
-        return defer.promise;
     };
 
     beforeEach(function () {
