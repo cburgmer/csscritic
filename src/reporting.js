@@ -64,7 +64,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
         configuredComparison,
         isSelected
     ) {
-        return util.all(
+        return Promise.all(
             reporters.map(function (reporter) {
                 var reportingFunc = reportingMethod(reporter, isSelected);
                 if (reportingFunc) {
@@ -79,7 +79,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
 
         attachPageAcceptHelpers(result);
 
-        return util.all(
+        return Promise.all(
             reporters.map(function (reporter) {
                 if (reporter.reportComparison) {
                     return reporter.reportComparison(result);
@@ -89,7 +89,7 @@ csscriticLib.reporting = function (renderer, storage, util) {
     };
 
     module.doReportTestSuite = function (passed) {
-        return util.all(
+        return Promise.all(
             reporters.map(function (reporter) {
                 if (reporter.reportTestSuite) {
                     return reporter.reportTestSuite({ success: passed });

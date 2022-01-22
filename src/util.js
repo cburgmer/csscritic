@@ -159,41 +159,5 @@ csscriticLib.util = function () {
         return hasValidTestSetup && allPassed;
     };
 
-    module.all = function (functionReturnValues) {
-        var defer = ayepromise.defer(),
-            pendingFunctionCalls = functionReturnValues.length,
-            resolvedValues = [];
-
-        var functionCallResolved = function (value, idx) {
-            pendingFunctionCalls -= 1;
-            resolvedValues[idx] = value;
-
-            if (pendingFunctionCalls === 0) {
-                defer.resolve(resolvedValues);
-            }
-        };
-
-        if (functionReturnValues.length === 0) {
-            defer.resolve([]);
-            return defer.promise;
-        }
-
-        functionReturnValues.forEach(function (returnValue, idx) {
-            if (returnValue && returnValue.then) {
-                returnValue.then(
-                    function (result) {
-                        functionCallResolved(result, idx);
-                    },
-                    function (e) {
-                        defer.reject(e);
-                    }
-                );
-            } else {
-                functionCallResolved(returnValue, idx);
-            }
-        });
-        return defer.promise;
-    };
-
     return module;
 };

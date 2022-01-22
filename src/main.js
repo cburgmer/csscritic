@@ -41,7 +41,7 @@ csscriticLib.main = function (
     };
 
     var fetchStartingComparisons = function (testCases) {
-        return util.all(
+        return Promise.all(
             testCases.map(function (testCase) {
                 return storage.readReferenceImage(testCase).then(
                     function (referenceImageRecord) {
@@ -74,7 +74,7 @@ csscriticLib.main = function (
     };
 
     var reportConfiguredComparisons = function (comparisonSelection) {
-        return util.all(
+        return Promise.all(
             comparisonSelection.map(function (selection) {
                 var isSelected = selection.selected;
                 return reporting.doReportConfiguredComparison(
@@ -115,7 +115,7 @@ csscriticLib.main = function (
                         return selection.configuredComparison;
                     });
 
-                return util.all(selectedComparisons.map(executeTestCase));
+                return Promise.all(selectedComparisons.map(executeTestCase));
             })
             .then(function (comparisons) {
                 allPassed = util.hasTestSuitePassed(comparisons);
