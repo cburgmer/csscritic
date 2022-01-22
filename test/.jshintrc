@@ -12,7 +12,6 @@
         "afterEach": true,
         "expect": true,
         "spyOn": true,
-        "ayepromise": true,
         "imagediff": true,
         "imagediffForJasmine2": true,
         "csscriticLib": true,

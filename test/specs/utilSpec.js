@@ -57,29 +57,27 @@ describe("Utility", function () {
 
     describe("loadAsBlob", function () {
         var blob2Text = function (blob) {
-            var defer = ayepromise.defer(),
-                reader = new FileReader();
+            return new Promise(function (fulfill) {
+                var reader = new FileReader();
 
-            reader.onload = function (e) {
-                defer.resolve(e.target.result);
-            };
+                reader.onload = function (e) {
+                    fulfill(e.target.result);
+                };
 
-            reader.readAsText(blob);
-
-            return defer.promise;
+                reader.readAsText(blob);
+            });
         };
 
         var blob2Base64 = function (blob) {
-            var defer = ayepromise.defer(),
-                reader = new FileReader();
+            return new Promise(function (fulfill) {
+                var reader = new FileReader();
 
-            reader.onload = function (e) {
-                defer.resolve(btoa(e.target.result));
-            };
+                reader.onload = function (e) {
+                    fulfill(btoa(e.target.result));
+                };
 
-            reader.readAsBinaryString(blob);
-
-            return defer.promise;
+                reader.readAsBinaryString(blob);
+            });
         };
 
         it("should load content from a URL", function (done) {

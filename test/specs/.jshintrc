@@ -18,7 +18,6 @@
         "imagediffForJasmine2": true,
         "csscriticLib": true,
         "testHelper": true,
-        "ayepromise": true,
         "Promise": true,
         "indexedDB": true
     },
