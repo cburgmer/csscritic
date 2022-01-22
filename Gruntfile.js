@@ -20,6 +20,7 @@ module.exports = function (grunt) {
             src: "csscritic.js",
             options: {
                 host: "http://127.0.0.1:8765/",
+                outfile: "test/_SpecRunner.html", // enforce same relative path as manual SpecRunner.html
                 specs: [
                     "test/specs/shared/*.js",
                     "test/specs/*.js",
@@ -30,7 +31,6 @@ module.exports = function (grunt) {
                     "node_modules/jquery/dist/jquery.js",
                     "node_modules/jasmine-jquery/lib/jasmine-jquery.js",
                     "test/testHelper.js",
-                    "test/gruntpath.js",
                 ],
                 summary: true,
                 display: "short",

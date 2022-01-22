@@ -3,10 +3,10 @@
 window.testHelper = (function () {
     var module = {};
 
-    module.fixturesPath = "fixtures/";
+    var fixturesPath = "fixtures/";
 
     module.fixture = function (path) {
-        return module.fixturesPath + path;
+        return fixturesPath + path;
     };
 
     var loadImage = function (url, successCallback, errorCallback) {
