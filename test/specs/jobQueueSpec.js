@@ -51,7 +51,7 @@ describe("Job Queue", function () {
                 .createSpy("job2")
                 .and.returnValue(new Promise(function () {}));
 
-        subject.execute(job1);
+        subject.execute(job1).catch(function () {});
         subject.execute(job2);
 
         expect(job1).toHaveBeenCalled();
@@ -59,7 +59,7 @@ describe("Job Queue", function () {
 
         job1Reject();
 
-        job1Promise.then(null, function () {
+        job1Promise.catch(function () {
             expect(job2).toHaveBeenCalled();
 
             done();
@@ -102,7 +102,7 @@ describe("Job Queue", function () {
 
         jobReject(e);
 
-        jobPromise.then(null, function () {
+        jobPromise.catch(function () {
             setTimeout(function () {
                 expect(jobExecutionSpy).toHaveBeenCalledWith(e);
 

@@ -70,10 +70,9 @@ module.exports = function (grunt) {
                 objectToExport: "csscritic",
                 indent: "    ",
                 deps: {
-                    default: ["ayepromise", "imagediff", "rasterizeHTML"],
+                    default: ["imagediff", "rasterizeHTML"],
                     // HACK, use the css require to include css via cssify
                     cjs: [
-                        "ayepromise",
                         "imagediff",
                         "rasterizehtml",
                         "../build/<%= pkg.name %>.concat.css",
@@ -108,7 +107,6 @@ module.exports = function (grunt) {
                         " Licensed <%= pkg.license %> */" +
                         "\n/* Integrated dependencies:\n" +
                         " * imagediff.js (MIT License),\n" +
-                        " * ayepromise (BSD License & WTFPL),\n" +
                         " * url (MIT License),\n" +
                         " * xmlserializer (MIT License),\n" +
                         " * css-font-face-src (BSD License),\n" +

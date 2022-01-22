@@ -9,7 +9,7 @@ csscriticLib.jobQueue = function () {
     var runJob = function (job) {
         var result = job.func();
 
-        job.resolve(result);
+        job.fulfill(result);
         return result;
     };
 
@@ -26,25 +26,18 @@ csscriticLib.jobQueue = function () {
         }
     };
 
-    var constructJob = function (func) {
-        var defer = ayepromise.defer();
-
-        return {
-            func: func,
-            resolve: defer.resolve,
-            promise: defer.promise,
-        };
-    };
-
     module.execute = function (func) {
-        var job = constructJob(func);
+        return new Promise(function (fulfill) {
+            var job = {
+                func: func,
+                fulfill: fulfill,
+            };
 
-        jobQueue.push(job);
-        if (!busy) {
-            nextInQueue();
-        }
-
-        return job.promise;
+            jobQueue.push(job);
+            if (!busy) {
+                nextInQueue();
+            }
+        });
     };
 
     return module;

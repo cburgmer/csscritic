@@ -5,7 +5,6 @@
         "inlineresources": true,
         "imagediff": true,
         "Promise": true,
-        "ayepromise": true,
         "indexedDB": true,
         "console": true,
         "require": true,
