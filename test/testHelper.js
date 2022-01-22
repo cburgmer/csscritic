@@ -88,12 +88,6 @@ window.testHelper = (function () {
         return tempSubPath;
     };
 
-    module.successfulPromise = function (value) {
-        var defer = ayepromise.defer();
-        defer.resolve(value);
-        return defer.promise;
-    };
-
     module.failedPromise = function (e) {
         var defer = ayepromise.defer();
         defer.reject(e);
@@ -137,18 +131,17 @@ window.testHelper = (function () {
     };
 
     module.waitsFor = function (predicate) {
-        var timeout = 2000,
-            defer = ayepromise.defer();
+        var timeout = 2000;
 
-        doWait(predicate, timeout, function (predicateResovled) {
-            if (predicateResovled) {
-                defer.resolve();
-            } else {
-                defer.reject();
-            }
+        return new Promise(function (fulfill, reject) {
+            doWait(predicate, timeout, function (predicateResovled) {
+                if (predicateResovled) {
+                    fulfill();
+                } else {
+                    reject();
+                }
+            });
         });
-
-        return defer.promise;
     };
 
     return module;

@@ -6,14 +6,12 @@ describe("Main", function () {
     var util = csscriticLib.util();
 
     var setUpComparison = function (comparison) {
-        regression.compare.and.returnValue(
-            testHelper.successfulPromise(comparison)
-        );
+        regression.compare.and.returnValue(Promise.resolve(comparison));
     };
 
     var setUpReferenceImage = function (image, viewport) {
         storage.readReferenceImage.and.returnValue(
-            testHelper.successfulPromise({
+            Promise.resolve({
                 image: image,
                 viewport: viewport,
             })
@@ -21,7 +19,7 @@ describe("Main", function () {
     };
 
     var setUpReferenceImageMissing = function () {
-        storage.readReferenceImage.and.returnValue(testHelper.failedPromise());
+        storage.readReferenceImage.and.returnValue(Promise.reject());
     };
 
     beforeEach(function () {
@@ -31,14 +29,10 @@ describe("Main", function () {
             "doReportTestSuite",
         ]);
         reporting.doReportConfiguredComparison.and.returnValue(
-            testHelper.successfulPromise()
+            Promise.resolve()
         );
-        reporting.doReportComparison.and.returnValue(
-            testHelper.successfulPromise()
-        );
-        reporting.doReportTestSuite.and.returnValue(
-            testHelper.successfulPromise()
-        );
+        reporting.doReportComparison.and.returnValue(Promise.resolve());
+        reporting.doReportTestSuite.and.returnValue(Promise.resolve());
 
         regression = jasmine.createSpyObj("regression", ["compare"]);
         storage = jasmine.createSpyObj("storage", ["readReferenceImage"]);

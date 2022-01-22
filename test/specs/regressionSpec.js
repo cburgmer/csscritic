@@ -327,9 +327,7 @@ describe("Regression testing", function () {
                 message: "some message",
                 originalError: new Error("original error"),
             };
-            rendererBackend.render.and.returnValue(
-                testHelper.failedPromise(error)
-            );
+            rendererBackend.render.and.returnValue(Promise.reject(error));
         });
 
         it("should report the comparison", function (done) {
