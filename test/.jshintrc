@@ -16,7 +16,6 @@
         "imagediff": true,
         "imagediffForJasmine2": true,
         "csscriticLib": true,
-        "csscriticTestPath": true,
         "csscritic": true,
         "testHelper": true
     }

@@ -17,13 +17,10 @@
         "imagediff": true,
         "imagediffForJasmine2": true,
         "csscriticLib": true,
-        "csscriticTestPath": true,
         "testHelper": true,
-        "loadStoragePluginSpecs": true,
-        "CanvasRenderingContext2D": true,
         "ayepromise": true,
         "Promise": true,
         "indexedDB": true
     },
-    "exported": ["loadStoragePluginSpecs"]
+    "exported": []
 }
