@@ -96,7 +96,7 @@ describe("IndexedDB storage", function () {
         };
 
         var setUpImageForUrlToFail = function (e) {
-            util.getImageForUrl.and.returnValue(testHelper.failedPromise(e));
+            util.getImageForUrl.and.rejectWith(e);
         };
 
         beforeEach(function (done) {
@@ -270,7 +270,7 @@ describe("IndexedDB storage", function () {
         });
 
         it("should call error handler if read reference image is invalid", function (done) {
-            setUpImageForUrlToFail();
+            setUpImageForUrlToFail(new Error("blargh"));
 
             storeMockReferenceImage(
                 "somePage.html",
@@ -280,7 +280,9 @@ describe("IndexedDB storage", function () {
             );
             storage
                 .readReferenceImage({ url: "somePage.html" })
-                .then(null, done);
+                .then(null, function () {
+                    done();
+                });
         });
 
         it("should honour test case parameters when reading", function (done) {

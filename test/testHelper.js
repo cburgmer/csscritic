@@ -25,12 +25,6 @@ window.testHelper = (function () {
         });
     };
 
-    module.failedPromise = function (e) {
-        var defer = ayepromise.defer();
-        defer.reject(e);
-        return defer.promise;
-    };
-
     module.deferFake = function (value) {
         var successHandler,
             resolved = false;
