@@ -61,8 +61,8 @@ describe("Browser renderer", function () {
         };
 
         var setUpRasterizeHtmlToFail = function () {
-            spyOn(rasterizeHTML, "drawHTML").and.returnValue(
-                testHelper.failedPromise()
+            spyOn(rasterizeHTML, "drawHTML").and.rejectWith(
+                new Error("blargh")
             );
         };
 
