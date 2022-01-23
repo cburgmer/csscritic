@@ -2,7 +2,6 @@ csscriticLib.niceReporter = function (
     window,
     util,
     selectionFilter,
-    pageNavigationHandlingFallback,
     rasterizeHTML,
     packageVersion
 ) {
@@ -243,10 +242,6 @@ csscriticLib.niceReporter = function (
                     }
                 )
             );
-
-        if (pageNavigationHandlingFallback) {
-            pageNavigationHandlingFallback.install(entry.querySelector("a"));
-        }
 
         toc.appendChild(entry);
     };
@@ -721,10 +716,6 @@ csscriticLib.niceReporter = function (
         );
         tick.classList.add(progressBarPendingClassName);
         progressBar.appendChild(tick);
-
-        if (pageNavigationHandlingFallback) {
-            pageNavigationHandlingFallback.install(tick.querySelector("a"));
-        }
 
         return tick;
     };

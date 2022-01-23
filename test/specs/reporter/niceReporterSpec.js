@@ -99,11 +99,6 @@ describe("Nice reporter", function () {
             "clearFilter",
             "clearFilterUrl",
         ]);
-        var pageNavigationHandlingFallback =
-            csscriticLib.pageNavigationHandlingFallback({
-                href: "file://somepath",
-            });
-
         $fixture = setFixtures();
 
         fakeWindow = {
@@ -120,7 +115,7 @@ describe("Nice reporter", function () {
                 fakeWindow,
                 util,
                 selectionFilter,
-                pageNavigationHandlingFallback,
+                undefined,
                 rasterizeHTML,
                 packageVersion
             )

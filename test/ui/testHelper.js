@@ -202,10 +202,6 @@ window.testHelper = (function () {
     testHelper.constructNiceReporter = function (hasTaintedCanvasBug) {
         var util = csscriticLib.util(),
             packageVersion = "0.1.42",
-            pageNavigationHandlingFallback =
-                csscriticLib.pageNavigationHandlingFallback({
-                    href: "file://somepath",
-                }),
             mockPromise = function (result) {
                 return {
                     then: function (callback) {
@@ -223,7 +219,6 @@ window.testHelper = (function () {
                 fakeWindow,
                 util,
                 { filterFor: function () {} },
-                pageNavigationHandlingFallback,
                 mockRasterizeHTML,
                 packageVersion
             );

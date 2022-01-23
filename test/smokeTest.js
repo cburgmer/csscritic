@@ -123,9 +123,7 @@ var assertMatches = function (value, regex, name) {
     }
 };
 
-const runTestAgainst = async (browser, pageUrl, options) => {
-    const withNavigationFallback = options.withNavigationFallback;
-
+const runTestAgainst = async (browser, pageUrl) => {
     console.log("Running test against " + pageUrl);
 
     const page = await loadPage(browser, pageUrl);
@@ -142,11 +140,7 @@ const runTestAgainst = async (browser, pageUrl, options) => {
     let scrollY = await page.evaluate("window.scrollY");
     assertNotEquals(scrollY, 0, "scrollY");
 
-    if (withNavigationFallback) {
-        assertEquals(page.url(), pageUrl, "page url");
-    } else {
-        assertMatches(page.url(), /#/, "page url");
-    }
+    assertMatches(page.url(), /#/, "page url");
 
     // 3
     console.log("Jumping back");
@@ -165,11 +159,7 @@ const runTestAgainst = async (browser, pageUrl, options) => {
     let comparisonCount = await page.evaluate(getComparisonCount);
 
     assertEquals(comparisonCount, 1, "number of comparisons");
-    if (withNavigationFallback) {
-        assertEquals(page.url(), pageUrl, "page url");
-    } else {
-        assertMatches(page.url(), /\?filter/, "page url");
-    }
+    assertMatches(page.url(), /\?filter/, "page url");
 
     // 5
     console.log('Clicking "Run all"');
@@ -180,11 +170,7 @@ const runTestAgainst = async (browser, pageUrl, options) => {
     comparisonCount = await page.evaluate(getComparisonCount);
 
     assertEquals(comparisonCount, 2, "number of comparisons");
-    if (withNavigationFallback) {
-        assertEquals(page.url(), pageUrl, "page url");
-    } else {
-        assertMatches(page.url(), /\?$/, "page url");
-    }
+    assertMatches(page.url(), /\?$/, "page url");
 };
 
 (async () => {
@@ -195,19 +181,10 @@ const runTestAgainst = async (browser, pageUrl, options) => {
             headless: true,
         });
 
-        await runTestAgainst(
-            browser,
-            "file://" + path.resolve(csscriticLoadingPage),
-            {
-                withNavigationFallback: true,
-            }
-        );
-
         startWebserver(webserverPort);
         await runTestAgainst(
             browser,
-            "http://localhost:" + webserverPort + "/" + csscriticLoadingPage,
-            { withNavigationFallback: false }
+            "http://localhost:" + webserverPort + "/" + csscriticLoadingPage
         );
 
         browser.close();

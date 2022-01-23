@@ -34,7 +34,6 @@ describe("Integration", function () {
             window,
             util,
             urlQueryFilter,
-            csscriticLib.pageNavigationHandlingFallback(),
             rasterizeHTML,
             "dev"
         );

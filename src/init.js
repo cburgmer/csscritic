@@ -9,16 +9,6 @@ var csscritic = (function () {
         };
     };
 
-    var startsWith = function (str, prefix) {
-        // PhantomJS has no startsWith
-        return str.substr(0, prefix.length) === prefix;
-    };
-
-    // Work around https://bugzilla.mozilla.org/show_bug.cgi?id=1005634
-    var needsFallback = function () {
-        return startsWith(window.location.href, "file://");
-    };
-
     var packageVersion = csscriticLib.packageVersion || "dev",
         util = csscriticLib.util();
 
@@ -35,29 +25,23 @@ var csscritic = (function () {
             util
         ),
         regression = csscriticLib.regression(browserRenderer, util, imagediff),
-        queryFilter = csscriticLib.urlQueryFilter(window.location),
-        fallbackFilter = csscriticLib.fallbackFilter(window.location);
-
-    var filter = needsFallback() ? fallbackFilter : queryFilter;
+        queryFilter = csscriticLib.urlQueryFilter(window.location);
 
     var main = csscriticLib.main(
         regression,
         reporting,
         util,
         indexedDbStorage,
-        filter
+        queryFilter
     );
 
-    var pageNavigationHandlingFallback =
-            csscriticLib.pageNavigationHandlingFallback(window.location),
-        niceReporter = csscriticLib.niceReporter(
-            window,
-            util,
-            filter,
-            needsFallback() ? pageNavigationHandlingFallback : undefined,
-            rasterizeHTML,
-            packageVersion
-        );
+    var niceReporter = csscriticLib.niceReporter(
+        window,
+        util,
+        queryFilter,
+        rasterizeHTML,
+        packageVersion
+    );
 
     var self = {};
 
