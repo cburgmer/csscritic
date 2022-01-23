@@ -65,7 +65,10 @@ For tests install Node.js and run
 
     $ npm install && npm test
 
-[![Build Status](https://travis-ci.org/cburgmer/csscritic.svg?branch=master)](https://travis-ci.org/cburgmer/csscritic)
+To see CSS Critic testing its own UI run
+
+    $ python3 -m http.server
+    $ open http://localhost:8000/test/RegressionRunner.html
 
 ## Limitations
 
